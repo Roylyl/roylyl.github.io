@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>加密鹿 🦌</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <div class="hero">
+      <div class="hero-emoji">🦌</div>
+      <h1>加密鹿</h1>
+    </div>
+
+    <div class="controls">
+      <label class="pwd">
+        <span>密钥（解密须相同）</span>
+        <input id="pwd" type="text" placeholder="留空也可，但加了更安全" autocomplete="off" />
+      </label>
+    </div>
+
+    <div class="io">
+      <div class="field">
+        <div class="field-head">
+          <span class="field-label">原文 / 密文</span>
+          <span class="count" id="inCount">0 字</span>
+        </div>
+        <textarea id="input" placeholder="在这里输入要隐藏的文字，或粘贴一段鹿群密文"></textarea>
+      </div>
+
+      <div class="actions">
+        <button class="btn primary" id="btnEncrypt">鹿加密 🦌</button>
+        <button class="btn" id="btnDecrypt">鹿出来 🌿</button>
+        <button class="btn ghost" id="btnSmart">智能转换</button>
+        <button class="btn ghost" id="btnSwap">交换 ↔</button>
+        <button class="btn ghost" id="btnClear">清空</button>
+        <button class="btn ghost" id="btnCopy">复制结果</button>
+      </div>
+
+      <div class="field">
+        <div class="field-head">
+          <span class="field-label">结果</span>
+          <span class="count" id="outCount">0 符号</span>
+        </div>
+        <textarea id="output" readonly placeholder="藏好或现形后的内容会显示在这里"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
