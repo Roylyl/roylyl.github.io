@@ -1,0 +1,10 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Editor / OS junk
+Thumbs.db
+desktop.ini
+*~
+.idea/
+.vscode/
