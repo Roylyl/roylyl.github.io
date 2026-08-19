@@ -146,10 +146,26 @@
       var pwd = $("pwd");
       var inCount = $("inCount");
       var outCount = $("outCount");
+      var engine = $("engine");
+      var engineTitle = $("engineTitle");
+      var engineLog = $("engineLog");
+      var engineBar = $("engineBar");
+      var btns = ["btnEncrypt", "btnDecrypt", "btnSmart", "btnSwap", "btnClear", "btnCopy"]
+        .map($);
+
+      var busy = false;        // 引擎运行中，禁止重复触发
+      var rafId = null;        // 当前逐字流式的动画句柄
 
       function updateCounts() {
         inCount.textContent = Array.from(input.value).length + " 字";
         outCount.textContent = Array.from(output.value).length + " 符号";
+      }
+
+      function setBusy(on) {
+        busy = on;
+        btns.forEach(function (b) { b.disabled = on; });
+        if (on) output.classList.add("typing");
+        else output.classList.remove("typing");
       }
 
       function toast(msg) {
@@ -164,35 +180,126 @@
         }, 1600);
       }
 
-      function doEncrypt() {
-        if (!input.value) { toast("先输入要隐藏的文字"); return; }
-        output.value = encrypt(input.value, pwd.value);
+      // 逐字速度：短文本每只慢一点（更有仪式感），长文本加快以免拖沓。
+      // 返回一个符号的间隔毫秒，并兜底总时长不超过 ~3.5s。
+      function pickSpeed(len) {
+        var slow = 42, fast = 6;          // 单字符间隔上限 / 下限
+        var t = Math.min(Math.max((len - 16) / (360 - 16), 0), 1);
+        var ms = slow - t * (slow - fast);
+        var maxTotal = 3500;
+        if (len * ms > maxTotal) ms = Math.max(2, maxTotal / len);
+        return ms;
+      }
+
+      // 基于时间的逐字流式输出：按经过时间补字符，长短文本都顺滑。
+      function typewrite(text, onDone) {
+        var perMs = pickSpeed(text.length);
+        var i = 0, last = performance.now();
+        output.value = "";
         updateCounts();
-        toast("已藏入鹿群 🦌");
+        function step(now) {
+          if (!busy) return;             // 被新动作打断则停止
+          var elapsed = now - last;
+          var add = Math.max(1, Math.floor(elapsed / perMs));
+          if (add > 0) {
+            i = Math.min(text.length, i + add);
+            output.value = text.slice(0, i);
+            updateCounts();
+            last = now;
+          }
+          if (i < text.length) {
+            rafId = requestAnimationFrame(step);
+          } else if (onDone) {
+            onDone();
+          }
+        }
+        rafId = requestAnimationFrame(step);
+      }
+
+      // 展示“加密引擎”运行过程，返回多久后开始逐字输出（毫秒）。
+      function showEngine(mode, meta) {
+        engine.hidden = false;
+        engineTitle.textContent = mode === "encrypt" ? "🦌 鹿加密引擎" : "🔍 鹿解密引擎";
+        engineLog.innerHTML = "";
+        engineBar.style.width = "0%";
+        var lines = mode === "encrypt"
+          ? [
+              "密钥派生完成 · FNV-1a 32-bit",
+              "替换表已生成 · 16 符号洗牌",
+              "正在把比特流编织进鹿群…"
+            ]
+          : [
+              "识别密文符号 " + (meta || "若干") + " 个",
+              "重建密钥流 · xorshift32",
+              "逐字还原原文…"
+            ];
+        requestAnimationFrame(function () { engineBar.style.width = "100%"; });
+        lines.forEach(function (txt, idx) {
+          setTimeout(function () {
+            var d = document.createElement("div");
+            d.className = "engine-line";
+            d.textContent = "· " + txt;
+            engineLog.appendChild(d);
+          }, 160 + idx * 210);
+        });
+        return 160 + lines.length * 210 + 220;
+      }
+
+      function runEngine(mode, compute, failMsg, okMsg) {
+        if (busy) return;
+        if (!input.value) { toast(mode === "encrypt" ? "先输入要隐藏的文字" : "先粘贴密文"); return; }
+        setBusy(true);
+        var meta = mode === "decrypt"
+          ? Array.from(input.value).filter(function (c) { return POOL.indexOf(c) !== -1; }).length
+          : null;
+        var wait = showEngine(mode, meta);
+        setTimeout(function () {
+          var res = compute();
+          if (res === "" || res == null) {
+            setBusy(false);
+            toast(failMsg);
+            return;
+          }
+          typewrite(res, function () {
+            setBusy(false);
+            toast(okMsg);
+          });
+        }, wait);
+      }
+
+      function doEncrypt() {
+        runEngine("encrypt",
+          function () { return encrypt(input.value, pwd.value); },
+          "加密失败，请重试",
+          "已藏入鹿群 🦌");
       }
 
       function doDecrypt() {
-        if (!input.value) { toast("先粘贴密文"); return; }
-        var res = decrypt(input.value, pwd.value);
-        if (!res) { toast("无法还原：密码不符或密文受损"); return; }
-        output.value = res;
-        updateCounts();
-        toast("已现出原形 🌿");
+        runEngine("decrypt",
+          function () { return decrypt(input.value, pwd.value); },
+          "无法还原：密码不符或密文受损",
+          "已现出原形 🌿");
       }
 
       function doSmart() {
+        if (busy) return;
         if (!input.value) { toast("先输入内容"); return; }
         if (looksLikeCipher(input.value)) doDecrypt();
         else doEncrypt();
       }
 
       function doSwap() {
+        if (busy) return;
         var tmp = input.value; input.value = output.value; output.value = tmp;
         updateCounts();
       }
-      function doClear() { input.value = ""; output.value = ""; updateCounts(); }
+      function doClear() {
+        if (busy) return;
+        input.value = ""; output.value = ""; engine.hidden = true; updateCounts();
+      }
 
       function doCopy() {
+        if (busy) return;
         if (!output.value) { toast("没有可复制的结果"); return; }
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(output.value).then(
