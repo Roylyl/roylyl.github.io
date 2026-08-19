@@ -1,0 +1,33 @@
+KunCode 下载官网部署包
+
+目录名：
+kuncodedownload
+
+部署到 roylyl.github.io 仓库后，推荐结构：
+
+roylyl.github.io/
+└── kuncodedownload/
+    ├── index.html
+    ├── style.css
+    └── script.js
+
+GitHub Desktop 操作：
+1. 将整个 kuncodedownload 文件夹复制到本地 roylyl.github.io 仓库根目录。
+2. GitHub Desktop 中 Commit to main。
+3. Push origin。
+4. 保持 GitHub Pages 设置为 main / (root)。
+
+访问地址：
+https://roylyl.github.io/kuncodedownload/
+
+下载按钮已固定为：
+Windows x64 V1.0.0
+https://github.com/Roylyl/KunCode/releases/download/V1.0.0/KunCode-Windows-x64-V1.0.0.exe
+
+macOS Apple Silicon V1.0.0
+https://github.com/Roylyl/KunCode/releases/download/V1.0.0/KunCode-macOS-arm64-V1.0.0.pkg
+
+说明：
+- 网站会根据浏览器系统自动突出推荐 Windows 或 macOS 下载。
+- 页面使用 KunCode 仓库中的水豚图标远程地址；若图片无法加载，会自动显示 K 作为后备标识。
+- 页面不依赖框架，可以直接部署到 GitHub Pages。
