@@ -1,24 +1,24 @@
 KunCode 下载官网部署包
 
 目录名：
-kuncodedownload
+kuncode
 
 部署到 roylyl.github.io 仓库后，推荐结构：
 
 roylyl.github.io/
-└── kuncodedownload/
+└── kuncode/
     ├── index.html
     ├── style.css
     └── script.js
 
 GitHub Desktop 操作：
-1. 将整个 kuncodedownload 文件夹复制到本地 roylyl.github.io 仓库根目录。
+1. 将整个 kuncode 文件夹复制到本地 roylyl.github.io 仓库根目录。
 2. GitHub Desktop 中 Commit to main。
 3. Push origin。
 4. 保持 GitHub Pages 设置为 main / (root)。
 
 访问地址：
-https://roylyl.github.io/kuncodedownload/
+https://roylyl.github.io/kuncode/
 
 下载按钮已固定为：
 Windows x64 V1.0.0
