@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="音享贴 LENGHE SoundShare 项目介绍页面。" />
+  <meta name="theme-color" content="#05070b" />
+  <title>音享贴 · LENGHE SoundShare</title>
+  <link rel="stylesheet" href="soundshare.css" />
+</head>
+<body>
+  <div class="ss-progress"><span id="ssProgress"></span></div>
+  <header class="ss-nav">
+    <a class="ss-brand" href="index.html">
+      <img src="assets/soundshare-icon.webp" alt="音享贴图标" />
+      <span>LENGHE SoundShare</span>
+    </a>
+    <nav>
+      <a href="#intro">Intro</a>
+      <a href="#ui">UI</a>
+      <a href="#scenes">Scenes</a>
+      <a href="ultrasonic.html">Ultrasonic</a>
+      <a href="index.html">Home</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="ss-hero" id="intro">
+      <div class="orb orb-a"></div>
+      <div class="orb orb-b"></div>
+      <div class="ss-wrap ss-hero-inner">
+        <div class="ss-copy reveal">
+          <p class="ss-kicker">PROJECT 02</p>
+          <h1>音享贴<br><span>LENGHE SoundShare</span></h1>
+          <p class="ss-lead">一个面向跨生态多人蓝牙音频共享的轻量化中继设备概念。核心目标是让用户在不更换现有蓝牙设备的前提下，低成本完成多人同步听音与可视化控制。</p>
+          <div class="ss-actions">
+            <a class="ss-button primary" href="#ui">查看多端 UI</a>
+            <a class="ss-button ghost" href="index.html#projects">返回主页</a>
+          </div>
+        </div>
+        <div class="ss-hero-art reveal">
+          <div class="app-icon-stage"><img src="assets/soundshare-icon.webp" alt="音享贴图标" /></div>
+          <div class="hero-line line-one"><i></i><span>MagSafe · Bluetooth Relay</span></div>
+          <div class="hero-line line-two"><i></i><span>Latency · Volume · Channel</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ss-section dark-section">
+      <div class="ss-wrap">
+        <div class="section-title reveal">
+          <p class="ss-kicker">VALUE</p>
+          <h2>它不是替代现有设备，而是打通设备之间的壁垒。</h2>
+          <p>音享贴围绕“音源终端 — 音享贴中继 — 多终端播放设备”的架构工作，强调跨品牌兼容、手动可视化校准与多设备独立控制。</p>
+        </div>
+        <div class="feature-cards">
+          <article class="feature reveal"><span>01</span><h3>跨生态共享</h3><p>连接手机或平板作为音源，再同步分发到多台蓝牙耳机或音箱。</p></article>
+          <article class="feature reveal"><span>02</span><h3>磁吸轻量形态</h3><p>以轻量化硬件中继的思路切入，强调便携、低门槛与快速落地。</p></article>
+          <article class="feature reveal"><span>03</span><h3>手动毫秒级校准</h3><p>通过可视化延迟调节解决不同设备的固有播放时差，适配民用场景。</p></article>
+          <article class="feature reveal"><span>04</span><h3>多端可视化控制</h3><p>支持 iPad、iPhone、Android、微信小程序与 Apple Watch 等交互形态。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="ss-section ui-section" id="ui">
+      <div class="ss-wrap">
+        <div class="section-title light reveal">
+          <p class="ss-kicker">UI SHOWCASE</p>
+          <h2>多终端控制界面。</h2>
+          <p>在这个项目里，UI 不是装饰，而是产品逻辑的一部分：设备连接、同步校准、音量控制、状态确认都需要更直观的交互来承载。</p>
+        </div>
+
+        <div class="ui-grid">
+          <article class="ui-card large reveal">
+            <div class="ui-copy"><span>iPad UI</span><h3>大屏控制总览</h3><p>适合在更大视图下查看多设备状态与高级设置。</p></div>
+            <div class="ui-frame ipad"><img src="assets/soundshare-ipad.webp" alt="音享贴 iPad UI" /></div>
+          </article>
+          <article class="ui-card reveal">
+            <div class="ui-copy"><span>iPhone UI</span><h3>移动端主控制界面</h3><p>用于手机侧进行连接、音量控制与播放状态管理。</p></div>
+            <div class="ui-frame phone"><img src="assets/soundshare-iphone.webp" alt="音享贴 iPhone UI" /></div>
+          </article>
+          <article class="ui-card reveal">
+            <div class="ui-copy"><span>Android UI</span><h3>安卓端界面</h3><p>强调更直观的设备卡片与数值型控制布局。</p></div>
+            <div class="ui-frame phone"><img src="assets/soundshare-android.webp" alt="音享贴 Android UI" /></div>
+          </article>
+          <article class="ui-card wide reveal">
+            <div class="ui-copy"><span>微信小程序 UI</span><h3>轻量化跨端控制入口</h3><p>适合作为更低门槛的设备控制入口，方便用户快速连接与管理。</p></div>
+            <div class="ui-frame desktop"><img src="assets/soundshare-miniapp.png" alt="音享贴微信小程序 UI" /></div>
+          </article>
+          <article class="ui-card reveal">
+            <div class="ui-copy"><span>Apple Watch UI</span><h3>节点音量控制</h3><p>在腕上查看与微调不同节点设备的音量状态。</p></div>
+            <div class="ui-frame watch"><img src="assets/soundshare-watch-volume.jpg" alt="音享贴 Apple Watch 音量界面" /></div>
+          </article>
+          <article class="ui-card reveal">
+            <div class="ui-copy"><span>Apple Watch UI</span><h3>延迟与同步提示</h3><p>在更轻量的场景里查看双设备同步状态与延迟信息。</p></div>
+            <div class="ui-frame watch"><img src="assets/soundshare-watch-delay.jpg" alt="音享贴 Apple Watch 延迟界面" /></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="ss-section scene-section" id="scenes">
+      <div class="ss-wrap">
+        <div class="section-title reveal">
+          <p class="ss-kicker">SCENES</p>
+          <h2>围绕真实场景来定义产品价值。</h2>
+        </div>
+        <div class="scene-grid">
+          <article class="scene reveal"><span>01</span><h3>情侣 / 朋友影音共享</h3><p>多人使用各自耳机同步观影或听音，兼顾私密性与陪伴感。</p></article>
+          <article class="scene reveal"><span>02</span><h3>居家 / 聚会 K 歌</h3><p>同时连接耳机与音箱，在监听与氛围之间找到更轻量的平衡。</p></article>
+          <article class="scene reveal"><span>03</span><h3>户外多音箱组网</h3><p>在露营、团建、骑行等活动中临时搭建同步音响系统。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="ss-section closing-section">
+      <div class="ss-wrap">
+        <div class="closing-card reveal">
+          <img src="assets/soundshare-icon.webp" alt="音享贴图标" />
+          <p class="ss-kicker">LENGHE SOUND SHARE</p>
+          <h2>从概念、交互到落地路径，继续打磨。</h2>
+          <p>这个页面展示的是音享贴的产品概念、界面体系与场景逻辑。它与我的工程主页保持连接，但把更完整的产品表达放到了二级页面中。</p>
+          <div class="ss-actions center">
+            <a class="ss-button primary" href="index.html#projects">返回主页</a>
+            <a class="ss-button ghost" href="ultrasonic.html">查看超声波项目</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="ss-footer">
+    <span>© <span id="ssYear"></span> Roy Luo</span>
+    <span>SoundShare project page</span>
+  </footer>
+  <div class="roy-signature">designed by Roy</div>
+
+  <script src="soundshare.js"></script>
+</body>
+</html>

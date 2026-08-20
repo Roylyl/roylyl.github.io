@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="超声波定向扬声器项目介绍页面。" />
+  <meta name="theme-color" content="#05070b" />
+  <title>超声波定向扬声器 · Roy Luo</title>
+  <link rel="stylesheet" href="ultrasonic.css" />
+</head>
+<body>
+  <div class="detail-progress"><span id="detailProgress"></span></div>
+  <header class="detail-nav">
+    <a class="detail-brand" href="index.html">← 罗宇伦 Roy Luo</a>
+    <nav>
+      <a href="#overview">Overview</a>
+      <a href="#engineering">Engineering</a>
+      <a href="#gallery">Gallery</a>
+      <a href="soundshare.html">SoundShare</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="detail-hero wrap reveal">
+      <div class="hero-copy">
+        <p class="eyebrow">PROJECT 01</p>
+        <h1>超声波定向扬声器</h1>
+        <p class="lead">一个围绕定向音频传播展开的工程项目。我在项目中承担负责人角色，关注硬件系统搭建、ESP32 功能验证、样机调试与整体推进。</p>
+        <div class="cta-row">
+          <a class="btn primary" href="#engineering">查看工程细节</a>
+          <a class="btn ghost" href="index.html#projects">返回主页</a>
+        </div>
+      </div>
+      <div class="hero-visual glass">
+        <img src="assets/ultrasonic-concept.webp" alt="超声波定向扬声器概念图" />
+      </div>
+    </section>
+
+    <section class="wrap reveal" id="overview">
+      <div class="title-row">
+        <p class="eyebrow">OVERVIEW</p>
+        <h2>项目概览</h2>
+      </div>
+      <div class="overview-grid">
+        <article class="panel glass">
+          <span>项目定位</span>
+          <h3>定向音频原型验证</h3>
+          <p>通过超声波阵列与相关音频链路，探索“声音更有方向”的实现路径，面向公共展示与个人音频体验场景。</p>
+        </article>
+        <article class="panel glass">
+          <span>我的角色</span>
+          <h3>项目负责人</h3>
+          <p>负责整体推进、任务分工与展示沟通，同时参与硬件系统搭建、蓝牙音频功能验证与样机调试。</p>
+        </article>
+        <article class="panel glass">
+          <span>当前阶段</span>
+          <h3>第一代 Demo</h3>
+          <p>已完成基础样机开发，实现蓝牙音频接收与基础定向发声，并完成展示与联调验证。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap reveal" id="engineering">
+      <div class="title-row">
+        <p class="eyebrow">ENGINEERING</p>
+        <h2>我在工程层面做了什么。</h2>
+      </div>
+      <div class="engineering-grid">
+        <article class="panel glass">
+          <h3>系统与样机</h3>
+          <ul>
+            <li>参与超声波定向扬声器系统搭建</li>
+            <li>进行样机组装、功能验证与现场联调</li>
+            <li>围绕真实展示场景推进可运行 Demo</li>
+          </ul>
+        </article>
+        <article class="panel glass">
+          <h3>嵌入式与控制</h3>
+          <ul>
+            <li>基于 ESP32 进行基础功能验证</li>
+            <li>围绕蓝牙音频接收进行调试</li>
+            <li>持续学习 ESP-IDF 与嵌入式开发流程</li>
+          </ul>
+        </article>
+        <article class="panel glass">
+          <h3>硬件与电路</h3>
+          <ul>
+            <li>参与功放电路搭建与基础优化</li>
+            <li>进行硬件调试与系统联调</li>
+            <li>使用嘉立创 EDA、KiCad 进行基础 PCB 设计</li>
+          </ul>
+        </article>
+        <article class="panel glass">
+          <h3>推进与展示</h3>
+          <ul>
+            <li>负责项目推进、分工协作与沟通展示</li>
+            <li>完成项目展板、现场展示与答辩支持</li>
+            <li>让项目从概念走向可见的工程样机</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap reveal" id="gallery">
+      <div class="title-row">
+        <p class="eyebrow">GALLERY</p>
+        <h2>项目相关画面</h2>
+      </div>
+      <div class="gallery-grid">
+        <figure class="gallery-card glass">
+          <img src="assets/project-board.jpg" alt="超声波定向扬声器项目展板" />
+          <figcaption>项目展板</figcaption>
+        </figure>
+        <figure class="gallery-card glass">
+          <img src="assets/project-team.jpg" alt="项目团队与样机" />
+          <figcaption>团队与样机</figcaption>
+        </figure>
+        <figure class="gallery-card glass wide">
+          <img src="assets/ultrasonic-concept.webp" alt="超声波定向扬声器概念图" />
+          <figcaption>概念形态图</figcaption>
+        </figure>
+      </div>
+    </section>
+  </main>
+
+  <footer class="detail-footer wrap">
+    <span>© <span id="detailYear"></span> 罗宇伦 Roy Luo</span>
+    <span>Ultrasonic Directional Speaker</span>
+  </footer>
+
+  <script src="ultrasonic.js"></script>
+</body>
+</html>
