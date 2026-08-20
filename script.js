@@ -205,3 +205,28 @@ if (qrDialog) {
     if (event.target === qrDialog) qrDialog.close();
   });
 }
+
+// Desktop QR rail controls. The same cards become a four-up grid on phones.
+const socialCarousel = document.querySelector('[data-social-carousel]');
+if (socialCarousel) {
+  const socialTrack = socialCarousel.querySelector('.social-grid');
+  const socialPrev = socialCarousel.querySelector('[data-social-prev]');
+  const socialNext = socialCarousel.querySelector('[data-social-next]');
+  const updateSocialArrows = () => {
+    if (!socialTrack || !socialPrev || !socialNext) return;
+    const maxScroll = Math.max(0, socialTrack.scrollWidth - socialTrack.clientWidth - 2);
+    socialPrev.disabled = socialTrack.scrollLeft <= 2;
+    socialNext.disabled = socialTrack.scrollLeft >= maxScroll;
+  };
+  const socialStep = () => {
+    const card = socialTrack?.querySelector('.social-card');
+    if (!card) return socialTrack?.clientWidth || 0;
+    const gap = Number.parseFloat(getComputedStyle(socialTrack).gap) || 0;
+    return card.getBoundingClientRect().width + gap;
+  };
+  socialPrev?.addEventListener('click', () => socialTrack?.scrollBy({ left: -socialStep(), behavior: 'smooth' }));
+  socialNext?.addEventListener('click', () => socialTrack?.scrollBy({ left: socialStep(), behavior: 'smooth' }));
+  socialTrack?.addEventListener('scroll', updateSocialArrows, { passive: true });
+  window.addEventListener('resize', updateSocialArrows);
+  updateSocialArrows();
+}

@@ -1585,6 +1585,136 @@ body { --pointer-x: 50%; --pointer-y: 50%; }
   .qr-toggle { display: none; }
 }
 
+/* QR contact rail: four clean, square codes on desktop; a compact four-up grid on phones. */
+.social-carousel {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) 42px;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+.social-grid {
+  display: flex;
+  min-width: 0;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 2px 2px 12px;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.social-grid::-webkit-scrollbar { display: none; }
+.social-card {
+  flex: 0 0 calc((100% - 48px) / 4);
+  min-height: 0;
+  padding: 20px;
+  gap: 16px;
+  scroll-snap-align: start;
+}
+.social-card .qr-frame,
+.social-card:first-child .qr-frame {
+  width: 100%;
+  max-width: none;
+  max-height: none;
+  aspect-ratio: 1 / 1;
+  padding: 8px;
+  border-radius: 20px;
+  background: #fff;
+}
+.social-card .qr-frame img { border-radius: 12px; }
+.social-scroll {
+  width: 42px;
+  height: 42px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0 0 3px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 50%;
+  color: var(--text);
+  background: rgba(255,255,255,.06);
+  box-shadow: 0 8px 22px rgba(0,0,0,.18);
+  font: 400 30px/1 -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  cursor: pointer;
+  transition: background .25s ease, border-color .25s ease, opacity .25s ease, transform .25s ease;
+}
+.social-scroll:hover:not(:disabled) {
+  background: rgba(255,255,255,.13);
+  border-color: rgba(255,255,255,.32);
+  transform: scale(1.04);
+}
+.social-scroll:disabled { opacity: .32; cursor: default; }
+
+@media (max-width: 1100px) and (min-width: 701px) {
+  .social-card { flex-basis: calc((100% - 32px) / 3); }
+}
+
+@media (max-width: 700px) {
+  .social-carousel { display: block; margin-top: 18px; }
+  .social-scroll { display: none; }
+  .social-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    overflow: visible;
+    padding: 0;
+    scroll-snap-type: none;
+  }
+  .social-card {
+    grid-column: auto !important;
+    min-width: 0;
+    padding: 14px;
+    gap: 10px;
+  }
+  .social-meta p { display: none; }
+  .social-meta h3 { margin-top: 7px; font-size: 20px; }
+  .social-card .qr-frame,
+  .social-card:first-child .qr-frame {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    padding: 5px;
+    border-radius: 15px;
+  }
+  .social-card .qr-frame img { border-radius: 9px; }
+}
+
+/* Normalize the visible QR area inside each square canvas. */
+.social-card:nth-child(2) .qr-frame img { transform: scale(1.08); }
+.social-card:nth-child(3) .qr-frame img { transform: scale(.96); }
+.social-card:nth-child(4) .qr-frame img { transform: scale(1.08); }
+@media (max-width: 700px) {
+  .social-card:nth-child(2) .qr-frame img { transform: scale(1.08); }
+  .social-card:nth-child(3) .qr-frame img { transform: scale(.96); }
+  .social-card:nth-child(4) .qr-frame img { transform: scale(1.08); }
+}
+
+/* Match the SoundShare icon with a centered square, rounded-corner product image. */
+.project-thumb.ultrasonic-thumb {
+  display: grid;
+  place-items: center;
+  min-height: 360px;
+  padding: 22px;
+  background: linear-gradient(160deg, #05070b, #0e131b);
+}
+.project-thumb.ultrasonic-thumb img {
+  width: min(100%, 360px);
+  max-height: 360px;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+}
+@media (max-width: 700px) {
+  .project-thumb.ultrasonic-thumb {
+    aspect-ratio: 1 / 1;
+    min-height: 0;
+    padding: 12px;
+  }
+  .project-thumb.ultrasonic-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
 /* ===== Apple-like visual refinement =====
    Keep the dark direction, but remove the louder cyberpunk cues.
    The page now uses one calm blue accent, quieter glass, and native-system typography. */

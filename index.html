@@ -10,11 +10,11 @@
   <meta property="og:type" content="website" />
   <meta property="og:image" content="assets/portrait.jpg" />
   
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
-  <link rel="icon" type="image/png" sizes="180x180" href="assets/favicon-180.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-avatar-32.png" />
+  <link rel="icon" type="image/png" sizes="180x180" href="assets/favicon-avatar-180.png" />
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
   <title>罗宇伦 Roy Luo</title>
-  <link rel="stylesheet" href="style.css?v=20260821-3" />
+  <link rel="stylesheet" href="style.css?v=20260821-10" />
   <link rel="stylesheet" href="i18n.css?v=20260821-1" />
 </head>
 <body>
@@ -127,8 +127,8 @@
       </div>
       <div class="project-grid">
         <article class="project-card glass reveal">
-          <figure class="project-thumb">
-            <img src="assets/ultrasonic-concept.webp" width="1747" height="1800" loading="lazy" decoding="async" alt="超声波定向扬声器概念图" />
+          <figure class="project-thumb dark ultrasonic-thumb">
+            <img src="assets/ultrasonic-concept-rounded.png" width="1000" height="1030" loading="lazy" decoding="async" alt="超声波定向扬声器概念图" />
           </figure>
           <div class="project-copy">
             <p class="project-tag">PROJECT 01</p>
@@ -234,19 +234,27 @@
         <p class="eyebrow">SOCIAL</p>
         <h2>更多联系方式与社交媒体。</h2>
       </div>
-      <div class="social-grid">
+      <div class="social-carousel" data-social-carousel>
+        <button class="social-scroll social-scroll-prev" type="button" data-social-prev aria-label="上一组二维码">‹</button>
+        <div class="social-grid" id="socialGrid">
         <article class="social-card glass reveal">
           <div class="social-meta"><span>WECHAT</span><h3>微信</h3><p>扫码添加好友，适合项目交流与日常联系。</p></div>
-          <div class="qr-frame light"><img src="assets/social-wechat.jpg" width="888" height="1128" loading="lazy" decoding="async" alt="微信二维码" /></div>
+          <div class="qr-frame"><img src="assets/social-wechat-clean.png" width="650" height="650" loading="lazy" decoding="async" alt="微信二维码" /></div>
         </article>
         <article class="social-card glass reveal">
           <div class="social-meta"><span>INSTAGRAM</span><h3>Instagram</h3><p>@ROYLYL06</p></div>
-          <div class="qr-frame instagram"><img src="assets/social-instagram.jpg" width="804" height="1348" loading="lazy" decoding="async" alt="Instagram 二维码" /></div>
+          <div class="qr-frame"><img src="assets/social-instagram-clean.png" width="470" height="470" loading="lazy" decoding="async" alt="Instagram 二维码" /></div>
         </article>
         <article class="social-card glass reveal">
           <div class="social-meta"><span>DOUYIN</span><h3>抖音</h3><p>@Roylyl · 抖音号：luoyulun</p></div>
-          <div class="qr-frame douyin"><img src="assets/social-douyin.jpg" width="1125" height="1680" loading="lazy" decoding="async" alt="抖音二维码" /></div>
+          <div class="qr-frame"><img src="assets/social-douyin-clean.png" width="760" height="760" loading="lazy" decoding="async" alt="抖音二维码" /></div>
         </article>
+        <article class="social-card glass reveal">
+          <div class="social-meta"><span>WHATSAPP</span><h3>WhatsApp</h3><p>扫码添加 WhatsApp，方便跨地区联系。</p></div>
+          <div class="qr-frame"><img src="assets/social-whatsapp-clean.png" width="700" height="700" loading="lazy" decoding="async" alt="WhatsApp 二维码" /></div>
+        </article>
+        </div>
+        <button class="social-scroll social-scroll-next" type="button" data-social-next aria-label="下一组二维码">›</button>
       </div>
     </section>
 
