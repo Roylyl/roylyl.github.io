@@ -54,7 +54,7 @@ python3 -m http.server 8000
 ## 联系
 
 - GitHub：[@Roylyl](https://github.com/Roylyl)
-- 邮箱：[roylyl@hotmail.com](mailto:roylyl@hotmail.com)
+- 邮箱：[L3092105572@gmail.com](mailto:L3092105572@gmail.com)
 
 其他社交平台与二维码可在网站联系区域查看。
 
