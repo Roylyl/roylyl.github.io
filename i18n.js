@@ -3,6 +3,7 @@
   const normalize = (value) => String(value || '').replace(/\s+/g, ' ').trim();
 
   const cn = {
+    'Open menu': '打开菜单', 'Close menu': '关闭菜单',
     'About': '关于', 'Projects': '项目', 'Skills': '技能', 'Philosophy': '理念', 'Music': '音乐', 'Contact': '联系', 'Resume': '简历',
     'Intro': '介绍', 'Scenes': '场景', 'Ultrasonic': '定向声', 'Home': '主页',
     'Overview': '概览', 'Engineering': '工程', 'Gallery': '画面', 'SoundShare': '音享贴',
@@ -17,6 +18,7 @@
   };
 
   const tw = {
+    'Open menu': '開啟選單', 'Close menu': '關閉選單',
     '罗宇伦 Roy Luo': '羅宇倫 Roy Luo',
     '← 罗宇伦 Roy Luo': '← 羅宇倫 Roy Luo',
     'About': '關於', 'Projects': '專案', 'Skills': '技能', 'Philosophy': '理念', 'Music': '音樂', 'Contact': '聯絡', 'Resume': '履歷',
@@ -72,7 +74,11 @@
     '抖音': '抖音', '@Roylyl · 抖音号：luoyulun': '@Roylyl · 抖音號：luoyulun',
     '如果你在寻找硬件 / 嵌入式方向的实习生，欢迎联系我。': '如果你正在尋找硬體 / 嵌入式方向的實習生，歡迎聯絡我。',
     '也可以查看我的 GitHub、简历与两个项目的完整介绍。': '也可以查看我的 GitHub、履歷與兩個專案的完整介紹。',
-    '发邮件': '寄送郵件', '下载简历': '下載履歷',
+    '发邮件': '寄送郵件', '下载简历': '下載履歷', '下载简历 ↗': '下載履歷 ↗',
+    '角色：项目负责人': '角色：專案負責人', '平台：ESP32': '平台：ESP32', '阶段：第一代 Demo': '階段：第一代 Demo',
+    '角色：产品与交互设计': '角色：產品與互動設計', '形态：蓝牙中继': '形態：藍牙中繼', '阶段：产品概念': '階段：產品概念',
+    '产品与交互设计': '產品與互動設計', '蓝牙中继': '藍牙中繼', '产品概念': '產品概念',
+    '查看二维码': '查看 QR Code', '关闭二维码': '關閉 QR Code', '社交媒体二维码': '社群媒體 QR Code', '点击播放视频': '點擊播放影片',
 
     '音享贴': '音享貼', '返回主页': '返回首頁', '查看多端 UI': '查看多端 UI',
     '一个面向跨生态多人蓝牙音频共享的轻量化中继设备概念。核心目标是让用户在不更换现有蓝牙设备的前提下，低成本完成多人同步听音与可视化控制。': '一個面向跨生態多人藍牙音訊共享的輕量化中繼設備概念。核心目標是讓使用者在不更換現有藍牙設備的前提下，以較低成本完成多人同步聽音與視覺化控制。',
@@ -179,7 +185,11 @@
     '我长期进行乐队排练与现场演出，熟悉电吉他、效果器、监听系统和 DAW 工作流。这些实践也持续反哺我对音频产品、设备交互和真实使用体验的理解。': 'I have long-term experience in band rehearsals and live performance, with hands-on familiarity with electric guitars, effects, monitoring systems, and DAW workflows. This continuously informs how I understand audio products, device interaction, and real-world experience.',
     '更多联系方式与社交媒体。': 'More ways to connect.', '微信': 'WeChat', '扫码添加好友，适合项目交流与日常联系。': 'Scan the QR code to add me for project discussions or everyday contact.', '抖音': 'Douyin', '@Roylyl · 抖音号：luoyulun': '@Roylyl · Douyin ID: luoyulun',
     '如果你在寻找硬件 / 嵌入式方向的实习生，欢迎联系我。': 'If you are looking for a hardware or embedded-systems intern, feel free to contact me.',
-    '也可以查看我的 GitHub、简历与两个项目的完整介绍。': 'You can also review my GitHub, résumé, and full project pages.', '发邮件': 'Email me', '下载简历': 'Download résumé',
+    '也可以查看我的 GitHub、简历与两个项目的完整介绍。': 'You can also review my GitHub, résumé, and full project pages.', '发邮件': 'Email me', '下载简历': 'Download résumé', '下载简历 ↗': 'Download résumé ↗',
+    '角色：项目负责人': 'Role: Project lead', '平台：ESP32': 'Platform: ESP32', '阶段：第一代 Demo': 'Stage: First demo',
+    '角色：产品与交互设计': 'Role: Product & interaction', '形态：蓝牙中继': 'Form: Bluetooth relay', '阶段：产品概念': 'Stage: Product concept',
+    '产品与交互设计': 'Product & interaction', '蓝牙中继': 'Bluetooth relay', '产品概念': 'Product concept',
+    '查看二维码': 'View QR code', '关闭二维码': 'Close QR code', '社交媒体二维码': 'Social QR code', '点击播放视频': 'Click to play',
 
     '音享贴': 'LENGHE SoundShare', '一个面向跨生态多人蓝牙音频共享的轻量化中继设备概念。核心目标是让用户在不更换现有蓝牙设备的前提下，低成本完成多人同步听音与可视化控制。': 'A lightweight relay concept for cross-ecosystem multi-user Bluetooth audio sharing. The goal is to enable synchronized listening and visual control without forcing users to replace their existing Bluetooth devices.',
     '查看多端 UI': 'Explore multi-device UI', '返回主页': 'Back to home',

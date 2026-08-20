@@ -213,3 +213,42 @@ img { display: block; max-width: 100%; }
 
 /* Scroll progress lives at the bottom to avoid looking like a page-loading bar. */
 .ss-progress { top: auto; bottom: 0; }
+
+.ss-facts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.ss-facts span { padding: 7px 10px; border: 1px solid rgba(255,255,255,.12); border-radius: 999px; color: var(--muted); background: rgba(255,255,255,.035); font: 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace; }
+:where(a,button):focus-visible { outline: 3px solid rgba(112,204,255,.84); outline-offset: 3px; }
+
+@media (max-width: 760px) {
+  .ss-hero-inner { padding: 78px 0 42px; gap: 24px; }
+  .ss-hero h1 { font-size: clamp(35px, 10.8vw, 46px); line-height: .98; }
+  .ss-lead { margin-top: 18px; font-size: 15px; line-height: 1.68; }
+  .ss-facts { margin-top: 16px; gap: 6px; }
+  .ss-facts span { padding: 6px 8px; font-size: 10px; }
+  .ss-actions { margin-top: 20px; }
+  .ss-actions .ss-button { flex: 1 1 auto; min-height: 46px; }
+  .ss-actions .ss-button.ghost { display: none; }
+  .ss-hero-art { min-height: 290px; }
+  .app-icon-stage { width: min(238px, 68vw); }
+  .ss-section { padding: 56px 0; }
+  .section-title { margin-bottom: 24px; }
+  .section-title h2, .closing-card h2 { font-size: clamp(32px, 9.5vw, 42px); line-height: 1; }
+  .section-title > p:last-child { font-size: 14px; line-height: 1.65; }
+  .feature-cards { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .feature { min-height: 0; padding: 16px; }
+  .feature h3 { margin: 24px 0 8px; font-size: 18px; }
+  .feature p { font-size: 12.5px; line-height: 1.55; }
+  .ui-grid { gap: 12px; }
+  .ui-card { padding: 17px; }
+  .ui-copy h3 { margin: 12px 0 8px; }
+  .ui-copy p { font-size: 14px; line-height: 1.6; }
+  .scene-grid { grid-template-columns: 1fr; gap: 10px; }
+  .scene { padding: 18px; }
+  .scene h3 { margin: 58px 0 8px; font-size: 22px; }
+  .closing-card { padding: 42px 20px; }
+  .closing-card .ss-actions .ss-button.ghost { display: inline-flex; }
+}
+
+@media (max-width: 370px) {
+  .ss-brand span { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .feature-cards { grid-template-columns: 1fr; }
+}

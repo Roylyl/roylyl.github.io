@@ -14,8 +14,8 @@
   <link rel="icon" type="image/png" sizes="180x180" href="assets/favicon-180.png" />
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
   <title>罗宇伦 Roy Luo</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="i18n.css" />
+  <link rel="stylesheet" href="style.css?v=20260820-4" />
+  <link rel="stylesheet" href="i18n.css?v=20260820-4" />
 </head>
 <body>
   <div class="bg-orb orb-1" aria-hidden="true"></div>
@@ -25,16 +25,17 @@
 
   <header class="site-header">
     <a class="brand" href="#top">
-      <span class="brand-mark"><img src="assets/portrait.jpg" alt="罗宇伦证件照头像" /></span>
+      <span class="brand-mark"><img src="assets/portrait-160.jpg" width="117" height="160" alt="罗宇伦证件照头像" /></span>
       <span>罗宇伦 Roy Luo</span>
     </a>
     <nav class="nav" id="siteNav">
       <a href="#about">About</a>
       <a href="#projects">Projects</a>
-      <a href="#skills">Skills</a>
       <a href="#philosophy">Philosophy</a>
       <a href="#music">Music</a>
       <a href="#contact">Contact</a>
+      <a class="nav-external" href="https://github.com/Roylyl" target="_blank" rel="noreferrer">GitHub ↗</a>
+      <a class="nav-external" href="assets/resume-hardware-embedded.pdf" target="_blank">下载简历 ↗</a>
     </nav>
     <button class="mobile-menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="siteNav">
       <span></span><span></span>
@@ -60,11 +61,14 @@
           <a href="assets/resume-hardware-embedded.pdf" target="_blank">硬件 / 嵌入式</a>
           <a href="assets/resume-audio-qa.pdf" target="_blank">音乐 QA</a>
         </div>
+        <div class="hero-mobile-facts" aria-label="核心技术">
+          <span>ESP32</span><span>PCB</span><span>Prototype</span><span>Audio UX</span>
+        </div>
       </div>
 
       <div class="hero-visual reveal" data-depth="0.10">
         <figure class="hero-photo glass">
-          <img src="assets/home-hero-stack-2.jpg" alt="罗宇伦个人照片" />
+          <img src="assets/home-hero-stack-2.jpg" srcset="assets/home-hero-720.jpg 540w, assets/home-hero-1200.jpg 900w, assets/home-hero-stack-2.jpg 1536w" sizes="(max-width: 700px) calc(100vw - 24px), 470px" width="1536" height="2048" fetchpriority="high" alt="罗宇伦个人照片" />
         </figure>
         <div class="hero-card-stack">
           <div class="hero-floating card glass card-top">
@@ -91,21 +95,25 @@
           <span>01</span>
           <h3>嵌入式开发</h3>
           <p>以 ESP32 为主，进行蓝牙音频、基础控制逻辑与原型功能验证。</p>
+          <div class="focus-tags"><b>ESP32</b><b>Arduino</b><b>ESP-IDF</b></div>
         </article>
         <article class="focus-card glass">
           <span>02</span>
           <h3>硬件实现</h3>
           <p>样机搭建、功放电路实验、硬件调试、系统联调与现场展示。</p>
+          <div class="focus-tags"><b>KiCad</b><b>PCB</b><b>Debug</b></div>
         </article>
         <article class="focus-card glass">
           <span>03</span>
           <h3>项目推进</h3>
           <p>能够在学生项目中承担负责人角色，推进分工、验证与展示落地。</p>
+          <div class="focus-tags"><b>Prototype</b><b>Demo</b><b>Teamwork</b></div>
         </article>
         <article class="focus-card glass">
           <span>04</span>
           <h3>音频体验辅助</h3>
           <p>长期乐队演出与设备使用，让我对延迟、底噪、动态响应等更敏感。</p>
+          <div class="focus-tags"><b>Latency</b><b>Noise</b><b>Live</b></div>
         </article>
       </div>
     </section>
@@ -118,11 +126,12 @@
       <div class="project-grid">
         <article class="project-card glass reveal">
           <figure class="project-thumb">
-            <img src="assets/ultrasonic-concept.webp" alt="超声波定向扬声器概念图" />
+            <img src="assets/ultrasonic-concept.webp" width="1747" height="1800" loading="lazy" decoding="async" alt="超声波定向扬声器概念图" />
           </figure>
           <div class="project-copy">
             <p class="project-tag">PROJECT 01</p>
             <h3>超声波定向扬声器</h3>
+            <div class="project-facts"><span>角色：项目负责人</span><span>平台：ESP32</span><span>阶段：第一代 Demo</span></div>
             <p>基于 ESP32 平台推进的定向音频项目，围绕蓝牙音频接收、样机搭建、基础硬件系统与工程验证展开。</p>
             <a class="button primary" href="ultrasonic.html">了解更多</a>
           </div>
@@ -130,51 +139,18 @@
 
         <article class="project-card glass reveal">
           <figure class="project-thumb dark">
-            <img src="assets/soundshare-icon.webp" alt="音享贴应用图标" />
+            <img src="assets/soundshare-icon.webp" width="1254" height="1254" loading="lazy" decoding="async" alt="音享贴应用图标" />
           </figure>
           <div class="project-copy">
             <p class="project-tag">PROJECT 02</p>
             <h3>音享贴 · LENGHE SoundShare</h3>
+            <div class="project-facts"><span>角色：产品与交互设计</span><span>形态：蓝牙中继</span><span>阶段：产品概念</span></div>
             <p>面向多人蓝牙音频共享场景的轻量化中继设备概念，重点展示产品结构、控制逻辑与多端 UI 设计。</p>
             <a class="button primary" href="soundshare.html">了解更多</a>
           </div>
         </article>
       </div>
     </section>
-
-    <section class="skills wrap" id="skills">
-      <div class="section-head reveal">
-        <p class="eyebrow">SKILLS</p>
-        <h2>面向工程岗位的能力展示。</h2>
-      </div>
-      <div class="skills-grid">
-        <article class="skill-card glass reveal">
-          <span class="skill-no">01</span>
-          <h3>Embedded</h3>
-          <p>ESP32、Arduino、ESP-IDF 学习实践，进行原型功能验证与基础嵌入式开发。</p>
-          <div class="tag-row"><span>ESP32</span><span>Arduino</span><span>ESP-IDF</span><span>Bluetooth</span></div>
-        </article>
-        <article class="skill-card glass reveal">
-          <span class="skill-no">02</span>
-          <h3>Hardware</h3>
-          <p>基础 PCB 设计、硬件调试、样机搭建、功放联调、现场功能验证与展示。</p>
-          <div class="tag-row"><span>KiCad</span><span>嘉立创 EDA</span><span>PCB</span><span>Debug</span></div>
-        </article>
-        <article class="skill-card glass reveal">
-          <span class="skill-no">03</span>
-          <h3>Project Delivery</h3>
-          <p>从概念、分工到原型展示的完整推进能力，能在学生项目中承担负责人角色。</p>
-          <div class="tag-row"><span>Prototype</span><span>Demo</span><span>Teamwork</span><span>Presentation</span></div>
-        </article>
-        <article class="skill-card glass reveal">
-          <span class="skill-no">04</span>
-          <h3>Audio Awareness</h3>
-          <p>音乐与音频设备实践让我能从使用者视角理解延迟、底噪、动态响应与交互体验。</p>
-          <div class="tag-row"><span>Latency</span><span>Noise</span><span>UX</span><span>Live</span></div>
-        </article>
-      </div>
-    </section>
-
 
     <section class="philosophy wrap" id="philosophy">
       <div class="section-head reveal">
@@ -227,7 +203,7 @@
       <div class="music-card glass reveal">
         <div class="music-copy">
           <div class="studio-lockup">
-            <img src="assets/desk-park.webp" alt="Desk Park 音乐工作室标识" />
+            <img src="assets/desk-park.webp" loading="lazy" decoding="async" alt="Desk Park 音乐工作室标识" />
             <div>
               <strong>DP音乐工作室主理人 · Desk Park乐队吉他手</strong>
               <span>乐队演出 / 基础音频制作 / 音色实践</span>
@@ -236,15 +212,15 @@
           <p>我长期进行乐队排练与现场演出，熟悉电吉他、效果器、监听系统和 DAW 工作流。这些实践也持续反哺我对音频产品、设备交互和真实使用体验的理解。</p>
         </div>
         <div class="stage-gallery">
-          <figure class="stage-photo glass reveal"><img src="assets/music-stage-1.jpg" alt="Desk Park 舞台演出照片" /></figure>
-          <figure class="stage-photo glass reveal"><img src="assets/music-stage-2.jpg" alt="罗宇伦舞台吉他演出照片" /></figure>
+          <figure class="stage-photo glass reveal"><img src="assets/music-stage-1.jpg" width="2048" height="1536" loading="lazy" decoding="async" alt="Desk Park 舞台演出照片" /></figure>
+          <figure class="stage-photo glass reveal"><img src="assets/music-stage-2.jpg" width="2048" height="1365" loading="lazy" decoding="async" alt="罗宇伦舞台吉他演出照片" /></figure>
         </div>
         <div class="video-grid">
           <div class="video-card">
-            <iframe src="https://www.youtube.com/embed/xj9B_D_6wDI" title="Desk Park 演出视频 1" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            <button class="video-load video-one" type="button" data-youtube-id="xj9B_D_6wDI" data-bilibili-id="BV1WJ596FE2u" aria-label="播放《忧书》演出视频"><span class="play-icon" aria-hidden="true">▶</span><strong>《忧书》Cover 黄贯中</strong><small>点击播放视频</small></button>
           </div>
           <div class="video-card">
-            <iframe src="https://www.youtube.com/embed/o9ygrOS12eg" title="Desk Park 演出视频 2" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            <button class="video-load video-two" type="button" data-youtube-id="o9ygrOS12eg" data-bilibili-id="BV1GpL46TE9L" aria-label="播放《梦幻丽莎发廊》演出视频"><span class="play-icon" aria-hidden="true">▶</span><strong>《梦幻丽莎发廊》Cover 五条人</strong><small>点击播放视频</small></button>
           </div>
         </div>
       </div>
@@ -258,15 +234,18 @@
       <div class="social-grid">
         <article class="social-card glass reveal">
           <div class="social-meta"><span>WECHAT</span><h3>微信</h3><p>扫码添加好友，适合项目交流与日常联系。</p></div>
-          <div class="qr-frame light"><img src="assets/social-wechat.jpg" alt="微信二维码" /></div>
+          <button class="qr-toggle" type="button">查看二维码</button>
+          <div class="qr-frame light"><img src="assets/social-wechat.jpg" width="888" height="1128" loading="lazy" decoding="async" alt="微信二维码" /></div>
         </article>
         <article class="social-card glass reveal">
           <div class="social-meta"><span>INSTAGRAM</span><h3>Instagram</h3><p>@ROYLYL06</p></div>
-          <div class="qr-frame instagram"><img src="assets/social-instagram.jpg" alt="Instagram 二维码" /></div>
+          <button class="qr-toggle" type="button">查看二维码</button>
+          <div class="qr-frame instagram"><img src="assets/social-instagram.jpg" width="804" height="1348" loading="lazy" decoding="async" alt="Instagram 二维码" /></div>
         </article>
         <article class="social-card glass reveal">
           <div class="social-meta"><span>DOUYIN</span><h3>抖音</h3><p>@Roylyl · 抖音号：luoyulun</p></div>
-          <div class="qr-frame douyin"><img src="assets/social-douyin.jpg" alt="抖音二维码" /></div>
+          <button class="qr-toggle" type="button">查看二维码</button>
+          <div class="qr-frame douyin"><img src="assets/social-douyin.jpg" width="1125" height="1680" loading="lazy" decoding="async" alt="抖音二维码" /></div>
         </article>
       </div>
     </section>
@@ -288,13 +267,19 @@
     </section>
   </main>
 
+  <dialog class="qr-dialog" aria-label="社交媒体二维码">
+    <button class="qr-dialog-close" type="button" aria-label="关闭二维码">×</button>
+    <div class="qr-dialog-copy"><span></span><strong></strong></div>
+    <img src="" alt="" />
+  </dialog>
+
   <footer class="footer wrap">
     <span>© <span id="year"></span> 罗宇伦 Roy Luo</span>
     <span>Built for GitHub Pages · Engineering first</span>
   </footer>
 
-  <script src="i18n.js"></script>
-  <script src="regional-video.js"></script>
-  <script src="script.js"></script>
+  <script src="i18n.js?v=20260820-4"></script>
+  <script src="regional-video.js?v=20260820-4"></script>
+  <script src="script.js?v=20260820-4"></script>
 </body>
 </html>

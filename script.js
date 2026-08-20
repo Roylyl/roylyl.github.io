@@ -132,10 +132,18 @@ if (!reduceMotion && window.matchMedia('(hover: hover)').matches) {
 // Mobile menu for compact layouts.
 const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
 const nav = document.querySelector('.nav');
+function getMenuLabel(open) {
+  const lang = document.documentElement.lang;
+  if (lang === 'en') return open ? 'Close menu' : 'Open menu';
+  if (lang === 'zh-TW') return open ? '關閉選單' : '開啟選單';
+  return open ? '关闭菜单' : '打开菜单';
+}
 function setMenu(open) {
   if (!header || !mobileMenuToggle || !nav) return;
   header.classList.toggle('menu-open', open);
+  document.body.classList.toggle('mobile-menu-active', open);
   mobileMenuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  mobileMenuToggle.setAttribute('aria-label', getMenuLabel(open));
 }
 if (mobileMenuToggle && header && nav) {
   mobileMenuToggle.addEventListener('click', () => {
@@ -145,7 +153,55 @@ if (mobileMenuToggle && header && nav) {
   document.addEventListener('click', (event) => {
     if (!header.contains(event.target)) setMenu(false);
   });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') setMenu(false);
+  });
   window.addEventListener('resize', () => {
     if (window.innerWidth > 860) setMenu(false);
+  });
+  window.addEventListener('site-language-change', () => {
+    mobileMenuToggle.setAttribute('aria-label', getMenuLabel(header.classList.contains('menu-open')));
+  });
+}
+
+// Load third-party video players only after the visitor chooses to play one.
+document.querySelectorAll('.video-load').forEach((button) => {
+  button.addEventListener('click', () => {
+    const card = button.closest('.video-card');
+    if (!card) return;
+    const useBilibili = document.documentElement.dataset.videoPlatform === 'bilibili';
+    const iframe = document.createElement('iframe');
+    iframe.title = button.getAttribute('aria-label') || '演出视频';
+    iframe.loading = 'eager';
+    iframe.allowFullscreen = true;
+    iframe.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture; encrypted-media');
+    iframe.src = useBilibili
+      ? `https://player.bilibili.com/player.html?bvid=${encodeURIComponent(button.dataset.bilibiliId)}&page=1&high_quality=1&danmaku=0&autoplay=1`
+      : `https://www.youtube.com/embed/${encodeURIComponent(button.dataset.youtubeId)}?autoplay=1`;
+    card.replaceChildren(iframe);
+  });
+});
+
+// Use one compact modal on phones instead of rendering three full-size QR cards.
+const qrDialog = document.querySelector('.qr-dialog');
+if (qrDialog) {
+  const dialogImage = qrDialog.querySelector('img');
+  const dialogKicker = qrDialog.querySelector('.qr-dialog-copy span');
+  const dialogTitle = qrDialog.querySelector('.qr-dialog-copy strong');
+  document.querySelectorAll('.qr-toggle').forEach((button) => {
+    button.addEventListener('click', () => {
+      const card = button.closest('.social-card');
+      const source = card?.querySelector('.qr-frame img');
+      if (!source || !dialogImage) return;
+      dialogImage.src = source.currentSrc || source.src;
+      dialogImage.alt = source.alt;
+      if (dialogKicker) dialogKicker.textContent = card.querySelector('.social-meta span')?.textContent || '';
+      if (dialogTitle) dialogTitle.textContent = card.querySelector('.social-meta h3')?.textContent || '';
+      qrDialog.showModal();
+    });
+  });
+  qrDialog.querySelector('.qr-dialog-close')?.addEventListener('click', () => qrDialog.close());
+  qrDialog.addEventListener('click', (event) => {
+    if (event.target === qrDialog) qrDialog.close();
   });
 }
