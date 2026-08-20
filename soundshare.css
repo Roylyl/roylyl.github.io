@@ -228,7 +228,19 @@ img { display: block; max-width: 100%; }
   .ss-actions .ss-button { flex: 1 1 auto; min-height: 46px; }
   .ss-actions .ss-button.ghost { display: none; }
   .ss-hero-art { min-height: 290px; }
-  .app-icon-stage { width: min(238px, 68vw); }
+  .app-icon-stage {
+    --mobile-icon-size: min(238px, 68vw);
+    width: var(--mobile-icon-size);
+    height: var(--mobile-icon-size);
+    aspect-ratio: 1 / 1;
+    flex: 0 0 auto;
+  }
+  .app-icon-stage img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+  }
   .ss-section { padding: 56px 0; }
   .section-title { margin-bottom: 24px; }
   .section-title h2, .closing-card h2 { font-size: clamp(32px, 9.5vw, 42px); line-height: 1; }

@@ -1301,6 +1301,19 @@ body { --pointer-x: 50%; --pointer-y: 50%; }
 }
 
 @media (max-width: 860px) {
+  .site-header .mobile-menu-toggle,
+  .site-header .lang-toggle {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    min-height: 42px;
+    padding: 0;
+    flex: 0 0 42px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
   body.mobile-menu-active { overflow: hidden; }
   body.mobile-menu-active::before {
     content: "";
@@ -1384,7 +1397,24 @@ body { --pointer-x: 50%; --pointer-y: 50%; }
     transform: none !important;
   }
   .hero-photo img { object-position: center 58%; }
-  .hero-card-stack { display: none; }
+  .hero-card-stack {
+    position: relative;
+    inset: auto;
+    display: grid;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .hero-floating,
+  .card-top,
+  .card-bottom {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    max-width: none;
+  }
+  .hero-floating { padding: 17px 18px; border-radius: 22px; }
+  .hero-floating strong { font-size: 17px; }
+  .hero-floating p { font-size: 13px; line-height: 1.55; }
 
   .focus-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
   .focus-card { padding: 16px; }
