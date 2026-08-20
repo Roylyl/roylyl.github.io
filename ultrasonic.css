@@ -115,3 +115,20 @@ section { padding: 92px 0; }
 .hero-visual:hover img, .gallery-card:hover img { transform:scale(1.015); }
 .panel, .gallery-card { transition: transform 1.05s var(--detail-ease), border-color 1s var(--detail-ease), box-shadow 1.05s var(--detail-ease); }
 .panel:hover, .gallery-card:hover { transform:translateY(-4px) scale(1.004); border-color:rgba(255,255,255,.20); box-shadow:0 34px 92px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.12); }
+
+
+/* Mobile refinement */
+@media (max-width: 760px) {
+  body { line-height: 1.62; }
+  .detail-brand { font-size: 15px; }
+  h1 { font-size: clamp(36px, 11vw, 52px); }
+  h2 { font-size: clamp(28px, 9vw, 40px); line-height: 1.02; }
+  .lead, .panel p, .panel li, .gallery-card figcaption { font-size: 15px; line-height: 1.75; }
+  .detail-hero { min-height: auto; padding: 96px 0 24px; gap: 24px; }
+  .cta-row { gap: 10px; }
+  .cta-row .btn { flex: 1 1 100%; text-align: center; justify-content: center; }
+  .panel h3 { font-size: 24px; }
+}
+
+/* Scroll progress lives at the bottom to avoid looking like a page-loading bar. */
+.detail-progress { top: auto; bottom: 0; }

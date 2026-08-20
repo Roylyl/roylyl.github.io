@@ -934,9 +934,78 @@ body { --pointer-x: 50%; --pointer-y: 50%; }
 /* ===== Hero alignment verification pass ===== */
 @media (min-width: 1081px) {
   .hero-photo { right: 6px; }
-  .card-top { right: 0; }
+  .card-top { right: -14px; }
   .card-bottom { bottom: -18px; }
+}
+@media (min-width: 701px) and (max-width: 1080px) {
+  .card-top { right: 8px; }
 }
 @media (max-width: 700px) {
   .card-bottom { bottom: 58px; }
+}
+
+
+/* Mobile refinement */
+@media (max-width: 700px) {
+  body { line-height: 1.62; }
+  .site-header { gap: 10px; }
+  .brand { gap: 10px; }
+  .brand-mark { width: 34px; height: 34px; }
+  .header-cta, .button { padding: 12px 16px; font-size: 14px; }
+  .hero h1 { font-size: clamp(40px, 14vw, 66px); line-height: .94; max-width: 10ch; }
+  .section-head h2, .contact-copy h2 { font-size: clamp(30px, 9vw, 42px); line-height: 1.02; }
+  .hero-lead { margin-top: 20px; font-size: 15px; line-height: 1.8; }
+  .hero-actions { gap: 10px; }
+  .hero-actions .button { flex: 1 1 calc(50% - 5px); justify-content: center; }
+  .resume-links { gap: 10px; row-gap: 8px; font-size: 12px; }
+  .hero-visual { min-height: 600px; }
+  .hero-photo { top: 42px; width: min(80vw, 336px); height: 392px; }
+  .card-top { width: min(252px, 72vw); left: auto; right: 8px; top: 10px; }
+  .card-bottom { width: min(286px, 80vw); left: 8px; right: auto; bottom: 10px; }
+  .hero-floating strong { margin: 9px 0 8px; font-size: 18px; line-height: 1.2; }
+  .hero-floating p { font-size: 13px; line-height: 1.58; }
+  .focus-card h3, .skill-card h3 { margin: 16px 0 10px; font-size: 22px; }
+  .project-copy h3 { font-size: clamp(24px, 8vw, 34px); }
+  .project-copy p, .focus-card p, .skill-card p, .music-copy p, .contact-copy p:last-child { font-size: 14px; line-height: 1.75; }
+  .project-thumb { min-height: 220px; }
+  .project-copy .button { width: 100%; justify-content: center; margin-top: 18px; }
+  .tag-row { margin-top: 18px; gap: 6px; }
+  .tag-row span { font-size: 11px; padding: 7px 10px; }
+  .philosophy-card h3 { max-width: 100%; font-size: clamp(26px, 8vw, 36px); }
+  .philosophy-index { top: 18px; right: 18px; font-size: 42px; }
+  .philosophy-card ul { padding-left: 1.1em; }
+  .philosophy-statement strong { font-size: clamp(20px, 7vw, 28px); }
+  .music-card, .contact-card { padding: 22px; }
+  .studio-lockup { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .studio-lockup strong { font-size: 22px; line-height: 1.18; }
+  .stage-photo { aspect-ratio: 4 / 3; }
+  .social-meta h3 { font-size: 24px; }
+  .social-meta p { font-size: 13px; line-height: 1.7; }
+  .email-address { font-size: 14px; word-break: break-all; }
+  .contact-actions { flex-direction: column; align-items: stretch; }
+  .contact-actions .button { width: 100%; justify-content: center; }
+}
+
+@media (max-width: 420px) {
+  .site-header { padding: 10px 12px; }
+  .header-cta { padding-inline: 14px; font-size: 13px; }
+  .hero { padding-top: 28px; }
+  .hero h1 { font-size: clamp(38px, 13vw, 58px); }
+  .hero-visual { min-height: 570px; }
+  .hero-photo { width: min(82vw, 320px); height: 372px; }
+  .hero-floating { padding: 15px 16px; }
+  .card-top { width: min(232px, 72vw); }
+  .card-bottom { width: min(268px, 80vw); }
+  .hero-actions .button { flex-basis: 100%; }
+}
+
+/* Scroll progress lives at the bottom to avoid looking like a page-loading bar. */
+.progress { inset: auto auto 0 0; top: auto; bottom: 0; }
+
+/* Latest hero-card placement refinement */
+@media (min-width: 1081px) {
+  .card-top {
+    right: -24px;
+    left: auto;
+  }
 }

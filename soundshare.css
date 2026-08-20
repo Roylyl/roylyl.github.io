@@ -187,3 +187,29 @@ img { display: block; max-width: 100%; }
   backdrop-filter: blur(24px) saturate(160%);
   -webkit-backdrop-filter: blur(24px) saturate(160%);
 }
+
+
+/* Mobile refinement */
+@media (max-width: 760px) {
+  body { line-height: 1.62; }
+  .ss-brand span { font-size: 15px; }
+  .ss-hero h1, .section-title h2, .closing-card h2 { font-size: clamp(36px, 12vw, 54px); line-height: .96; }
+  .ss-lead, .section-title > p:last-child, .ui-copy p, .feature p, .scene p, .closing-card > p:not(.ss-kicker) { font-size: 15px; line-height: 1.75; }
+  .ss-actions { gap: 10px; }
+  .ss-actions .ss-button { flex: 1 1 100%; min-height: 46px; }
+  .ss-hero-art { min-height: 340px; }
+  .app-icon-stage { width: min(280px, 74vw); }
+  .hero-line { max-width: calc(100% - 18px); padding: 10px 12px; font-size: 8px; }
+  .hero-line i { width: 34px; }
+  .hero-line span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .feature, .scene, .closing-card { padding: 20px; border-radius: 24px; }
+  .feature h3 { margin: 34px 0 12px; font-size: 22px; }
+  .scene { min-height: auto; }
+  .scene h3 { margin: 96px 0 12px; font-size: 24px; }
+  .ui-card { padding: 18px; }
+  .ui-copy h3 { font-size: clamp(22px, 8vw, 32px); }
+  .ss-footer { font-size: 11px; }
+}
+
+/* Scroll progress lives at the bottom to avoid looking like a page-loading bar. */
+.ss-progress { top: auto; bottom: 0; }
