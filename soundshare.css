@@ -284,7 +284,7 @@ img { display: block; max-width: 100%; }
   .ui-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .ui-grid .ui-card.large,
   .ui-grid .ui-card.wide,
-  .ui-grid .ui-card:not(.compact-ui) { grid-column: 1 / -1; }
+  .ui-grid .ui-card:not(.compact-ui):not(.compact-watch) { grid-column: 1 / -1; }
   .ui-card.compact-ui {
     min-width: 0;
     padding: 14px;
@@ -299,4 +299,18 @@ img { display: block; max-width: 100%; }
     line-height: 1.5;
   }
   .compact-ui .ui-frame.phone img { width: 100%; }
+  .ui-card.compact-watch {
+    min-width: 0;
+    padding: 14px;
+  }
+  .compact-watch .ui-copy h3 {
+    margin: 10px 0 7px;
+    font-size: clamp(18px, 5.6vw, 25px);
+  }
+  .compact-watch .ui-copy p {
+    margin-bottom: 12px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .compact-watch .ui-frame.watch img { width: 100%; }
 }
