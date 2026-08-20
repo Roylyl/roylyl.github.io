@@ -1212,6 +1212,12 @@ body { --pointer-x: 50%; --pointer-y: 50%; }
   flex-wrap: wrap;
   gap: 7px;
 }
+.hero-identity-note,
+.music-note,
+.contact-note { color: var(--muted); font-size: 14px; }
+.hero-identity-note { margin: 14px 0 0; letter-spacing: .01em; }
+.music-note { margin: 14px 0 0; }
+.contact-note { margin: 8px 0 0; }
 .focus-tags { margin-top: 20px; }
 .focus-tags b,
 .project-facts span {
@@ -1533,4 +1539,242 @@ body { --pointer-x: 50%; --pointer-y: 50%; }
   }
   .hero-photo img { object-position: center 57%; }
   .hero-card-stack { display: none; }
+}
+
+/* Final mobile composition: surface the secondary identity before the photo. */
+@media (max-width: 700px) {
+  .hero-visual {
+    display: flex;
+    flex-direction: column;
+  }
+  .hero-card-stack {
+    order: 1;
+    margin: 0 0 12px;
+  }
+  .hero-photo { order: 2; }
+
+  /* Keep all three QR codes visible without an extra tap. */
+  .social-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .social-card {
+    display: flex;
+    min-height: 0;
+    padding: 14px;
+    gap: 10px;
+  }
+  .social-card:first-child { grid-column: 1 / -1; }
+  .social-meta p { display: none; }
+  .social-meta h3 { margin-top: 7px; font-size: 20px; }
+  .social-card .qr-frame,
+  .social-card:first-child .qr-frame {
+    display: grid;
+    width: 100%;
+    max-width: none;
+    max-height: none;
+    aspect-ratio: 4 / 5;
+    margin-top: auto;
+    padding: 5px;
+    border-radius: 15px;
+  }
+  .social-card:first-child .qr-frame {
+    width: min(100%, 220px);
+    align-self: center;
+  }
+  .qr-toggle { display: none; }
+}
+
+/* ===== Apple-like visual refinement =====
+   Keep the dark direction, but remove the louder cyberpunk cues.
+   The page now uses one calm blue accent, quieter glass, and native-system typography. */
+:root {
+  --bg: #050608;
+  --bg-2: #111214;
+  --panel: rgba(28, 28, 30, .72);
+  --text: #f5f5f7;
+  --muted: rgba(235, 235, 245, .68);
+  --line: rgba(255, 255, 255, .12);
+  --line-strong: rgba(255, 255, 255, .18);
+  --accent: #2997ff;
+  --accent-2: #8fcaff;
+  --radius: 24px;
+  --shadow: 0 26px 80px rgba(0, 0, 0, .34);
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background:
+    radial-gradient(circle at 50% -18%, rgba(41, 151, 255, .13), transparent 34%),
+    linear-gradient(180deg, #050608 0%, #101114 55%, #050608 100%);
+}
+
+.noise {
+  opacity: .035;
+  background-size: 28px 28px;
+}
+
+.bg-orb {
+  filter: blur(110px);
+  opacity: .13;
+}
+
+.orb-1,
+.orb-2 {
+  background: rgba(41, 151, 255, .22);
+}
+
+.glass {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, .085), rgba(255, 255, 255, .035) 48%, rgba(255, 255, 255, .022));
+  border-color: rgba(255, 255, 255, .13);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .26), inset 0 1px 0 rgba(255, 255, 255, .09);
+  backdrop-filter: blur(28px) saturate(145%);
+  -webkit-backdrop-filter: blur(28px) saturate(145%);
+}
+
+.glass::before {
+  background: linear-gradient(135deg, rgba(255, 255, 255, .13), transparent 24%, transparent 78%, rgba(255, 255, 255, .025));
+  opacity: .42;
+}
+
+.glass:hover::before { opacity: .56; }
+
+.site-header {
+  background: rgba(28, 28, 30, .72);
+  border-color: rgba(255, 255, 255, .14);
+  box-shadow: 0 14px 42px rgba(0, 0, 0, .22), inset 0 1px 0 rgba(255, 255, 255, .10);
+  backdrop-filter: blur(28px) saturate(150%);
+  -webkit-backdrop-filter: blur(28px) saturate(150%);
+}
+
+.site-header.scrolled {
+  background: rgba(28, 28, 30, .84);
+  border-color: rgba(255, 255, 255, .18);
+}
+
+.brand-mark {
+  background: rgba(255, 255, 255, .08);
+  border-color: rgba(255, 255, 255, .16);
+  box-shadow: none;
+}
+
+.nav { gap: 26px; font-size: 13px; }
+
+.header-cta,
+.button {
+  background: rgba(255, 255, 255, .06);
+  border-color: rgba(255, 255, 255, .17);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .10), 0 8px 22px rgba(0, 0, 0, .14);
+}
+
+.button.primary {
+  color: #fff;
+  background: linear-gradient(180deg, #2997ff 0%, #1479e9 100%);
+  border-color: rgba(255, 255, 255, .16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 10px 24px rgba(41, 151, 255, .24);
+}
+
+.button:hover,
+.header-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .13), 0 12px 30px rgba(0, 0, 0, .18);
+}
+
+.button.primary:hover {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .24), 0 14px 30px rgba(41, 151, 255, .30);
+}
+
+.button::after,
+.header-cta::after { display: none; }
+
+.hero h1,
+.section-head h2,
+.contact-copy h2 {
+  font-weight: 650;
+  letter-spacing: -.052em;
+}
+
+.hero h1 span {
+  background: linear-gradient(90deg, #fff 0%, #c7e6ff 58%, #8fcaff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.eyebrow,
+.card-kicker,
+.project-tag,
+.social-meta span {
+  color: rgba(235, 235, 245, .58);
+}
+
+.hero-floating {
+  background: rgba(28, 28, 30, .70);
+  border-color: rgba(255, 255, 255, .15);
+  box-shadow: 0 22px 58px rgba(0, 0, 0, .24), inset 0 1px 0 rgba(255, 255, 255, .09);
+  backdrop-filter: blur(30px) saturate(145%);
+  -webkit-backdrop-filter: blur(30px) saturate(145%);
+}
+
+.focus-card,
+.project-card,
+.philosophy-card,
+.music-card,
+.social-card,
+.contact-card,
+.stage-photo,
+.video-card {
+  border-radius: 26px;
+}
+
+.focus-card:hover,
+.philosophy-card:hover,
+.social-card:hover {
+  transform: translateY(-3px) scale(1.003);
+  border-color: rgba(255, 255, 255, .18);
+  box-shadow: 0 30px 78px rgba(0, 0, 0, .30), inset 0 1px 0 rgba(255, 255, 255, .11);
+}
+
+.focus-tags b,
+.project-facts span,
+.hero-mobile-facts span {
+  border-color: rgba(255, 255, 255, .12);
+  background: rgba(255, 255, 255, .035);
+}
+
+:where(a, button):focus-visible {
+  outline-color: rgba(41, 151, 255, .95);
+}
+
+@media (max-width: 700px) {
+  .glass {
+    backdrop-filter: blur(22px) saturate(140%);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+  }
+
+  .site-header {
+    background: rgba(28, 28, 30, .78);
+    border-radius: 24px;
+  }
+
+  .hero-floating {
+    background: rgba(28, 28, 30, .74);
+    border-radius: 22px;
+  }
+
+  .focus-card,
+  .project-card,
+  .philosophy-card,
+  .music-card,
+  .social-card,
+  .contact-card,
+  .stage-photo,
+  .video-card {
+    border-radius: 22px;
+  }
 }

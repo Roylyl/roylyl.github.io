@@ -4,6 +4,9 @@
 
   const cn = {
     'Open menu': '打开菜单', 'Close menu': '关闭菜单',
+    '学生工程实践者 · 音频产品探索者 · Desk Park 乐队吉他手': '学生工程实践者 · 音频产品探索者 · Desk Park 乐队吉他手',
+    '通过音响展调研，我开始更系统地思考音频产品、技术融合和真实使用场景。': '通过音响展调研，我开始更系统地思考音频产品、技术融合和真实使用场景。',
+    '欢迎交流硬件、音频产品和早期项目实践。': '欢迎交流硬件、音频产品和早期项目实践。',
     'About': '关于', 'Projects': '项目', 'Skills': '技能', 'Philosophy': '理念', 'Music': '音乐', 'Contact': '联系', 'Resume': '简历',
     'Intro': '介绍', 'Scenes': '场景', 'Ultrasonic': '定向声', 'Home': '主页',
     'Overview': '概览', 'Engineering': '工程', 'Gallery': '画面', 'SoundShare': '音享贴',
@@ -19,6 +22,9 @@
 
   const tw = {
     'Open menu': '開啟選單', 'Close menu': '關閉選單',
+    '学生工程实践者 · 音频产品探索者 · Desk Park 乐队吉他手': '學生工程實踐者 · 音訊產品探索者 · Desk Park 樂隊吉他手',
+    '通过音响展调研，我开始更系统地思考音频产品、技术融合和真实使用场景。': '透過音響展調研，我開始更系統地思考音訊產品、技術融合和真實使用場景。',
+    '欢迎交流硬件、音频产品和早期项目实践。': '歡迎交流硬體、音訊產品和早期專案實踐。',
     '罗宇伦 Roy Luo': '羅宇倫 Roy Luo',
     '← 罗宇伦 Roy Luo': '← 羅宇倫 Roy Luo',
     'About': '關於', 'Projects': '專案', 'Skills': '技能', 'Philosophy': '理念', 'Music': '音樂', 'Contact': '聯絡', 'Resume': '履歷',
@@ -139,6 +145,9 @@
   };
 
   const en = {
+    '学生工程实践者 · 音频产品探索者 · Desk Park 乐队吉他手': 'Student engineer · Audio product explorer · Desk Park guitarist',
+    '通过音响展调研，我开始更系统地思考音频产品、技术融合和真实使用场景。': 'Visiting audio trade shows led me to think more systematically about audio products, technology integration, and real-world use cases.',
+    '欢迎交流硬件、音频产品和早期项目实践。': 'I am open to conversations about hardware, audio products, and early-stage projects.',
     '罗宇伦 Roy Luo': 'Roy Luo', '← 罗宇伦 Roy Luo': '← Roy Luo',
     'About': 'About', 'Projects': 'Projects', 'Skills': 'Skills', 'Philosophy': 'Philosophy', 'Music': 'Music', 'Contact': 'Contact',
     '以工程能力为主线，': 'Engineering first,', '把想法做成样机。': 'turn ideas into working prototypes.',
