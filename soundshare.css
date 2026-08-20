@@ -264,3 +264,39 @@ img { display: block; max-width: 100%; }
   .ss-brand span { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .feature-cards { grid-template-columns: 1fr; }
 }
+
+/* Keep the labels over the app icon readable against any image detail. */
+.hero-line {
+  color: #e8eef5;
+  background: rgba(7, 10, 15, .94);
+  border-color: rgba(255, 255, 255, .18);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, .34), inset 0 1px 0 rgba(255, 255, 255, .10);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+@media (max-width: 760px) {
+  .hero-line { background: rgba(7, 10, 15, .96); }
+}
+
+/* Keep the two phone interfaces side by side on small screens. */
+@media (max-width: 760px) {
+  .ui-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ui-grid .ui-card.large,
+  .ui-grid .ui-card.wide,
+  .ui-grid .ui-card:not(.compact-ui) { grid-column: 1 / -1; }
+  .ui-card.compact-ui {
+    min-width: 0;
+    padding: 14px;
+  }
+  .compact-ui .ui-copy h3 {
+    margin: 10px 0 7px;
+    font-size: clamp(18px, 5.6vw, 25px);
+  }
+  .compact-ui .ui-copy p {
+    margin-bottom: 12px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .compact-ui .ui-frame.phone img { width: 100%; }
+}
