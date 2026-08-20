@@ -1300,6 +1300,22 @@ body { --pointer-x: 50%; --pointer-y: 50%; }
   outline-offset: 3px;
 }
 
+@media (min-width: 861px) {
+  .site-header .lang-toggle,
+  .site-header .header-cta {
+    min-height: 50px;
+    height: 50px;
+    padding: 0 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 650;
+    line-height: 1;
+  }
+}
+
 @media (max-width: 860px) {
   .site-header .mobile-menu-toggle,
   .site-header .lang-toggle {
