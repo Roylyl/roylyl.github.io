@@ -5,35 +5,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="KunCode — 603 官方 IDE，基于 Code - OSS 定制的跨平台开发工具。支持 Windows x64 与 macOS Apple Silicon。" />
   <meta name="theme-color" content="#0f6b50" />
+  <meta name="kuncode-release" content="V1.0.0" />
+  <meta name="kuncode-windows-asset" content="KunCode-Windows-x64-{version}.exe" />
+  <meta name="kuncode-macos-asset" content="KunCode-macOS-arm64-{version}.pkg" />
   <!-- Open Graph / 微信分享卡片 -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="KunCode — 603 官方 IDE" />
   <meta property="og:description" content="基于 Code - OSS 定制的跨平台开发工具，支持 Windows x64 与 macOS Apple Silicon。" />
   <meta property="og:url" content="https://roylyl.github.io/kuncode/" />
   <meta property="og:site_name" content="KunCode" />
-  <meta property="og:image" content="https://roylyl.github.io/kuncode/og-image.jpg" />
+  <meta property="og:image" content="https://roylyl.github.io/kuncode/og-image-v2.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="KunCode 水豚开发者与品牌标语" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="KunCode — 603 官方 IDE" />
   <meta name="twitter:description" content="基于 Code - OSS 定制的跨平台开发工具。" />
-  <meta name="twitter:image" content="https://roylyl.github.io/kuncode/og-image.jpg" />
+  <meta name="twitter:image" content="https://roylyl.github.io/kuncode/og-image-v2.jpg" />
+  <link rel="canonical" href="https://roylyl.github.io/kuncode/" />
   <title>KunCode — 603 官方 IDE</title>
   <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png" />
   <link rel="icon" type="image/png" sizes="256x256" href="./favicon.png" />
   <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
-  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="./style.css?v=20260821" />
 </head>
 <body>
+  <a class="skip-link" href="#main-content">跳到主要内容</a>
   <div class="bg-grid" aria-hidden="true"></div>
 
   <header class="site-header">
-    <a class="brand" href="#top" aria-label="KunCode 首页">
+    <a class="brand" href="#main-content" aria-label="KunCode 首页">
       <div class="brand-mark">
         <img
-          src="https://raw.githubusercontent.com/Roylyl/KunCode/main/resources/kuncode/capybara-pixel.png"
+          src="./apple-touch-icon.png"
+          width="38"
+          height="38"
           alt="KunCode 水豚图标"
-          onerror="this.style.display='none'; this.parentElement.classList.add('fallback');"
         />
-        <span class="brand-fallback">K</span>
       </div>
       <div>
         <strong>KunCode</strong>
@@ -49,12 +57,12 @@
     </nav>
   </header>
 
-  <main id="top">
+  <main id="main-content">
     <section class="hero">
       <div class="hero-copy">
         <div class="eyebrow">
-          <span class="status-dot"></span>
-          V1.0.0 已发布 · Windows / macOS
+          <span class="status-dot" aria-hidden="true"></span>
+          <span data-release-version>最新版本</span> 已发布 · Windows / macOS
         </div>
 
         <h1>让写代码<br><span>变得更轻松。</span></h1>
@@ -84,7 +92,7 @@
         </div>
       </div>
 
-      <div class="hero-visual" aria-label="KunCode 产品展示">
+      <div class="hero-visual" role="img" aria-label="KunCode 编辑器工作台产品展示，包含代码编辑、终端和困困 AI">
         <div class="window">
           <div class="window-bar">
             <div class="traffic"><i></i><i></i><i></i></div>
@@ -154,7 +162,7 @@
 
       <div class="feature-grid">
         <article class="feature-card feature-large">
-          <div class="feature-icon">⌘</div>
+          <div class="feature-icon" aria-hidden="true">⌘</div>
           <h3>完整开发工作台</h3>
           <p>代码编辑、文件与项目管理、集成终端及调试工具集中在同一个窗口。</p>
           <div class="mini-editor">
@@ -163,31 +171,31 @@
         </article>
 
         <article class="feature-card">
-          <div class="feature-icon">AI</div>
+          <div class="feature-icon" aria-hidden="true">AI</div>
           <h3>困困 AI 助手</h3>
           <p>在侧边栏与困困 AI 对话，辅助理解代码、学习编程和排查问题。</p>
         </article>
 
         <article class="feature-card">
-          <div class="feature-icon">{ }</div>
+          <div class="feature-icon" aria-hidden="true">{ }</div>
           <h3>多语言开发</h3>
           <p>面向 Python、C/C++、Java、ESP-IDF 等常用场景，并可通过扩展继续拓展。</p>
         </article>
 
         <article class="feature-card">
-          <div class="feature-icon">▸▸</div>
+          <div class="feature-icon" aria-hidden="true">▸▸</div>
           <h3>Agent 逐字输出</h3>
           <p>Agent 回复支持逐字输出，让交互过程更自然、更易跟随。</p>
         </article>
 
         <article class="feature-card">
-          <div class="feature-icon">◫</div>
+          <div class="feature-icon" aria-hidden="true">◫</div>
           <h3>Windows + macOS</h3>
           <p>提供 Windows x64 安装包与适配 Apple Silicon 的 macOS 安装包。</p>
         </article>
 
         <article class="feature-card feature-wide">
-          <div class="feature-icon">K</div>
+          <div class="feature-icon" aria-hidden="true">K</div>
           <div>
             <h3>KunCode 品牌体验</h3>
             <p>像素风水豚图标、水豚绿色主题与简体中文界面，构成 KunCode 自己的产品识别。</p>
@@ -201,7 +209,7 @@
       <div class="download-glow" aria-hidden="true"></div>
       <div class="section-head centered">
         <p class="section-kicker">DOWNLOAD</p>
-        <h2>下载 KunCode V1.0.0</h2>
+        <h2>下载 KunCode <span data-release-version>最新版本</span></h2>
         <p>请选择与你的设备匹配的安装包。下载按钮直接指向 GitHub Releases 官方发行文件。</p>
       </div>
 
@@ -214,16 +222,17 @@
           <div class="package-info">
             <span>架构</span><b>x64</b>
             <span>格式</span><b>.exe</b>
-            <span>版本</span><b>V1.0.0</b>
+            <span>版本</span><b data-release-version>最新版本</b>
           </div>
           <a
             class="btn btn-download"
-            href="https://github.com/Roylyl/KunCode/releases/download/V1.0.0/KunCode-Windows-x64-V1.0.0.exe"
+            href="https://github.com/Roylyl/KunCode/releases"
+            data-download="windows"
           >
             下载 Windows x64
             <span>↓</span>
           </a>
-          <small class="filename">KunCode-Windows-x64-V1.0.0.exe</small>
+          <small class="filename" data-filename="windows">Windows x64 安装包</small>
         </article>
 
         <article class="download-card" data-platform="mac">
@@ -234,16 +243,17 @@
           <div class="package-info">
             <span>架构</span><b>arm64</b>
             <span>格式</span><b>.pkg</b>
-            <span>版本</span><b>V1.0.0</b>
+            <span>版本</span><b data-release-version>最新版本</b>
           </div>
           <a
             class="btn btn-download"
-            href="https://github.com/Roylyl/KunCode/releases/download/V1.0.0/KunCode-macOS-arm64-V1.0.0.pkg"
+            href="https://github.com/Roylyl/KunCode/releases"
+            data-download="mac"
           >
             下载 macOS arm64
             <span>↓</span>
           </a>
-          <small class="filename">KunCode-macOS-arm64-V1.0.0.pkg</small>
+          <small class="filename" data-filename="mac">macOS Apple Silicon 安装包</small>
         </article>
       </div>
 
@@ -256,7 +266,7 @@
       </div>
 
       <div class="release-links">
-        <a href="https://github.com/Roylyl/KunCode/releases/tag/V1.0.0" target="_blank" rel="noopener noreferrer">查看 V1.0.0 Release ↗</a>
+        <a href="https://github.com/Roylyl/KunCode/releases" data-release-link target="_blank" rel="noopener noreferrer">查看最新 Release ↗</a>
         <a href="https://github.com/Roylyl/KunCode/releases" target="_blank" rel="noopener noreferrer">全部发行版本 ↗</a>
       </div>
     </section>
@@ -286,7 +296,7 @@
   </main>
 
   <footer>
-    <a class="footer-brand" href="#top">KunCode</a>
+    <a class="footer-brand" href="#main-content">KunCode</a>
     <p>603 官方 IDE · 让写代码变得更轻松</p>
     <div class="footer-links">
       <a href="https://github.com/Roylyl/KunCode" target="_blank" rel="noopener noreferrer">GitHub</a>
@@ -295,6 +305,6 @@
     </div>
   </footer>
 
-  <script src="./script.js"></script>
+  <script src="./script.js?v=20260821"></script>
 </body>
 </html>

@@ -20,14 +20,12 @@ GitHub Desktop 操作：
 访问地址：
 https://roylyl.github.io/kuncode/
 
-下载按钮已固定为：
-Windows x64 V1.0.0
-https://github.com/Roylyl/KunCode/releases/download/V1.0.0/KunCode-Windows-x64-V1.0.0.exe
-
-macOS Apple Silicon V1.0.0
-https://github.com/Roylyl/KunCode/releases/download/V1.0.0/KunCode-macOS-arm64-V1.0.0.pkg
+发布新版本：
+1. 在 index.html 顶部修改 kuncode-release 的 content。
+2. 如果安装包命名规则不变，无需修改其他版本文字或链接。
+3. 如果文件名变化，修改相邻的 kuncode-windows-asset 或 kuncode-macos-asset。
 
 说明：
 - 网站会根据浏览器系统自动突出推荐 Windows 或 macOS 下载。
-- 页面使用 KunCode 仓库中的水豚图标远程地址；若图片无法加载，会自动显示 K 作为后备标识。
+- 页面使用本目录中的 apple-touch-icon.png 作为水豚图标，不依赖远程图片。
 - 页面不依赖框架，可以直接部署到 GitHub Pages。
