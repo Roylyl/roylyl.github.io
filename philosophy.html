@@ -10,6 +10,13 @@
   <link rel="icon" type="image/png" sizes="180x180" href="assets/favicon-180.png" />
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
   <title>产品理念与创业理念 · 罗宇伦 Roy Luo</title>
+  <script>
+    history.scrollRestoration = 'manual';
+    if (performance.getEntriesByType('navigation')[0]?.type === 'reload') {
+      window.scrollTo(0, 0);
+      window.addEventListener('load', () => window.scrollTo(0, 0), { once: true });
+    }
+  </script>
   <link rel="stylesheet" href="philosophy.css" />
   <link rel="stylesheet" href="i18n.css" />
 </head>

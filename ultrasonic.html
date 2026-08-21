@@ -9,6 +9,13 @@
   <link rel="icon" type="image/png" sizes="512x512" href="assets/ultrasonic-icon.png?v=20260821-4" />
   <link rel="apple-touch-icon" href="assets/ultrasonic-icon.png?v=20260821-4" />
   <title>超声波定向扬声器 · Roy Luo</title>
+  <script>
+    history.scrollRestoration = 'manual';
+    if (performance.getEntriesByType('navigation')[0]?.type === 'reload') {
+      window.scrollTo(0, 0);
+      window.addEventListener('load', () => window.scrollTo(0, 0), { once: true });
+    }
+  </script>
   <link rel="stylesheet" href="ultrasonic.css?v=20260821-7" />
   <link rel="stylesheet" href="i18n.css?v=20260821-1" />
 </head>
