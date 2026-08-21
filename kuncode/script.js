@@ -1,4 +1,11 @@
 (() => {
+  if ("scrollRestoration" in history) {
+    history.scrollRestoration = "manual";
+  }
+  window.addEventListener("pageshow", () => {
+    window.scrollTo(0, 0);
+  });
+
   const RELEASE_BASE = "https://github.com/Roylyl/KunCode/releases";
   const meta = name => document.querySelector(`meta[name="${name}"]`)?.content || "";
   const version = meta("kuncode-release");
