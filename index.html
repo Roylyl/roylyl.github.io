@@ -17,6 +17,9 @@
   <script>
     history.scrollRestoration = 'manual';
     if (performance.getEntriesByType('navigation')[0]?.type === 'reload') {
+      if (/\/(?:index\.html)?$/.test(location.pathname) && location.hash) {
+        history.replaceState(null, '', location.pathname.replace(/index\.html$/, '') || '/');
+      }
       window.scrollTo(0, 0);
       window.addEventListener('load', () => window.scrollTo(0, 0), { once: true });
     }
