@@ -36,7 +36,8 @@
   };
   function renderNext(){if(!frames.length)return;const payload=frames[frameIndex];FixedQR.render(payload,qrCanvas,10,4);const parts=payload.split('|'),isMeta=parts[2]==='M',seq=Number(parts[3]),total=Number(parts[4]);$('#frameMeta').textContent=isMeta?`元数据帧 · 循环 ${frameIndex+1}/${frames.length}`:`数据帧 ${seq+1}/${total} · 循环 ${frameIndex+1}/${frames.length}`;$('#sendProgress').style.width=`${isMeta?0:((seq+1)/total*100)}%`;frameIndex=(frameIndex+1)%frames.length;}
   function scheduleSend(){clearInterval(sendTimer);sendTimer=setInterval(()=>{if(sending)renderNext();},Number($('#frameInterval').value));}
-  $('#frameInterval').onchange=()=>{if(sendTimer)scheduleSend();};$('#toggleSendBtn').onclick=()=>{sending=!sending;$('#toggleSendBtn').textContent=sending?'暂停':'继续';};
+  function updateThroughput(){const size=Number($('#chunkSize').value),interval=Number($('#frameInterval').value),theoretical=size*8/interval,effective=theoretical*18/19;$('#throughputHint').textContent=`理论 ${theoretical.toFixed(1)} kb/s · 有效目标约 ${effective.toFixed(1)} kb/s`;}
+  $('#chunkSize').onchange=updateThroughput;$('#frameInterval').onchange=()=>{updateThroughput();if(sendTimer)scheduleSend();};$('#toggleSendBtn').onclick=()=>{sending=!sending;$('#toggleSendBtn').textContent=sending?'暂停':'继续';};updateThroughput();
   function stopSending(){clearInterval(sendTimer);sendTimer=null;sending=false;frames=[];}
 
   // RECEIVE
@@ -65,7 +66,7 @@
         const codes=await detector.detect($('#video'));raw=codes[0]?.rawValue||'';
       }else{
         const video=$('#video');if(!video.videoWidth||!video.videoHeight)return;
-        const canvas=$('#scanCanvas'),maxWidth=960,scale=Math.min(1,maxWidth/video.videoWidth);canvas.width=Math.round(video.videoWidth*scale);canvas.height=Math.round(video.videoHeight*scale);const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(video,0,0,canvas.width,canvas.height);const image=ctx.getImageData(0,0,canvas.width,canvas.height);raw=window.jsQR(image.data,image.width,image.height,{inversionAttempts:'dontInvert'})?.data||'';
+        const canvas=$('#scanCanvas'),maxWidth=1280,scale=Math.min(1,maxWidth/video.videoWidth);canvas.width=Math.round(video.videoWidth*scale);canvas.height=Math.round(video.videoHeight*scale);const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(video,0,0,canvas.width,canvas.height);const image=ctx.getImageData(0,0,canvas.width,canvas.height);raw=window.jsQR(image.data,image.width,image.height,{inversionAttempts:'dontInvert'})?.data||'';
       }
       if(raw&&raw!==lastRaw){lastRaw=raw;setTimeout(()=>{if(lastRaw===raw)lastRaw='';},120);await consume(raw);}
     }catch(e){/* transient camera and decoder errors ignored */}finally{scanBusy=false;}

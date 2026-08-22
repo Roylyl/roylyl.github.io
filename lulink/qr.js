@@ -1,12 +1,13 @@
-// Minimal fixed Version 15-L QR encoder for UTF-8 byte payloads.
-// 77x77 modules, 523 data codewords, 132 ECC codewords.
+// Minimal fixed Version 22-L QR encoder for UTF-8 byte payloads.
+// 105x105 modules, 1006 data codewords, 252 ECC codewords.
 (function(global){
-  const VERSION=15, SIZE=77, DATA_CW=523;
+  const VERSION=22, SIZE=105, DATA_CW=1006;
   const RS_BLOCKS=[
-    {total:109,data:87},{total:109,data:87},{total:109,data:87},
-    {total:109,data:87},{total:109,data:87},{total:110,data:88}
+    {total:139,data:111},{total:139,data:111},
+    {total:140,data:112},{total:140,data:112},{total:140,data:112},
+    {total:140,data:112},{total:140,data:112},{total:140,data:112},{total:140,data:112}
   ];
-  const ALIGN=[6,26,48,70];
+  const ALIGN=[6,26,50,74,98];
   const EXP=new Uint8Array(512), LOG=new Uint8Array(256);
   let x=1; for(let i=0;i<255;i++){EXP[i]=x;LOG[x]=i;x<<=1;if(x&0x100)x^=0x11d;} for(let i=255;i<512;i++)EXP[i]=EXP[i-255];
   const gfMul=(a,b)=>a&&b?EXP[LOG[a]+LOG[b]]:0;
@@ -14,7 +15,7 @@
   function generator(n){let g=new Uint8Array([1]);for(let i=0;i<n;i++)g=polyMul(g,new Uint8Array([1,EXP[i]]));return g;}
   function ecc(data,n){const gen=generator(n), rem=new Uint8Array(n);for(const b of data){const f=b^rem[0];rem.copyWithin(0,1);rem[n-1]=0;for(let j=0;j<n;j++)rem[j]^=gfMul(gen[j+1],f);}return rem;}
   class Bits{constructor(){this.a=[];}put(v,n){for(let i=n-1;i>=0;i--)this.a.push((v>>>i)&1);}bytes(){const out=new Uint8Array(Math.ceil(this.a.length/8));this.a.forEach((b,i)=>{if(b)out[i>>>3]|=0x80>>>(i&7);});return out;}}
-  function makeData(text){const bytes=new TextEncoder().encode(text);if(bytes.length>520)throw new Error('QR payload too large');const b=new Bits();b.put(4,4);b.put(bytes.length,16);for(const v of bytes)b.put(v,8);const max=DATA_CW*8;for(let i=0;i<Math.min(4,max-b.a.length);i++)b.put(0,1);while(b.a.length%8)b.put(0,1);let arr=Array.from(b.bytes());let pad=true;while(arr.length<DATA_CW){arr.push(pad?0xec:0x11);pad=!pad;}return new Uint8Array(arr);}
+  function makeData(text){const bytes=new TextEncoder().encode(text);if(bytes.length>1003)throw new Error('QR payload too large');const b=new Bits();b.put(4,4);b.put(bytes.length,16);for(const v of bytes)b.put(v,8);const max=DATA_CW*8;for(let i=0;i<Math.min(4,max-b.a.length);i++)b.put(0,1);while(b.a.length%8)b.put(0,1);let arr=Array.from(b.bytes());let pad=true;while(arr.length<DATA_CW){arr.push(pad?0xec:0x11);pad=!pad;}return new Uint8Array(arr);}
   function interleave(data){let p=0;const blocks=[], eccs=[];for(const rs of RS_BLOCKS){const d=data.slice(p,p+rs.data);p+=rs.data;blocks.push(d);eccs.push(ecc(d,rs.total-rs.data));}const out=[];const maxD=Math.max(...blocks.map(b=>b.length));for(let i=0;i<maxD;i++)for(const b of blocks)if(i<b.length)out.push(b[i]);const maxE=Math.max(...eccs.map(b=>b.length));for(let i=0;i<maxE;i++)for(const e of eccs)if(i<e.length)out.push(e[i]);return new Uint8Array(out);}
   function bchDigit(v){let d=0;while(v){d++;v>>>=1;}return d;}
   function typeInfo(data){const G15=0x537, MASK=0x5412;let d=data<<10;while(bchDigit(d)-bchDigit(G15)>=0)d^=G15<<(bchDigit(d)-bchDigit(G15));return ((data<<10)|d)^MASK;}
