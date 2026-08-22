@@ -1728,15 +1728,21 @@ body { --pointer-x: 50%; --pointer-y: 50%; }
   display: grid;
   place-items: center;
   min-height: 360px;
-  padding: 22px;
+  padding: 40px;
   background: linear-gradient(160deg, #05070b, #0e131b);
 }
 .project-thumb.ultrasonic-thumb img {
   width: min(100%, 280px);
   max-height: 280px;
   height: auto;
-  object-fit: contain;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
   object-position: center;
+  border-radius: 28%;
+  corner-shape: squircle;
+}
+.project-card.is-active .project-thumb img {
+  transform: none;
 }
 @media (max-width: 700px) {
   .project-thumb.ultrasonic-thumb {
@@ -1750,6 +1756,14 @@ body { --pointer-x: 50%; --pointer-y: 50%; }
     aspect-ratio: 1 / 1;
     object-fit: cover;
     object-position: center;
+    border-radius: 28%;
+    corner-shape: squircle;
+  }
+  .project-card,
+  .project-card.is-active {
+    --project-scale: 1 !important;
+    --project-y: 0px !important;
+    transform: none !important;
   }
 }
 
