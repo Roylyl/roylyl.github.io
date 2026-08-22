@@ -35,6 +35,18 @@
   .music-toggle .music-label { display: none; }
 }
 
+:is(.footer, .detail-footer, .ss-footer, .p-footer) {
+  flex-wrap: wrap;
+}
+.music-copyright {
+  flex: 1 0 100%;
+  text-align: center;
+  font-size: 10px;
+  line-height: 1.6;
+  letter-spacing: .02em;
+  opacity: .68;
+}
+
 /* Keep the music and language controls together at the right of detail navs. */
 :is(.ss-nav, .detail-nav, .p-nav) {
   justify-content: flex-start;
@@ -45,6 +57,33 @@
 }
 :is(.ss-nav, .detail-nav, .p-nav) > .lang-switcher {
   margin-left: 0;
+}
+@media (min-width: 861px) {
+  :is(.ss-nav, .detail-nav, .p-nav) > nav {
+    position: absolute;
+    left: 50%;
+    margin-left: 0;
+    transform: translateX(-50%);
+  }
+  :is(.ss-nav, .detail-nav, .p-nav) > .music-toggle {
+    margin-left: auto;
+  }
+}
+@media (min-width: 861px) and (max-width: 1050px) {
+  :is(.ss-nav, .detail-nav, .p-nav) > .music-toggle,
+  :is(.ss-nav, .detail-nav, .p-nav) .lang-toggle {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    min-height: 42px;
+    padding: 0;
+    border-radius: 50%;
+  }
+  :is(.ss-nav, .detail-nav, .p-nav) .music-label,
+  :is(.ss-nav, .detail-nav, .p-nav) .lang-toggle [data-lang-current],
+  :is(.ss-nav, .detail-nav, .p-nav) .lang-chevron {
+    display: none;
+  }
 }
 @media (max-width: 860px) {
   :is(.ss-nav, .detail-nav, .p-nav) > .music-toggle {

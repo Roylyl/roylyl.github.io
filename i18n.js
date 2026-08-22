@@ -4,6 +4,7 @@
 
   const cn = {
     'Open menu': '打开菜单', 'Close menu': '关闭菜单',
+    '背景音乐仅用于个人非商业展示 · 音乐版权归原权利人所有': '背景音乐仅用于个人非商业展示 · 音乐版权归原权利人所有',
     '学生工程实践者 · 音频产品探索者 · Desk Park 乐队吉他手': '学生工程实践者 · 音频产品探索者 · Desk Park 乐队吉他手',
     '通过音响展调研，我开始更系统地思考音频产品、技术融合和真实使用场景。': '通过音响展调研，我开始更系统地思考音频产品、技术融合和真实使用场景。',
     '欢迎交流硬件、音频产品和早期项目实践。': '欢迎交流硬件、音频产品和早期项目实践。',
@@ -22,6 +23,7 @@
 
   const tw = {
     'Open menu': '開啟選單', 'Close menu': '關閉選單',
+    '背景音乐仅用于个人非商业展示 · 音乐版权归原权利人所有': '背景音樂僅用於個人非商業展示 · 音樂版權歸原權利人所有',
     '学生工程实践者 · 音频产品探索者 · Desk Park 乐队吉他手': '學生工程實踐者 · 音訊產品探索者 · Desk Park 樂隊吉他手',
     '通过音响展调研，我开始更系统地思考音频产品、技术融合和真实使用场景。': '透過音響展調研，我開始更系統地思考音訊產品、技術融合和真實使用場景。',
     '欢迎交流硬件、音频产品和早期项目实践。': '歡迎交流硬體、音訊產品和早期專案實踐。',
@@ -146,6 +148,7 @@
   };
 
   const en = {
+    '背景音乐仅用于个人非商业展示 · 音乐版权归原权利人所有': 'Background music is used only for this non-commercial personal portfolio · Rights belong to the respective rights holders',
     '学生工程实践者 · 音频产品探索者 · Desk Park 乐队吉他手': 'Student engineer · Audio product explorer · Desk Park guitarist',
     '通过音响展调研，我开始更系统地思考音频产品、技术融合和真实使用场景。': 'Visiting audio trade shows led me to think more systematically about audio products, technology integration, and real-world use cases.',
     '欢迎交流硬件、音频产品和早期项目实践。': 'I am open to conversations about hardware, audio products, and early-stage projects.',
