@@ -89,6 +89,14 @@
   :is(.ss-nav, .detail-nav, .p-nav) > .music-toggle {
     margin-left: auto;
   }
+  :is(.ss-nav, .detail-nav, .p-nav) .lang-toggle {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    min-height: 42px;
+    padding: 0;
+    border-radius: 50%;
+  }
   :is(.ss-nav, .detail-nav, .p-nav) > .lang-switcher {
     margin-left: 0 !important;
   }

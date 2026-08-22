@@ -1992,3 +1992,26 @@ body {
     line-height: 1;
   }
 }
+
+/* Mobile hero actions: a vertical, left-half-width control stack. */
+@media (max-width: 700px) {
+  .hero-actions {
+    width: 50%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .hero-actions .button {
+    flex: 0 0 48px !important;
+    width: 100% !important;
+    min-width: 0;
+    height: 48px;
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 14px;
+    line-height: 1;
+    text-align: center;
+  }
+}

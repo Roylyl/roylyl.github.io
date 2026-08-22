@@ -15,3 +15,14 @@
 
 /* Scroll progress lives at the bottom to avoid looking like a page-loading bar. */
 .p-progress { top: auto; bottom: 0; }
+
+.closing .actions {
+  gap: 8px;
+  margin-top: 20px;
+}
+.closing .actions .btn {
+  margin-top: 0;
+}
+@media (max-width: 700px) {
+  .closing .actions { gap: 8px; margin-top: 18px; }
+}
