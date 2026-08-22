@@ -34,3 +34,23 @@
   }
   .music-toggle .music-label { display: none; }
 }
+
+/* Keep the music and language controls together at the right of detail navs. */
+:is(.ss-nav, .detail-nav, .p-nav) {
+  justify-content: flex-start;
+  column-gap: 10px;
+}
+:is(.ss-nav, .detail-nav, .p-nav) > nav {
+  margin-left: auto;
+}
+:is(.ss-nav, .detail-nav, .p-nav) > .lang-switcher {
+  margin-left: 0;
+}
+@media (max-width: 860px) {
+  :is(.ss-nav, .detail-nav, .p-nav) > .music-toggle {
+    margin-left: auto;
+  }
+  :is(.ss-nav, .detail-nav, .p-nav) > .lang-switcher {
+    margin-left: 0 !important;
+  }
+}
