@@ -1,26 +1,10 @@
 (() => {
-  const CACHE_KEY = 'roylyl.video-region.v2';
-  const MAX_AGE = 10 * 60 * 1000;
   const players = [
     { bvid: 'BV1WJ596FE2u', title: '忧书 Cover 黄贯中' },
     { bvid: 'BV1GpL46TE9L', title: '《梦幻丽莎发廊》Cover 五条人' }
   ];
 
   const normalizeCountry = (value) => String(value || '').trim().toUpperCase();
-
-  function readCache() {
-    try {
-      const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
-      if (cached?.country && Date.now() - cached.savedAt < MAX_AGE) return normalizeCountry(cached.country);
-    } catch (_) {}
-    return '';
-  }
-
-  function saveCache(country) {
-    try {
-      localStorage.setItem(CACHE_KEY, JSON.stringify({ country, savedAt: Date.now() }));
-    } catch (_) {}
-  }
 
   function useBilibili() {
     const frames = [...document.querySelectorAll('.video-grid iframe')];
@@ -36,6 +20,10 @@
     document.documentElement.dataset.videoPlatform = 'bilibili';
   }
 
+  function useYouTube() {
+    document.documentElement.dataset.videoPlatform = 'youtube';
+  }
+
   async function fetchWithTimeout(url, asText = false) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 2800);
@@ -49,30 +37,34 @@
   }
 
   async function detectCountry() {
-    const cached = readCache();
-    if (cached) return cached;
-
     try {
       const data = await fetchWithTimeout('https://api.country.is/');
       const country = normalizeCountry(data?.country);
-      if (country) { saveCache(country); return country; }
+      if (country) return country;
     } catch (_) {}
 
     try {
       const text = await fetchWithTimeout('https://ipapi.co/country/', true);
       const country = normalizeCountry(text);
-      if (/^[A-Z]{2}$/.test(country)) { saveCache(country); return country; }
+      if (/^[A-Z]{2}$/.test(country)) return country;
     } catch (_) {}
 
     return '';
   }
 
+
+  // A fresh promise is created for every document load. The notice script can
+  // reuse it on the home page without turning the result into persistent cache.
+  const countryPromise = detectCountry();
+  window.__roylylCountryPromise = countryPromise;
+
   async function init() {
     if (!document.querySelector('.video-grid iframe')) return;
     document.documentElement.dataset.regionCheckedAt = String(Date.now());
-    const country = await detectCountry();
+    const country = await countryPromise;
     if (country) document.documentElement.dataset.country = country;
     if (country === 'CN') useBilibili();
+    else useYouTube();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
