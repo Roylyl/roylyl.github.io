@@ -24,8 +24,8 @@
       window.addEventListener('load', () => window.scrollTo(0, 0), { once: true });
     }
   </script>
-  <link rel="stylesheet" href="style.css?v=20260821-12" />
-  <link rel="stylesheet" href="i18n.css?v=20260821-1" />
+  <link rel="stylesheet" href="style.css?v=20260822-2" />
+  <link rel="stylesheet" href="i18n.css?v=20260822-1" />
   <link rel="stylesheet" href="region-notice.css?v=20260821-1" />
 </head>
 <body>
@@ -52,8 +52,20 @@
     <button class="mobile-menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="siteNav">
       <span></span><span></span>
     </button>
+    <button class="music-toggle is-muted" type="button" aria-label="背景音乐静音" title="背景音乐静音" aria-pressed="false">
+      <span class="music-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <path class="speaker-shape" d="M4 9v6h4l5 4V5L8 9H4Z" />
+          <path class="sound-wave" d="M16 8.4a5 5 0 0 1 0 7.2M18.6 5.8a8.5 8.5 0 0 1 0 12.4" />
+          <path class="mute-mark" d="m16.3 9.3 4.4 4.4m0-4.4-4.4 4.4" />
+        </svg>
+      </span>
+      <span class="music-label">背景音乐静音</span>
+    </button>
     <a class="header-cta" href="https://github.com/Roylyl" target="_blank" rel="noreferrer">GitHub ↗</a>
   </header>
+
+  <audio id="backgroundMusic" src="assets/你离开了南京，从此没有人和我说话.mp3" preload="metadata" loop muted></audio>
 
   <main id="top">
     <section class="hero wrap">
@@ -231,10 +243,18 @@
         </div>
         <div class="video-grid">
           <div class="video-card">
-            <iframe src="https://www.youtube.com/embed/xj9B_D_6wDI" title="Desk Park 演出视频 1" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            <button class="video-load video-one" type="button" data-youtube-id="xj9B_D_6wDI" data-bilibili-id="BV1WJ596FE2u" aria-label="播放 Desk Park 演出视频 1">
+              <span class="play-icon" aria-hidden="true">▶</span>
+              <strong>Desk Park 演出视频 1</strong>
+              <small>点击播放</small>
+            </button>
           </div>
           <div class="video-card">
-            <iframe src="https://www.youtube.com/embed/o9ygrOS12eg" title="Desk Park 演出视频 2" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            <button class="video-load video-two" type="button" data-youtube-id="o9ygrOS12eg" data-bilibili-id="BV1GpL46TE9L" aria-label="播放 Desk Park 演出视频 2">
+              <span class="play-icon" aria-hidden="true">▶</span>
+              <strong>Desk Park 演出视频 2</strong>
+              <small>点击播放</small>
+            </button>
           </div>
         </div>
       </div>
@@ -299,8 +319,8 @@
   </footer>
 
   <script src="i18n.js?v=20260821-5"></script>
-  <script src="regional-video.js?v=20260820-5"></script>
-  <script src="script.js?v=20260820-4"></script>
+  <script src="regional-video.js?v=20260822-1"></script>
+  <script src="script.js?v=20260822-1"></script>
   <script src="region-notice.js?v=20260821-1"></script>
   <script src="nav-scroll.js?v=20260821-1"></script>
 </body>

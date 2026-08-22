@@ -86,10 +86,10 @@
 .lang-menu button:hover { background: rgba(255,255,255,.07); }
 .lang-menu button.active { color: #fff; background: rgba(105,201,255,.12); }
 .lang-menu button.active::after { content: '✓'; color: #8ef0c8; font-weight: 800; }
-.site-header { grid-template-columns: auto 1fr auto auto; }
+.site-header { grid-template-columns: auto 1fr auto auto auto; }
 
 @media (max-width: 860px) {
-  .site-header { grid-template-columns: auto 1fr auto auto; }
+  .site-header { grid-template-columns: auto 1fr auto auto auto; }
   .lang-toggle { min-height: 38px; padding: 8px 10px; }
   .lang-toggle [data-lang-current] { display: none; }
   .lang-toggle .lang-chevron { display: none; }
@@ -99,7 +99,7 @@
 }
 
 @media (max-width: 520px) {
-  .site-header { grid-template-columns: auto 1fr auto; }
+  .site-header { grid-template-columns: minmax(0, 1fr) auto auto auto; }
   .site-header .header-cta { display: none; }
   .lang-glyph { font-size: 13px; }
   .lang-toggle { width: 38px; height: 38px; min-height: 38px; padding: 0; justify-content: center; }

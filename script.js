@@ -165,8 +165,59 @@ if (mobileMenuToggle && header && nav) {
 }
 
 // Load third-party video players only after the visitor chooses to play one.
+const backgroundMusic = document.querySelector('#backgroundMusic');
+const musicToggle = document.querySelector('.music-toggle');
+
+function getMusicLabel(isPlaying) {
+  const lang = document.documentElement.lang;
+  if (lang === 'en') return isPlaying ? 'Background music on' : 'Background music muted';
+  if (lang === 'zh-TW') return isPlaying ? '背景音樂開啟' : '背景音樂靜音';
+  return isPlaying ? '背景音乐打开' : '背景音乐静音';
+}
+
+function renderMusicState(isPlaying) {
+  if (!musicToggle) return;
+  const label = getMusicLabel(isPlaying);
+  musicToggle.classList.toggle('is-muted', !isPlaying);
+  musicToggle.setAttribute('aria-pressed', isPlaying ? 'true' : 'false');
+  musicToggle.setAttribute('aria-label', label);
+  musicToggle.setAttribute('title', label);
+  const text = musicToggle.querySelector('.music-label');
+  if (text) text.textContent = label;
+}
+
+function muteBackgroundMusic() {
+  if (!backgroundMusic) return;
+  backgroundMusic.pause();
+  backgroundMusic.muted = true;
+  renderMusicState(false);
+}
+
+if (backgroundMusic && musicToggle) {
+  renderMusicState(false);
+  musicToggle.addEventListener('click', async () => {
+    if (!backgroundMusic.paused && !backgroundMusic.muted) {
+      muteBackgroundMusic();
+      return;
+    }
+    backgroundMusic.muted = false;
+    try {
+      await backgroundMusic.play();
+      renderMusicState(true);
+    } catch (_) {
+      backgroundMusic.muted = true;
+      renderMusicState(false);
+    }
+  });
+  backgroundMusic.addEventListener('pause', () => renderMusicState(false));
+  window.addEventListener('site-language-change', () => {
+    renderMusicState(!backgroundMusic.paused && !backgroundMusic.muted);
+  });
+}
+
 document.querySelectorAll('.video-load').forEach((button) => {
   button.addEventListener('click', () => {
+    muteBackgroundMusic();
     const card = button.closest('.video-card');
     if (!card) return;
     const useBilibili = document.documentElement.dataset.videoPlatform === 'bilibili';

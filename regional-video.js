@@ -9,17 +9,6 @@
   const normalizeCountry = (value) => String(value || '').trim().toUpperCase();
 
   function useBilibili() {
-    const frames = [...document.querySelectorAll('.video-grid iframe')];
-    if (frames.length < 2) return;
-    frames.slice(0, 2).forEach((frame, index) => {
-      const video = players[index];
-      frame.src = `https://player.bilibili.com/player.html?bvid=${encodeURIComponent(video.bvid)}&page=1&high_quality=1&danmaku=0`;
-      frame.title = `${video.title} · 哔哩哔哩`;
-      frame.setAttribute('allowfullscreen', 'true');
-      frame.setAttribute('scrolling', 'no');
-      frame.setAttribute('frameborder', '0');
-      frame.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture');
-    });
     document.documentElement.dataset.videoPlatform = 'bilibili';
   }
 
@@ -67,7 +56,7 @@
   }
 
   async function init() {
-    if (!document.querySelector('.video-grid iframe')) return;
+    if (!document.querySelector('.video-load')) return;
     const country = await detectCountry();
     if (country) document.documentElement.dataset.country = country;
     if (country === 'CN') useBilibili();
