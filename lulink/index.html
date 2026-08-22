@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0d12" />
+  <title>鹿传 · 动态二维码文件传输</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">LUCHUAN · OFFLINE TRANSFER</div>
+        <h1>鹿传</h1>
+        <p>无需服务器。文件在浏览器内分片、编码、扫码、重组与校验。</p>
+      </div>
+      <button id="homeBtn" class="ghost hidden">返回主页</button>
+    </header>
+
+    <section id="homeView" class="view active">
+      <div class="hero-card">
+        <div class="hero-mark">鹿</div>
+        <div>
+          <h2>选择传输模式</h2>
+          <p>发送设备显示不断变化的二维码；接收设备调用摄像头连续读取二维码帧。</p>
+        </div>
+      </div>
+      <div class="mode-grid">
+        <button class="mode-card" data-mode="send">
+          <span class="mode-icon">↑</span>
+          <strong>发文件</strong>
+          <small>选择单个文件并生成动态二维码</small>
+        </button>
+        <button class="mode-card" data-mode="receive">
+          <span class="mode-icon">◎</span>
+          <strong>收文件</strong>
+          <small>调用摄像头扫码并自动重组文件</small>
+        </button>
+      </div>
+      <div class="notice">
+        <strong>使用提示</strong>
+        <span>摄像头通常要求 HTTPS 或 localhost。压缩包内已附带本地启动脚本。</span>
+      </div>
+    </section>
+
+    <section id="sendView" class="view">
+      <div class="panel two-col">
+        <div class="controls">
+          <h2>发送文件</h2>
+          <label class="dropzone" id="dropzone">
+            <input id="fileInput" type="file" />
+            <span class="drop-icon">＋</span>
+            <strong>选择一个文件</strong>
+            <small>或拖放文件到这里</small>
+          </label>
+          <div id="fileInfo" class="file-info hidden"></div>
+
+          <div class="field-row">
+            <label>每帧数据量
+              <select id="chunkSize">
+                <option value="192">192 B · 更稳</option>
+                <option value="256" selected>256 B · 推荐</option>
+                <option value="320">320 B · 更快</option>
+              </select>
+            </label>
+            <label>帧间隔
+              <select id="frameInterval">
+                <option value="180">180 ms</option>
+                <option value="250" selected>250 ms</option>
+                <option value="350">350 ms</option>
+                <option value="500">500 ms</option>
+              </select>
+            </label>
+          </div>
+
+          <button id="prepareBtn" class="primary" disabled>生成动态二维码</button>
+          <button id="toggleSendBtn" class="secondary hidden">暂停</button>
+          <div id="sendStatus" class="status-box hidden"></div>
+        </div>
+
+        <div class="qr-stage">
+          <div id="qrPlaceholder" class="qr-placeholder">
+            <div class="fake-qr">▦</div>
+            <span>选择文件后开始</span>
+          </div>
+          <canvas id="qrCanvas" width="650" height="650" class="hidden"></canvas>
+          <div id="frameMeta" class="frame-meta hidden"></div>
+          <div class="progress"><div id="sendProgress" class="progress-bar"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="receiveView" class="view">
+      <div class="panel two-col receive-layout">
+        <div class="camera-stage">
+          <video id="video" playsinline muted></video>
+          <canvas id="scanCanvas" class="hidden"></canvas>
+          <div id="cameraOverlay" class="camera-overlay">
+            <div class="scan-frame"><i></i><i></i><i></i><i></i></div>
+            <span>将动态二维码保持在框内</span>
+          </div>
+          <div id="cameraError" class="camera-error hidden"></div>
+        </div>
+        <div class="controls">
+          <h2>接收文件</h2>
+          <p class="muted">浏览器会在本机解析二维码，不会上传图像或文件。</p>
+          <button id="startCameraBtn" class="primary">启动摄像头</button>
+          <button id="stopCameraBtn" class="secondary hidden">停止摄像头</button>
+
+          <div class="receive-stats">
+            <div><span>文件</span><strong id="recvName">等待元数据</strong></div>
+            <div><span>进度</span><strong id="recvCount">0 / 0</strong></div>
+            <div><span>有效帧</span><strong id="goodFrames">0</strong></div>
+            <div><span>坏帧</span><strong id="badFrames">0</strong></div>
+          </div>
+          <div class="progress"><div id="recvProgress" class="progress-bar"></div></div>
+          <div id="recvStatus" class="status-box">等待扫码。</div>
+          <button id="downloadBtn" class="primary hidden">下载接收到的文件</button>
+          <button id="resetRecvBtn" class="ghost">清空接收状态</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="qr.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
