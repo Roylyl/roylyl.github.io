@@ -40,21 +40,36 @@
   function stopSending(){clearInterval(sendTimer);sendTimer=null;sending=false;frames=[];}
 
   // RECEIVE
-  let stream=null, scanTimer=null, detector=null, sessionId=null, meta=null, chunks=new Map(), metaChunks=new Map(), metaTotal=0, good=0,bad=0,lastRaw='';
+  let stream=null, scanTimer=null, detector=null, detectorMode='', scanBusy=false, sessionId=null, meta=null, chunks=new Map(), metaChunks=new Map(), metaTotal=0, good=0,bad=0,lastRaw='';
   let downloadBlob=null;
   function resetReceive(){sessionId=null;meta=null;chunks.clear();metaChunks.clear();metaTotal=0;good=0;bad=0;lastRaw='';downloadBlob=null;$('#recvName').textContent='等待元数据';$('#recvCount').textContent='0 / 0';$('#goodFrames').textContent='0';$('#badFrames').textContent='0';$('#recvProgress').style.width='0%';$('#recvStatus').textContent='等待扫码。';$('#downloadBtn').classList.add('hidden');}
   $('#resetRecvBtn').onclick=resetReceive;
   $('#startCameraBtn').onclick=startCamera;$('#stopCameraBtn').onclick=stopCamera;
   async function startCamera(){
     $('#cameraError').classList.add('hidden');
-    if(!('BarcodeDetector' in window)){showCamError('当前浏览器没有 BarcodeDetector 二维码识别接口。请使用较新的 Chrome / Edge / Android Chromium 浏览器；iPhone/iPad 若当前 Safari 不支持，可尝试最新版系统浏览器。');return;}
+    if(!navigator.mediaDevices?.getUserMedia){showCamError('当前浏览器无法调用摄像头。请使用支持摄像头权限的现代浏览器，并通过 HTTPS 打开本页面。');return;}
     try{
-      detector=new BarcodeDetector({formats:['qr_code']});stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false});$('#video').srcObject=stream;await $('#video').play();$('#startCameraBtn').classList.add('hidden');$('#stopCameraBtn').classList.remove('hidden');scanTimer=setInterval(scanFrame,90);
+      detector=null;detectorMode='jsqr';
+      if('BarcodeDetector' in window){try{detector=new BarcodeDetector({formats:['qr_code']});detectorMode='native';}catch(e){detector=null;}}
+      if(!detector&&typeof window.jsQR!=='function'){showCamError('二维码识别组件加载失败，请刷新页面后重试。');return;}
+      stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1920},height:{ideal:1080}},audio:false});$('#video').srcObject=stream;await $('#video').play();$('#startCameraBtn').classList.add('hidden');$('#stopCameraBtn').classList.remove('hidden');$('#recvStatus').textContent=detectorMode==='native'?'摄像头已启动，等待扫码。':'兼容识别模式已启动，等待扫码。';scanTimer=setInterval(scanFrame,detectorMode==='native'?90:120);
     }catch(e){showCamError(`无法启动摄像头：${e.message}。请检查摄像头权限，并尽量通过 localhost 启动本页面。`);}
   }
-  function stopCamera(){clearInterval(scanTimer);scanTimer=null;if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}$('#video').srcObject=null;$('#startCameraBtn').classList.remove('hidden');$('#stopCameraBtn').classList.add('hidden');}
+  function stopCamera(){clearInterval(scanTimer);scanTimer=null;scanBusy=false;detector=null;detectorMode='';if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}$('#video').srcObject=null;$('#startCameraBtn').classList.remove('hidden');$('#stopCameraBtn').classList.add('hidden');}
   function showCamError(msg){$('#cameraError').textContent=msg;$('#cameraError').classList.remove('hidden');}
-  async function scanFrame(){if(!detector||!stream)return;try{const codes=await detector.detect($('#video'));if(codes.length){const raw=codes[0].rawValue;if(raw&&raw!==lastRaw){lastRaw=raw;setTimeout(()=>{if(lastRaw===raw)lastRaw='';},120);await consume(raw);}}}catch(e){/* transient detector errors ignored */}}
+  async function scanFrame(){
+    if(!stream||scanBusy)return;scanBusy=true;
+    try{
+      let raw='';
+      if(detectorMode==='native'){
+        const codes=await detector.detect($('#video'));raw=codes[0]?.rawValue||'';
+      }else{
+        const video=$('#video');if(!video.videoWidth||!video.videoHeight)return;
+        const canvas=$('#scanCanvas'),maxWidth=960,scale=Math.min(1,maxWidth/video.videoWidth);canvas.width=Math.round(video.videoWidth*scale);canvas.height=Math.round(video.videoHeight*scale);const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.drawImage(video,0,0,canvas.width,canvas.height);const image=ctx.getImageData(0,0,canvas.width,canvas.height);raw=window.jsQR(image.data,image.width,image.height,{inversionAttempts:'dontInvert'})?.data||'';
+      }
+      if(raw&&raw!==lastRaw){lastRaw=raw;setTimeout(()=>{if(lastRaw===raw)lastRaw='';},120);await consume(raw);}
+    }catch(e){/* transient camera and decoder errors ignored */}finally{scanBusy=false;}
+  }
   async function consume(raw){
     if(!raw.startsWith('DQR1|'))return;const parts=raw.split('|');if(parts.length!==7){markBad('帧格式错误');return;}const [magic,id,type,seqS,totalS,crc,payload]=parts;const seq=Number(seqS),total=Number(totalS);
     if(sessionId&&id!==sessionId){$('#recvStatus').textContent='检测到另一份文件的二维码，已忽略。若要接收它，请先清空接收状态。';return;}

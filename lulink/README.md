@@ -20,7 +20,9 @@
 
 ## 浏览器要求
 
-接收端当前使用浏览器原生 `BarcodeDetector` 识别 QR Code。推荐较新的 Chrome / Edge / Android Chromium 浏览器。不同 Safari/iOS 版本对该接口支持情况可能不同。
+接收端优先使用浏览器原生 `BarcodeDetector` 识别 QR Code；当该接口不可用时，会自动切换到内置的 `jsQR` 兼容识别器，因此也支持缺少 `BarcodeDetector` 的 Safari/iOS 浏览器。摄像头仍要求 HTTPS 或 localhost 安全上下文。
+
+项目内置的 `jsQR` 使用 Apache License 2.0，许可证见 `jsQR-LICENSE.txt`。
 
 ## 协议与校验
 
