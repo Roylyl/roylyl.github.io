@@ -62,6 +62,24 @@
     if (text) text.textContent = label;
   }
 
+  if (window.parent !== window) {
+    audio.remove();
+    toggle.addEventListener('click', () => {
+      window.parent.postMessage({ type: 'site:music-toggle' }, location.origin);
+    });
+    window.addEventListener('message', (event) => {
+      if (event.origin === location.origin && event.source === window.parent && event.data?.type === 'site:music-state') {
+        render(Boolean(event.data.enabled));
+      }
+    });
+    window.addEventListener('site-language-change', () => {
+      window.parent.postMessage({ type: 'site:music-state-request' }, location.origin);
+    });
+    render(false);
+    window.parent.postMessage({ type: 'site:music-state-request' }, location.origin);
+    return;
+  }
+
   async function playFromState(state) {
     if (!state?.enabled) { render(false); return; }
     const elapsed = Math.max(0, (Date.now() - (state.savedAt || Date.now())) / 1000);
@@ -89,7 +107,7 @@
     render(false);
   }
 
-  toggle.addEventListener('click', async () => {
+  async function togglePlayback() {
     if (!audio.paused && !audio.muted) { mute(); return; }
     audio.muted = false;
     try {
@@ -98,6 +116,22 @@
       render(true);
     } catch (_) {
       mute();
+    }
+  }
+
+  toggle.addEventListener('click', togglePlayback);
+
+  function sendState(target) {
+    target?.postMessage({ type: 'site:music-state', enabled: !audio.paused && !audio.muted }, location.origin);
+  }
+
+  window.addEventListener('message', async (event) => {
+    if (event.origin !== location.origin) return;
+    if (event.data?.type === 'site:music-toggle') {
+      await togglePlayback();
+      sendState(event.source);
+    } else if (event.data?.type === 'site:music-state-request') {
+      sendState(event.source);
     }
   });
 
@@ -111,5 +145,5 @@
   audio.addEventListener('timeupdate', () => saveState(!audio.paused && !audio.muted));
 
   playFromState(readState());
-  window.siteBackgroundMusic = { mute };
+  window.siteBackgroundMusic = { mute, toggle: togglePlayback };
 })();

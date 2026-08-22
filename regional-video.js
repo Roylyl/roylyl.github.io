@@ -1,12 +1,26 @@
 (() => {
-  const CACHE_KEY = 'roylyl.video-region.v1';
-  const MAX_AGE = 24 * 60 * 60 * 1000;
+  const CACHE_KEY = 'roylyl.video-region.v2';
+  const MAX_AGE = 10 * 60 * 1000;
   const players = [
     { bvid: 'BV1WJ596FE2u', title: '忧书 Cover 黄贯中' },
     { bvid: 'BV1GpL46TE9L', title: '《梦幻丽莎发廊》Cover 五条人' }
   ];
 
   const normalizeCountry = (value) => String(value || '').trim().toUpperCase();
+
+  function readCache() {
+    try {
+      const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+      if (cached?.country && Date.now() - cached.savedAt < MAX_AGE) return normalizeCountry(cached.country);
+    } catch (_) {}
+    return '';
+  }
+
+  function saveCache(country) {
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ country, savedAt: Date.now() }));
+    } catch (_) {}
+  }
 
   function useBilibili() {
     const frames = [...document.querySelectorAll('.video-grid iframe')];
@@ -20,18 +34,6 @@
       frame.setAttribute('allow', 'fullscreen; picture-in-picture');
     });
     document.documentElement.dataset.videoPlatform = 'bilibili';
-  }
-
-  function readCache() {
-    try {
-      const parsed = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
-      if (parsed?.country && Date.now() - parsed.time < MAX_AGE) return normalizeCountry(parsed.country);
-    } catch (_) {}
-    return '';
-  }
-
-  function saveCache(country) {
-    try { localStorage.setItem(CACHE_KEY, JSON.stringify({ country, time: Date.now() })); } catch (_) {}
   }
 
   async function fetchWithTimeout(url, asText = false) {
@@ -67,6 +69,7 @@
 
   async function init() {
     if (!document.querySelector('.video-grid iframe')) return;
+    document.documentElement.dataset.regionCheckedAt = String(Date.now());
     const country = await detectCountry();
     if (country) document.documentElement.dataset.country = country;
     if (country === 'CN') useBilibili();
