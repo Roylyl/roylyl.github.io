@@ -2032,3 +2032,69 @@ body {
     transform: none;
   }
 }
+
+/* Current industry experience and evidence-first project status. */
+.experience-card {
+  padding: 30px;
+  border-radius: 30px;
+  overflow: hidden;
+}
+.experience-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 28px;
+}
+.experience-head h3 {
+  margin: 0;
+  font-size: clamp(28px, 3.5vw, 44px);
+  line-height: 1.08;
+  letter-spacing: -.045em;
+}
+.experience-meta {
+  display: grid;
+  justify-items: end;
+  gap: 6px;
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 14px;
+}
+.experience-meta strong { color: var(--text); font-size: 16px; }
+.experience-summary {
+  max-width: 880px;
+  margin: 26px 0 0;
+  color: var(--muted);
+}
+.experience-points {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 32px;
+  margin: 22px 0 0;
+  padding-left: 1.2em;
+  color: var(--muted);
+}
+.soundshare-thumb { position: relative; }
+.project-proof-badge {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  padding: 8px 11px;
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 999px;
+  color: rgba(255,255,255,.76);
+  background: rgba(8,12,18,.68);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  font: 700 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: .08em;
+}
+
+@media (max-width: 700px) {
+  .experience-card { padding: 20px; border-radius: 22px; }
+  .experience-head { display: grid; gap: 16px; }
+  .experience-head h3 { font-size: 26px; }
+  .experience-meta { justify-items: start; }
+  .experience-summary { margin-top: 20px; font-size: 14px; }
+  .experience-points { grid-template-columns: 1fr; gap: 8px; font-size: 14px; }
+  .project-proof-badge { left: 12px; bottom: 12px; font-size: 9px; }
+}

@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="罗宇伦 Roy Luo 的 GitHub 个人主页，聚焦硬件开发、嵌入式系统、工程项目与音频产品实践。" />
+  <meta name="description" content="罗宇伦 Roy Luo 的工程作品集，聚焦 ESP32、PCB 设计与验证、嵌入式系统、音频硬件原型和多端交互。" />
   <meta name="theme-color" content="#05070b" />
   <meta property="og:title" content="罗宇伦 Roy Luo" />
-  <meta property="og:description" content="Hardware · Embedded · Engineering Portfolio" />
+  <meta property="og:description" content="ESP32 · PCB Validation · Embedded Systems · Audio Hardware Prototypes" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="assets/portrait.jpg" />
   
@@ -24,7 +24,7 @@
       window.addEventListener('load', () => window.scrollTo(0, 0), { once: true });
     }
   </script>
-  <link rel="stylesheet" href="style.css?v=20260822-10" />
+  <link rel="stylesheet" href="style.css?v=20260824-11" />
   <link rel="stylesheet" href="i18n.css?v=20260822-1" />
   <link rel="stylesheet" href="background-music.css?v=20260822-5" />
   <link rel="stylesheet" href="continuous-navigation.css?v=20260822-1" />
@@ -49,7 +49,7 @@
       <a href="#music">Music</a>
       <a href="#contact">Contact</a>
       <a class="nav-external" href="https://github.com/Roylyl" target="_blank" rel="noreferrer">GitHub ↗</a>
-      <a class="nav-external" href="assets/罗宇伦-简历-中繁英三语.pdf" target="_blank">下载三语简历 ↗</a>
+      <a class="nav-external" href="assets/罗宇伦-简历-中繁英三语.pdf?v=20260824-2" target="_blank">下载三语简历 ↗</a>
     </nav>
     <button class="mobile-menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="siteNav">
       <span></span><span></span>
@@ -85,7 +85,7 @@
         </div>
         <div class="resume-links">
           <span>Resume</span>
-          <a href="assets/罗宇伦-简历-中繁英三语.pdf" target="_blank">简体 · 繁體 · English</a>
+          <a href="assets/罗宇伦-简历-中繁英三语.pdf?v=20260824-2" target="_blank">简体 · 繁體 · English</a>
         </div>
         <div class="hero-mobile-facts" aria-label="核心技术">
           <span>ESP32</span><span>PCB</span><span>Prototype</span><span>Audio UX</span>
@@ -99,8 +99,8 @@
         <div class="hero-card-stack">
           <div class="hero-floating card glass card-top">
             <span class="card-kicker">CURRENT FOCUS</span>
-            <strong>ESP32 · PCB · Prototype</strong>
-            <p>硬件调试、样机搭建、基础 PCB 设计与系统联调。</p>
+            <strong>ESP32 · PCB · Validation</strong>
+            <p>PCB 设计、板级验证、硬件调试与系统联调。</p>
           </div>
           <div class="hero-floating card glass card-bottom">
             <span class="card-kicker">SECONDARY IDENTITY</span>
@@ -120,14 +120,14 @@
         <article class="focus-card glass">
           <span>01</span>
           <h3>嵌入式开发</h3>
-          <p>以 ESP32 为主，进行蓝牙音频、基础控制逻辑与原型功能验证。</p>
-          <div class="focus-tags"><b>ESP32</b><b>Arduino</b><b>ESP-IDF</b></div>
+          <p>以 ESP32 为主，围绕 BLE/A2DP、嵌入式控制与原型功能验证。</p>
+          <div class="focus-tags"><b>ESP32</b><b>ESP-IDF</b><b>BLE/A2DP</b></div>
         </article>
         <article class="focus-card glass">
           <span>02</span>
-          <h3>硬件实现</h3>
-          <p>样机搭建、功放电路实验、硬件调试、系统联调与现场展示。</p>
-          <div class="focus-tags"><b>KiCad</b><b>PCB</b><b>Debug</b></div>
+          <h3>硬件与验证</h3>
+          <p>PCB 设计、样机组装、硬件调试、功能测试与系统联调。</p>
+          <div class="focus-tags"><b>KiCad</b><b>JLCEDA</b><b>Validation</b></div>
         </article>
         <article class="focus-card glass">
           <span>03</span>
@@ -137,11 +137,32 @@
         </article>
         <article class="focus-card glass">
           <span>04</span>
-          <h3>音频体验辅助</h3>
-          <p>长期乐队演出与设备使用，让我对延迟、底噪、动态响应等更敏感。</p>
-          <div class="focus-tags"><b>Latency</b><b>Noise</b><b>Live</b></div>
+          <h3>产品与调研</h3>
+          <p>结合竞品调研、用户场景分析、多端交互与产品验证推进方案。</p>
+          <div class="focus-tags"><b>Research</b><b>Interaction</b><b>Product</b></div>
         </article>
       </div>
+    </section>
+
+    <section class="experience wrap reveal" id="experience">
+      <div class="section-head compact">
+        <p class="eyebrow">CURRENT EXPERIENCE</p>
+        <h2>把工程判断放进真实行业场景。</h2>
+      </div>
+      <article class="experience-card glass">
+        <div class="experience-head">
+          <div>
+            <p class="project-tag">HARDWARE & MARKET RESEARCH</p>
+            <h3>湖南康通电子股份有限公司</h3>
+          </div>
+          <div class="experience-meta"><strong>硬件与市场调研</strong><span>2026.08 — 至今</span></div>
+        </div>
+        <p class="experience-summary">围绕音视频产品与智能硬件开展技术和市场调研，把应用场景、硬件参数、技术方案与产品定位放进同一套分析框架。</p>
+        <ul class="experience-points">
+          <li>梳理竞品功能、硬件参数与应用场景，形成结构化对比和阶段性结论。</li>
+          <li>记录技术方案与产品定位差异，为后续讨论、方案判断和调研复盘提供依据。</li>
+        </ul>
+      </article>
     </section>
 
     <section class="projects wrap" id="projects">
@@ -164,14 +185,15 @@
         </article>
 
         <article class="project-card glass reveal">
-          <figure class="project-thumb dark">
+          <figure class="project-thumb dark soundshare-thumb">
             <img src="assets/soundshare-icon.webp" width="1254" height="1254" loading="lazy" decoding="async" alt="音享贴应用图标" />
+            <figcaption class="project-proof-badge">FIRST PCB VALIDATED</figcaption>
           </figure>
           <div class="project-copy">
             <p class="project-tag">PROJECT 02</p>
             <h3>音享贴 · LENGHE SoundShare</h3>
-            <div class="project-facts"><span>角色：产品与交互设计</span><span>形态：蓝牙中继</span><span>阶段：产品概念</span></div>
-            <p>面向多人蓝牙音频共享场景的轻量化中继设备概念，重点展示产品结构、控制逻辑与多端 UI 设计。</p>
+            <div class="project-facts"><span>角色：硬件原型 / 嵌入式与产品设计</span><span>形态：蓝牙音频中继</span><span>阶段：首版 PCB 已验证</span></div>
+            <p>跨生态多人蓝牙音频共享硬件原型；已完成首版 PCB 与板级功能验证，并实现双 A2DP、多设备同步及延迟调节。</p>
             <a class="button primary" href="soundshare.html">了解更多</a>
           </div>
         </article>
@@ -294,7 +316,7 @@
         <div class="contact-actions">
           <a class="button primary" href="mailto:L3092105572@gmail.com">发邮件</a>
           <a class="button secondary" href="https://github.com/Roylyl" target="_blank" rel="noreferrer">GitHub ↗</a>
-          <a class="button secondary" href="assets/罗宇伦-简历-中繁英三语.pdf" target="_blank">下载三语简历</a>
+          <a class="button secondary" href="assets/罗宇伦-简历-中繁英三语.pdf?v=20260824-2" target="_blank">下载三语简历</a>
         </div>
       </div>
     </section>
@@ -312,7 +334,7 @@
     <span class="music-copyright">背景音乐仅用于个人非商业展示 · 音乐版权归原权利人所有</span>
   </footer>
 
-  <script src="i18n.js?v=20260824-9"></script>
+  <script src="i18n.js?v=20260824-10"></script>
   <script src="background-music.js?v=20260822-3"></script>
   <script src="continuous-navigation.js?v=20260822-1"></script>
   <script src="regional-video.js?v=20260822-6"></script>

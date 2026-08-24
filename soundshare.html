@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="音享贴 LENGHE SoundShare 项目介绍页面。" />
+  <meta name="description" content="LENGHE SoundShare 硬件原型：首版 PCB、三板音频架构、双 A2DP、多设备同步、延迟调节与多端交互设计。" />
   <meta name="theme-color" content="#05070b" />
   
   <link rel="icon" type="image/webp" href="assets/soundshare-icon.webp?v=20260821-1" />
@@ -19,7 +19,7 @@
       window.addEventListener('load', () => window.scrollTo(0, 0), { once: true });
     }
   </script>
-  <link rel="stylesheet" href="soundshare.css?v=20260821-4" />
+  <link rel="stylesheet" href="soundshare.css?v=20260824-5" />
   <link rel="stylesheet" href="i18n.css?v=20260821-1" />
   <link rel="stylesheet" href="background-music.css?v=20260822-5" />
   <link rel="stylesheet" href="region-notice.css?v=20260821-1" />
@@ -34,6 +34,7 @@
     <nav>
       <a href="index.html">个人主页</a>
       <a href="#intro">Intro</a>
+      <a href="#prototype">Prototype</a>
       <a href="#ui">UI</a>
       <a href="#scenes">Scenes</a>
       <a href="ultrasonic.html">Ultrasonic</a>
@@ -48,17 +49,17 @@
         <div class="ss-copy reveal">
           <p class="ss-kicker">PROJECT 02</p>
           <h1>音享贴<br><span>LENGHE SoundShare</span></h1>
-          <p class="ss-lead">一个面向跨生态多人蓝牙音频共享的轻量化中继设备概念。核心目标是让用户在不更换现有蓝牙设备的前提下，低成本完成多人同步听音与可视化控制。</p>
-          <div class="ss-facts"><span>产品与交互设计</span><span>蓝牙中继</span><span>产品概念</span></div>
+          <p class="ss-lead">面向跨生态多人蓝牙音频共享的轻量化硬件中继。首版 PCB 已完成并通过板级功能验证，硬件原型可稳定与移动设备建立连接。</p>
+          <div class="ss-facts"><span>硬件原型 / 嵌入式与产品设计</span><span>首版 PCB 已验证</span><span>双 A2DP · 多设备同步</span></div>
           <div class="ss-actions">
-            <a class="ss-button primary" href="#ui">查看多端 UI</a>
-            <a class="ss-button ghost" href="index.html#projects">返回主页</a>
+            <a class="ss-button primary" href="#prototype">查看工程验证</a>
+            <a class="ss-button ghost" href="#ui">查看多端 UI</a>
           </div>
         </div>
         <div class="ss-hero-art reveal">
           <div class="app-icon-stage"><img src="assets/soundshare-icon.webp" width="1254" height="1254" fetchpriority="high" alt="音享贴图标" /></div>
-          <div class="hero-line line-one"><i></i><span>MagSafe · Bluetooth Relay</span></div>
-          <div class="hero-line line-two"><i></i><span>Latency · Volume · Channel</span></div>
+          <div class="hero-line line-one"><i></i><span>First PCB · Hardware Bring-up</span></div>
+          <div class="hero-line line-two"><i></i><span>Dual A2DP · Sync · Delay</span></div>
         </div>
       </div>
     </section>
@@ -68,14 +69,51 @@
         <div class="section-title reveal">
           <p class="ss-kicker">VALUE</p>
           <h2>它不是替代现有设备，而是打通设备之间的壁垒。</h2>
-          <p>音享贴围绕“音源终端 — 音享贴中继 — 多终端播放设备”的架构工作，强调跨品牌兼容、手动可视化校准与多设备独立控制。</p>
+          <p>音享贴围绕“音源终端 — 蓝牙中继 — 多播放终端”的架构工作，通过 BLE 承载控制与状态、I²S 分发 PCM 音频，并由两个播放节点分别建立 A2DP 输出链路。</p>
         </div>
         <div class="feature-cards">
-          <article class="feature reveal"><span>01</span><h3>跨生态共享</h3><p>连接手机或平板作为音源，再同步分发到多台蓝牙耳机或音箱。</p></article>
+          <article class="feature reveal"><span>01</span><h3>跨生态共享</h3><p>以手机或平板作为音源，将音频分发到两台独立蓝牙播放设备。</p></article>
           <article class="feature reveal"><span>02</span><h3>磁吸轻量形态</h3><p>以轻量化硬件中继的思路切入，强调便携、低门槛与快速落地。</p></article>
-          <article class="feature reveal"><span>03</span><h3>手动毫秒级校准</h3><p>通过可视化延迟调节解决不同设备的固有播放时差，适配民用场景。</p></article>
-          <article class="feature reveal"><span>04</span><h3>多端可视化控制</h3><p>支持 iPad、iPhone、Android、微信小程序与 Apple Watch 等交互形态。</p></article>
+          <article class="feature reveal"><span>03</span><h3>可视化延迟校准</h3><p>通过独立音量、声道与延迟调节，应对不同播放设备之间的状态与时差。</p></article>
+          <article class="feature reveal"><span>04</span><h3>多端可视化控制</h3><p>完成 iPad、iPhone、Android、微信小程序与 Apple Watch 的交互方案。</p></article>
         </div>
+      </div>
+    </section>
+
+    <section class="ss-section prototype-section" id="prototype">
+      <div class="ss-wrap">
+        <div class="section-title reveal">
+          <p class="ss-kicker">ENGINEERING STATUS</p>
+          <h2>从产品设想到可验证的硬件原型。</h2>
+          <p>项目已完成首版 PCB 设计、打样、焊接调试与板级功能验证。当前工程采用 A、B1、B2 三板架构，把手机侧音频接收、控制链路与两路蓝牙播放输出拆分处理。</p>
+        </div>
+
+        <div class="prototype-grid">
+          <article class="prototype-card reveal"><span>VERIFIED</span><h3>PCB 与板级验证</h3><p>完成首版 PCB 设计、打样、焊接调试及板级功能验证，硬件原型可稳定连接移动设备。</p></article>
+          <article class="prototype-card reveal"><span>IMPLEMENTED</span><h3>双路音频与同步</h3><p>完成双 A2DP、多设备同步及延迟调节，并将独立音量与声道控制纳入系统逻辑。</p></article>
+          <article class="prototype-card reveal"><span>INTEGRATED</span><h3>Android 控制基线</h3><p>当前工程基线由 Android 端通过 BLE 完成设备发现、控制与状态展示；BLE 不承载 PCM 音频。</p></article>
+          <article class="prototype-card reveal"><span>DESIGNED</span><h3>五端交互体系</h3><p>完成 iPhone、iPad、Android、微信小程序与 Apple Watch 交互设计，覆盖连接、校准、异常反馈与配置。</p></article>
+        </div>
+
+        <div class="architecture-card reveal" aria-label="SoundShare 三板音频与控制架构">
+          <div class="architecture-head">
+            <div><p class="ss-kicker">SYSTEM ARCHITECTURE</p><h3>控制链路与音频链路分离。</h3></div>
+            <p>BLE 负责控制与状态；音频由 A 板接收后，经 I²S 向 B1/B2 分发 PCM，再由两个节点分别输出到蓝牙播放设备。</p>
+          </div>
+          <div class="architecture-flow">
+            <div class="architecture-node"><span>SOURCE</span><strong>移动设备</strong><small>A2DP 音频输入</small></div>
+            <div class="architecture-arrow" aria-hidden="true">→</div>
+            <div class="architecture-node relay"><span>A BOARD</span><strong>ESP32 中继</strong><small>BLE 控制 · PCM 缓冲 · I²S Master</small></div>
+            <div class="architecture-arrow" aria-hidden="true">→</div>
+            <div class="architecture-outputs">
+              <div class="architecture-node"><span>B1</span><strong>播放节点 1</strong><small>I²S Slave · A2DP Source</small></div>
+              <div class="architecture-node"><span>B2</span><strong>播放节点 2</strong><small>I²S Slave · A2DP Source</small></div>
+            </div>
+          </div>
+          <div class="architecture-tags"><span>BLE GATT Control</span><span>I²S PCM</span><span>Dual A2DP</span><span>Independent Volume</span><span>Channel</span><span>Sync & Delay</span></div>
+        </div>
+
+        <p class="evidence-note reveal"><strong>工程状态说明：</strong>本页区分已验证硬件、已实现功能与已完成交互设计；其他平台仍需持续进行真机覆盖和长期稳定性测试。</p>
       </div>
     </section>
 
@@ -135,8 +173,8 @@
         <div class="closing-card reveal">
           <img src="assets/soundshare-icon.webp" alt="音享贴图标" />
           <p class="ss-kicker">LENGHE SOUND SHARE</p>
-          <h2>从概念、交互到落地路径，继续打磨。</h2>
-          <p>这个页面展示的是音享贴的产品概念、界面体系与场景逻辑。它与我的工程主页保持连接，但把更完整的产品表达放到了二级页面中。</p>
+          <h2>从硬件原型到更完整的产品验证，继续推进。</h2>
+          <p>SoundShare 已从交互设想推进到首版 PCB 与硬件功能验证，并建立三板音频架构和多端控制体系。下一阶段将围绕平台覆盖、长期稳定性与产品化细节继续验证。</p>
           <div class="ss-actions center">
             <a class="ss-button primary" href="index.html#projects">返回主页</a>
             <a class="ss-button ghost" href="ultrasonic.html">查看超声波项目</a>
@@ -153,7 +191,7 @@
   </footer>
   <div class="roy-signature">designed by Roy</div>
 
-  <script src="i18n.js?v=20260824-9"></script>
+  <script src="i18n.js?v=20260824-10"></script>
   <script src="background-music.js?v=20260822-3"></script>
   <script src="continuous-navigation.js?v=20260822-1"></script>
   <script src="soundshare.js?v=20260820-4"></script>
