@@ -63,6 +63,13 @@
   opacity: .68;
 }
 
+/* Navigation may use more horizontal space than the reading column on desktop. */
+@media (min-width: 861px) {
+  :is(.site-header, .ss-nav, .detail-nav, .p-nav) {
+    width: min(100% - 48px, 1320px);
+  }
+}
+
 /* Keep the music and language controls together at the right of detail navs. */
 :is(.ss-nav, .detail-nav, .p-nav) {
   justify-content: flex-start;
