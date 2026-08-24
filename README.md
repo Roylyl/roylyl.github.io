@@ -26,7 +26,7 @@
 
 网站目前使用一份统一的中、繁、英三语简历：
 
-- `assets/roy-luo-resume-trilingual.pdf`
+- `assets/罗宇伦-简历-中繁英三语.pdf`
 - 第 1 页：简体中文
 - 第 2 页：繁体中文
 - 第 3 页：English
