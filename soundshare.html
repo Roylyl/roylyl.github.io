@@ -19,9 +19,9 @@
       window.addEventListener('load', () => window.scrollTo(0, 0), { once: true });
     }
   </script>
-  <link rel="stylesheet" href="soundshare.css?v=20260824-5" />
+  <link rel="stylesheet" href="soundshare.css?v=20260824-7" />
   <link rel="stylesheet" href="i18n.css?v=20260821-1" />
-  <link rel="stylesheet" href="background-music.css?v=20260822-5" />
+  <link rel="stylesheet" href="background-music.css?v=20260824-7" />
   <link rel="stylesheet" href="region-notice.css?v=20260821-1" />
 </head>
 <body>
@@ -29,12 +29,15 @@
   <header class="ss-nav">
     <a class="ss-brand" href="index.html">
       <img src="assets/soundshare-icon.webp" alt="音享贴图标" />
-      <span>LENGHE SoundShare</span>
+      <span class="brand-label-full">LENGHE SoundShare</span>
+      <span class="brand-label-compact">SoundShare</span>
     </a>
-    <nav>
+    <button class="secondary-menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="soundshareNav"><span></span><span></span></button>
+    <nav id="soundshareNav">
       <a href="index.html">个人主页</a>
       <a href="#intro">Intro</a>
-      <a href="#prototype">Prototype</a>
+      <a href="#value">Value</a>
+      <a href="#prototype">Prototype Status</a>
       <a href="#ui">UI</a>
       <a href="#scenes">Scenes</a>
       <a href="ultrasonic.html">Ultrasonic</a>
@@ -64,7 +67,7 @@
       </div>
     </section>
 
-    <section class="ss-section dark-section">
+    <section class="ss-section dark-section" id="value">
       <div class="ss-wrap">
         <div class="section-title reveal">
           <p class="ss-kicker">VALUE</p>
@@ -91,7 +94,7 @@
         <div class="prototype-grid">
           <article class="prototype-card reveal"><span>VERIFIED</span><h3>PCB 与板级验证</h3><p>完成首版 PCB 设计、打样、焊接调试及板级功能验证，硬件原型可稳定连接移动设备。</p></article>
           <article class="prototype-card reveal"><span>IMPLEMENTED</span><h3>双路音频与同步</h3><p>完成双 A2DP、多设备同步及延迟调节，并将独立音量与声道控制纳入系统逻辑。</p></article>
-          <article class="prototype-card reveal"><span>INTEGRATED</span><h3>Android 控制基线</h3><p>当前工程基线由 Android 端通过 BLE 完成设备发现、控制与状态展示；BLE 不承载 PCM 音频。</p></article>
+          <article class="prototype-card reveal"><span>DEVELOPED</span><h3>iOS 与 Android 控制应用</h3><p>面向当前硬件原型开发 iOS 与 Android App，围绕 BLE 设备发现、连接控制、状态展示与配置建立移动端控制体系。</p></article>
           <article class="prototype-card reveal"><span>DESIGNED</span><h3>五端交互体系</h3><p>完成 iPhone、iPad、Android、微信小程序与 Apple Watch 交互设计，覆盖连接、校准、异常反馈与配置。</p></article>
         </div>
 
@@ -191,11 +194,11 @@
   </footer>
   <div class="roy-signature">designed by Roy</div>
 
-  <script src="i18n.js?v=20260824-10"></script>
+  <script src="i18n.js?v=20260824-14"></script>
   <script src="background-music.js?v=20260822-3"></script>
   <script src="continuous-navigation.js?v=20260822-1"></script>
   <script src="soundshare.js?v=20260820-4"></script>
   <script src="region-notice.js?v=20260822-2"></script>
-  <script src="nav-scroll.js?v=20260821-1"></script>
+  <script src="nav-scroll.js?v=20260824-4"></script>
 </body>
 </html>

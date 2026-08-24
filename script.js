@@ -157,7 +157,7 @@ if (mobileMenuToggle && header && nav) {
     if (event.key === 'Escape') setMenu(false);
   });
   window.addEventListener('resize', () => {
-    if (window.innerWidth > 860) setMenu(false);
+    if (window.innerWidth > 1160) setMenu(false);
   });
   window.addEventListener('site-language-change', () => {
     mobileMenuToggle.setAttribute('aria-label', getMenuLabel(header.classList.contains('menu-open')));

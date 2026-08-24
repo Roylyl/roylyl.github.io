@@ -59,7 +59,12 @@ img { display: block; max-width: 100%; }
 .nav a, .button, .header-cta { transition: transform .25s ease, color .25s ease, border-color .25s ease, background .25s ease; }
 .nav a:hover, .header-cta:hover { color: var(--text); }
 .header-cta, .button { padding: 12px 17px; border-radius: 999px; border: 1px solid var(--line-strong); font-size: 14px; font-weight: 600; }
-.header-cta { background: rgba(255,255,255,.04); }
+.header-cta {
+  min-width: max-content;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  background: rgba(255,255,255,.04);
+}
 .button.primary { background: linear-gradient(135deg, rgba(105,201,255,.22), rgba(142,240,200,.12)); border-color: rgba(105,201,255,.26); }
 .button.secondary { background: rgba(255,255,255,.04); }
 .button:hover, .header-cta:hover { transform: translateY(-1px); }
@@ -2030,6 +2035,42 @@ body {
     width: 100%;
     height: 100%;
     transform: none;
+  }
+}
+
+/* Switch the expanded home navigation to the existing menu before it crowds
+   the music, language, and GitHub controls on medium-width screens. */
+@media (min-width: 861px) and (max-width: 1160px) {
+  .mobile-menu-toggle { display: inline-flex; justify-self: end; align-items: center; }
+  .site-header { position: sticky; overflow: visible; }
+  .nav { display: none; }
+  .site-header.menu-open .nav {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    right: 0;
+    padding: 14px;
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 26px;
+    background: rgba(7,10,15,.94);
+    box-shadow: 0 22px 64px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.08);
+    backdrop-filter: blur(26px) saturate(165%);
+    -webkit-backdrop-filter: blur(26px) saturate(165%);
+  }
+  .site-header.menu-open .nav a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 11px 12px;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 16px;
+    color: #dfe6ee;
+    background: rgba(255,255,255,.035);
+    text-align: center;
   }
 }
 
