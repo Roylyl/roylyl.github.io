@@ -403,3 +403,24 @@ img { display: block; max-width: 100%; }
   }
   .compact-watch .ui-frame.watch img { width: 100%; }
 }
+
+/* A 10–11-inch iPad has enough room for the product story and its visual to
+   coexist. Preserve that relationship instead of inheriting the phone-like
+   single-column breakpoint intended for sub-1050px laptop windows. */
+@media (min-width: 901px) and (max-width: 1050px) {
+  .ss-hero-inner {
+    min-height: auto;
+    grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
+    gap: 30px;
+    padding: 92px 0 58px;
+  }
+
+  .ss-hero h1 { font-size: clamp(48px, 6vw, 62px); }
+  .ss-lead { margin-top: 20px; font-size: 16px; line-height: 1.7; }
+  .ss-actions { margin-top: 24px; }
+  .ss-hero-art { min-height: 460px; }
+  .app-icon-stage { width: min(390px, 88%); }
+  .hero-line { max-width: calc(100% - 8px); }
+  .ss-section { padding: 88px 0; }
+  .ui-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

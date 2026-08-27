@@ -2139,3 +2139,57 @@ body {
   .experience-points { grid-template-columns: 1fr; gap: 8px; font-size: 14px; }
   .project-proof-badge { left: 12px; bottom: 12px; font-size: 9px; }
 }
+
+/* iPad landscape and full-size portrait: keep the first screen composed as
+   one scene. The former <=1080px rule stacked this layout like a phone,
+   leaving a large gap between the introduction and portrait on 10–11-inch
+   iPads. Narrow tablets still use the deliberate single-column treatment. */
+@media (min-width: 901px) and (max-width: 1080px) {
+  .hero {
+    min-height: auto;
+    grid-template-columns: minmax(0, 1.06fr) minmax(360px, .94fr);
+    align-items: center;
+    gap: 30px;
+    padding: 54px 0 48px;
+  }
+
+  .hero h1 {
+    max-width: 9.5em;
+    font-size: clamp(50px, 5.9vw, 64px);
+  }
+
+  .hero-lead { margin-top: 20px; font-size: 16px; line-height: 1.72; }
+  .hero-actions { margin-top: 24px; }
+
+  .hero-visual {
+    min-height: 550px;
+    width: 100%;
+    max-width: 430px;
+    margin: 0;
+    justify-self: end;
+  }
+
+  .hero-photo {
+    top: 42px;
+    width: min(100%, 392px);
+    height: 462px;
+    border-radius: 30px;
+    --hero-rotate: 1.2deg;
+  }
+
+  .card-top {
+    top: 12px;
+    left: -34px;
+    width: 262px;
+  }
+
+  .card-bottom {
+    right: -10px;
+    bottom: 8px;
+    width: 298px;
+  }
+
+  .hero-floating { padding: 18px 19px; border-radius: 24px; }
+  .hero-floating strong { font-size: 18px; }
+  .hero-floating p { font-size: 13px; line-height: 1.55; }
+}
