@@ -386,6 +386,13 @@
     en: { current: 'English', button: 'Language', aria: 'Choose language' }
   };
 
+  const resumeAssets = {
+    'zh-CN': 'assets/罗宇伦_简历.pdf',
+    'zh-TW': 'assets/羅宇倫_簡歷.pdf',
+    en: 'assets/Roy-Luo-Resume.pdf'
+  };
+  const resumeVersion = '20260902-1';
+
   const originalText = new WeakMap();
   const originalAttrs = new WeakMap();
 
@@ -444,6 +451,13 @@
     });
   }
 
+  function updateResumeLinks(lang) {
+    const asset = resumeAssets[lang] || resumeAssets['zh-CN'];
+    document.querySelectorAll('[data-resume-link]').forEach((el) => {
+      el.setAttribute('href', `${asset}?v=${resumeVersion}`);
+    });
+  }
+
   function renderLanguage(lang, persist = false) {
     document.documentElement.lang = lang === 'en' ? 'en' : lang;
     collectTextNodes().forEach((node) => {
@@ -456,6 +470,7 @@
     const page = location.pathname.split('/').pop() || 'index.html';
     const titleSet = pageTitles[page] || pageTitles['index.html'];
     document.title = titleSet[lang] || titleSet['zh-CN'];
+    updateResumeLinks(lang);
     document.querySelectorAll('[data-lang-current]').forEach((el) => { el.textContent = labels[lang].current; });
     document.querySelectorAll('[data-lang-toggle]').forEach((el) => {
       el.setAttribute('aria-label', labels[lang].aria);
