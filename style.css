@@ -33,6 +33,9 @@ img { display: block; max-width: 100%; }
   background-image: radial-gradient(rgba(255,255,255,.07) .8px, transparent .8px), radial-gradient(rgba(255,255,255,.03) .8px, transparent .8px);
   background-size: 22px 22px; background-position: 0 0, 11px 11px;
 }
+.page-particle-canvas { position: fixed; inset: 0; z-index: 0; width: 100%; height: 100%; display: block; pointer-events: none; opacity: .9; }
+.page-particle-canvas.is-fallback { opacity: 0; }
+#top, .footer { position: relative; z-index: 1; }
 .bg-orb { position: fixed; border-radius: 50%; filter: blur(84px); pointer-events: none; z-index: -4; opacity: .22; }
 .orb-1 { width: 42vw; height: 42vw; left: -15vw; top: -16vw; background: rgba(105,201,255,.28); }
 .orb-2 { width: 34vw; height: 34vw; right: -12vw; top: 28vh; background: rgba(142,240,200,.20); }
@@ -2075,6 +2078,10 @@ body {
 }
 
 /* Current industry experience and evidence-first project status. */
+.experience-list {
+  display: grid;
+  gap: 16px;
+}
 .experience-card {
   padding: 30px;
   border-radius: 30px;
@@ -2101,6 +2108,11 @@ body {
   font-size: 14px;
 }
 .experience-meta strong { color: var(--text); font-size: 16px; }
+.experience-sector {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-weight: 650;
+}
 .experience-summary {
   max-width: 880px;
   margin: 26px 0 0;
@@ -2108,7 +2120,7 @@ body {
 }
 .experience-points {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 12px 32px;
   margin: 22px 0 0;
   padding-left: 1.2em;
@@ -2135,6 +2147,7 @@ body {
   .experience-head { display: grid; gap: 16px; }
   .experience-head h3 { font-size: 26px; }
   .experience-meta { justify-items: start; }
+  .experience-sector { margin-top: 16px; font-size: 14px; }
   .experience-summary { margin-top: 20px; font-size: 14px; }
   .experience-points { grid-template-columns: 1fr; gap: 8px; font-size: 14px; }
   .project-proof-badge { left: 12px; bottom: 12px; font-size: 9px; }

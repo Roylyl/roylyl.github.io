@@ -29,6 +29,10 @@ img { display: block; max-width: 100%; }
 .detail-brand { display: inline-flex; align-items: center; gap: 12px; font-weight: 700; }
 .detail-brand img { width: 34px; height: 34px; border-radius: 10px; object-fit: cover; }
 .detail-nav nav { display: flex; gap: 24px; color: var(--muted); font-size: 14px; }
+.detail-particle-surface { position: relative; overflow: hidden; }
+.detail-particle-canvas { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; display: block; pointer-events: none; opacity: .94; }
+.detail-particle-canvas.is-fallback { opacity: 0; }
+.detail-particle-surface > .detail-hero { position: relative; z-index: 2; }
 .detail-hero { min-height: calc(100svh - 70px); display: grid; grid-template-columns: 1fr 1fr; gap: 34px; align-items: center; padding: 72px 0 42px; }
 .eyebrow { margin: 0 0 16px; color: var(--muted); font: 700 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .16em; }
 h1, h2 { margin: 0; letter-spacing: -.06em; }

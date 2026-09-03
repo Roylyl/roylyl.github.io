@@ -1,10 +1,11 @@
 (() => {
   'use strict';
 
-  const canvas = document.getElementById('ssParticleCanvas');
-  const hero = document.querySelector('.ss-hero');
+  const canvas = document.querySelector('[data-particle-canvas], #ssParticleCanvas');
+  const viewportMode = canvas?.dataset.particleMode === 'viewport';
+  const surface = canvas?.closest('[data-particle-surface]') || document.querySelector('.ss-hero');
 
-  if (!canvas || !hero || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!canvas || (!surface && !viewportMode) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   const gl = canvas.getContext('webgl2', {
     alpha: true,
@@ -451,8 +452,22 @@
     let rafId = 0;
     let visible = true;
 
+    const getBounds = () => {
+      if (viewportMode) {
+        return {
+          left: 0,
+          top: 0,
+          right: window.innerWidth,
+          bottom: window.innerHeight,
+          width: window.innerWidth,
+          height: window.innerHeight
+        };
+      }
+      return surface.getBoundingClientRect();
+    };
+
     const resize = () => {
-      const bounds = hero.getBoundingClientRect();
+      const bounds = getBounds();
       width = Math.max(1, bounds.width);
       height = Math.max(1, bounds.height);
       pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
@@ -462,7 +477,7 @@
     };
 
     const updateRing = (time) => {
-      const bounds = hero.getBoundingClientRect();
+      const bounds = getBounds();
       const inside = followsFinePointer && (
         pointerX >= bounds.left &&
         pointerX <= bounds.right &&
@@ -533,7 +548,15 @@
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D, stateTextures[readIndex]);
       gl.uniform1i(particleUniforms.uPosition, 0);
-      gl.uniform1f(particleUniforms.uParticleScale, width / pixelRatio / 2000 * HERO_PARTICLE_SCALE);
+      const desktopParticleScale = width / pixelRatio / 2000 * HERO_PARTICLE_SCALE;
+      const touchParticleScale = Math.max(
+        0.38,
+        Math.min(0.46, width / pixelRatio / 1100 * HERO_PARTICLE_SCALE)
+      );
+      gl.uniform1f(
+        particleUniforms.uParticleScale,
+        followsFinePointer ? desktopParticleScale : touchParticleScale
+      );
       gl.uniform1f(particleUniforms.uPixelRatio, pixelRatio);
       gl.uniform1f(particleUniforms.uTime, time);
       gl.uniform2f(particleUniforms.uRingPosition, ringX, ringY);
@@ -555,16 +578,16 @@
     }
     window.addEventListener('resize', resize, { passive: true });
 
-    if ('ResizeObserver' in window) {
+    if (!viewportMode && 'ResizeObserver' in window) {
       const resizeObserver = new ResizeObserver(resize);
-      resizeObserver.observe(hero);
+      resizeObserver.observe(surface);
     }
 
-    if ('IntersectionObserver' in window) {
+    if (!viewportMode && 'IntersectionObserver' in window) {
       const intersectionObserver = new IntersectionObserver((entries) => {
         visible = entries.some((entry) => entry.isIntersecting);
       }, { threshold: 0 });
-      intersectionObserver.observe(hero);
+      intersectionObserver.observe(surface);
     }
 
     resize();
