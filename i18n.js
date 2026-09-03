@@ -391,7 +391,7 @@
     'zh-TW': 'assets/羅宇倫_簡歷.pdf',
     en: 'assets/Roy-Luo-Resume.pdf'
   };
-  const resumeVersion = '20260902-1';
+  const resumeVersion = '20260903-1';
 
   const originalText = new WeakMap();
   const originalAttrs = new WeakMap();
