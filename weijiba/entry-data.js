@@ -749,7 +749,7 @@
   Object.assign(entries, oddEntries);
 
   const generatedMembers = [
-    "困困", "彭鹏", "魏子奇", "唐胤鑫", "吴子轩", "夏炜城", "陈祖涵", "邓宇航",
+    "困困", "罗宇伦", "彭鹏", "魏子奇", "唐胤鑫", "吴子轩", "夏炜城", "陈祖涵", "邓宇航",
     "黎健毓", "唐博釜", "李彦臻", "王鹏涛", "涂腾辉", "徐哥", "书记"
   ];
   const generatedActions = [
@@ -781,6 +781,20 @@
     "把长文切成短句", "把生活改写成制度", "把制度拆回玩笑", "把玩笑送回行动", "把行动保存成群史"
   ];
   const generatedTopicProfiles = {
+    "罗宇伦": {
+      label: "在本项目里与 Roylyl 对应的名字条目，也是站点作者语境中的基础称呼",
+      scene: "在魏鸡百科的项目语境中，Roylyl 即罗宇伦；这个对应关系用于说明站点署名与中文名字之间的关系，不把英文式账号名再拆成另一个人。",
+      action: "读者可以先从 Roylyl 跳到罗宇伦，再沿着鹿群、项目、代码和群史等条目观察一个名字如何成为页面入口",
+      metaphor: "一张把英文用户名和中文名字扣在一起的双面索引卡",
+      boundary: "本条只记录用户明确提供的称呼对应关系，以及网站公开可见的项目语境，不延伸推断其他个人资料。"
+    },
+    "Roylyl": {
+      label: "与罗宇伦对应的英文式署名与项目入口",
+      scene: "Roylyl 在本项目中即罗宇伦，是网站署名、代码仓库和鹿群资料整理语境里使用的英文式名字；它与中文词条共享同一张页面地图。",
+      action: "当读者在项目链接、仓库说明或群聊语境里看到 Roylyl 时，可以把它作为罗宇伦的对应入口，再回到具体页面上下文核对",
+      metaphor: "一枚把仓库地址、站点页脚和中文姓名暂时别在一起的书签",
+      boundary: "这里的对应关系来自用户明确说明；页面不把署名自动扩写成现实履历或未提供的身份信息。"
+    },
     "ChatGPT": {
       label: "会把问号整理成段落、却不敢替鹿群决定午饭的公共语言模型",
       scene: "在鹿群语境中，它常被召来解释概念、改写长文、协助代码和整理计划，最后仍要接受一句“何意味”的现场复核。",
@@ -1380,17 +1394,124 @@
     if (!extensionRecordsByTopic.has(record.topic)) extensionRecordsByTopic.set(record.topic, []);
     extensionRecordsByTopic.get(record.topic).push(record);
   });
+  const baseTopicDomainProfiles = [
+    {
+      dimension: "天文常识",
+      matcher: /^(天文学|太阳系|太阳|月球|行星|水星|金星|地球|火星|木星|土星|天王星|海王星|恒星|星系|银河系|星云|黑洞|小行星|彗星|流星|日食|月食|天文台)$/,
+      label: "天文学中的基础天体、现象或观测入口",
+      definition: (topic) => `“${topic}”是天文学常识中用于认识天空、天体或观测现象的基础名词。`,
+      scene: (topic) => `在天文常识里，“${topic}”可以作为认识尺度、轨道、光线和观测方法的入口；先把对象放回宇宙尺度，再讨论它为什么会出现在鹿群的日常比喻里。`,
+      action: (topic) => `理解“${topic}”时，可以先确认它属于天体、结构还是现象，再区分肉眼观察、仪器观测和群聊想象`,
+      metaphor: "一张把晚饭时间抬头接到星空、却仍然要先查天气的观测图",
+      boundary: "本页只提供不依赖即时数据的基础科普框架，不把鹿群比喻当作天文学结论，也不替代专业观测资料。"
+    },
+    {
+      dimension: "地理常识",
+      matcher: /^(地理学|地球仪|地图|地形|地貌|赤道|经度|纬度|时区|山脉|峡谷|高原|平原|盆地|河流|湖泊|海洋|海岸|岛屿|海峡|沙漠|气候带|等高线|地理信息)$/,
+      label: "地理学中的基础空间、地表或定位概念",
+      definition: (topic) => `“${topic}”是地理常识中用来描述地球空间、地表形态或位置关系的基础名词。`,
+      scene: (topic) => `在地理常识里，“${topic}”帮助读者把地点、距离、方向、地形和气候放进同一张空间图；鹿群讨论出行或吃什么时，也会不自觉地调用这套地图思维。`,
+      action: (topic) => `理解“${topic}”时，可以先问它描述的是位置、尺度、地表形态还是人与环境的关系，再把地图上的符号和现实中的行动分开`,
+      metaphor: "一张把湘江、食堂和远方路线放在同一比例尺上、但不保证每个人都看得懂的折叠地图",
+      boundary: "本页只整理稳定的地理常识与生活化比喻，不记录个人实时位置，也不把单次路线经验扩大成普遍判断。"
+    },
+    {
+      dimension: "现代音乐常识",
+      matcher: /^(现代音乐|流行音乐|摇滚|爵士|嘻哈|电子音乐|民谣|独立音乐|K-pop|乐队|歌手|专辑|单曲|歌曲|歌词|节拍|旋律|和声|贝斯|鼓组|合成器|采样|混音|音乐节)$/,
+      label: "现代音乐中的基础形式、角色或制作概念",
+      definition: (topic) => `“${topic}”是现代音乐语境中用于描述作品、表演、声音组织或制作流程的基础名词。`,
+      scene: (topic) => `在现代音乐语境里，“${topic}”可以连接听感、演出、创作和制作；它进入鹿群后，往往又会和吉他、直播、表情以及“谁来点一首”发生转场。`,
+      action: (topic) => `理解“${topic}”时，可以先区分它是在说作品、表演者、声音元素还是制作环节，再观察它怎样改变一段群聊的节奏`,
+      metaphor: "一支从唐博釜的吉他弦出发、途经问号和夜宵、最后在播放列表里暂时落地的移动乐队",
+      boundary: "本页只做基础音乐知识和鹿群听觉想象的连接，不评价具体艺人、作品或商业成绩，也不把一次听感写成专业结论。"
+    },
+    {
+      dimension: "物理常识",
+      matcher: /^(物理学|力|质量|速度|加速度|位移|能量|功|功率|动量|电荷|电场|磁场|电流|电压|电阻|波|频率|光速|温度|压强|原子|分子|量子)$/,
+      label: "物理学中的基础量、对象或规律入口",
+      definition: (topic) => `“${topic}”是物理常识中用于描述运动、相互作用、能量、物质或场的基础名词。`,
+      scene: (topic) => `在物理常识里，“${topic}”通常需要和单位、测量、模型及适用条件一起理解；它进入鹿群后，可能从雅可比矩阵、机器人动作或杜邦线突然拐到一顿饭。`,
+      action: (topic) => `理解“${topic}”时，可以先找出对象、变量、单位和边界条件，再判断它是在描述变化、守恒还是相互作用`,
+      metaphor: "一块会把机器人关节、充电器和食堂排队都暂时换算成变量的群聊黑板",
+      boundary: "本页保持基础科普尺度，不用群聊类比替代公式、实验或教材，也不对超出页面范围的专业问题作确定结论。"
+    },
+    {
+      dimension: "人文常识",
+      matcher: /^(人文学科|哲学|伦理学|逻辑学|文学|语言学|历史学|社会学|人类学|心理学|艺术史|建筑|阅读|书籍|叙事|记忆|传统|节日|博物馆|图书|文字|文化|教育|审美)$/,
+      label: "人文学科中的基础问题、作品或理解方法",
+      definition: (topic) => `“${topic}”是人文知识中用于理解人、语言、作品、社会经验或价值判断的基础名词。`,
+      scene: (topic) => `在人文语境里，“${topic}”关注的不只是一个答案，还包括人如何记忆、表达、解释和共同生活；鹿群的称呼、群史与长文正好提供了一个微型观察窗口。`,
+      action: (topic) => `理解“${topic}”时，可以同时观察概念本身、使用它的人、它出现的情境以及不同解释之间的差异`,
+      metaphor: "一张由长文、短句、旧称呼和新注释共同绘制的群体阅读地图",
+      boundary: "本页只将人文常识与鹿群公开语境做轻量连接，不把群聊片段当作完整社会研究，也不对任何现实个体作心理或价值判断。"
+    },
+    {
+      dimension: "城市常识",
+      matcher: /^(城市|北京|上海|广州|深圳|武汉|成都|杭州|南京|西安|东京|首尔|新加坡|曼谷|伦敦|巴黎|柏林|罗马|悉尼|纽约|多伦多|温哥华|开罗|里约热内卢)$/,
+      label: "城市地理中的公共空间、生活系统或城市入口",
+      definition: (topic) => `“${topic}”是城市常识中用于认识城市空间、公共设施或日常生活网络的基础名词。`,
+      scene: (topic) => `在城市语境里，“${topic}”可以连接交通、居住、学习、消费和文化活动；对鹿群而言，城市又是课程表、食堂、湘江和临时出门提案的共同背景。`,
+      action: (topic) => `理解“${topic}”时，可以先区分它是城市整体、具体地点还是生活系统，再把公共知识和个人经验分别标注`,
+      metaphor: "一个把高铁、地铁、食堂、雨伞和群聊定位同时装进去的超大号共享地图",
+      boundary: "本页只使用城市作为公共地理和生活语境，不涉及个人行踪、未公开地点信息或对城市居民的概括性判断。"
+    },
+    {
+      dimension: "数字常识",
+      matcher: /^(数字化|操作系统|Android|Linux|macOS|iPad|平板电脑|智能手机|个人电脑|浏览器|搜索引擎|网站|网页|云计算|数据库|算法|编程|软件|硬件|文件格式|二维码|密码|账号|开源软件)$/,
+      label: "数字世界中的基础设备、软件或信息概念",
+      definition: (topic) => `“${topic}”是数字常识中用于理解设备、软件、网络、数据或信息处理的基础名词。`,
+      scene: (topic) => `在数字语境里，“${topic}”往往不会单独出现，而是和账号、文件、浏览器、代码、平台及权限组成一条完整工作流；鹿群的问号通常从其中某个摩擦点开始。`,
+      action: (topic) => `理解“${topic}”时，可以先确认它处在设备、系统、应用、数据还是用户操作这一层，再检查输入、输出和权限边界`,
+      metaphor: "一座由链接、文件、版本和问号搭起来的数字校园，入口很多，颗粒度必须先对齐",
+      boundary: "本页提供基础数字素养层面的解释，不保存账号、密钥或个人文件，也不把一次产品体验当成所有版本都成立的结论。"
+    },
+    {
+      dimension: "消费电子常识",
+      matcher: /^(消费电子|笔记本电脑|台式机|显示器|电视机|游戏机|PlayStation|Nintendo Switch|Kindle|AirPods|智能手表|智能音箱|相机|无人机|充电宝|无线充电|USB-C|Wi-Fi|蓝牙|屏幕|处理器|存储器|固态硬盘|芯片)$/,
+      label: "消费电子中的常见设备、部件或连接方式",
+      definition: (topic) => `“${topic}”是消费电子常识中用于认识设备形态、核心部件或连接体验的基础名词。`,
+      scene: (topic) => `在消费电子语境里，“${topic}”要和用途、兼容性、续航、预算、维护以及数据安全一起判断；这正是戴尔问号、MacBook 比较和杜邦线现场容易交叉的地方。`,
+      action: (topic) => `理解“${topic}”时，可以先确认需求和接口，再看性能、价格、可维护性与长期工作流，而不是只盯着一个参数`,
+      metaphor: "一件会在开箱、充电、调试和群聊复盘之间不断变换身份的项目道具",
+      boundary: "本页只提供一般消费电子常识，不构成即时购买建议，不评价未指定型号，也不记录任何个人设备中的私密内容。"
+    },
+    {
+      dimension: "国家与世界常识",
+      matcher: /^(国家|日本|韩国|新加坡|泰国|越南|印度|英国|法国|德国|意大利|西班牙|葡萄牙|希腊|美国|加拿大|墨西哥|巴西|澳大利亚|新西兰|埃及|肯尼亚|南非|土耳其)$/,
+      label: "世界地理中的国家、区域与公共文化入口",
+      definition: (topic) => `“${topic}”是世界常识中用于认识国家、区域、城市或公共文化差异的基础名词。`,
+      scene: (topic) => `在世界地理和日常常识里，“${topic}”可以连接地图、语言、饮食、音乐、城市与旅行想象；鹿群讨论它时，宜把公共知识和个人经历分开，不让一个梗代替整个地方。`,
+      action: (topic) => `理解“${topic}”时，可以先确认讨论的是地理位置、文化对象还是旅行信息，再核对时间、来源和适用范围`,
+      metaphor: "一张被鹿群拿来规划旅行、点餐和播放列表的世界地图，边界清楚，路线可以很离谱",
+      boundary: "本页只做中性世界地理与公共文化常识整理，不展开争议性现实议题、现实个体评价或未经核实的地区性断言。"
+    }
+  ];
+  const resolveBaseTopicProfile = (topic, fallback) => {
+    const domain = baseTopicDomainProfiles.find(({ matcher }) => matcher.test(topic));
+    if (!domain) return fallback;
+    return {
+      ...fallback,
+      dimension: domain.dimension,
+      label: domain.label,
+      definition: domain.definition(topic),
+      scene: domain.scene(topic),
+      action: domain.action(topic),
+      metaphor: domain.metaphor,
+      boundary: domain.boundary
+    };
+  };
   const baseEntries = {};
   baseEntryRecords.forEach((record) => {
     const extensionRecords = extensionRecordsByTopic.get(record.topic) || [];
     const extensions = extensionRecords.map(({ slug, title, format }) => ({ slug, title, format }));
-    const profile = generatedTopicProfiles[record.topic] || {
+    const fallbackProfile = {
       label: `在鹿群里被重新命名的“${record.topic}”公共对象`,
       scene: `它可能以一句短问句、一个截图、一个课程节点、一个设备名或一段内部玩笑进入鹿群，然后等待别人决定它究竟属于知识、生活还是笑点。`,
       action: `讨论先把“${record.topic}”放进当前问题，再通过问号、长文、表情和行动结果反复校准`,
       metaphor: `一块会吸收问号、长文和临时决定的鹿群公共黑板`,
       boundary: "条目保留戏仿式夸张，但不把内部玩笑扩展成现实身份、隐私或未经核实的事实。"
     };
+    const profile = generatedTopicProfiles[record.topic] || resolveBaseTopicProfile(record.topic, fallbackProfile);
     const existingEntry = entries[record.slug];
     if (existingEntry) {
       existingEntry.extensions = extensions;
@@ -1399,27 +1520,32 @@
       return;
     }
     const member = generatedMembers[(record.index - 1) % generatedMembers.length];
+    const sourceLabel = record.source === "鹿群资料" ? "鹿群聊天资料" : "常用语境整理";
     baseEntries[record.slug] = {
       title: record.title,
       type: "鹿群基础名词",
-      description: `“${record.topic}”是鹿群常用的基础名词；在这里，它被整理成${profile.label}。`,
+      description: `“${record.topic}”是魏鸡百科基础索引中的常用名词；本页按${sourceLabel}整理成${profile.label}。`,
       facts: [
         ["基础编号", `BASE-${String(record.index).padStart(3, "0")}`],
         ["基础主题", record.topic],
+        ["资料来源", sourceLabel],
+        ["常识维度", profile.dimension || "鹿群与日常语境"],
         ["群聊角色", profile.label],
         ["拓展条目", `${extensions.length} 个`]
       ],
       overview: [
-        `“${record.topic}”是魏鸡百科基础索引中的常用名词。它可以指向一个人、一件物品、一个地点、一项技术或一个群聊动作，具体含义取决于出现它的时间、对象和前后文。`,
+        `“${record.topic}”是魏鸡百科基础索引中的常用名词，${record.source === "鹿群资料" ? "它从鹿群聊天资料的可观察语境中被挑出" : "它从日常常用语境中被整理进来"}。它可以指向一个人、一件物品、一个地点、一项技术或一个群聊动作，具体含义取决于出现它的时间、对象和前后文。`,
+        profile.definition ? `${profile.definition}这条常识说明负责提供公共知识入口，鹿群部分则只借用它的形状来讨论问号、长文、项目和日常行动。` : "",
         `${profile.scene}在基础词条页面里，这些不同用法先被放在同一张语境地图上，再交给读者沿着拓展阅读继续分叉。`,
         `本页不急着给“${record.topic}”下一个只有标准答案的定义。它更像${profile.metaphor}：先让词语站稳，再让它和鹿群、困困、课程、项目以及“吃什么”建立可以继续跳转的关系。`
-      ],
+      ].filter(Boolean),
       sections: [
         {
           id: "definition",
           title: "基本解释",
           paragraphs: [
-            `从普通用法看，“${record.topic}”首先是一个可以被直接指认的名词；从鹿群用法看，它还可能成为提问入口、行动对象、群史道具或一句话里最重要的那个未解释部分。`,
+            profile.definition || `从普通用法看，“${record.topic}”首先是一个可以被直接指认的名词；从鹿群用法看，它还可能成为提问入口、行动对象、群史道具或一句话里最重要的那个未解释部分。`,
+            `在鹿群阅读中，“${record.topic}”又可能成为提问入口、行动对象、群史道具或一句话里最重要的那个未解释部分。公共常识负责说明它是什么，群聊语境负责展示它如何被使用。`,
             `同一个词在不同消息里不必保持同一重量。有人把它当作事实，有人把它当作比喻，也有人只用它来测试群聊是否还在线。基础条目的任务是保留这些差异，而不是替它们强行统一。`
           ]
         },
@@ -1449,7 +1575,9 @@
         }
       ],
       references: [
-        `鹿群聊天导出中与“${record.topic}”相关的短句、长文、表情或@提醒记录。`,
+        record.source === "鹿群资料"
+          ? `鹿群聊天导出及相关分析中与“${record.topic}”相关的短句、长文、表情或@提醒语境。`
+          : `常用语境整理中与“${record.topic}”相关的公共名词用法，并接入鹿群阅读框架。`,
         "魏鸡百科基础词条整理、群聊语境分析与拓展链接索引。"
       ],
       categories: ["基础名词", "鹿群语境", "条目索引"],

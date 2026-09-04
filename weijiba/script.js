@@ -303,11 +303,15 @@
       link.target = "_blank";
       link.rel = "noopener";
       link.title = `${record.title}：基础词条，页面内含拓展阅读`;
+      link.dataset.source = record.source || "常用词";
       link.textContent = `${String(record.index).padStart(3, "0")} · ${record.title}`;
       fragment.append(link);
     });
     megaEntryList.replaceChildren(fragment);
-    if (megaEntryCount) megaEntryCount.textContent = `${records.length} 个基础词条`;
+    if (megaEntryCount) {
+      const fromLuchun = records.filter((record) => record.source === "鹿群资料").length;
+      megaEntryCount.textContent = `${records.length} 个基础词条 · ${fromLuchun} 个来自鹿群资料`;
+    }
   }
 
   if (footerYear) footerYear.textContent = String(new Date().getFullYear());
