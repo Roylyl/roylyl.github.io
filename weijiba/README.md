@@ -14,6 +14,6 @@
 
 首页与词条页底部使用一个统一的 `WEIJIBA project` 项目标识，图像素材位于 `assets/weijiba-project.png`。
 
-首页与词条页统一使用 `assets/weijiba-logo.png` 作为浏览器标签页图标；所有 `article.html?entry=...` 词条页面沿用同一设置。
+首页与词条页统一使用 `assets/wikipedia-logo-v2.svg.webp` 作为浏览器标签页图标；所有 `article.html?entry=...` 词条页面沿用同一设置。页面顶部的魏鸡百科品牌图仍使用 `assets/weijiba-logo.png`。
 
 首页“更多群史”入口使用独立的 `article.html?entry=history` 群史词条，和“鹿群（微信群）”总览词条分开，便于按时间线继续浏览。
