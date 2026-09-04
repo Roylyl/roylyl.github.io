@@ -310,6 +310,7 @@
         <div class="view-tabs"><a class="active" href="#top">阅读</a><button type="button" data-demo="编辑">编辑</button><button type="button" data-demo="查看历史">查看历史</button><button type="button" data-demo="工具">工具⌄</button></div>
       </div>
     </header>
+    <p class="article-tagline">魏鸡百科，困困的百科全书</p>
     <div class="article-notice" role="note"><span class="notice-icon" aria-hidden="true">i</span><p>此条目根据鹿群资料二次编写，仅记录可观察的群聊表达与互动语境，不用于推断现实人格、身份或立场。</p></div>
     <aside class="infobox" aria-label="${escapeHtml(entry.title)}概要"><div class="infobox-title">${escapeHtml(entry.title)}</div><div class="infobox-subtitle">${escapeHtml(entry.type)}</div><table><tbody>${facts}</tbody></table></aside>
     ${overview}

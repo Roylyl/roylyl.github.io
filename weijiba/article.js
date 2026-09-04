@@ -201,6 +201,11 @@
   document.querySelectorAll("[data-close-drawers]").forEach((element) => element.addEventListener("click", closeDrawers));
   mainMenu?.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeDrawers));
 
+  const closeBanner = document.querySelector("[data-close-banner]");
+  closeBanner?.addEventListener("click", () => {
+    document.querySelector("#site-banner")?.remove();
+  });
+
   hideAppearanceButton?.addEventListener("click", () => {
     if (isNarrowScreen()) {
       closeDrawers();
