@@ -47,7 +47,7 @@
       title: "外观",
       html: `<p>魏鸡百科默认采用接近中文维基百科的白底、灰线和蓝色链接界面。</p>
         <p>完整的文本大小、页面宽度与颜色设置位于词条页右侧，并会保存到浏览器本地。</p>
-        <p><a href="article.html">打开詹绍源（困困）词条并设置外观</a></p>
+        <p><a href="article.html">打开困困词条并设置外观</a></p>
         <button class="modal-button" type="button" data-toggle-contrast>切换首页高对比模式</button>`
     },
     edit: {
@@ -70,9 +70,9 @@
   const randomEntries = [
     {
       tag: "群内人物 · 语境观察",
-      title: "詹绍源（困困）",
+      title: "困困",
       href: "article.html?entry=kunkun",
-      summary: "“困困”是鹿群语境中的高频称呼与群内角色名。他常以短句、追问和直接判断参与讨论，在工程学习、AI 工具、校园事务与群友玩笑之间快速切换。",
+      summary: "“困困”是鹿群语境中对詹绍源的高频称呼与群内角色名。他常以短句、追问和直接判断参与讨论，在工程学习、AI 工具、校园事务与群友玩笑之间快速切换。",
       quote: "“稳了”——一个在群聊里被反复识别的收束式回应。"
     },
     {

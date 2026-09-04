@@ -92,7 +92,7 @@
       title: "困教练",
       type: "群内人物称号",
       description: "詹绍源在鹿群中的关系化称呼之一，连接篮球、指挥和高认知玩笑。",
-      facts: [["对应人物", "詹绍源（困困）"], ["常见简称", "教练、困教"], ["使用场景", "体育与团队玩笑"], ["性质", "非正式称号"]],
+      facts: [["对应词条", "困困（詹绍源）"], ["常见简称", "教练、困教"], ["使用场景", "体育与团队玩笑"], ["性质", "非正式称号"]],
       overview: ["困教练是“困困”称呼系统中的一条体育支线。资料中也可见“教练”“詹教练”和“困教”等变体。", "这一称号会把普通建议、团队安排或篮球话题包装成“教练发话”，由群友共同维护其喜剧效果。"],
       sections: [
         { id: "name", title: "称号结构", paragraphs: ["“困”来自困困，“教练”来自体育与指导语境。二者组合后既能指向具体人物，也能提示接下来是一段角色化表达。"] },
@@ -631,7 +631,7 @@
     return `<a href="${href}">${escapeHtml(category)}</a>`;
   }).join("");
   const related = entry.related.map((relatedSlug) => {
-    const relatedEntry = relatedSlug === "kunkun" ? { title: "詹绍源（困困）" } : entries[relatedSlug];
+    const relatedEntry = relatedSlug === "kunkun" ? { title: "困困" } : entries[relatedSlug];
     return relatedEntry ? `<a href="${entryLink(relatedSlug)}">${escapeHtml(relatedEntry.title)}</a>` : "";
   }).filter(Boolean).join("、");
 
