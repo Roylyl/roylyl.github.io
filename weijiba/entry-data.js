@@ -821,7 +821,7 @@
       scene: "它常出现在学习、机器人、数据处理和 AI 工具的交界处，既可以承载一段严肃程序，也可以成为群友发出“我这里为什么又报错”的起点。",
       action: "讨论一般从一段能运行的最小代码开始，再经过环境、依赖和输入检查，最后等待“稳了”是否经得住第二次执行",
       metaphor: "一条会把问号煮成脚本、把脚本端上课程表的细长面条",
-      boundary: "具体代码能否运行取决于环境和版本；词条保留伪百科语气，不把群聊示例当作通用教程。"
+      boundary: "具体代码能否运行取决于环境和版本；词条保留戏仿语气，不把群聊示例当作通用教程。"
     },
     "GitHub": {
       label: "把代码、项目和群聊共同记忆放进同一座远程仓库的公共名词",
@@ -955,22 +955,22 @@
       scene: `它可能以一句短问句、一个截图、一个课程节点、一个设备名或一段内部玩笑进入鹿群，然后等待别人决定它究竟属于知识、生活还是笑点。`,
       action: `讨论先把“${record.topic}”放进当前问题，再通过问号、长文、表情和行动结果反复校准`,
       metaphor: metaphor,
-      boundary: "条目保留伪百科式夸张，但不把内部玩笑扩展成现实身份、隐私或未经核实的事实。"
+      boundary: "条目保留戏仿式夸张，但不把内部玩笑扩展成现实身份、隐私或未经核实的事实。"
     };
     const nextRecord = generatedRecordCount ? window.WEIJIBA_GENERATED_ENTRY_RECORDS[record.index % generatedRecordCount] : null;
     const mirrorRecord = generatedRecordCount ? window.WEIJIBA_GENERATED_ENTRY_RECORDS[(record.index + 246) % generatedRecordCount] : null;
     generatedEntries[record.slug] = {
       title: record.title,
-      type: "鹿群伪基百科派生条目",
+      type: "鹿群派生条目",
       description: `围绕“${record.topic}”展开的${record.format.replace("{topic}", "")}式群聊解释，兼具资料痕迹、角色借用和无必要的制度感；在鹿群语境中，它被整理成${topicProfile.label}。`,
       facts: [
         ["自动编号", `WJB-${String(record.index).padStart(4, "0")}`],
         ["母题", record.topic],
-        ["条目体裁", record.format.replace("{topic}", "伪基百科")],
+        ["条目体裁", record.format.replace("{topic}", "魏鸡百科")],
         ["主要出场", `${member}及其上下文`]
       ],
       overview: [
-        `“${record.title}”是魏鸡百科自动扩写的鹿群派生条目。它以聊天记录里反复出现的“${record.topic}”为母题，再套上“${record.format.replace("{topic}", "")}”的伪基百科外壳，故意把一个可以用一句话说清的事情解释成需要目录、注释和相关条目的公共机构。`,
+        `“${record.title}”是魏鸡百科自动扩写的鹿群派生条目。它以聊天记录里反复出现的“${record.topic}”为母题，再套上“${record.format.replace("{topic}", "")}”的魏鸡百科外壳，故意把一个可以用一句话说清的事情解释成需要目录、注释和相关条目的公共机构。`,
         `在原始群聊里，“${record.topic}”可能只是一个短词、一个提问、一个课程名、一件设备或一段群内玩笑；在本条目里，它被${verb}，并与${member}、鹿群、困困和高认知语境发生临时连接。${topicProfile.scene}`,
         `本文不声称“${record.title}”是现实组织或正式概念。它更接近${topicProfile.metaphor || metaphor}：有一定资料依据，拥有过量比喻，最重要的功能是给下一条消息准备一个可以继续跳转的入口。`
       ],
@@ -980,7 +980,7 @@
           title: "词源与最初证据",
           paragraphs: [
             `“${record.topic}”之所以能进入词条，并不是因为它足够宏大，而是因为它在鹿群里有被看见、被回应或被重复使用的痕迹。聊天记录里的短句、长文、截图和表情共同构成了它的最低限度证据。`,
-            `伪基百科在这里采取一种略显可疑的整理方式：先承认原始材料可能只提供一个词，再为这个词安排时间、人物和因果。这样做不是为了伪造事实，而是为了展示群聊如何把碎片加工成共同记忆。`
+            `魏鸡百科在这里采取一种略显可疑的整理方式：先承认原始材料可能只提供一个词，再为这个词安排时间、人物和因果。这样做不是为了伪造事实，而是为了展示群聊如何把碎片加工成共同记忆。`
           ]
         },
         {
@@ -1004,7 +1004,7 @@
           title: "比喻系统",
           paragraphs: [
             `“${record.title}”最适合使用的比喻是${topicProfile.metaphor || metaphor}。这个比喻没有科学依据，却能准确说明它的群聊功能：它不是一件孤立物品，而是一个会吸收问号、长文、角色和行动结果的接口。`,
-            `如果要继续扩写，可以把它接入鹿群群聊回路：从“${record.topic}”出发，途经短句连发、全员广播、人物和高认知宇宙，再在一个看似无关的“吃什么”问题里重新落地。伪基百科认为，这种绕路不是偏题，而是本群的正常交通。`
+            `如果要继续扩写，可以把它接入鹿群群聊回路：从“${record.topic}”出发，途经短句连发、全员广播、人物和高认知宇宙，再在一个看似无关的“吃什么”问题里重新落地。魏鸡百科认为，这种绕路不是偏题，而是本群的正常交通。`
           ]
         },
         {
@@ -1012,12 +1012,12 @@
           title: "常见误读与反例",
           paragraphs: [
             `最常见的误读，是把“${record.title}”看成现实中的正式术语、组织或人物评级。实际上，它只是一个以“${record.topic}”为核心的群内再创作页面；标题越像制度，越需要读者回到鹿群上下文。`,
-            `${topicProfile.boundary || "页面不把内部玩笑扩展成现实结论。"}第二种误读，是以为条目越长，结论就越可靠。伪基百科承认自己的长文有时只是把一个笑点搬进了五个章节，但也正因为如此，读者可以看见一个短词如何被不同成员、不同时间和不同语气反复改写。`
+            `${topicProfile.boundary || "页面不把内部玩笑扩展成现实结论。"}第二种误读，是以为条目越长，结论就越可靠。魏鸡百科承认自己的长文有时只是把一个笑点搬进了五个章节，但也正因为如此，读者可以看见一个短词如何被不同成员、不同时间和不同语气反复改写。`
           ]
         },
         {
           id: "conclusion",
-          title: "伪基百科结论",
+          title: "条目结论",
           paragraphs: [
             `综上，“${record.title}”目前处于“资料足以成梗、证据不足以成学科”的稳定状态。它可以继续被引用、质疑、重命名或升级成下一篇条目，暂不建议为其修建纪念馆。`,
             `若读者仍然不知道它是什么意思，可以先查看${member}、困困、鹿群、何意味和问号瀑布，再根据需要点击相关条目${nextRecord ? `“${nextRecord.title}”` : "继续随机浏览"}。如果所有页面都看完了，欢迎回到首页重新决定吃什么。`
@@ -1026,9 +1026,9 @@
       ],
       references: [
         `鹿群聊天导出中与“${record.topic}”相关的短句、长文、表情或@提醒记录。`,
-        `魏鸡百科的鹿群语境整理、伪基百科式二次编写与链接索引。`
+        `魏鸡百科的鹿群语境整理、条目式二次编写与链接索引。`
       ],
-      categories: ["鹿群伪基百科", "内部玩笑", "群聊语言"],
+      categories: ["鹿群语境条目", "内部玩笑", "群聊语言"],
       related: [
         "luchun", "kunkun", "chat-cycle", "high-cognition",
         member === "困困" ? "kunkun" : (window.WEIJIBA_ENTRY_PATHS ? Object.entries(window.WEIJIBA_ENTRY_PATHS).find(([, path]) => path === member)?.[0] || "person" : "person"),
@@ -1414,7 +1414,7 @@
     "高认知宇宙": "cognition-universe",
     "设备操作": "silence-open",
     "AI图像语境": "portrait-generator",
-    "鹿群伪基百科": "person"
+    "鹿群语境条目": "person"
   };
 
   window.WEIJIBA_ENTRY_CATALOG = entries;
