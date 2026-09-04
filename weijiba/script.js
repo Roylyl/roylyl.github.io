@@ -5,6 +5,7 @@
   const sidebar = document.querySelector("#sidebar");
   const sidebarBackdrop = document.querySelector("#sidebar-backdrop");
   const openSidebarButton = document.querySelector("[data-open-sidebar]");
+  const focusSearchButton = document.querySelector("[data-focus-search]");
   const closeSidebarButtons = document.querySelectorAll("[data-close-sidebar]");
   const searchForm = document.querySelector("#search-form");
   const searchInput = document.querySelector("#search-input");
@@ -120,6 +121,10 @@
   }
 
   openSidebarButton?.addEventListener("click", () => setSidebar(true));
+  focusSearchButton?.addEventListener("click", () => {
+    setSidebar(true);
+    window.setTimeout(() => searchInput?.focus(), 0);
+  });
   closeSidebarButtons.forEach((button) => button.addEventListener("click", () => setSidebar(false)));
   sidebarBackdrop?.addEventListener("click", () => setSidebar(false));
   sidebar?.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => setSidebar(false)));

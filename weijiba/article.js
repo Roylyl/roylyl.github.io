@@ -13,11 +13,19 @@
   const languageButton = document.querySelector("#article-language-button");
   const languageMenu = document.querySelector("#article-language-menu");
   const searchForm = document.querySelector("#article-search");
+  const searchToggle = document.querySelector(".search-icon");
   const searchInput = document.querySelector("#article-search-input");
   const toast = document.querySelector("#article-toast");
   const tocLinks = [...document.querySelectorAll(".toc a")];
   const sections = [...document.querySelectorAll("#top, .article-section")];
   let toastTimer;
+
+  function setSearchExpanded(expanded) {
+    if (!searchForm) return;
+    searchForm.classList.toggle("is-expanded", expanded);
+    searchToggle?.setAttribute("aria-expanded", String(expanded));
+    if (expanded) searchInput?.focus();
+  }
 
   const defaults = {
     textSize: "standard",
@@ -278,6 +286,10 @@
     button.addEventListener("click", () => showToast(`${button.dataset.demo}为本地演示功能`));
   });
 
+  searchToggle?.addEventListener("click", () => {
+    setSearchExpanded(!searchForm?.classList.contains("is-expanded"));
+  });
+
   searchForm?.addEventListener("submit", (event) => {
     event.preventDefault();
     const query = searchInput?.value.trim().toLocaleLowerCase() || "";
@@ -293,6 +305,7 @@
     match.scrollIntoView({ behavior: "smooth", block: "start" });
     match.classList.add("search-flash");
     window.setTimeout(() => match.classList.remove("search-flash"), 1500);
+    if (isNarrowScreen()) setSearchExpanded(false);
     showToast(`已定位“${searchInput.value.trim()}”`);
   });
 
