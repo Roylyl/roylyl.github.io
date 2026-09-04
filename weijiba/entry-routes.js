@@ -1,6 +1,15 @@
 (() => {
   "use strict";
 
+  const forceScrollTop = () => window.scrollTo(0, 0);
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  forceScrollTop();
+  window.addEventListener("pageshow", forceScrollTop);
+  window.addEventListener("load", () => {
+    forceScrollTop();
+    window.setTimeout(forceScrollTop, 0);
+  }, { once: true });
+
   const entryPaths = Object.freeze({
     kunkun: "困困",
     luchun: "鹿群",
