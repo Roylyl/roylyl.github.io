@@ -47,11 +47,37 @@
     "robot-basics": "机器人基础",
     "seven-robots": "七个机器人",
     "603-vision": "603视界",
+    kuncode: "KunCode",
+    "kuncode-windows": "KunCode Windows版",
+    "kuncode-macos": "KunCode macOS版",
+    "kuncode-code-oss": "Code - OSS",
+    "kuncode-kunkun-ai": "困困 AI",
+    "kuncode-open-vsx": "Open VSX",
+    "kuncode-release": "KunCode V1.0.0",
+    "603-tech-light": "科技之光｜603寝室成员在招新宣讲会后展示创新成果",
+    "603-root-trip": "夏炜城的寻根之旅",
+    "603-air-conditioner-odor": "603空调异味事件",
+    "603-campus-inscription": "被刻进农专缝隙里的三个字",
+    "603-ai-android": "603视界AI安卓端应用程序",
+    "desk-park": "Desk Park乐队",
+    "603-energy-crisis": "603能源危机",
+    "603-yueyang-trip": "岳阳楼，望浙江",
+    "603-europe-cooling": "603欧洲空调困局",
+    "603-nobel-observation": "世界欠603一个诺贝尔奖",
+    "603-lost-cake": "雨夜失糕",
+    "603-found-phone": "拾金不昧扬正气，善行微光暖芷兰",
+    "603-bass-player": "湖南农业大学最强贝斯手黎健毓",
+    "603-icebreaking-performance": "罗宇伦与宁玮琦破冰演出",
+    "zhan-shaoyuan": "詹绍源",
+    "unmanned-aircraft": "无人机",
+    "ecological-question": "生态问题",
+    "recruitment-presentation": "招新宣讲会",
     "cognition-universe": "高认知宇宙",
     "kunkun-who": "困困是谁",
     "silence-open": "静音不开",
     "portrait-generator": "人物群像生成器",
     "six-reaction": "6号反应",
+    "luo-yulun": "罗宇伦",
     "peng-peng": "彭鹏",
     "wei-ziqi": "魏子奇",
     "tang-yinxin": "唐胤鑫",
@@ -150,6 +176,16 @@
     "湖南农业大学语境", "农大校园", "校园熟人群体", "跨学期生活", "熟人关系", "同学关系", "老师通知", "班级事务", "校园项目", "校园设备",
     "吃什么现场", "吃什么投票", "午饭投票", "晚饭投票", "外卖地址", "奶茶订单", "火锅桌", "食堂排队", "热水排队", "查寝时间",
 
+    // 603视界与校园公众号：把公开账号、栏目、文章与校园创作收进基础索引，具体文章仍留在603视界词条的资料边界内。
+    "微信公众号", "微信公众平台", "603视界公众号", "校园公众号", "校园自媒体", "校园媒体", "寝室公众号", "校园创作", "公众号运营", "公众号文章",
+    "推文", "文章选题", "文章标题", "文章排版", "投稿", "编辑", "作者署名", "发布时间", "更新频率", "读者互动",
+    "评论区", "阅读量", "转载", "账号主体", "公开链接", "文章归档", "公众号自述", "第三方资料", "资料核验", "公开检索",
+    "核查报告", "无法确认", "证据等级", "内容定位", "内容风格", "寝室日记", "青年创作共同体", "校园故事", "校园观察", "成长记录",
+    "生活记录", "游记散文", "人物志", "杂笔", "603动态", "603观察", "603游记", "603创客", "603人物志", "603杂笔",
+    "芷兰24栋", "南603", "芷兰24栋南603", "603寝室成员", "603社区", "移动冷气机", "制冷涂料", "半导体制冷", "帕尔贴效应", "立体绿化降温网",
+    "Android应用", "AI角色", "三维寝室地图", "无人机", "生态问题", "技术原理", "招新宣讲会", "创新成果", "公开文章", "校园纪实", "青年写作", "公众号栏目", "公众号简介", "原创内容", "朋友关注",
+    "置顶文章", "公众号头像", "公众号主页", "账号地区", "KunCode", "IDE", "MacOS",
+
     // 群聊事件与可观察的资料对象
     "困困是谁", "静音不开事件", "你魏逐帧学习", "雅可比速问速答", "戴尔问号", "六号反应", "群聊回路", "短句连发现场", "问号瀑布现场", "何意味现场",
     "稳了现场", "nb现场", "强三连现场", "全员广播现场", "打卡现场", "接龙现场", "群聊转场", "话题转弯", "话题回收", "话题分叉",
@@ -160,6 +196,11 @@
     "公开语境", "公开称呼", "公开话题", "现实身份", "阅读边界", "事实边界", "玩笑边界", "资料边界", "隐私边界", "解释范围",
     "条目入口", "条目关联", "条目目录", "条目索引", "词条地图", "词条关系", "词条回路", "词条注释", "词条正文", "词条脚注",
     "鹿群资料", "鹿群样本", "鹿群导出", "鹿群数据", "鹿群关键词", "鹿群时间线", "鹿群成员表", "鹿群消息表", "鹿群话题表", "鹿群阅读法"
+  ]);
+  const publicAccountBaseTopicSet = new Set([
+    "603视界", "微信公众号", "微信公众平台", "603视界公众号", "校园公众号", "校园自媒体", "校园媒体", "寝室公众号", "校园创作", "公众号运营", "公众号文章",
+    "推文", "文章选题", "文章标题", "文章排版", "投稿", "编辑", "作者署名", "发布时间", "更新频率", "读者互动", "评论区", "阅读量", "转载", "账号主体", "公开链接", "文章归档", "公众号自述", "第三方资料", "资料核验", "公开检索", "核查报告", "无法确认", "证据等级", "内容定位", "内容风格", "寝室日记", "青年创作共同体", "校园故事", "校园观察", "成长记录", "生活记录", "游记散文", "人物志", "杂笔", "603动态", "603观察", "603游记", "603创客", "603人物志", "603杂笔", "芷兰24栋", "南603", "芷兰24栋南603", "603寝室成员", "603社区", "移动冷气机", "制冷涂料", "半导体制冷", "帕尔贴效应", "立体绿化降温网", "Android应用", "AI角色", "三维寝室地图", "无人机", "生态问题", "技术原理", "招新宣讲会", "创新成果", "公开文章", "校园纪实", "青年写作", "公众号栏目",
+    "公众号简介", "原创内容", "朋友关注", "置顶文章", "公众号头像", "公众号主页", "账号地区", "KunCode", "IDE", "MacOS"
   ]);
 
   const commonBaseTopicGroups = Object.freeze([
@@ -266,7 +307,9 @@
       title: topic,
       topic,
       index: topicIndex + 1,
-      source: luchunBaseTopicSet.has(topic) ? "鹿群资料" : "常用词"
+      source: publicAccountBaseTopicSet.has(topic)
+        ? "公众号资料"
+        : (luchunBaseTopicSet.has(topic) ? "鹿群资料" : "常用词")
     });
   });
   Object.freeze(entryPaths);
@@ -311,7 +354,8 @@
   window.WEIJIBA_BASE_ENTRY_RECORDS = baseEntryRecords;
   window.WEIJIBA_BASE_ENTRY_STATS = {
     total: baseEntryRecords.length,
-    fromLuchun: baseEntryRecords.filter((record) => record.source === "鹿群资料").length
+    fromLuchun: baseEntryRecords.filter((record) => record.source === "鹿群资料").length,
+    fromPublicAccount: baseEntryRecords.filter((record) => record.source === "公众号资料").length
   };
   window.WEIJIBA_ENTRY_URL = getEntryUrl;
   window.WEIJIBA_ENTRY_FROM_PATH = getEntryFromPath;

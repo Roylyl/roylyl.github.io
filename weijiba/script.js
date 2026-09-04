@@ -127,8 +127,8 @@
       tag: "数字寝室 · 群史空间",
       title: "603视界",
       href: getEntryUrl("603-vision"),
-      summary: "603、604、杜邦线、查寝和接龙共同组成的鹿群数字寝室宇宙。",
-      quote: "门牌是坐标，故事才是空间。"
+      summary: "以芷兰24栋南603为自述坐标的微信公众号，把寝室日记、校园观察、游记、人物志和科技设想写进同一条内容回路。",
+      quote: "账号是入口，栏目才是视界。"
     }
   ];
 
@@ -310,7 +310,8 @@
     megaEntryList.replaceChildren(fragment);
     if (megaEntryCount) {
       const fromLuchun = records.filter((record) => record.source === "鹿群资料").length;
-      megaEntryCount.textContent = `${records.length} 个基础词条 · ${fromLuchun} 个来自鹿群资料`;
+      const fromPublicAccount = records.filter((record) => record.source === "公众号资料").length;
+      megaEntryCount.textContent = `${records.length} 个基础词条 · ${fromLuchun} 个来自鹿群资料 · ${fromPublicAccount} 个来自603视界公开资料`;
     }
   }
 
