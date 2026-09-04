@@ -28,6 +28,8 @@
 
   const entryTerms = [
     ["詹绍源（困困）", "kunkun"],
+    ["群内编年史", "history"],
+    ["群史", "history"],
     ["集体高认知化", "high-cognition"],
     ["对齐一下颗粒度", "particle"],
     ["鹿群科技话题", "tech"],
