@@ -291,7 +291,7 @@
 
   function renderMegaEntryIndex() {
     if (!megaEntryList) return;
-    const records = window.WEIJIBA_GENERATED_ENTRY_RECORDS || [];
+    const records = window.WEIJIBA_BASE_ENTRY_RECORDS || [];
     if (!records.length) {
       megaEntryList.textContent = "词条正在准备中……";
       return;
@@ -302,12 +302,12 @@
       link.href = getEntryUrl(record.slug);
       link.target = "_blank";
       link.rel = "noopener";
-      link.title = `${record.title}：${record.topic} · ${record.format.replace("{topic}", "")}`;
-      link.textContent = `${String(record.index).padStart(4, "0")} · ${record.title}`;
+      link.title = `${record.title}：基础词条，页面内含拓展阅读`;
+      link.textContent = `${String(record.index).padStart(3, "0")} · ${record.title}`;
       fragment.append(link);
     });
     megaEntryList.replaceChildren(fragment);
-    if (megaEntryCount) megaEntryCount.textContent = `${records.length} 条派生词条`;
+    if (megaEntryCount) megaEntryCount.textContent = `${records.length} 个基础词条`;
   }
 
   if (footerYear) footerYear.textContent = String(new Date().getFullYear());

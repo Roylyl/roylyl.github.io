@@ -128,7 +128,9 @@
   function enrichArticleLinks() {
     const article = document.querySelector(".article-main article");
     if (!article || typeof NodeFilter === "undefined") return;
-    const currentSlug = new URLSearchParams(window.location.search).get("entry") || "kunkun";
+    const currentSlug = new URLSearchParams(window.location.search).get("entry")
+      || window.WEIJIBA_ENTRY_FROM_PATH?.(window.location.pathname)
+      || "kunkun";
     const termLookup = new Map(entryTerms.map(([term, slug]) => [term.toLocaleLowerCase(), { term, slug }]));
     const matcher = new RegExp(entryTerms.map(([term]) => escapeRegExp(term)).join("|"), "gi");
     const linkedBySection = new WeakMap();
@@ -136,7 +138,7 @@
       acceptNode(node) {
         const parent = node.parentElement;
         if (!parent || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
-        if (parent.closest("a, button, code, sup, h1, h2, h3, .article-toolbar, .language-menu, .categories, .references, .last-edited")) return NodeFilter.FILTER_REJECT;
+        if (parent.closest("a, button, code, sup, h1, h2, h3, .article-toolbar, .language-menu, .categories, .references, .last-edited, .extension-section")) return NodeFilter.FILTER_REJECT;
         return NodeFilter.FILTER_ACCEPT;
       }
     });

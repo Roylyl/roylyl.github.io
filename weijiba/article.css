@@ -714,6 +714,18 @@ article.search-flash {
   break-inside: avoid;
 }
 
+.extension-list li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 8px;
+  align-items: baseline;
+}
+
+.extension-meta {
+  color: var(--muted);
+  font-size: 0.82em;
+}
+
 .auto-entry-link {
   text-decoration-thickness: from-font;
   text-underline-offset: 0.15em;

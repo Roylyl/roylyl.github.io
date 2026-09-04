@@ -1374,6 +1374,91 @@
     if (entries[entrySlug]) entries[entrySlug].sections.push(...sections);
   });
 
+  const baseEntryRecords = window.WEIJIBA_BASE_ENTRY_RECORDS || [];
+  const extensionRecordsByTopic = new Map();
+  (window.WEIJIBA_GENERATED_ENTRY_RECORDS || []).forEach((record) => {
+    if (!extensionRecordsByTopic.has(record.topic)) extensionRecordsByTopic.set(record.topic, []);
+    extensionRecordsByTopic.get(record.topic).push(record);
+  });
+  const baseEntries = {};
+  baseEntryRecords.forEach((record) => {
+    const extensionRecords = extensionRecordsByTopic.get(record.topic) || [];
+    const extensions = extensionRecords.map(({ slug, title, format }) => ({ slug, title, format }));
+    const profile = generatedTopicProfiles[record.topic] || {
+      label: `在鹿群里被重新命名的“${record.topic}”公共对象`,
+      scene: `它可能以一句短问句、一个截图、一个课程节点、一个设备名或一段内部玩笑进入鹿群，然后等待别人决定它究竟属于知识、生活还是笑点。`,
+      action: `讨论先把“${record.topic}”放进当前问题，再通过问号、长文、表情和行动结果反复校准`,
+      metaphor: `一块会吸收问号、长文和临时决定的鹿群公共黑板`,
+      boundary: "条目保留戏仿式夸张，但不把内部玩笑扩展成现实身份、隐私或未经核实的事实。"
+    };
+    const existingEntry = entries[record.slug];
+    if (existingEntry) {
+      existingEntry.extensions = extensions;
+      existingEntry.categories = Array.from(new Set([...(existingEntry.categories || []), "基础名词"]));
+      existingEntry.related = Array.from(new Set([...(existingEntry.related || []), ...extensions.slice(0, 7).map(({ slug }) => slug)]));
+      return;
+    }
+    const member = generatedMembers[(record.index - 1) % generatedMembers.length];
+    baseEntries[record.slug] = {
+      title: record.title,
+      type: "鹿群基础名词",
+      description: `“${record.topic}”是鹿群常用的基础名词；在这里，它被整理成${profile.label}。`,
+      facts: [
+        ["基础编号", `BASE-${String(record.index).padStart(3, "0")}`],
+        ["基础主题", record.topic],
+        ["群聊角色", profile.label],
+        ["拓展条目", `${extensions.length} 个`]
+      ],
+      overview: [
+        `“${record.topic}”是魏鸡百科基础索引中的常用名词。它可以指向一个人、一件物品、一个地点、一项技术或一个群聊动作，具体含义取决于出现它的时间、对象和前后文。`,
+        `${profile.scene}在基础词条页面里，这些不同用法先被放在同一张语境地图上，再交给读者沿着拓展阅读继续分叉。`,
+        `本页不急着给“${record.topic}”下一个只有标准答案的定义。它更像${profile.metaphor}：先让词语站稳，再让它和鹿群、困困、课程、项目以及“吃什么”建立可以继续跳转的关系。`
+      ],
+      sections: [
+        {
+          id: "definition",
+          title: "基本解释",
+          paragraphs: [
+            `从普通用法看，“${record.topic}”首先是一个可以被直接指认的名词；从鹿群用法看，它还可能成为提问入口、行动对象、群史道具或一句话里最重要的那个未解释部分。`,
+            `同一个词在不同消息里不必保持同一重量。有人把它当作事实，有人把它当作比喻，也有人只用它来测试群聊是否还在线。基础条目的任务是保留这些差异，而不是替它们强行统一。`
+          ]
+        },
+        {
+          id: "context",
+          title: "鹿群语境",
+          paragraphs: [
+            `${profile.scene}`,
+            `${profile.action}。当讨论出现“对齐一下颗粒度”时，通常说明大家需要重新确认是在谈定义、方案、设备、课程还是笑点；当“何意味”出现时，说明这个词已经开始自行长出背景。`
+          ]
+        },
+        {
+          id: "metaphor",
+          title: "群聊比喻",
+          paragraphs: [
+            `在鹿群里，“${record.topic}”经常被比喻成${profile.metaphor}。比喻的价值不在于科学准确，而在于它能把一个普通名词接到问号、长文、角色和行动结果上。`,
+            `如果把群聊看成一条交通线，基础名词是站点，拓展条目是支线列车；有人从研究所出发，有人前往委员会，也有人绕道经过食堂后才想起来自己原本要讨论什么。`
+          ]
+        },
+        {
+          id: "boundary",
+          title: "理解边界",
+          paragraphs: [
+            `${profile.boundary}`,
+            `页面使用的是公开可观察的群聊语境与二次整理，不把词条中的夸张比喻当成现实组织、人物评价、产品承诺或行动记录。若需要准确理解某一次使用，应回到对应时间和原始上下文。`
+          ]
+        }
+      ],
+      references: [
+        `鹿群聊天导出中与“${record.topic}”相关的短句、长文、表情或@提醒记录。`,
+        "魏鸡百科基础词条整理、群聊语境分析与拓展链接索引。"
+      ],
+      categories: ["基础名词", "鹿群语境", "条目索引"],
+      related: ["luchun", "kunkun", ...extensions.slice(0, 5).map(({ slug }) => slug)],
+      extensions
+    };
+  });
+  Object.assign(entries, baseEntries);
+
   const categoryTargets = {
     "群史": "history",
     "新闻动态": "history",
@@ -1414,7 +1499,10 @@
     "高认知宇宙": "cognition-universe",
     "设备操作": "silence-open",
     "AI图像语境": "portrait-generator",
-    "鹿群语境条目": "person"
+    "鹿群语境条目": "person",
+    "基础名词": "luchun",
+    "鹿群语境": "luchun",
+    "条目索引": "luchun"
   };
 
   window.WEIJIBA_ENTRY_CATALOG = entries;
@@ -1431,6 +1519,17 @@
     window.history.replaceState({}, "", canonicalEntryUrl);
   }
   if (slug === "kunkun") {
+    const kunkunArticle = document.querySelector(".article-main article");
+    const kunkunEntry = entries[slug];
+    if (kunkunArticle && kunkunEntry?.extensions?.length && !kunkunArticle.querySelector("#extensions")) {
+      const escapeInline = (value) => String(value).replace(/[&<>'"]/g, (character) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"
+      })[character]);
+      const extensionUrl = (extensionSlug) => window.WEIJIBA_ENTRY_URL?.(extensionSlug)
+        || `article.html?entry=${encodeURIComponent(extensionSlug)}`;
+      const extensionItems = kunkunEntry.extensions.map((extension) => `<li><a href="${extensionUrl(extension.slug)}" target="_blank" rel="noopener">${escapeInline(extension.title)}</a><span class="extension-meta">${escapeInline(extension.format.replace("{topic}", ""))}篇</span></li>`).join("");
+      kunkunArticle.insertAdjacentHTML("beforeend", `<section id="extensions" class="article-section extension-section"><h2><span>拓展阅读</span></h2><p>以下条目以“困困”为基础名词继续展开。首页只保留基础名词，相关的主题变体统一收纳在这里。</p><ul class="see-also-list extension-list">${extensionItems}</ul></section>`);
+    }
     window.WEIJIBA_NORMALIZE_ENTRY_LINKS?.();
     return;
   }
@@ -1472,6 +1571,13 @@
     const relatedEntry = relatedSlug === "kunkun" ? { title: "困困" } : entries[relatedSlug];
     return relatedEntry ? `<a href="${entryLink(relatedSlug)}" target="_blank" rel="noopener">${escapeHtml(relatedEntry.title)}</a>` : "";
   }).filter(Boolean).join("、");
+  const extensionItems = (entry.extensions || []).map((extension) => {
+    const extensionEntry = entries[extension.slug];
+    const title = extensionEntry?.title || extension.title;
+    const format = extension.format.replace("{topic}", "");
+    return `<li><a href="${entryLink(extension.slug)}" target="_blank" rel="noopener">${escapeHtml(title)}</a><span class="extension-meta">${escapeHtml(format)}篇</span></li>`;
+  }).join("");
+  const extensionBlock = extensionItems ? `<section id="extensions" class="article-section extension-section"><h2><span>拓展阅读</span></h2><p>以下条目以“${escapeHtml(entry.title)}”为基础名词继续展开。首页只保留基础名词，相关的主题变体统一收纳在这里。</p><ul class="see-also-list extension-list">${extensionItems}</ul></section>` : "";
 
   article.innerHTML = `
     <header class="article-heading">
@@ -1491,11 +1597,12 @@
     <aside class="infobox" aria-label="${escapeHtml(entry.title)}概要"><div class="infobox-title">${escapeHtml(entry.title)}</div><div class="infobox-subtitle">${escapeHtml(entry.type)}</div><table><tbody>${facts}</tbody></table></aside>
     ${overview}
     ${sections}
+    ${extensionBlock}
     <section id="related" class="article-section"><h2><span>相关条目</span></h2><p>${related}</p></section>
     <section id="references" class="article-section references"><h2><span>资料来源</span><button type="button" data-demo="编辑资料来源">编辑</button></h2><ol>${references}</ol></section>
     <div class="categories"><span>分类：</span>${categories}</div>
     <p class="last-edited" id="history-note">本页面最后修订于 2026 年 9 月 4 日。页面内容仅用于非官方群内文化记录。</p>`;
 
-  toc.innerHTML = `<a class="is-active" href="#top">序言</a>${entry.sections.map((section, index) => `<a href="#${escapeHtml(section.id)}"><span>${index + 1}</span> ${escapeHtml(section.title)}</a>`).join("")}<a href="#related"><span>${entry.sections.length + 1}</span> 相关条目</a><a href="#references"><span>${entry.sections.length + 2}</span> 资料来源</a>`;
+  toc.innerHTML = `<a class="is-active" href="#top">序言</a>${entry.sections.map((section, index) => `<a href="#${escapeHtml(section.id)}"><span>${index + 1}</span> ${escapeHtml(section.title)}</a>`).join("")}${extensionItems ? `<a href="#extensions"><span>${entry.sections.length + 1}</span> 拓展阅读</a>` : ""}<a href="#related"><span>${entry.sections.length + (extensionItems ? 2 : 1)}</span> 相关条目</a><a href="#references"><span>${entry.sections.length + (extensionItems ? 3 : 2)}</span> 资料来源</a>`;
   window.WEIJIBA_NORMALIZE_ENTRY_LINKS?.();
 })();

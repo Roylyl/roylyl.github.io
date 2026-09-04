@@ -94,6 +94,17 @@
       entryPaths[slug] = title;
     });
   });
+  const baseEntryRecords = [];
+  const existingSlugByPath = new Map(Object.entries(entryPaths).map(([slug, path]) => [path, slug]));
+  generatedTopics.forEach((topic, topicIndex) => {
+    const existingSlug = existingSlugByPath.get(topic);
+    const slug = existingSlug || `base-${String(topicIndex + 1).padStart(3, "0")}`;
+    if (!existingSlug) {
+      entryPaths[slug] = topic;
+      existingSlugByPath.set(topic, slug);
+    }
+    baseEntryRecords.push({ slug, title: topic, topic, index: topicIndex + 1 });
+  });
   Object.freeze(entryPaths);
 
   const slugByPath = Object.fromEntries(Object.entries(entryPaths).map(([slug, path]) => [path, slug]));
@@ -133,6 +144,7 @@
 
   window.WEIJIBA_ENTRY_PATHS = entryPaths;
   window.WEIJIBA_GENERATED_ENTRY_RECORDS = generatedEntryRecords;
+  window.WEIJIBA_BASE_ENTRY_RECORDS = baseEntryRecords;
   window.WEIJIBA_ENTRY_URL = getEntryUrl;
   window.WEIJIBA_ENTRY_FROM_PATH = getEntryFromPath;
   window.WEIJIBA_NORMALIZE_ENTRY_LINKS = normalizeEntryLinks;
