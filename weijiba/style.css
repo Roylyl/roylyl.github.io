@@ -724,6 +724,84 @@ blockquote {
   min-height: 300px;
 }
 
+.nonsense-grid {
+  align-items: stretch;
+}
+
+.nonsense-grid > .module {
+  height: 100%;
+}
+
+.nonsense-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 14px;
+}
+
+.nonsense-item {
+  min-width: 0;
+  padding: 10px 0 11px;
+  border-bottom: 1px dotted var(--light-line);
+}
+
+.nonsense-item a {
+  display: block;
+  color: var(--blue-dark);
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+.nonsense-item a:hover {
+  text-decoration: underline;
+}
+
+.nonsense-item p {
+  margin: 4px 0 0 !important;
+  color: var(--muted);
+  font-size: 12px !important;
+  line-height: 1.5;
+}
+
+.people-list .nonsense-item a {
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.mega-index-module {
+  margin-bottom: 18px;
+}
+
+.mega-entry-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0 12px;
+  max-height: 720px;
+  overflow: auto;
+  padding: 2px 4px 2px 0;
+  border-top: 1px solid var(--light-line);
+  border-bottom: 1px solid var(--light-line);
+}
+
+.mega-entry-list a {
+  min-width: 0;
+  padding: 7px 6px;
+  border-bottom: 1px dotted var(--light-line);
+  color: var(--blue-dark);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mega-entry-list a:hover {
+  background: #f5f7fb;
+  text-decoration: none;
+}
+
 .module-intro {
   margin-bottom: 17px !important;
 }
@@ -1459,6 +1537,14 @@ body.high-contrast {
   .article-body,
   .matrix-body {
     min-height: 0;
+  }
+
+  .nonsense-list {
+    grid-template-columns: 1fr;
+  }
+
+  .mega-entry-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .participate-body {

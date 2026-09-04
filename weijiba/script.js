@@ -19,6 +19,8 @@
   const languagePanel = document.querySelector("#language-panel");
   const notice = document.querySelector("#site-notice");
   const footerYear = document.querySelector("#footer-year");
+  const megaEntryList = document.querySelector("#mega-entry-list");
+  const megaEntryCount = document.querySelector("#mega-entry-count");
   const searchableModules = [...document.querySelectorAll("[data-searchable]")];
   let toastTimer;
   let lastFocusedElement;
@@ -99,6 +101,34 @@
       href: getEntryUrl("short-messages"),
       summary: "鹿群常用短句推进讨论：一个人抛出问题，另一个人用“6”“nb”或“稳了”接住，再由上下文补齐真正的意思。阅读这类消息，前后关系比单句字面更重要。",
       quote: "字数很短，关系链很长。"
+    },
+    {
+      tag: "群内自然现象 · 统计可疑",
+      title: "问号瀑布",
+      href: getEntryUrl("question-rain"),
+      summary: "约 464 个纯问号沿着聊天时间线下落，形成鹿群最稳定的低成本围观系统。",
+      quote: "先问一句，讨论就不会断。"
+    },
+    {
+      tag: "语义审查 · 四字接口",
+      title: "何意味",
+      href: getEntryUrl("he-meaning"),
+      summary: "当一条消息太怪、太长或太高认知时，鹿群用“何意味”要求它暂时翻译成人话。",
+      quote: "请把你刚才那套世界观压缩一下。"
+    },
+    {
+      tag: "数字评价 · 现场观测",
+      title: "666量子态",
+      href: getEntryUrl("six-six-six"),
+      summary: "一个会在赞叹、围观、敷衍和震惊之间坍缩的数字，只有放回上下文才能完成测量。",
+      quote: "数字没有变，语境先坍缩了。"
+    },
+    {
+      tag: "数字寝室 · 群史空间",
+      title: "603视界",
+      href: getEntryUrl("603-vision"),
+      summary: "603、604、杜邦线、查寝和接龙共同组成的鹿群数字寝室宇宙。",
+      quote: "门牌是坐标，故事才是空间。"
     }
   ];
 
@@ -259,6 +289,28 @@
     showToast(`随机条目：${entry.title}`);
   }
 
+  function renderMegaEntryIndex() {
+    if (!megaEntryList) return;
+    const records = window.WEIJIBA_GENERATED_ENTRY_RECORDS || [];
+    if (!records.length) {
+      megaEntryList.textContent = "词条正在准备中……";
+      return;
+    }
+    const fragment = document.createDocumentFragment();
+    records.forEach((record) => {
+      const link = document.createElement("a");
+      link.href = getEntryUrl(record.slug);
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.title = `${record.title}：${record.topic} · ${record.format.replace("{topic}", "")}`;
+      link.textContent = `${String(record.index).padStart(4, "0")} · ${record.title}`;
+      fragment.append(link);
+    });
+    megaEntryList.replaceChildren(fragment);
+    if (megaEntryCount) megaEntryCount.textContent = `${records.length} 条派生词条`;
+  }
+
   if (footerYear) footerYear.textContent = String(new Date().getFullYear());
+  renderMegaEntryIndex();
   window.WEIJIBA_NORMALIZE_ENTRY_LINKS?.();
 })();
