@@ -23,6 +23,9 @@
   let toastTimer;
   let lastFocusedElement;
 
+  const getEntryUrl = (slug) => window.WEIJIBA_ENTRY_URL?.(slug)
+    || `article.html?entry=${encodeURIComponent(slug)}`;
+
   const modalViews = {
     source: {
       title: "查看源代码",
@@ -48,7 +51,7 @@
       title: "外观",
       html: `<p>魏鸡百科默认采用接近中文维基百科的白底、灰线和蓝色链接界面。</p>
         <p>完整的文本大小、页面宽度与颜色设置位于词条页右侧，并会保存到浏览器本地。</p>
-        <p><a href="article.html">打开困困词条并设置外观</a></p>
+        <p><a href="${getEntryUrl("kunkun")}" target="_blank" rel="noopener">打开困困词条并设置外观</a></p>
         <button class="modal-button" type="button" data-toggle-contrast>切换首页高对比模式</button>`
     },
     edit: {
@@ -72,28 +75,28 @@
     {
       tag: "群内人物 · 语境观察",
       title: "困困",
-      href: "article.html?entry=kunkun",
+      href: getEntryUrl("kunkun"),
       summary: "“困困”是鹿群语境中对詹绍源的高频称呼与群内角色名。他常以短句、追问和直接判断参与讨论，在工程学习、AI 工具、校园事务与群友玩笑之间快速切换。",
       quote: "“稳了”——一个在群聊里被反复识别的收束式回应。"
     },
     {
       tag: "群内概念 · 玩笑词典",
       title: "共🦌主义",
-      href: "article.html?entry=gonglu",
+      href: getEntryUrl("gonglu"),
       summary: "一个把鹿群共同体意识、认知玩笑和临时口号揉在一起的内部词。它的意义依赖说话人、前后句与当时的群聊气氛，不能直接搬到群外解释。",
       quote: "高认知不是结论，是群里继续接话的邀请。"
     },
     {
       tag: "群内称呼 · 体育支线",
       title: "困教练",
-      href: "article.html?entry=kun-coach",
+      href: getEntryUrl("kun-coach"),
       summary: "困教练是詹绍源在群内的一个关系化称呼，连接了篮球、指挥部和“高认知”玩笑。它更像一枚会随上下文变色的标签，而不是固定职务。",
       quote: "先把队伍叫起来，再讨论战术。"
     },
     {
       tag: "群聊方法 · 高语境",
       title: "短句连发",
-      href: "article.html?entry=short-messages",
+      href: getEntryUrl("short-messages"),
       summary: "鹿群常用短句推进讨论：一个人抛出问题，另一个人用“6”“nb”或“稳了”接住，再由上下文补齐真正的意思。阅读这类消息，前后关系比单句字面更重要。",
       quote: "字数很短，关系链很长。"
     }
@@ -192,6 +195,7 @@
     lastFocusedElement = document.activeElement;
     modalTitle.textContent = view.title;
     modalContent.innerHTML = view.html;
+    window.WEIJIBA_NORMALIZE_ENTRY_LINKS?.(modalContent);
     modal.hidden = false;
     body.classList.add("modal-open");
     modalCloseButton?.focus();
@@ -243,8 +247,12 @@
     const summary = document.querySelector("#featured-summary");
     const quote = document.querySelector("#featured-quote");
     if (title) title.textContent = entry.title;
-    if (title) title.href = entry.href;
-    if (readLink) readLink.href = entry.href;
+    [title, readLink].forEach((link) => {
+      if (!link) return;
+      link.href = entry.href;
+      link.target = "_blank";
+      link.rel = "noopener";
+    });
     if (tag) tag.textContent = entry.tag;
     if (summary) summary.textContent = entry.summary;
     if (quote) quote.textContent = entry.quote;
@@ -252,4 +260,5 @@
   }
 
   if (footerYear) footerYear.textContent = String(new Date().getFullYear());
+  window.WEIJIBA_NORMALIZE_ENTRY_LINKS?.();
 })();

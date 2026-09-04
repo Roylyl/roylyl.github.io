@@ -121,8 +121,11 @@
         if (!target || target.slug === currentSlug || linkedTargets.has(target.slug)) continue;
         fragment.append(document.createTextNode(text.slice(lastIndex, match.index)));
         const link = document.createElement("a");
-        link.href = `article.html?entry=${encodeURIComponent(target.slug)}`;
+        link.href = window.WEIJIBA_ENTRY_URL?.(target.slug)
+          || `article.html?entry=${encodeURIComponent(target.slug)}`;
         link.className = "auto-entry-link";
+        link.target = "_blank";
+        link.rel = "noopener";
         link.title = `查看词条：${target.term}`;
         link.textContent = match[0];
         fragment.append(link);

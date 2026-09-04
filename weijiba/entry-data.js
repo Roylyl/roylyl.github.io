@@ -593,8 +593,19 @@
 
   window.WEIJIBA_ENTRY_SLUGS = ["kunkun", ...Object.keys(entries)];
 
-  const slug = new URLSearchParams(window.location.search).get("entry") || "kunkun";
-  if (slug === "kunkun") return;
+  const querySlug = new URLSearchParams(window.location.search).get("entry");
+  const pathSlug = window.WEIJIBA_ENTRY_FROM_PATH?.(window.location.pathname) || "";
+  const slug = querySlug || pathSlug || "kunkun";
+  const canonicalEntryUrl = window.WEIJIBA_ENTRY_URL?.(slug);
+  const isLegacyEntryUrl = Boolean(querySlug && canonicalEntryUrl);
+  const isRootTemplateUrl = !querySlug && !pathSlug && /\/article\.html$/.test(window.location.pathname);
+  if (canonicalEntryUrl && (isLegacyEntryUrl || isRootTemplateUrl) && window.history?.replaceState) {
+    window.history.replaceState({}, "", canonicalEntryUrl);
+  }
+  if (slug === "kunkun") {
+    window.WEIJIBA_NORMALIZE_ENTRY_LINKS?.();
+    return;
+  }
 
   const entry = entries[slug];
   const article = document.querySelector(".article-main article");
@@ -605,10 +616,8 @@
     "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"
   })[character]);
 
-  const entryLink = (relatedSlug) => {
-    if (relatedSlug === "kunkun") return "article.html?entry=kunkun";
-    return `article.html?entry=${encodeURIComponent(relatedSlug)}`;
-  };
+  const entryLink = (relatedSlug) => window.WEIJIBA_ENTRY_URL?.(relatedSlug)
+    || `article.html?entry=${encodeURIComponent(relatedSlug)}`;
 
   if (!entry) {
     document.title = "未找到词条—魏鸡百科";
@@ -628,11 +637,12 @@
   const categories = entry.categories.map((category) => {
     const target = categoryTargets[category];
     const href = target && target !== slug ? entryLink(target) : "index.html#articles";
-    return `<a href="${href}">${escapeHtml(category)}</a>`;
+    const linkTarget = target && target !== slug ? ' target="_blank" rel="noopener"' : "";
+    return `<a${linkTarget} href="${href}">${escapeHtml(category)}</a>`;
   }).join("");
   const related = entry.related.map((relatedSlug) => {
     const relatedEntry = relatedSlug === "kunkun" ? { title: "困困" } : entries[relatedSlug];
-    return relatedEntry ? `<a href="${entryLink(relatedSlug)}">${escapeHtml(relatedEntry.title)}</a>` : "";
+    return relatedEntry ? `<a href="${entryLink(relatedSlug)}" target="_blank" rel="noopener">${escapeHtml(relatedEntry.title)}</a>` : "";
   }).filter(Boolean).join("、");
 
   article.innerHTML = `
@@ -659,4 +669,5 @@
     <p class="last-edited" id="history-note">本页面最后修订于 2026 年 9 月 4 日。页面内容仅用于非官方群内文化记录。</p>`;
 
   toc.innerHTML = `<a class="is-active" href="#top">序言</a>${entry.sections.map((section, index) => `<a href="#${escapeHtml(section.id)}"><span>${index + 1}</span> ${escapeHtml(section.title)}</a>`).join("")}<a href="#related"><span>${entry.sections.length + 1}</span> 相关条目</a><a href="#references"><span>${entry.sections.length + 2}</span> 资料来源</a>`;
+  window.WEIJIBA_NORMALIZE_ENTRY_LINKS?.();
 })();
