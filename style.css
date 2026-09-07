@@ -2216,7 +2216,7 @@ body {
   --module-glass-background: linear-gradient(145deg, rgba(255, 255, 255, .085), rgba(255, 255, 255, .035) 48%, rgba(255, 255, 255, .022));
   --module-glass-border: rgba(255, 255, 255, .13);
   --module-glass-shadow: 0 24px 70px rgba(0, 0, 0, .26), inset 0 1px 0 rgba(255, 255, 255, .09);
-  --module-glass-blur: blur(28px) saturate(145%);
+  --module-glass-blur: none;
 }
 
 body { line-break: strict; }
@@ -2228,6 +2228,20 @@ body { line-break: strict; }
   backdrop-filter: var(--module-glass-blur);
   -webkit-backdrop-filter: var(--module-glass-blur);
 }
+
+/* Keep the particle field visible through every module, including reveals.
+   Reset the statement's former pointer spotlight to the shared glass highlight. */
+.glass::before {
+  inset: 1px;
+  width: auto;
+  height: auto;
+  border-radius: inherit;
+  z-index: 4;
+  background: linear-gradient(135deg, rgba(255, 255, 255, .13), transparent 24%, transparent 78%, rgba(255, 255, 255, .025));
+  opacity: .42;
+  transition: opacity var(--motion-slow) var(--apple-ease-out);
+}
+.glass:hover::before { opacity: .56; }
 
 .experience-card {
   transition: transform .65s cubic-bezier(.16, 1, .3, 1), border-color .55s ease, box-shadow .65s cubic-bezier(.16, 1, .3, 1);
@@ -2251,7 +2265,7 @@ body { line-break: strict; }
 
 @media (max-width: 700px) {
   .glass {
-    --module-glass-blur: blur(22px) saturate(140%);
+    --module-glass-blur: none;
     backdrop-filter: var(--module-glass-blur);
     -webkit-backdrop-filter: var(--module-glass-blur);
   }
