@@ -394,10 +394,10 @@
 
   const resumeAssets = {
     'zh-CN': 'assets/罗宇伦_简历.pdf',
-    'zh-TW': 'assets/羅宇倫_簡歷.pdf',
+    'zh-TW': 'assets/羅宇倫_履歷.pdf',
     en: 'assets/Roy-Luo-Resume.pdf'
   };
-  const resumeVersion = '20260903-1';
+  const resumeVersion = '20260907-1';
 
   const originalText = new WeakMap();
   const originalAttrs = new WeakMap();
