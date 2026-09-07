@@ -2210,23 +2210,23 @@ body {
   .hero-floating p { font-size: 13px; line-height: 1.55; }
 }
 
-/* Keep every translucent content module on the same calm glass surface as the
-   experience cards, including the two small cards layered over the hero. */
+/* One shared glass surface for every module.  Experience cards are the
+   reference treatment; other modules opt in by using the same .glass class. */
 :root {
   --module-glass-background: linear-gradient(145deg, rgba(255, 255, 255, .085), rgba(255, 255, 255, .035) 48%, rgba(255, 255, 255, .022));
   --module-glass-border: rgba(255, 255, 255, .13);
   --module-glass-shadow: 0 24px 70px rgba(0, 0, 0, .26), inset 0 1px 0 rgba(255, 255, 255, .09);
+  --module-glass-blur: blur(28px) saturate(145%);
 }
 
 body { line-break: strict; }
 
-.glass,
-.hero-floating {
+.glass {
   background: var(--module-glass-background);
   border-color: var(--module-glass-border);
   box-shadow: var(--module-glass-shadow);
-  backdrop-filter: blur(28px) saturate(145%);
-  -webkit-backdrop-filter: blur(28px) saturate(145%);
+  backdrop-filter: var(--module-glass-blur);
+  -webkit-backdrop-filter: var(--module-glass-blur);
 }
 
 .experience-card {
@@ -2250,10 +2250,10 @@ body { line-break: strict; }
 }
 
 @media (max-width: 700px) {
-  .glass,
-  .hero-floating {
-    backdrop-filter: blur(22px) saturate(140%);
-    -webkit-backdrop-filter: blur(22px) saturate(140%);
+  .glass {
+    --module-glass-blur: blur(22px) saturate(140%);
+    backdrop-filter: var(--module-glass-blur);
+    -webkit-backdrop-filter: var(--module-glass-blur);
   }
 }
 
