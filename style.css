@@ -2281,7 +2281,9 @@ body { line-break: strict; }
    translate preserve the transition without competing with the particle RAF. */
 .reveal {
   filter: none;
-  will-change: transform, opacity;
+  /* An opacity hint creates a backdrop root even at opacity: 1, preventing
+     nested glass from blurring the particle canvas outside this element. */
+  will-change: transform;
   transition:
     opacity .95s var(--apple-ease-out),
     transform .95s var(--apple-ease-out);
