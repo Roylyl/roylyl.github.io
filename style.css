@@ -1100,7 +1100,10 @@ body { --pointer-x: 50%; --pointer-y: 50%; }
     padding: 10px 12px;
     gap: 8px;
     border-radius: 28px;
-    grid-template-columns: minmax(0, 1fr) auto auto;
+    /* Four visible items remain on phones: brand, menu, audio and language.
+       Give each control its own fixed track so none of them is pushed beyond
+       the viewport when the language switcher is injected by i18n.js. */
+    grid-template-columns: minmax(0, 1fr) repeat(3, 42px);
   }
   .site-header .header-cta { display: none; }
   .brand { min-width: 0; gap: 10px; }
@@ -2205,4 +2208,88 @@ body {
   .hero-floating { padding: 18px 19px; border-radius: 24px; }
   .hero-floating strong { font-size: 18px; }
   .hero-floating p { font-size: 13px; line-height: 1.55; }
+}
+
+/* Keep every translucent content module on the same calm glass surface as the
+   experience cards, including the two small cards layered over the hero. */
+:root {
+  --module-glass-background: linear-gradient(145deg, rgba(255, 255, 255, .085), rgba(255, 255, 255, .035) 48%, rgba(255, 255, 255, .022));
+  --module-glass-border: rgba(255, 255, 255, .13);
+  --module-glass-shadow: 0 24px 70px rgba(0, 0, 0, .26), inset 0 1px 0 rgba(255, 255, 255, .09);
+}
+
+body { line-break: strict; }
+
+.glass,
+.hero-floating {
+  background: var(--module-glass-background);
+  border-color: var(--module-glass-border);
+  box-shadow: var(--module-glass-shadow);
+  backdrop-filter: blur(28px) saturate(145%);
+  -webkit-backdrop-filter: blur(28px) saturate(145%);
+}
+
+.experience-card {
+  transition: transform .65s cubic-bezier(.16, 1, .3, 1), border-color .55s ease, box-shadow .65s cubic-bezier(.16, 1, .3, 1);
+}
+
+.experience-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, .18);
+  box-shadow: 0 30px 78px rgba(0, 0, 0, .30), inset 0 1px 0 rgba(255, 255, 255, .11);
+}
+
+.experience { scroll-margin-top: 104px; }
+
+/* Promote the fixed WebGL surface to its own compositor layer so scrolling
+   does not repeatedly re-rasterize the particle field. */
+.page-particle-canvas {
+  contain: strict;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+@media (max-width: 700px) {
+  .glass,
+  .hero-floating {
+    backdrop-filter: blur(22px) saturate(140%);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-particle-canvas { transform: none; will-change: auto; }
+}
+
+/* Keep scroll reveals compositor-friendly while the fixed particle canvas is
+   animating.  The previous full-element blur forced a large repaint for each
+   translucent card (and its backdrop-filter) during every reveal.  Fade and
+   translate preserve the transition without competing with the particle RAF. */
+.reveal {
+  filter: none;
+  will-change: transform, opacity;
+  transition:
+    opacity .95s var(--apple-ease-out),
+    transform .95s var(--apple-ease-out);
+}
+.reveal.in { filter: none; }
+
+@media (max-width: 700px) {
+  /* Keep the injected language switcher inside the phone header. */
+  .site-header {
+    display: flex;
+    align-items: center;
+    grid-template-columns: none !important;
+  }
+  .site-header > .brand { flex: 1 1 auto; min-width: 0; }
+  .site-header > .mobile-menu-toggle,
+  .site-header > .music-toggle,
+  .site-header > .lang-switcher {
+    flex: 0 0 42px;
+    width: 42px;
+    min-width: 42px;
+    margin-left: 8px;
+    justify-self: auto;
+  }
+  .site-header > .lang-switcher .lang-toggle { width: 42px; }
 }

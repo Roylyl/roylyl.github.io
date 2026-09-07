@@ -20,7 +20,7 @@
     'Embedded': '嵌入式', 'Hardware': '硬件', 'Project Delivery': '项目交付', 'Audio Awareness': '音频感知',
     'VALUE': '产品价值', 'UI SHOWCASE': '界面展示', 'SCENES': '使用场景', 'OVERVIEW': '项目概览', 'ENGINEERING': '工程实现', 'GALLERY': '项目画面',
     'SHORT TERM': '短期', 'MID TERM': '中期', 'LONG TERM': '长期', 'WORKING PRINCIPLE': '工作原则',
-    'CURRENT EXPERIENCE': '当前经历', 'INTERNSHIP EXPERIENCE': '实习经历', 'HARDWARE & MARKET RESEARCH': '硬件与市场调研', 'MARKET RESEARCH INTERNSHIP': '市场调研实习', 'HARDWARE INTERNSHIP': '硬件部实习', 'FIRST PCB VALIDATED': '首版 PCB 已验证',
+    'CURRENT EXPERIENCE': '当前经历', 'INTERNSHIP EXPERIENCE': '实习经历', 'HARDWARE & MARKET RESEARCH': '硬件与市场调研', 'MARKET RESEARCH INTERNSHIP': '市场调研实习', 'HARDWARE INTERNSHIP': '硬件部实习', 'AI AUDIO ALGORITHM INTERNSHIP': 'AI 音频算法实习', 'FIRST PCB VALIDATED': '首版 PCB 已验证',
     'ENGINEERING STATUS': '工程状态', 'VERIFIED': '已验证', 'IMPLEMENTED': '已实现', 'DEVELOPED': '已开发', 'DESIGNED': '已完成设计',
     'SYSTEM ARCHITECTURE': '系统架构', 'SOURCE': '音源', 'A BOARD': 'A 板',
     'Prototype Status': '原型状态', 'CONCEPT FORM · ENGINEERING PROJECT BELOW': '概念形态 · 工程过程见下文',
@@ -155,10 +155,12 @@
     '以 ESP32 为主，围绕 BLE/A2DP、嵌入式控制与原型功能验证。': '以 ESP32 為主，圍繞 BLE/A2DP、嵌入式控制與原型功能驗證。',
     '硬件与验证': '硬件與驗證', 'PCB 设计、样机组装、硬件调试、功能测试与系统联调。': 'PCB 設計、樣機組裝、硬件調試、功能測試與系統聯調。',
     '产品与调研': '產品與調研', '结合竞品调研、用户场景分析、多端交互与产品验证推进方案。': '結合競品調研、用戶場景分析、多端互動與產品驗證推進方案。',
-    '把工程判断放进真实行业场景。': '把工程判斷放進真實行業場景。', '深圳科创学院': '深圳科創學院', '湖南康通电子股份有限公司': '湖南康通電子股份有限公司',
-    '职能部门实习 · 市场调研': '職能部門實習 · 市場調研', '硬件部实习': '硬件部實習', '音视频行业 · 硬件实践': '音視頻行業 · 硬件實踐',
-    '2026.01 — 2026.02': '2026.01 — 2026.02', '2026.08 — 至今': '2026.08 — 至今',
+    '把工程判断放进真实行业场景。': '把工程判斷放進真實行業場景。', '雷鸟创新': '雷鳥創新', '深圳科创学院': '深圳科創學院', '湖南康通电子股份有限公司': '湖南康通電子股份有限公司',
+    'AI AUDIO ALGORITHM INTERNSHIP': 'AI 音頻算法實習', 'AI 音频算法实习生': 'AI 音頻算法實習生', '职能部门实习 · 市场调研': '職能部門實習 · 市場調研', '硬件部实习': '硬件部實習', '音视频行业 · 硬件实践': '音視頻行業 · 硬件實踐',
+    '2026.09 — 至今': '2026.09 — 至今', '2026.01 — 2026.02': '2026.01 — 2026.02', '2026.08 — 2026.09': '2026.08 — 2026.09',
+    '参与智能眼镜音频方向的算法与技术方案研究，围绕 AI 音频、语音处理及智能穿戴音频场景开展资料调研、技术分析与方案整理；结合实际产品需求，对相关音频算法、开源方案及实现路径进行研究，为后续技术验证与产品方案评估提供支持。': '參與智能眼鏡音頻方向的算法及技術方案研究，圍繞 AI 音頻、語音處理及智能穿戴音頻場景開展資料調研、技術分析及方案整理；結合實際產品需求，研究相關音頻算法、開源方案及實現路徑，為後續技術驗證及產品方案評估提供支持。',
     '调研消费电子产品、技术方案、竞品及应用场景，梳理主要参数、核心功能、用户需求与产品定位；归纳多来源市场信息，形成结构化调研记录与阶段性结论。': '調研消費電子產品、技術方案、競品及應用場景，梳理主要參數、核心功能、用戶需求與產品定位；歸納多來源市場資訊，形成結構化調研記錄與階段性結論。',
+    '参与消费级新产品前期定义，结合竞品、市场与用户需求开展功能及技术方案调研；对音视频及智能硬件进行拆解、逆向与方案分析，梳理关键器件、功能模块及技术路径；协助测试团队开展算法与产品功能测试，完成数据记录、异常场景复现及问题跟踪。': '參與消費級新產品前期定義，結合競品、市場及使用者需要開展功能及技術方案調研；對音視頻及智能硬件進行拆解、逆向及方案分析，梳理關鍵器件、功能模組及技術路徑；協助測試團隊開展算法及產品功能測試，完成數據記錄、異常情境復現及問題跟進。',
     '同步开展竞品、市场与用户需求分析，参与某新型消费级产品定义；对音视频及智能硬件进行硬件逆向与分析，拆解关键器件、功能模块及技术路径；协助测试部开展算法测试，记录数据、复现异常并跟进问题闭环。': '同步開展競品、市場與用戶需求分析，參與某新型消費級產品定義；對音視頻及智能硬件進行硬件逆向與分析，拆解關鍵器件、功能模組及技術路徑；協助測試部開展演算法測試，記錄數據、復現異常並跟進問題閉環。',
     '围绕音视频产品与智能硬件开展技术和市场调研，把应用场景、硬件参数、技术方案与产品定位放进同一套分析框架。': '圍繞音視頻產品與智能硬件開展技術和市場調研，把應用場景、硬件參數、技術方案與產品定位放進同一套分析框架。',
     '梳理竞品功能、硬件参数与应用场景，形成结构化对比和阶段性结论。': '梳理競品功能、硬件參數與應用場景，形成結構化對比和階段性結論。',
@@ -328,10 +330,12 @@
     '以 ESP32 为主，围绕 BLE/A2DP、嵌入式控制与原型功能验证。': 'ESP32-based development covering BLE/A2DP, embedded control, and prototype validation.',
     '硬件与验证': 'Hardware & validation', 'PCB 设计、样机组装、硬件调试、功能测试与系统联调。': 'PCB design, prototype assembly, hardware debugging, functional testing, and system integration.',
     '产品与调研': 'Product & research', '结合竞品调研、用户场景分析、多端交互与产品验证推进方案。': 'Advance product decisions through competitor research, user-scenario analysis, multi-platform interaction, and product validation.',
-    '把工程判断放进真实行业场景。': 'Applying engineering judgment in a real industry context.', '深圳科创学院': 'Shenzhen Innox Academy', '湖南康通电子股份有限公司': 'Hunan Comtom Electronic Co., Ltd.',
-    '职能部门实习 · 市场调研': 'Corporate Functions Intern · Market Research', '硬件部实习': 'Hardware Department Intern', '音视频行业 · 硬件实践': 'Audiovisual Industry · Hardware Practice',
-    '2026.01 — 2026.02': 'Jan 2026 — Feb 2026', '2026.08 — 至今': 'Aug 2026 — Present',
+    '把工程判断放进真实行业场景。': 'Applying engineering judgment in a real industry context.', '雷鸟创新': 'RayNeo', '深圳科创学院': 'Shenzhen Innox Academy', '湖南康通电子股份有限公司': 'Hunan Comtom Electronic Co., Ltd.',
+    'AI AUDIO ALGORITHM INTERNSHIP': 'AI AUDIO ALGORITHM INTERNSHIP', 'AI 音频算法实习生': 'AI Audio Algorithm Intern', '职能部门实习 · 市场调研': 'Corporate Functions Intern · Market Research', '硬件部实习': 'Hardware Department Intern', '音视频行业 · 硬件实践': 'Audiovisual Industry · Hardware Practice',
+    '2026.09 — 至今': 'Sep 2026 — Present', '2026.01 — 2026.02': 'Jan 2026 — Feb 2026', '2026.08 — 2026.09': 'Aug 2026 — Sep 2026',
+    '参与智能眼镜音频方向的算法与技术方案研究，围绕 AI 音频、语音处理及智能穿戴音频场景开展资料调研、技术分析与方案整理；结合实际产品需求，对相关音频算法、开源方案及实现路径进行研究，为后续技术验证与产品方案评估提供支持。': 'Participate in algorithm and technical-solution research for smart-glasses audio, focusing on AI audio, speech processing and wearable-audio scenarios. Conduct technical research on relevant audio algorithms, open-source solutions and implementation approaches based on product requirements, supporting subsequent technical validation and product-solution evaluation.',
     '调研消费电子产品、技术方案、竞品及应用场景，梳理主要参数、核心功能、用户需求与产品定位；归纳多来源市场信息，形成结构化调研记录与阶段性结论。': 'Researched consumer electronics, technical solutions, competitors, and use cases; organized key specifications, core functions, user needs, and product positioning; synthesized market information from multiple sources into structured research records and interim findings.',
+    '参与消费级新产品前期定义，结合竞品、市场与用户需求开展功能及技术方案调研；对音视频及智能硬件进行拆解、逆向与方案分析，梳理关键器件、功能模块及技术路径；协助测试团队开展算法与产品功能测试，完成数据记录、异常场景复现及问题跟踪。': 'Supported early-stage definition of a consumer product through competitor, market and user-needs research; analysed and reverse-engineered audio/video and smart-hardware products to identify key components, functional modules and technical approaches; assisted with algorithm and product-function testing, including data recording, issue reproduction and follow-up.',
     '同步开展竞品、市场与用户需求分析，参与某新型消费级产品定义；对音视频及智能硬件进行硬件逆向与分析，拆解关键器件、功能模块及技术路径；协助测试部开展算法测试，记录数据、复现异常并跟进问题闭环。': 'Conducted competitor, market, and user-needs analysis and contributed to defining a new consumer product; reverse-engineered and analyzed audiovisual and smart hardware, breaking down key components, functional modules, and technical approaches; assisted the test team with algorithm testing, recorded data, reproduced anomalies, and followed issues through closure.',
     '围绕音视频产品与智能硬件开展技术和市场调研，把应用场景、硬件参数、技术方案与产品定位放进同一套分析框架。': 'Conduct technical and market research on audio-video products and smart hardware, evaluating use cases, hardware specifications, technical approaches, and product positioning within one framework.',
     '梳理竞品功能、硬件参数与应用场景，形成结构化对比和阶段性结论。': 'Structured competitor features, hardware specifications, and use cases into comparative analyses and interim findings.',
@@ -395,9 +399,9 @@
   const resumeAssets = {
     'zh-CN': 'assets/罗宇伦_简历.pdf',
     'zh-TW': 'assets/羅宇倫_履歷.pdf',
-    en: 'assets/Roy-Luo-Resume.pdf'
+    en: 'assets/Roy Luo_Resume.pdf'
   };
-  const resumeVersion = '20260907-1';
+  const resumeVersion = '20260907-3';
 
   const originalText = new WeakMap();
   const originalAttrs = new WeakMap();

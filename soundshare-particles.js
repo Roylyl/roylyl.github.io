@@ -9,10 +9,9 @@
 
   const gl = canvas.getContext('webgl2', {
     alpha: true,
-    antialias: true,
+    antialias: false,
     depth: false,
     stencil: false,
-    preserveDrawingBuffer: true,
     powerPreference: 'high-performance'
   });
 
@@ -470,7 +469,11 @@
       const bounds = getBounds();
       width = Math.max(1, bounds.width);
       height = Math.max(1, bounds.height);
-      pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      // Touch devices often report DPR 2–3.  A 1.5x drawing buffer keeps the
+      // fixed particle layer smooth during scroll/reveal compositing while
+      // retaining the full desktop resolution on fine-pointer displays.
+      const maxPixelRatio = followsFinePointer ? 2 : 1.5;
+      pixelRatio = Math.min(window.devicePixelRatio || 1, maxPixelRatio);
       canvas.width = Math.max(1, Math.floor(width * pixelRatio));
       canvas.height = Math.max(1, Math.floor(height * pixelRatio));
       gl.viewport(0, 0, canvas.width, canvas.height);
