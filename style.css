@@ -2216,7 +2216,7 @@ body {
   --module-glass-background: linear-gradient(145deg, rgba(255, 255, 255, .085), rgba(255, 255, 255, .035) 48%, rgba(255, 255, 255, .022));
   --module-glass-border: rgba(255, 255, 255, .13);
   --module-glass-shadow: 0 24px 70px rgba(0, 0, 0, .26), inset 0 1px 0 rgba(255, 255, 255, .09);
-  --module-glass-blur: none;
+  --module-glass-blur: blur(4px);
 }
 
 body { line-break: strict; }
@@ -2229,7 +2229,7 @@ body { line-break: strict; }
   -webkit-backdrop-filter: var(--module-glass-blur);
 }
 
-/* Keep the particle field visible through every module, including reveals.
+/* Gently soften the particle field through every module, including reveals.
    Reset the statement's former pointer spotlight to the shared glass highlight. */
 .glass::before {
   inset: 1px;
@@ -2265,7 +2265,7 @@ body { line-break: strict; }
 
 @media (max-width: 700px) {
   .glass {
-    --module-glass-blur: none;
+    --module-glass-blur: blur(4px);
     backdrop-filter: var(--module-glass-blur);
     -webkit-backdrop-filter: var(--module-glass-blur);
   }

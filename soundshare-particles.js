@@ -21,7 +21,8 @@
   }
 
   const STATE_SIZE = 256;
-  const HERO_DENSITY = 230;
+  // Give the full-page background more breathing room around readable content.
+  const HERO_DENSITY = viewportMode ? 190 : 230;
   const HERO_PARTICLE_SCALE = 0.95;
   const RING_WIDTH = 0.006;
   const RING_WIDTH_2 = 0.107;
