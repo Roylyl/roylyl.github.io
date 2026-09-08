@@ -480,7 +480,7 @@
       gl.viewport(0, 0, canvas.width, canvas.height);
     };
 
-    const updateRing = (time) => {
+    const updateRing = (time, delta) => {
       const bounds = getBounds();
       const inside = followsFinePointer && (
         pointerX >= bounds.left &&
@@ -499,11 +499,14 @@
         // The particles are rendered directly in clip space, so the pointer must
         // stay in the same -1..1 coordinate system. The previous camera-style
         // conversion compressed the target into a small area around the centre.
-        targetX = Math.max(-0.96, Math.min(0.96, normalizedX + noiseX * 0.018));
-        targetY = Math.max(-0.92, Math.min(0.92, normalizedY + noiseY * 0.018));
+        // Consume the latest pointer on this frame without a second easing
+        // stage. Particle deformation supplies the visual softness itself.
+        ringX = Math.max(-1, Math.min(1, normalizedX));
+        ringY = Math.max(-1, Math.min(1, normalizedY));
+        return;
       }
 
-      const easing = inside ? 0.085 : 0.012;
+      const easing = 1 - Math.exp(-delta / 1.38);
       ringX += (targetX - ringX) * easing;
       ringY += (targetY - ringY) * easing;
     };
@@ -515,10 +518,13 @@
       const time = now * 0.001;
       const delta = lastFrame ? Math.min((now - lastFrame) * 0.001, 0.05) : 0.016;
       lastFrame = now;
-      updateRing(time);
+      updateRing(time, delta);
 
       const writeIndex = 1 - readIndex;
       gl.bindFramebuffer(gl.FRAMEBUFFER, stateFramebuffers[writeIndex]);
+      // State textures contain simulation data, not translucent colors.
+      // The visible particle pass enables blending later in this frame.
+      gl.disable(gl.BLEND);
       gl.viewport(0, 0, STATE_SIZE, STATE_SIZE);
       gl.useProgram(simulationProgram);
       gl.bindVertexArray(simulationVao);
@@ -576,8 +582,10 @@
 
     if (followsFinePointer) {
       window.addEventListener('pointermove', (event) => {
-        pointerX = event.clientX;
-        pointerY = event.clientY;
+        const samples = event.getCoalescedEvents?.();
+        const latest = samples?.length ? samples[samples.length - 1] : event;
+        pointerX = latest.clientX;
+        pointerY = latest.clientY;
       }, { passive: true });
     }
     window.addEventListener('resize', resize, { passive: true });
