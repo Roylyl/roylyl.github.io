@@ -22,8 +22,9 @@
 
   const STATE_SIZE = 256;
   // Give the full-page background more breathing room around readable content.
-  const HERO_DENSITY = viewportMode ? 190 : 230;
-  const HERO_PARTICLE_SCALE = 0.95;
+  const HERO_DENSITY = viewportMode ? 170 : 210;
+  // One CSS-pixel size curve for every viewport and input device.
+  const HERO_PARTICLE_SCALE = 0.48;
   const RING_WIDTH = 0.006;
   const RING_WIDTH_2 = 0.107;
   const RING_DISPLACEMENT = 0.62;
@@ -231,6 +232,7 @@
     uniform sampler2D uPosition;
     uniform float uParticleScale;
     uniform float uPixelRatio;
+    uniform float uDensityRatio;
 
     out float vVelocity;
     out float vScale;
@@ -245,7 +247,11 @@
       vLocalPosition = particle.xy;
 
       gl_Position = vec4(particle.xy, 0.0, 1.0);
-      gl_PointSize = min(6.5, (0.75 + vScale * 7.0) * uPixelRatio * uParticleScale);
+      // Stable thinning keeps small screens from packing in the desktop count.
+      if (aSeed > uDensityRatio) gl_Position = vec4(2.0, 2.0, 0.0, 1.0);
+      // Stay above the hardware's one-pixel point floor at every backing scale.
+      float cssPointSize = clamp((0.75 + vScale * 7.0) * uParticleScale, 1.0, 3.5);
+      gl_PointSize = cssPointSize * uPixelRatio;
     }
   `;
 
@@ -419,7 +425,7 @@
       'uRingWidth', 'uRingWidth2', 'uRingDisplacement', 'uTime'
     ]);
     const particleUniforms = uniformMap(particleProgram, [
-      'uPosition', 'uParticleScale', 'uPixelRatio', 'uTime', 'uRingPosition', 'uColor1', 'uColor2', 'uColor3', 'uAlpha'
+      'uPosition', 'uParticleScale', 'uPixelRatio', 'uDensityRatio', 'uTime', 'uRingPosition', 'uColor1', 'uColor2', 'uColor3', 'uAlpha'
     ]);
 
     gl.bindVertexArray(particleVao);
@@ -443,6 +449,7 @@
     let width = 1;
     let height = 1;
     let pixelRatio = 1;
+    let displayPixelRatio = 0;
     let readIndex = 0;
     let pointerX = window.innerWidth * 0.5;
     let pointerY = window.innerHeight * 0.35;
@@ -474,7 +481,8 @@
       // fixed particle layer smooth during scroll/reveal compositing while
       // retaining the full desktop resolution on fine-pointer displays.
       const maxPixelRatio = followsFinePointer ? 2 : 1.5;
-      pixelRatio = Math.min(window.devicePixelRatio || 1, maxPixelRatio);
+      displayPixelRatio = window.devicePixelRatio || 1;
+      pixelRatio = Math.min(displayPixelRatio, maxPixelRatio);
       canvas.width = Math.max(1, Math.floor(width * pixelRatio));
       canvas.height = Math.max(1, Math.floor(height * pixelRatio));
       gl.viewport(0, 0, canvas.width, canvas.height);
@@ -499,10 +507,9 @@
         // The particles are rendered directly in clip space, so the pointer must
         // stay in the same -1..1 coordinate system. The previous camera-style
         // conversion compressed the target into a small area around the centre.
-        // Consume the latest pointer on this frame without a second easing
-        // stage. Particle deformation supplies the visual softness itself.
-        ringX = Math.max(-1, Math.min(1, normalizedX));
-        ringY = Math.max(-1, Math.min(1, normalizedY));
+        // Restore the original pointer-follow smoothing: 8.5% per frame.
+        ringX += (Math.max(-1, Math.min(1, normalizedX)) - ringX) * 0.085;
+        ringY += (Math.max(-1, Math.min(1, normalizedY)) - ringY) * 0.085;
         return;
       }
 
@@ -514,6 +521,9 @@
     const draw = (now) => {
       rafId = window.requestAnimationFrame(draw);
       if (!visible || document.hidden) return;
+      // Moving between monitors or changing desktop zoom may change DPR
+      // without a surface ResizeObserver notification.
+      if (displayPixelRatio !== (window.devicePixelRatio || 1)) resize();
 
       const time = now * 0.001;
       const delta = lastFrame ? Math.min((now - lastFrame) * 0.001, 0.05) : 0.016;
@@ -558,16 +568,9 @@
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D, stateTextures[readIndex]);
       gl.uniform1i(particleUniforms.uPosition, 0);
-      const desktopParticleScale = width / pixelRatio / 2000 * HERO_PARTICLE_SCALE;
-      const touchParticleScale = Math.max(
-        0.38,
-        Math.min(0.46, width / pixelRatio / 1100 * HERO_PARTICLE_SCALE)
-      );
-      gl.uniform1f(
-        particleUniforms.uParticleScale,
-        followsFinePointer ? desktopParticleScale : touchParticleScale
-      );
+      gl.uniform1f(particleUniforms.uParticleScale, HERO_PARTICLE_SCALE);
       gl.uniform1f(particleUniforms.uPixelRatio, pixelRatio);
+      gl.uniform1f(particleUniforms.uDensityRatio, Math.min(1, width * height / (1440 * 900)));
       gl.uniform1f(particleUniforms.uTime, time);
       gl.uniform2f(particleUniforms.uRingPosition, ringX, ringY);
       gl.uniform3f(particleUniforms.uColor1, 0.17, 0.39, 0.93);
