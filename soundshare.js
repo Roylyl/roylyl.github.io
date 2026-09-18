@@ -14,6 +14,7 @@ const observer = new IntersectionObserver((entries) => {
     }
   });
 }, { threshold: 0.12, rootMargin: '0px 0px -5% 0px' });
+document.documentElement.classList.add('reveal-ready');
 document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
 
 document.querySelectorAll('.feature-cards .reveal, .ui-grid .reveal, .scene-grid .reveal').forEach((el, i) => {

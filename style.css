@@ -55,7 +55,7 @@ img { display: block; max-width: 100%; }
   display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: center;
   border-radius: 999px; background: rgba(6,9,14,.72); border: 1px solid rgba(255,255,255,.08); backdrop-filter: blur(18px);
 }
-.brand { display: inline-flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: -.02em; }
+.brand { display: inline-flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: -.02em; white-space: nowrap; }
 .brand-mark { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; overflow: hidden; background: linear-gradient(135deg, rgba(105,201,255,.24), rgba(142,240,200,.16)); border: 1px solid rgba(255,255,255,.14); box-shadow: 0 4px 14px rgba(0,0,0,.22); }
 .brand-mark img { width: 100%; height: 100%; object-fit: cover; }
 .nav { display: inline-flex; justify-self: center; gap: 28px; color: var(--muted); font-size: 14px; }
@@ -239,11 +239,7 @@ section { padding: 92px 0; }
   .footer { flex-direction: column; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *,*::before,*::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
-  .reveal { opacity: 1; transform: none; }
-}
+
 
 /* Social QR cards */
 .social-grid {
@@ -502,17 +498,7 @@ body { --pointer-x: 50%; --pointer-y: 50%; }
   .video-card:hover { transform: none; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .site-header, .hero-copy, .hero-photo, .hero-photo img, .hero-floating,
-  .focus-card, .skill-card, .project-card, .philosophy-card, .music-card,
-  .social-card, .contact-card, .stage-photo, .stage-photo img, .video-card,
-  .qr-frame img, .button::after, .header-cta::after {
-    transition: none !important;
-    transform: none !important;
-    animation: none !important;
-  }
-  .reveal { opacity: 1; filter: none; transform: none; }
-}
+
 
 /* ===== Apple-inspired slow motion + liquid glass v2 ===== */
 :root {
@@ -2080,6 +2066,17 @@ body {
   }
 }
 
+/* Keep the English navigation and brand on one line near the menu breakpoint. */
+@media (min-width: 1161px) and (max-width: 1280px) {
+  .site-header .music-toggle {
+    width: 44px;
+    min-width: 44px;
+    padding: 0;
+    justify-content: center;
+  }
+  .site-header .music-label { display: none; }
+}
+
 /* Current industry experience and evidence-first project status. */
 .experience-list {
   display: grid;
@@ -2169,11 +2166,6 @@ body {
     padding: 54px 0 48px;
   }
 
-  .hero h1 {
-    max-width: 9.5em;
-    font-size: clamp(50px, 5.9vw, 64px);
-  }
-
   .hero-lead { margin-top: 20px; font-size: 16px; line-height: 1.72; }
   .hero-actions { margin-top: 24px; }
 
@@ -2208,6 +2200,50 @@ body {
   .hero-floating { padding: 18px 19px; border-radius: 24px; }
   .hero-floating strong { font-size: 18px; }
   .hero-floating p { font-size: 13px; line-height: 1.55; }
+}
+
+/* Let headline size follow its text column, including the narrower desktop
+   column beside the portrait. Existing spans keep the two clauses together. */
+.hero-copy { min-width: 0; container-type: inline-size; }
+.hero h1 {
+  max-width: none;
+  font-size: clamp(32px, 5.8vw, 72px);
+  line-height: 1.12;
+  text-wrap: balance;
+}
+.hero h1 span { display: block; }
+@supports (font-size: 1cqi) {
+  .hero h1 { font-size: clamp(32px, 11cqi, 72px); }
+}
+
+/* Two project columns need the full card width for their descriptions.
+   Keep images above copy instead of splitting each card into two more columns. */
+@media (min-width: 701px) {
+  .project-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .project-card {
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+  }
+  .project-thumb.dark {
+    height: clamp(250px, 27vw, 320px);
+    min-height: 0;
+    padding: 28px;
+  }
+  .project-thumb.dark img {
+    width: auto;
+    height: auto;
+    max-width: min(100%, 264px);
+    max-height: 100%;
+  }
+  .project-copy { min-width: 0; padding: clamp(24px, 2.5vw, 30px); }
+  .project-copy h3 {
+    font-size: clamp(28px, 3vw, 38px);
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+  .project-copy .button { margin-top: auto; }
+  .project-copy > p:last-of-type { margin-bottom: 24px; }
 }
 
 /* One shared glass surface for every module.  Experience cards are the
@@ -2271,9 +2307,7 @@ body { line-break: strict; }
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .page-particle-canvas { transform: none; will-change: auto; }
-}
+
 
 /* Keep scroll reveals compositor-friendly while the fixed particle canvas is
    animating.  The previous full-element blur forced a large repaint for each

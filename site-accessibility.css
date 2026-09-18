@@ -1,0 +1,43 @@
+/* Shared last layer: keyboard access, progressive enhancement and motion settings. */
+[hidden] { display: none !important; }
+:where(a, button, [tabindex]):focus-visible {
+  outline: 3px solid #69c9ff;
+  outline-offset: 4px;
+}
+:where(main, section, h1)[tabindex="-1"]:focus { outline: none; }
+:where(section[id], main[id]) { scroll-margin-top: 108px; }
+html:not(.reveal-ready) .reveal {
+  opacity: 1 !important;
+  transform: none !important;
+  filter: none !important;
+}
+.site-header.menu-open .nav,
+:is(.ss-nav, .detail-nav, .p-nav).nav-open nav {
+  max-height: calc(100dvh - 115px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal, .site-header, .detail-nav, .ss-nav, .p-nav,
+  .hero-copy, .hero-photo, .hero-photo img, .hero-floating,
+  .project-card, .focus-card, .experience-card, .social-card,
+  .panel, .gallery-card, .app-icon-stage, .feature, .scene,
+  .skill-card, .philosophy-card, .music-card, .contact-card,
+  .stage-photo, .stage-photo img, .video-card, .qr-frame img,
+  .hero-visual img, .gallery-card img, .ui-card, .ui-frame img,
+  .closing-card, .button::after, .header-cta::after {
+    transform: none !important;
+    filter: none !important;
+    will-change: auto !important;
+  }
+  .reveal { opacity: 1 !important; }
+  .page-particle-canvas { transform: none; will-change: auto; }
+}

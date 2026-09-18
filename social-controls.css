@@ -1,0 +1,67 @@
+/* The QR image is an actual button; identifiers remain usable on phones. */
+.social-card .qr-toggle,
+.social-card:first-child .qr-toggle {
+  display: block;
+  margin-top: 0;
+  flex-shrink: 0;
+  cursor: zoom-in;
+  font: inherit;
+  transition: border-color .2s ease;
+}
+.social-card .qr-toggle:hover { border-color: #69c9ff; }
+.social-card .social-meta p {
+  display: block;
+  margin-top: 8px;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+  line-height: 1.5;
+  user-select: text;
+}
+.social-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 14px;
+}
+.social-actions button, .social-actions a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 12px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 14px;
+  color: #eef3fa;
+  background: rgba(255,255,255,.05);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+.social-actions :is(button,a):hover { background: rgba(105,201,255,.15); }
+.social-status {
+  position: fixed;
+  z-index: 220;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  max-width: calc(100% - 32px);
+  padding: 12px 18px;
+  border: 1px solid rgba(255,255,255,.22);
+  border-radius: 16px;
+  background: #14202e;
+  color: white;
+  text-align: center;
+  pointer-events: none;
+}
+.social-status:empty { display: none; }
+.qr-dialog { max-height: calc(100dvh - 32px); overflow-y: auto; }
+body:has(.qr-dialog[open]) { overflow: hidden; }
+@media (max-width:700px) {
+  .social-card { display: flex; flex-direction: column; }
+  .social-card .social-meta { min-height: 66px; }
+  .social-card .social-meta p { font-size: 12px; }
+  .social-actions { margin-top: auto; padding-top: 12px; width: 100%; }
+  .social-actions :is(button,a) { width: 100%; font-size: 12px; }
+}

@@ -5,7 +5,9 @@
   const viewportMode = canvas?.dataset.particleMode === 'viewport';
   const surface = canvas?.closest('[data-particle-surface]') || document.querySelector('.ss-hero');
 
-  if (!canvas || (!surface && !viewportMode) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!canvas || (!surface && !viewportMode)) return;
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   const gl = canvas.getContext('webgl2', {
     alpha: true,
@@ -458,6 +460,36 @@
     let lastFrame = 0;
     let rafId = 0;
     let visible = true;
+    let routeVisible = true;
+    let pageActive = true;
+    let disposed = false;
+    let resizeObserver;
+    let intersectionObserver;
+    const lifecycle = new AbortController();
+
+    const shouldAnimate = () => (
+      !disposed && pageActive && visible && routeVisible && !document.hidden &&
+      !reducedMotion.matches && !document.documentElement.classList.contains('detail-shell-open')
+    );
+
+    const stop = () => {
+      if (rafId) window.cancelAnimationFrame(rafId);
+      rafId = 0;
+      lastFrame = 0;
+    };
+
+    const syncAnimation = () => {
+      if (!shouldAnimate()) {
+        stop();
+        if (!disposed && reducedMotion.matches) {
+          gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+          gl.clearColor(0, 0, 0, 0);
+          gl.clear(gl.COLOR_BUFFER_BIT);
+        }
+        return;
+      }
+      if (!rafId) rafId = window.requestAnimationFrame(draw);
+    };
 
     const getBounds = () => {
       if (viewportMode) {
@@ -519,8 +551,11 @@
     };
 
     const draw = (now) => {
-      rafId = window.requestAnimationFrame(draw);
-      if (!visible || document.hidden) return;
+      rafId = 0;
+      if (!shouldAnimate()) {
+        stop();
+        return;
+      }
       // Moving between monitors or changing desktop zoom may change DPR
       // without a surface ResizeObserver notification.
       if (displayPixelRatio !== (window.devicePixelRatio || 1)) resize();
@@ -581,6 +616,7 @@
 
       gl.bindVertexArray(null);
       gl.bindTexture(gl.TEXTURE_2D, null);
+      rafId = window.requestAnimationFrame(draw);
     };
 
     if (followsFinePointer) {
@@ -589,27 +625,52 @@
         const latest = samples?.length ? samples[samples.length - 1] : event;
         pointerX = latest.clientX;
         pointerY = latest.clientY;
-      }, { passive: true });
+      }, { passive: true, signal: lifecycle.signal });
     }
-    window.addEventListener('resize', resize, { passive: true });
+    window.addEventListener('resize', resize, { passive: true, signal: lifecycle.signal });
 
     if (!viewportMode && 'ResizeObserver' in window) {
-      const resizeObserver = new ResizeObserver(resize);
+      resizeObserver = new ResizeObserver(resize);
       resizeObserver.observe(surface);
     }
 
     if (!viewportMode && 'IntersectionObserver' in window) {
-      const intersectionObserver = new IntersectionObserver((entries) => {
+      intersectionObserver = new IntersectionObserver((entries) => {
         visible = entries.some((entry) => entry.isIntersecting);
+        syncAnimation();
       }, { threshold: 0 });
       intersectionObserver.observe(surface);
     }
 
-    resize();
-    rafId = window.requestAnimationFrame(draw);
+    // The router explicitly reports covered home pages and hidden detail frames.
+    window.addEventListener('site:visibility-change', (event) => {
+      if (typeof event.detail?.visible !== 'boolean') return;
+      routeVisible = event.detail.visible;
+      syncAnimation();
+    }, { signal: lifecycle.signal });
+    window.addEventListener('message', (event) => {
+      if (window.parent === window || event.source !== window.parent || event.origin !== location.origin) return;
+      if (event.data?.type !== 'site:visibility' || typeof event.data.visible !== 'boolean') return;
+      routeVisible = event.data.visible;
+      syncAnimation();
+    }, { signal: lifecycle.signal });
+    document.addEventListener('visibilitychange', syncAnimation, { signal: lifecycle.signal });
+    reducedMotion.addEventListener('change', syncAnimation, { signal: lifecycle.signal });
 
-    window.addEventListener('pagehide', () => {
-      window.cancelAnimationFrame(rafId);
+    // Also follow the shell class, including history restoration before routing events.
+    const shellObserver = new MutationObserver(syncAnimation);
+    shellObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+    window.addEventListener('pagehide', (event) => {
+      pageActive = false;
+      stop();
+      // BFCache keeps this document and its GL resources alive for pageshow.
+      if (event.persisted) return;
+      disposed = true;
+      lifecycle.abort();
+      resizeObserver?.disconnect();
+      intersectionObserver?.disconnect();
+      shellObserver.disconnect();
       gl.deleteTexture(referenceTexture);
       stateTextures.forEach((texture) => gl.deleteTexture(texture));
       stateFramebuffers.forEach((framebuffer) => gl.deleteFramebuffer(framebuffer));
@@ -617,7 +678,17 @@
       gl.deleteProgram(particleProgram);
       gl.deleteBuffer(lookupBuffer);
       gl.deleteBuffer(seedBuffer);
-    }, { once: true });
+      gl.deleteVertexArray(simulationVao);
+      gl.deleteVertexArray(particleVao);
+    }, { signal: lifecycle.signal });
+    window.addEventListener('pageshow', () => {
+      pageActive = true;
+      resize();
+      syncAnimation();
+    }, { signal: lifecycle.signal });
+
+    resize();
+    syncAnimation();
   } catch (error) {
     canvas.classList.add('is-fallback');
     console.warn('SoundShare Antigravity particle preview disabled:', error);

@@ -33,7 +33,7 @@ img { display: block; max-width: 100%; }
 .detail-particle-canvas { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; display: block; pointer-events: none; opacity: .94; }
 .detail-particle-canvas.is-fallback { opacity: 0; }
 .detail-particle-surface > .detail-hero { position: relative; z-index: 2; }
-.detail-hero { min-height: calc(100svh - 70px); display: grid; grid-template-columns: 1fr 1fr; gap: 34px; align-items: center; padding: 72px 0 42px; }
+.detail-hero { min-height: calc(100svh - 70px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 34px; align-items: center; padding: 72px 0 42px; }
 .eyebrow { margin: 0 0 16px; color: var(--muted); font: 700 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .16em; }
 h1, h2 { margin: 0; letter-spacing: -.06em; }
 h1 { font-size: clamp(48px, 6.6vw, 86px); line-height: .96; }
@@ -146,7 +146,7 @@ section { padding: 92px 0; }
 .hero-visual:hover img, .gallery-card:hover img { transform:scale(1.025); }
 .panel, .gallery-card { transition: transform .6s cubic-bezier(.16,1,.3,1), border-color .5s ease, box-shadow .6s ease; }
 .panel:hover, .gallery-card:hover { transform:translateY(-5px); border-color:rgba(255,255,255,.16); box-shadow:0 32px 80px rgba(0,0,0,.34); }
-@media (prefers-reduced-motion: reduce) { .detail-nav,.panel,.gallery-card,.hero-visual img,.gallery-card img { transition:none !important; transform:none !important; } .reveal { opacity:1; filter:none; transform:none; } }
+
 
 /* ===== Apple-inspired slow liquid glass v2 ===== */
 :root { --detail-ease: cubic-bezier(.16,1,.3,1); }
@@ -200,3 +200,20 @@ section { padding: 92px 0; }
 
 /* Scroll progress lives at the bottom to avoid looking like a page-loading bar. */
 .detail-progress { top: auto; bottom: 0; }
+
+/* Size the project title against its own column rather than the viewport.
+   Five Chinese characters fit the first line, leaving the complete noun on
+   the second line; translated English titles retain normal word wrapping. */
+.detail-hero .hero-copy { min-width: 0; container-type: inline-size; }
+.detail-hero h1 {
+  font-size: clamp(36px, 6.2vw, 76px);
+  line-height: 1.12;
+  text-wrap: balance;
+}
+.detail-hero h1:lang(zh) {
+  max-inline-size: 5em;
+  text-wrap: wrap;
+}
+@supports (font-size: 1cqi) {
+  .detail-hero h1 { font-size: clamp(36px, 13.5cqi, 76px); }
+}

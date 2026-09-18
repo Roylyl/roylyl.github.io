@@ -84,6 +84,9 @@
   cursor: pointer;
 }
 .lang-menu button:hover { background: rgba(255,255,255,.07); }
+.lang-toggle:focus-visible,
+.lang-menu button:focus-visible { outline: 2px solid #8ef0c8; outline-offset: 3px; }
+.lang-menu[hidden] { display: none; }
 .lang-menu button.active { color: #fff; background: rgba(105,201,255,.12); }
 .lang-menu button.active::after { content: '✓'; color: #8ef0c8; font-weight: 800; }
 .site-header { grid-template-columns: auto 1fr auto auto auto; }

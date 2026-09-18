@@ -7,7 +7,7 @@
     audio = document.createElement('audio');
     audio.id = 'backgroundMusic';
     audio.src = source;
-    audio.preload = 'metadata';
+    audio.preload = 'none';
     audio.loop = true;
     document.body.appendChild(audio);
   }

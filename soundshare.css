@@ -114,11 +114,7 @@ img { display: block; max-width: 100%; }
   .ss-footer { flex-direction: column; padding-bottom: 74px; }
   .roy-signature { display: none; }
 }
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *,*::before,*::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
-  .reveal { opacity: 1; transform: none; }
-}
+
 
 /* Motion polish */
 .ss-nav { transition: background .4s ease, border-color .4s ease, box-shadow .4s ease, transform .4s cubic-bezier(.16,1,.3,1); }
@@ -131,7 +127,7 @@ img { display: block; max-width: 100%; }
 .ui-frame img { transition:transform 1.1s cubic-bezier(.16,1,.3,1); }
 .ui-card:hover .ui-frame img { transform:scale(1.015); }
 @media (max-width:760px) { .app-icon-stage { transform:rotate(-3deg); } .feature:hover,.ui-card:hover,.scene:hover { transform:none; } }
-@media (prefers-reduced-motion: reduce) { .ss-nav,.app-icon-stage,.feature,.ui-card,.scene,.closing-card,.ui-frame img { transition:none !important; transform:none !important; } .reveal { opacity:1; filter:none; transform:none; } }
+
 
 /* ===== Apple-inspired slow liquid glass v2 ===== */
 :root { --ss-ease: cubic-bezier(.16,1,.3,1); --ss-slow: 1.4s; }

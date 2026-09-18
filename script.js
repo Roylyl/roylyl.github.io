@@ -28,15 +28,18 @@ staggerGroups.forEach((selector) => {
   });
 });
 
-const revealObserver = new IntersectionObserver((entries) => {
+const revealObserver = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
       entry.target.classList.add('in');
       revealObserver.unobserve(entry.target);
     }
   });
-}, { threshold: 0.12, rootMargin: '0px 0px -5% 0px' });
-revealEls.forEach((el) => revealObserver.observe(el));
+}, { threshold: 0.12, rootMargin: '0px 0px -5% 0px' }) : null;
+if (revealObserver) {
+  root.classList.add('reveal-ready');
+  revealEls.forEach((el) => revealObserver.observe(el));
+}
 
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 let ticking = false;
@@ -140,10 +143,13 @@ function getMenuLabel(open) {
 }
 function setMenu(open) {
   if (!header || !mobileMenuToggle || !nav) return;
+  if (header.classList.contains('menu-open') === open) return;
   header.classList.toggle('menu-open', open);
   document.body.classList.toggle('mobile-menu-active', open);
   mobileMenuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
   mobileMenuToggle.setAttribute('aria-label', getMenuLabel(open));
+  document.querySelectorAll('body > main, body > footer').forEach((el) => { el.inert = open; });
+  if (open) nav.querySelector('a')?.focus();
 }
 if (mobileMenuToggle && header && nav) {
   mobileMenuToggle.addEventListener('click', () => {
@@ -154,8 +160,12 @@ if (mobileMenuToggle && header && nav) {
     if (!header.contains(event.target)) setMenu(false);
   });
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') setMenu(false);
+    if (event.key === 'Escape' && header.classList.contains('menu-open')) {
+      setMenu(false);
+      mobileMenuToggle.focus();
+    }
   });
+  window.addEventListener('site:close-menu', () => setMenu(false));
   window.addEventListener('resize', () => {
     if (window.innerWidth > 1160) setMenu(false);
   });
@@ -163,6 +173,43 @@ if (mobileMenuToggle && header && nav) {
     mobileMenuToggle.setAttribute('aria-label', getMenuLabel(header.classList.contains('menu-open')));
   });
 }
+
+// Keep contact actions usable without a second device or a clipboard permission.
+const socialLabels = {
+  'zh-CN': { copy: '复制账号', open: '打开平台 ↗', copied: '账号已复制', failed: '无法自动复制，请长按或选中上方账号复制', zoom: '放大二维码' },
+  'zh-TW': { copy: '複製帳號', open: '開啟平台 ↗', copied: '帳號已複製', failed: '無法自動複製，請長按或選取上方帳號複製', zoom: '放大二維碼' },
+  en: { copy: 'Copy ID', open: 'Open profile ↗', copied: 'Account copied', failed: 'Select or long-press the account above to copy it', zoom: 'Enlarge QR code' }
+};
+const socialStatus = document.querySelector('.social-status');
+let statusTimer;
+function updateSocialLabels() {
+  const labels = socialLabels[document.documentElement.lang] || socialLabels['zh-CN'];
+  document.querySelectorAll('.social-copy').forEach((button) => { button.textContent = labels.copy; });
+  document.querySelectorAll('.social-direct').forEach((link) => { link.textContent = labels.open; });
+  document.querySelectorAll('.qr-toggle').forEach((button) => {
+    const title = button.closest('.social-card').querySelector('h3').textContent;
+    button.setAttribute('aria-label', `${title} · ${labels.zoom}`);
+    button.setAttribute('aria-haspopup', 'dialog');
+  });
+}
+document.querySelectorAll('.social-copy').forEach((button) => button.addEventListener('click', async () => {
+  const labels = socialLabels[document.documentElement.lang] || socialLabels['zh-CN'];
+  let message = labels.copied;
+  try { await navigator.clipboard.writeText(button.dataset.copy); }
+  catch (_) {
+    const range = document.createRange();
+    range.selectNodeContents(button.closest('.social-card').querySelector('.social-meta p'));
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    message = labels.failed;
+  }
+  clearTimeout(statusTimer);
+  socialStatus.textContent = message;
+  statusTimer = setTimeout(() => { socialStatus.textContent = ''; }, 4500);
+}));
+window.addEventListener('site-language-change', updateSocialLabels);
+updateSocialLabels();
 
 // Use one compact modal on phones instead of rendering three full-size QR cards.
 const qrDialog = document.querySelector('.qr-dialog');
@@ -184,7 +231,8 @@ if (qrDialog) {
   });
   qrDialog.querySelector('.qr-dialog-close')?.addEventListener('click', () => qrDialog.close());
   qrDialog.addEventListener('click', (event) => {
-    if (event.target === qrDialog) qrDialog.close();
+    const rect = qrDialog.getBoundingClientRect();
+    if (event.target === qrDialog && (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)) qrDialog.close();
   });
 }
 
@@ -206,8 +254,9 @@ if (socialCarousel) {
     const gap = Number.parseFloat(getComputedStyle(socialTrack).gap) || 0;
     return card.getBoundingClientRect().width + gap;
   };
-  socialPrev?.addEventListener('click', () => socialTrack?.scrollBy({ left: -socialStep(), behavior: 'smooth' }));
-  socialNext?.addEventListener('click', () => socialTrack?.scrollBy({ left: socialStep(), behavior: 'smooth' }));
+  const socialBehavior = () => matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth';
+  socialPrev?.addEventListener('click', () => socialTrack?.scrollBy({ left: -socialStep(), behavior: socialBehavior() }));
+  socialNext?.addEventListener('click', () => socialTrack?.scrollBy({ left: socialStep(), behavior: socialBehavior() }));
   socialTrack?.addEventListener('scroll', updateSocialArrows, { passive: true });
   window.addEventListener('resize', updateSocialArrows);
   updateSocialArrows();

@@ -1,5 +1,7 @@
 (() => {
   const STORAGE_KEY = 'roylyl.site.language';
+  // The shell changes its URL while this document remains the home page.
+  const documentPage = location.pathname.split('/').pop() || 'index.html';
   const normalize = (value) => String(value || '').replace(/\s+/g, ' ').trim();
 
   const cn = {
@@ -221,7 +223,7 @@
     '欢迎交流硬件、音频产品和早期项目实践。': 'I am open to conversations about hardware, audio products, and early-stage projects.',
     '罗宇伦 Roy Luo': 'Roy Luo', '← 罗宇伦 Roy Luo': '← Roy Luo',
     'About': 'About', 'Projects': 'Projects', 'Skills': 'Skills', 'Philosophy': 'Philosophy', 'Music': 'Music', 'Contact': 'Contact',
-    '以工程能力为主线，': 'Engineering first,', '把想法做成样机。': 'turn ideas into working prototypes.',
+    '以工程能力为主线，': 'Engineering first, ', '把想法做成样机。': 'turn ideas into working prototypes.',
     '我是罗宇伦，湖南农业大学卓越工程师学院本科生。当前重点方向是硬件开发、嵌入式系统、样机实现与工程验证。 长期的音乐与音频实践，也让我在延迟、底噪、动态响应和交互体验上保持更敏锐的感知。': 'I am Roy Luo, an undergraduate at the College of Excellent Engineers, Hunan Agricultural University. My current focus is hardware development, embedded systems, prototyping, and engineering validation. Long-term practice in music and audio also gives me a sharper sense of latency, noise floor, dynamic response, and interaction design.',
     '查看项目': 'View projects', '联系我': 'Contact me', '硬件 / 嵌入式': 'Hardware / Embedded', '音乐 QA': 'Music QA', '简体 · 繁體 · English': 'Simplified · Traditional · English',
     '硬件调试、样机搭建、基础 PCB 设计与系统联调。': 'Hardware debugging, prototype assembly, basic PCB design, and system integration.',
@@ -405,20 +407,31 @@
 
   const originalText = new WeakMap();
   const originalAttrs = new WeakMap();
+  let currentLanguage;
+  const isLanguage = (lang) => Object.prototype.hasOwnProperty.call(labels, lang);
 
   function detectLanguage() {
     let saved = '';
     try { saved = localStorage.getItem(STORAGE_KEY) || ''; } catch (_) {}
-    if (saved && labels[saved]) return saved;
+    if (isLanguage(saved)) return saved;
     const candidates = navigator.languages?.length ? navigator.languages : [navigator.language || 'en'];
     for (const raw of candidates) {
-      const lang = String(raw).toLowerCase();
-      if (lang.startsWith('zh')) {
-        if (/(tw|hk|mo|hant)/.test(lang)) return 'zh-TW';
+      const parts = String(raw).toLowerCase().split('-');
+      if (parts[0] === 'en') return 'en';
+      if (parts[0] === 'zh') {
+        if (parts.includes('hans')) return 'zh-CN';
+        if (parts.some((part) => ['tw', 'hk', 'mo', 'hant'].includes(part))) return 'zh-TW';
         return 'zh-CN';
       }
     }
     return 'en';
+  }
+
+  function pageTitle(page = documentPage, lang = currentLanguage || detectLanguage()) {
+    let key = documentPage;
+    try { key = new URL(page, location.href).pathname.split('/').pop() || 'index.html'; } catch (_) {}
+    const titles = pageTitles[key] || pageTitles['index.html'];
+    return titles[lang] || titles['zh-CN'];
   }
 
   function translateValue(original, lang) {
@@ -468,8 +481,9 @@
     });
   }
 
-  function renderLanguage(lang, persist = false) {
-    document.documentElement.lang = lang === 'en' ? 'en' : lang;
+  function renderLanguage(lang) {
+    currentLanguage = lang;
+    document.documentElement.lang = lang;
     collectTextNodes().forEach((node) => {
       const original = originalText.get(node);
       const leading = original.match(/^\s*/)?.[0] || '';
@@ -477,9 +491,7 @@
       node.nodeValue = leading + translateValue(original, lang) + trailing;
     });
     translateAttributes(lang);
-    const page = location.pathname.split('/').pop() || 'index.html';
-    const titleSet = pageTitles[page] || pageTitles['index.html'];
-    document.title = titleSet[lang] || titleSet['zh-CN'];
+    document.title = pageTitle(documentPage, lang);
     updateResumeLinks(lang);
     document.querySelectorAll('[data-lang-current]').forEach((el) => { el.textContent = labels[lang].current; });
     document.querySelectorAll('[data-lang-toggle]').forEach((el) => {
@@ -490,8 +502,22 @@
       el.classList.toggle('active', el.dataset.langOption === lang);
       el.setAttribute('aria-checked', el.dataset.langOption === lang ? 'true' : 'false');
     });
+    window.dispatchEvent(new CustomEvent('site-language-change', { detail: { lang, page: documentPage } }));
+  }
+
+  function sendLanguage(target) {
+    target?.postMessage({ type: 'site:language-change', lang: currentLanguage }, location.origin);
+  }
+
+  function setLanguage(lang, { persist = true, broadcast = true } = {}) {
+    if (!isLanguage(lang)) return false;
+    if (lang !== currentLanguage) renderLanguage(lang);
     if (persist) { try { localStorage.setItem(STORAGE_KEY, lang); } catch (_) {} }
-    window.dispatchEvent(new CustomEvent('site-language-change', { detail: { lang } }));
+    if (broadcast) {
+      if (window.parent !== window) sendLanguage(window.parent);
+      sendLanguage(document.querySelector('.detail-shell-frame')?.contentWindow);
+    }
+    return true;
   }
 
   function createSwitcher() {
@@ -500,15 +526,15 @@
     wrapper.className = 'lang-switcher';
     wrapper.dataset.i18nUi = 'true';
     wrapper.innerHTML = `
-      <button class="lang-toggle" type="button" data-lang-toggle aria-haspopup="menu" aria-expanded="false">
+      <button class="lang-toggle" id="siteLanguageToggle" type="button" data-lang-toggle aria-haspopup="menu" aria-expanded="false" aria-controls="siteLanguageMenu">
         <span class="lang-glyph" aria-hidden="true">文</span>
         <span data-lang-current>简体中文</span>
         <span class="lang-chevron" aria-hidden="true">⌄</span>
       </button>
-      <div class="lang-menu" role="menu" aria-label="Language">
-        <button type="button" role="menuitemradio" data-lang-option="zh-CN">简体中文</button>
-        <button type="button" role="menuitemradio" data-lang-option="zh-TW">繁體中文</button>
-        <button type="button" role="menuitemradio" data-lang-option="en">English</button>
+      <div class="lang-menu" id="siteLanguageMenu" role="menu" aria-labelledby="siteLanguageToggle" hidden>
+        <button type="button" role="menuitemradio" tabindex="-1" data-lang-option="zh-CN">简体中文</button>
+        <button type="button" role="menuitemradio" tabindex="-1" data-lang-option="zh-TW">繁體中文</button>
+        <button type="button" role="menuitemradio" tabindex="-1" data-lang-option="en">English</button>
       </div>`;
 
     const indexHeader = document.querySelector('.site-header');
@@ -522,25 +548,97 @@
 
     const toggle = wrapper.querySelector('[data-lang-toggle]');
     const menu = wrapper.querySelector('.lang-menu');
-    const close = () => { wrapper.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); };
+    const options = [...wrapper.querySelectorAll('[data-lang-option]')];
+    const focusOption = (index) => {
+      const selected = (index + options.length) % options.length;
+      options.forEach((option, i) => { option.tabIndex = i === selected ? 0 : -1; });
+      options[selected].focus({ preventScroll: true });
+    };
+    const close = (restoreFocus = false) => {
+      const wasOpen = wrapper.classList.contains('open');
+      wrapper.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+      menu.hidden = true;
+      options.forEach((option) => { option.tabIndex = -1; });
+      if (wasOpen && restoreFocus) toggle.focus({ preventScroll: true });
+    };
+    const open = (index = options.findIndex((option) => option.dataset.langOption === currentLanguage)) => {
+      window.dispatchEvent(new Event('site:close-menu'));
+      menu.hidden = false;
+      wrapper.classList.add('open');
+      toggle.setAttribute('aria-expanded', 'true');
+      focusOption(index < 0 ? 0 : index);
+    };
     toggle.addEventListener('click', (event) => {
       event.stopPropagation();
-      const open = wrapper.classList.toggle('open');
-      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (wrapper.classList.contains('open')) close(true);
+      else open();
     });
-    wrapper.querySelectorAll('[data-lang-option]').forEach((button) => {
+    toggle.addEventListener('keydown', (event) => {
+      if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+      event.preventDefault();
+      open(event.key === 'ArrowUp' ? options.length - 1 : 0);
+    });
+    menu.addEventListener('keydown', (event) => {
+      const index = options.indexOf(document.activeElement);
+      const destinations = { ArrowDown: index + 1, ArrowUp: index - 1, Home: 0, End: options.length - 1 };
+      if (Object.prototype.hasOwnProperty.call(destinations, event.key)) {
+        event.preventDefault();
+        focusOption(destinations[event.key]);
+      } else if (event.key === 'Tab') {
+        // Let the browser move from the trigger to the next/previous control.
+        close(true);
+      }
+    });
+    options.forEach((button) => {
       button.addEventListener('click', () => {
-        renderLanguage(button.dataset.langOption, true);
-        close();
+        setLanguage(button.dataset.langOption);
+        close(true);
       });
     });
+    wrapper.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && wrapper.classList.contains('open')) {
+        event.preventDefault();
+        event.stopPropagation();
+        close(true);
+      }
+    });
+    document.addEventListener('focusin', (event) => {
+      const target = event.target;
+      if (target instanceof Element && target !== document.body && target !== document.documentElement && !wrapper.contains(target)) close();
+    });
     document.addEventListener('click', (event) => { if (!wrapper.contains(event.target)) close(); });
-    document.addEventListener('keydown', (event) => { if (event.key === 'Escape') close(); });
   }
+
+  window.siteLanguage = {
+    get: () => currentLanguage || detectLanguage(),
+    set: setLanguage,
+    pageTitle
+  };
+
+  window.addEventListener('storage', (event) => {
+    if (event.key === STORAGE_KEY || event.key === null) {
+      setLanguage(isLanguage(event.newValue) ? event.newValue : detectLanguage(), { persist: false });
+    }
+  });
+  window.addEventListener('message', (event) => {
+    if (event.origin !== location.origin) return;
+    const fromParent = window.parent !== window && event.source === window.parent;
+    const fromDetail = event.source === document.querySelector('.detail-shell-frame')?.contentWindow;
+    if (!event.source || (!fromParent && !fromDetail)) return;
+    if (event.data?.type === 'site:language-change') {
+      setLanguage(event.data.lang, { persist: false, broadcast: false });
+    } else if (event.data?.type === 'site:language-request') {
+      sendLanguage(event.source);
+    }
+  });
 
   function init() {
     createSwitcher();
-    renderLanguage(detectLanguage(), false);
+    renderLanguage(currentLanguage || detectLanguage());
+    if (window.parent !== window) {
+      window.parent.postMessage({ type: 'site:language-request' }, location.origin);
+    }
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });

@@ -14,21 +14,14 @@
   <link rel="icon" type="image/png" sizes="180x180" href="assets/favicon-avatar-180.png?v=20260902-1" />
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=20260902-1" />
   <title>罗宇伦 Roy Luo</title>
-  <script>
-    history.scrollRestoration = 'manual';
-    if (performance.getEntriesByType('navigation')[0]?.type === 'reload') {
-      if (/\/(?:index\.html)?$/.test(location.pathname) && location.hash) {
-        history.replaceState(null, '', location.pathname.replace(/index\.html$/, '') || '/');
-      }
-      window.scrollTo(0, 0);
-      window.addEventListener('load', () => window.scrollTo(0, 0), { once: true });
-    }
-  </script>
-  <link rel="stylesheet" href="style.css?v=20260907-9" />
-  <link rel="stylesheet" href="i18n.css?v=20260822-1" />
-  <link rel="stylesheet" href="background-music.css?v=20260824-8" />
-  <link rel="stylesheet" href="continuous-navigation.css?v=20260822-1" />
-  <link rel="stylesheet" href="region-notice.css?v=20260821-1" />
+  <link rel="stylesheet" href="style.css?v=20260918-4" />
+  <link rel="stylesheet" href="i18n.css?v=20260918-4" />
+  <link rel="stylesheet" href="background-music.css?v=20260918-4" />
+  <link rel="stylesheet" href="continuous-navigation.css?v=20260918-4" />
+  <link rel="stylesheet" href="region-notice.css?v=20260918-4" />
+  <link rel="stylesheet" href="social-controls.css?v=20260918-5" />
+  <link rel="stylesheet" href="video-player.css?v=20260918-4" />
+  <link rel="stylesheet" href="site-accessibility.css?v=20260918-4" />
 </head>
 <body>
   <div class="bg-orb orb-1" aria-hidden="true"></div>
@@ -67,7 +60,7 @@
     <a class="header-cta" href="https://github.com/Roylyl" target="_blank" rel="noreferrer">GitHub ↗</a>
   </header>
 
-  <audio id="backgroundMusic" src="assets/你离开了南京，从此没有人和我说话.mp3" preload="metadata" loop muted></audio>
+  <audio id="backgroundMusic" src="assets/你离开了南京，从此没有人和我说话.mp3" preload="none" loop muted></audio>
 
   <main id="top">
     <section class="hero wrap">
@@ -292,10 +285,10 @@
         </div>
         <div class="video-grid">
           <div class="video-card glass">
-            <iframe src="https://www.youtube.com/embed/xj9B_D_6wDI?autoplay=0" title="忧书 Cover 黄贯中" loading="lazy" allow="encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>
+            <a href="https://www.youtube.com/watch?v=xj9B_D_6wDI" target="_blank" rel="noopener noreferrer">忧书 Cover 黄贯中</a>
           </div>
           <div class="video-card glass">
-            <iframe src="https://www.youtube.com/embed/o9ygrOS12eg?autoplay=0" title="《梦幻丽莎发廊》Cover 五条人" loading="lazy" allow="encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>
+            <a href="https://www.youtube.com/watch?v=o9ygrOS12eg" target="_blank" rel="noopener noreferrer">《梦幻丽莎发廊》Cover 五条人</a>
           </div>
         </div>
       </div>
@@ -311,19 +304,23 @@
         <div class="social-grid" id="socialGrid">
         <article class="social-card glass reveal">
           <div class="social-meta"><span>WECHAT</span><h3>微信</h3><p>微信号：Roylyl06</p></div>
-          <div class="qr-frame"><img src="assets/social-wechat-clean.png" width="650" height="650" loading="lazy" decoding="async" alt="微信二维码" /></div>
+          <button class="qr-frame qr-toggle" type="button"><img src="assets/social-wechat-clean.png" width="650" height="650" loading="lazy" decoding="async" alt="微信二维码" /></button>
+          <div class="social-actions" data-i18n-static><button class="social-copy" type="button" data-copy="Roylyl06">复制账号</button></div>
         </article>
         <article class="social-card glass reveal">
           <div class="social-meta"><span>INSTAGRAM</span><h3>Instagram</h3><p>用户 ID：ROYLYL06</p></div>
-          <div class="qr-frame"><img src="assets/social-instagram-clean.png" width="470" height="470" loading="lazy" decoding="async" alt="Instagram 二维码" /></div>
+          <button class="qr-frame qr-toggle" type="button"><img src="assets/social-instagram-clean.png" width="470" height="470" loading="lazy" decoding="async" alt="Instagram 二维码" /></button>
+          <div class="social-actions" data-i18n-static><button class="social-copy" type="button" data-copy="ROYLYL06">复制账号</button><a href="https://www.instagram.com/roylyl06/" target="_blank" rel="noopener noreferrer" class="social-direct">打开平台 ↗</a></div>
         </article>
         <article class="social-card glass reveal">
           <div class="social-meta"><span>DOUYIN</span><h3>抖音</h3><p>@Roylyl · 抖音号：luoyulun</p></div>
-          <div class="qr-frame"><img src="assets/social-douyin-clean.png" width="760" height="760" loading="lazy" decoding="async" alt="抖音二维码" /></div>
+          <button class="qr-frame qr-toggle" type="button"><img src="assets/social-douyin-clean.png" width="760" height="760" loading="lazy" decoding="async" alt="抖音二维码" /></button>
+          <div class="social-actions" data-i18n-static><button class="social-copy" type="button" data-copy="luoyulun">复制账号</button></div>
         </article>
         <article class="social-card glass reveal">
           <div class="social-meta"><span>WHATSAPP</span><h3>WhatsApp</h3><p>+86 152 0021 0938</p></div>
-          <div class="qr-frame"><img src="assets/social-whatsapp-clean.png" width="700" height="700" loading="lazy" decoding="async" alt="WhatsApp 二维码" /></div>
+          <button class="qr-frame qr-toggle" type="button"><img src="assets/social-whatsapp-clean.png" width="700" height="700" loading="lazy" decoding="async" alt="WhatsApp 二维码" /></button>
+          <div class="social-actions" data-i18n-static><button class="social-copy" type="button" data-copy="+86 152 0021 0938">复制账号</button><a href="https://wa.me/8615200210938" target="_blank" rel="noopener noreferrer" class="social-direct">打开平台 ↗</a></div>
         </article>
         </div>
         <button class="social-scroll social-scroll-next" type="button" data-social-next aria-label="下一组二维码">›</button>
@@ -348,10 +345,11 @@
     </section>
   </main>
 
+  <div class="social-status" role="status" aria-live="polite" data-i18n-static></div>
   <dialog class="qr-dialog" aria-label="社交媒体二维码">
     <button class="qr-dialog-close" type="button" aria-label="关闭二维码">×</button>
     <div class="qr-dialog-copy"><span></span><strong></strong></div>
-    <img src="" alt="" />
+    <img alt="" />
   </dialog>
 
   <footer class="footer wrap">
@@ -360,13 +358,13 @@
     <span class="music-copyright">背景音乐仅用于个人非商业展示 · 音乐版权归原权利人所有</span>
   </footer>
 
-  <script src="i18n.js?v=20260907-3"></script>
-  <script src="background-music.js?v=20260822-3"></script>
-  <script src="soundshare-particles.js?v=20260908-3"></script>
-  <script src="continuous-navigation.js?v=20260822-1"></script>
-  <script src="regional-video.js?v=20260822-6"></script>
-  <script src="script.js?v=20260824-3"></script>
-  <script src="region-notice.js?v=20260822-2"></script>
-  <script src="nav-scroll.js?v=20260824-4"></script>
+  <script src="i18n.js?v=20260918-4"></script>
+  <script src="background-music.js?v=20260918-4"></script>
+  <script src="soundshare-particles.js?v=20260918-4"></script>
+  <script src="continuous-navigation.js?v=20260918-5"></script>
+  <script src="regional-video.js?v=20260918-4"></script>
+  <script src="script.js?v=20260918-4"></script>
+  <script src="region-notice.js?v=20260918-4"></script>
+  <script src="nav-scroll.js?v=20260918-4"></script>
 </body>
 </html>
