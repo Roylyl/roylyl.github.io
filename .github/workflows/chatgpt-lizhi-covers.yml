@@ -27,18 +27,9 @@ jobs:
           curl -fL --retry 3 "https://coverartarchive.org/release/f441c560-c866-410a-a53e-432f3e69b809/40455825102.jpg" -o "extras/2021 - Best Selection Songs 2004-2018 Vol.3 - 倒影.jpg"
           curl -fL --retry 3 "https://shop.panda-record.co.jp/resources/upload/products/368.png" -o "extras/2025 - THREE MISSING ONE JAPAN Tour 2024 in Tokyo.png"
 
-          python3 - <<'PY'
-          from pathlib import Path
-          from PIL import Image
-          for p in sorted(Path("extras").iterdir()):
-              try:
-                  with Image.open(p) as im:
-                      print(p.name, im.format, im.size, p.stat().st_size)
-              except Exception as e:
-                  print("BAD", p.name, repr(e))
-          PY
-
+          file extras/*\n
       - name: Upload extras
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: lizhi-missing-covers
