@@ -25,14 +25,10 @@ jobs:
           curl -fL --retry 4 --retry-delay 2 "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/15/65/79/15657986-6399-118e-e460-c3b0f8284536/9555150725323.jpg/3000x3000bb.jpg" -o "covers/2006 - 这个世界会好吗.jpg"
           curl -fL --retry 4 --retry-delay 2 "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/34/9f/e7/349fe7c3-b573-393c-9b05-4d7edc23b9f8/9555150725316.jpg/3000x3000bb.jpg" -o "covers/2009 - 工体东路没有人.jpg"
           curl -fL --retry 4 --retry-delay 2 "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/b8/0e/3d/b80e3d10-de05-28ab-b3d3-2e815de0482f/9787880973792.jpg/3000x3000bb.jpg" -o "covers/2009 - 我爱南京.jpg"
-
           curl -fL --retry 4 --retry-delay 2 "https://coverartarchive.org/release/4970c47f-8920-416b-94e5-485ca1be5396/38943589536.jpg" -o "covers/2010 - 二零零九年十月十六日事件.jpg"
-
           curl -fL --retry 4 --retry-delay 2 "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/ac/18/e5/ac18e537-3cc4-7b13-5d03-95b1fa97ccef/9787798608441.jpg/3000x3000bb.jpg" -o "covers/2010 - 你好，郑州.jpg"
           curl -fL --retry 4 --retry-delay 2 "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/42/e4/ba/42e4baea-a788-4ec9-3d03-f1dfa2674b96/9787883255154.jpg/3000x3000bb.jpg" -o "covers/2011 - F.jpg"
-
           curl -fL --retry 4 --retry-delay 2 "https://coverartarchive.org/release/f7f7a172-a4cb-4342-af4d-eca0b8371c05/38942832241.jpg" -o "covers/2012 - IMAGINE.jpg"
-
           curl -fL --retry 4 --retry-delay 2 "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/3c/b6/73/3cb67316-a838-ded6-3bd9-3bcd1c7712c8/9555150725309.jpg/3000x3000bb.jpg" -o "covers/2013 - 108个关键词.jpg"
           curl -fL --retry 4 --retry-delay 2 "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/6a/52/36/6a5236f5-8f6f-99d1-9646-4c8c401125a9/9787883256281.jpg/3000x3000bb.jpg" -o "covers/2014 - 勾三搭四.jpg"
           curl -fL --retry 4 --retry-delay 2 "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/93/cf/40/93cf4004-3469-dfc1-6586-aac1ff1dc13a/9787883257196.jpg/3000x3000bb.jpg" -o "covers/2014 - 1701.jpg"
@@ -46,26 +42,16 @@ jobs:
           curl -fL --retry 4 --retry-delay 2 "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/49/46/66/494666a7-1429-fe2f-f074-da837a48b70d/9787883306955.jpg/3000x3000bb.jpg" -o "covers/2018 - 爵士乐与不插电新编12首.jpg"
           curl -fL --retry 4 --retry-delay 2 "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/26/2f/e1/262fe181-f1e0-cb6f-9914-2ab0f0944169/9787883306948.jpg/3000x3000bb.jpg" -o "covers/2018 - 李志、电声与管弦乐II.jpg"
 
-          cat > covers/说明.txt <<'EOF'
-李志主要公开发行专辑 / 现场专辑封面整理
+          printf '%s\n' \
+            '李志主要公开发行专辑 / 现场专辑封面整理' \
+            '' \
+            '- Apple Music 可用条目：直接下载其 3000×3000 artwork 资源。' \
+            '- 《二零零九年十月十六日事件》《IMAGINE》：Apple Music 当前未提供对应条目，采用 MusicBrainz / Cover Art Archive 的 original 原图。' \
+            '- 文件名按作品首次发行年份整理；部分 Apple Music 页面显示的是后续数字发行/再版年份，因此未直接照抄其 releaseDate。' \
+            '- 未对图片进行 AI 放大、锐化或二次压缩。' \
+            > "covers/说明.txt"
 
-- Apple Music 可用条目：直接下载其 3000×3000 artwork 资源。
-- 《二零零九年十月十六日事件》《IMAGINE》：Apple Music 当前未提供对应条目，采用 MusicBrainz / Cover Art Archive 的 original 原图。
-- 文件名按作品首次发行年份整理；部分 Apple Music 页面显示的是后续数字发行/再版年份，因此未直接照抄其 releaseDate。
-- 未对图片进行 AI 放大、锐化或二次压缩。
-EOF
-
-          python3 - <<'PY'
-          from pathlib import Path
-          import zipfile
-
-          src = Path("covers")
-          out = Path("李志_专辑封面_高清.zip")
-          with zipfile.ZipFile(out, "w", compression=zipfile.ZIP_STORED) as z:
-              for p in sorted(src.iterdir(), key=lambda x: x.name):
-                  z.write(p, arcname=p.name)
-          print(out, out.stat().st_size)
-          PY
+          python3 -c 'from pathlib import Path; import zipfile; src=Path("covers"); out=Path("李志_专辑封面_高清.zip"); z=zipfile.ZipFile(out,"w",compression=zipfile.ZIP_STORED); [z.write(p,arcname=p.name) for p in sorted(src.iterdir(),key=lambda x:x.name)]; z.close(); print(out, out.stat().st_size)'
 
       - name: Upload ZIP artifact
         uses: actions/upload-artifact@v4
