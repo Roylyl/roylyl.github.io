@@ -30,10 +30,9 @@
   const RING_WIDTH = 0.006;
   const RING_WIDTH_2 = 0.107;
   const RING_DISPLACEMENT = 0.62;
-  const followsFinePointer = (
-    navigator.maxTouchPoints === 0 &&
-    window.matchMedia('(hover: hover) and (pointer: fine)').matches
-  );
+  // Input capabilities only choose rendering resolution. A touchscreen can
+  // coexist with a mouse, so actual pointer events decide interaction below.
+  const finePointer = window.matchMedia('(any-pointer: fine)');
 
   let randomState = 0x4d595df4;
   const random = () => {
@@ -455,6 +454,7 @@
     let readIndex = 0;
     let pointerX = window.innerWidth * 0.5;
     let pointerY = window.innerHeight * 0.35;
+    let mouseActive = false;
     let ringX = 0;
     let ringY = 0;
     let lastFrame = 0;
@@ -512,7 +512,7 @@
       // Touch devices often report DPR 2–3.  A 1.5x drawing buffer keeps the
       // fixed particle layer smooth during scroll/reveal compositing while
       // retaining the full desktop resolution on fine-pointer displays.
-      const maxPixelRatio = followsFinePointer ? 2 : 1.5;
+      const maxPixelRatio = finePointer.matches ? 2 : 1.5;
       displayPixelRatio = window.devicePixelRatio || 1;
       pixelRatio = Math.min(displayPixelRatio, maxPixelRatio);
       canvas.width = Math.max(1, Math.floor(width * pixelRatio));
@@ -522,7 +522,7 @@
 
     const updateRing = (time, delta) => {
       const bounds = getBounds();
-      const inside = followsFinePointer && (
+      const inside = mouseActive && (
         pointerX >= bounds.left &&
         pointerX <= bounds.right &&
         pointerY >= bounds.top &&
@@ -619,14 +619,27 @@
       rafId = window.requestAnimationFrame(draw);
     };
 
-    if (followsFinePointer) {
-      window.addEventListener('pointermove', (event) => {
-        const samples = event.getCoalescedEvents?.();
-        const latest = samples?.length ? samples[samples.length - 1] : event;
-        pointerX = latest.clientX;
-        pointerY = latest.clientY;
-      }, { passive: true, signal: lifecycle.signal });
-    }
+    const resetMouse = () => { mouseActive = false; };
+    const trackPointer = (event) => {
+      // Windows touch laptops and tablets with an attached mouse may report
+      // touch support or a coarse primary pointer while producing mouse events.
+      mouseActive = event.pointerType === 'mouse';
+      if (!mouseActive) return;
+      const samples = event.getCoalescedEvents?.();
+      const latest = samples?.length ? samples[samples.length - 1] : event;
+      pointerX = latest.clientX;
+      pointerY = latest.clientY;
+    };
+    const pointerOptions = { passive: true, capture: true, signal: lifecycle.signal };
+    window.addEventListener('pointermove', trackPointer, pointerOptions);
+    window.addEventListener('pointerdown', trackPointer, pointerOptions);
+    window.addEventListener('pointerout', (event) => {
+      if (event.pointerType === 'mouse' && !event.relatedTarget) resetMouse();
+    }, pointerOptions);
+    window.addEventListener('pointercancel', (event) => {
+      if (event.pointerType === 'mouse') resetMouse();
+    }, pointerOptions);
+    window.addEventListener('blur', resetMouse, { signal: lifecycle.signal });
     window.addEventListener('resize', resize, { passive: true, signal: lifecycle.signal });
 
     if (!viewportMode && 'ResizeObserver' in window) {
