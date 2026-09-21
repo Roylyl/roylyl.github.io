@@ -1,10 +1,42 @@
-# macOS
+# macOS / Windows metadata
 .DS_Store
-**/.DS_Store
-
-# Editor / OS junk
+._*
+.AppleDouble/
 Thumbs.db
+ehthumbs.db
 desktop.ini
-*~
+
+# Local editor settings and swap files
 .idea/
 .vscode/
+*.swp
+*.swo
+*~
+
+# Optional local tooling (the website itself has no build dependencies)
+node_modules/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Environment overrides; keep templates available for version control
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Disposable workspace files and verification output, at repository root
+/tmp/
+/temp/
+/.cache/
+/coverage/
+/test-results/
+/playwright-report/
+
+# Temporary files and logs at any depth
+*.log
+*.tmp
+*.temp
+
+# Keep website assets, PDFs, tests, lockfiles and independent page directories tracked.

@@ -7,6 +7,8 @@
 
 这是罗宇伦的个人作品集网站。内容围绕硬件开发、嵌入式系统、音频产品和工程验证展开，记录从需求与技术判断，到样机实现、调试与验证的实践过程；音乐与音频设备实践、行业调研和产品思考则呈现工程工作如何连接真实场景。
 
+[本地预览](#本地预览) · [验证](#验证) · [网站组成](#网站组成) · [维护指南](#维护指南) · [发布](#发布到-github-pages)
+
 ## 快速入口
 
 | 内容 | 入口 | 说明 |
@@ -15,6 +17,136 @@
 | 超声波定向扬声器 | [ultrasonic.html](ultrasonic.html) | ESP32 驱动的定向音频第一代 Demo |
 | 音享贴 · LENGHE SoundShare | [soundshare.html](soundshare.html) | 跨生态多人蓝牙音频共享硬件原型与产品设计 |
 | 产品与创业理念 | [philosophy.html](philosophy.html) | 从真实需求出发、先做可落地产品的工作方法 |
+
+## 本地预览
+
+主站使用原生 HTML、CSS 和 JavaScript，没有安装依赖或构建步骤。先进入仓库根目录，再用 Python 3 启动静态服务器。
+
+macOS / Linux：
+
+```sh
+python3 -m http.server 8000 --bind 127.0.0.1
+```
+
+Windows（已安装 Python Launcher）：
+
+```powershell
+py -3 -m http.server 8000 --bind 127.0.0.1
+```
+
+打开 [本地网站](http://127.0.0.1:8000/)，在终端按 `Ctrl+C` 停止。若端口已被占用，把命令和访问地址中的 `8000` 一起换成其他端口。
+
+使用 HTTP 服务预览，不要直接双击 HTML。`file://` 下的同源判断、跨页面通信和第三方请求可能与正式网站不同。预览服务需以仓库根目录为入口，连续导航按站点根路径识别页面。
+
+## 验证
+
+运行自动测试时另需 Node.js 22 或更新版本，无需执行 `npm install`。在仓库根目录运行：
+
+```sh
+node --test tests/particle-input.test.cjs
+git diff --check
+```
+
+[粒子输入回归测试](tests/particle-input.test.cjs) 执行实际粒子脚本，模拟浏览器输入与 WebGL 接口，检查传入渲染器的交互坐标。覆盖普通鼠标、触屏与鼠标并存、主指针为触摸时接入鼠标、合并事件采样、触摸切换、窗口失焦、局部坐标和减少动态效果。它不替代真实浏览器与显卡的渲染验证；仅预览网站不需要 Node.js。
+
+发布前按实际浏览顺序检查：
+
+1. **首页与语言**：切换简、繁、英，检查文字、日期、换行及对应简历下载。
+2. **项目导航**：首页 → 超声波 → 音享贴 → 后退两次 → 前进，检查地址、标题、语言、焦点和阅读位置；直接打开带章节锚点的详情页并刷新。
+3. **粒子与布局**：桌面、触屏电脑、平板、手机均无横向溢出；鼠标可以接管粒子，手指滚动不受干扰；减少动态效果、切后台和返回页面正常。
+4. **菜单与联系方式**：检查手机导航、语言菜单的键盘操作，以及二维码放大、Esc 关闭、账号复制与反馈。
+5. **视频与音乐**：检查两段原生视频在中国大陆、其他地区和检测失败时的自动选源；进入详情页后首页视频停止、首页粒子暂停；返回后重新加载播放器，保持自动播放关闭。背景音乐在连续导航中保持会话，焦点进入视频播放器时静音。
+
+## 网站组成
+
+```text
+.
+├── index.html                    # 个人主页
+├── style.css / script.js         # 主页样式、菜单与二维码交互
+├── ultrasonic.html / .css / .js  # 超声波定向扬声器
+├── soundshare.html / .css / .js  # 音享贴 · LENGHE SoundShare
+├── philosophy.html / .css / .js  # 产品与创业理念
+├── soundshare-particles.js       # 首页与两个项目页共用的 WebGL2 粒子
+├── i18n.css / i18n.js            # 三语界面、语言菜单与简历映射
+├── background-music.*            # 背景音乐会话与控制
+├── continuous-navigation.*       # 详情页嵌入、历史记录与阅读位置
+├── regional-video.js            # IP 地区识别与原生视频选源
+├── social-controls.css          # 联系方式与二维码区域样式
+├── site-accessibility.css        # 焦点、无脚本回退与减少动态效果
+├── region-notice.*               # 中国大陆访问提示
+├── nav-scroll.js                 # 锚点恢复与详情页移动导航
+├── assets/                       # 正式图片、音频、图标与三语简历
+├── tests/particle-input.test.cjs # 粒子输入回归测试
+├── kuncode/                      # 独立页面目录
+├── lululu/                       # 独立页面目录
+└── weijiba/                      # 独立页面目录
+```
+
+主站包含主页和三个详情页；后三个独立目录不接入主站的连续导航。它们与 `assets/`、`tests/` 一样属于正式仓库内容。
+
+## 网站行为
+
+- **三语与响应式布局**：主站支持简体中文、繁體中文（香港用语）和 English；导航、卡片、图片与联系方式适配桌面、平板和手机。
+- **粒子与玻璃效果**：粒子按实际 `pointerType === 'mouse'` 事件跟随，兼容触屏与鼠标并存的设备；触摸操作保持自动动画。缺少 WebGL2 或浮点颜色缓冲扩展时不启动粒子，系统启用减少动态效果时停止动画。
+- **连续导航**：从首页进入详情时，由首页保留背景音乐会话，并同步地址、标题、语言、焦点和阅读位置；详情页也支持独立打开，直接打开或刷新后的音乐状态恢复仍受浏览器播放策略影响。
+- **自动视频选源**：两段视频按 IP 识别结果选择播放源：中国大陆使用哔哩哔哩，其他地区及检测失败时使用 YouTube。直接使用平台原生 iframe，关闭自动播放，不添加自定义缩略图或手动平台选择。
+- **音乐与可访问性**：背景音乐初次访问默认静音、按需加载，由访客主动开启。语言菜单支持方向键、Home / End、Tab 和 Esc；手机菜单管理背景交互，二维码与地区提示使用原生弹窗；脚本不可用时正文仍可阅读。
+
+### 本地状态与外部请求
+
+| 用途 | 实现与保存范围 |
+| --- | --- |
+| 语言偏好 | `localStorage`，用于恢复界面语言与对应简历入口 |
+| 访问提示 | `localStorage` 保存上次展示时间，冷却时间为一小时 |
+| 背景音乐 | `sessionStorage` 保存当前会话状态 |
+| 首页地区检测 | 依次请求 `api.country.is`、`ipapi.co`；仅在页面内共享结果，不持久化地区 |
+| 独立详情页访问提示 | 没有共享检测任务时使用 `ipwho.is`；内嵌详情页复用父页任务，不重复查询或弹窗 |
+| 视频播放 | 由 YouTube 或哔哩哔哩原生播放器处理 |
+
+界面语言不参与视频选源。地区识别与视频的可用性取决于访客网络；表中的存储说明仅涵盖本站脚本，不包含第三方播放器自身的行为。
+
+## 维护指南
+
+| 修改内容 | 入口与检查重点 |
+| --- | --- |
+| 主站文字 | 对应 HTML 与 [i18n.js](i18n.js)；同步三语映射并检查换行。 |
+| 简历 PDF | `assets/` 内三份正式文件，以及 `i18n.js` 的 `resumeAssets`、`resumeVersion` 和 HTML 初始下载链接；核对文件名、页序与语言。 |
+| 粒子交互 | [soundshare-particles.js](soundshare-particles.js)；先运行输入回归测试，再检查首页与两个项目页的真实渲染、尺寸和交互。 |
+| 视频选源 | [regional-video.js](regional-video.js) 与首页原生 iframe；维持 IP 自动选源、原生嵌入和关闭自动播放。 |
+| 联系方式 | [index.html](index.html)、[script.js](script.js)、[social-controls.css](social-controls.css) 与原二维码图片；检查复制、放大和平台入口。 |
+| 玻璃卡片 | [style.css](style.css) 的 `.glass` 与 `--module-glass-*`；检查桌面与移动端覆盖，以及滚动入场时的视觉一致性。 |
+| 连续导航 | [continuous-navigation.js](continuous-navigation.js)；添加详情页时同步 `detailPages`，并验证直达、章节锚点、浏览器前进与后退。 |
+
+### 更新资源版本
+
+1. 修改 CSS、JavaScript 或固定文件名的素材后，更新**实际引用该资源的页面**中的 `?v=`。不必给无关资源一起改版本。例如粒子脚本由 `index.html`、`soundshare.html`、`ultrasonic.html` 引用，理念页没有加载它。
+2. 更新需要通过连续导航加载的详情页 HTML 时，同时更新 `continuous-navigation.js` 中的 `nav-version`，并更新引用该脚本的页面中的脚本版本，让访客拿到新的内嵌 HTML 地址。
+3. 发布后从首页进入详情页，并直接打开详情页各检查一次，确认新资源和页面均已生效。
+
+玻璃卡片的入场动画优先放在卡片自身。父容器长期使用 `will-change: opacity` 会影响内部 `backdrop-filter` 的背景采样；当前主页使用卡片级入场和 `will-change: transform`。调整后滚动检查能力、实习与项目模块的一致性。
+
+### 忽略规则
+
+[.gitignore](.gitignore) 统一忽略系统元数据、编辑器本地设置、可选工具依赖、Python 缓存、环境变量覆盖文件，以及根目录的 `tmp/`、`temp/`、缓存和测试报告。`.env.example` 与 `.env.*.example` 模板仍可提交；网站运行本身不需要环境变量配置。
+
+临时预览、截图和检查结果可放在根目录 `tmp/`。正式图片、音频、PDF、测试源码、锁文件与独立页面目录不按类型排除。忽略规则只影响未跟踪文件，不会自动删除或停止跟踪已有文件。
+
+检查某个文件被哪条规则忽略：
+
+```sh
+git check-ignore -v tmp/example.png
+```
+
+## 发布到 GitHub Pages
+
+仓库可以直接使用分支发布，无需前端构建：
+
+1. 在 GitHub 仓库的 **Settings → Pages → Build and deployment** 中选择 **Deploy from a branch**。
+2. 以 `main` 分支的 **/(root)** 作为发布源并保存；这是本仓库当前文件布局适用的配置。
+3. 本地验证通过后，将修改提交并推送到配置的发布分支，在仓库 **Actions** 中确认 Pages 部署成功。
+4. 打开 [线上网站](https://roylyl.github.io/)，复查页面直达、语言切换、简历下载、视频与移动端菜单。
+
+完整配置见 [GitHub Pages 官方文档](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)。本地修改不会自动更新线上网站。
 
 ## 关注方向
 
@@ -52,89 +184,6 @@
 - **深圳科创学院｜职能部门实习 · 市场调研（2026.01 — 2026.02）**：调研消费电子产品、竞品和用户场景，整理产品信息与阶段性结论。
 
 完整描述见 [主页的实习经历](https://roylyl.github.io/#experience) 与上方三语简历。
-
-## 网站特性
-
-- **原生静态站点**：HTML、CSS 与 JavaScript 实现，无框架、无构建步骤，可直接部署到 GitHub Pages。
-- **三语界面**：主页及主要二级页面支持简体中文、繁體中文与 English；栏目、事实信息和简历入口保持对应。
-- **响应式布局**：分别兼顾桌面、中等宽度、iPad 与手机的导航、内容密度、图片比例、按钮布局及触控尺寸。
-- **粒子与玻璃效果**：主页和部分项目页共用 [soundshare-particles.js](soundshare-particles.js) 的 WebGL2 粒子背景；桌面支持鼠标互动，缺少 WebGL2 或启用 `prefers-reduced-motion` 时自动不启动动效。
-- **连续浏览体验**：主页统一管理项目页导航，保持地址、标题、语言和前进后退一致，并恢复阅读位置与键盘焦点。背景音乐默认静音、按需加载，由访客主动开启；项目间浏览保留音乐会话。
-- **原生视频嵌入**：两段视频按访客 IP 自动选择播放源，中国大陆使用哔哩哔哩，其他地区或检测失败时使用 YouTube。直接呈现平台原生播放器，不添加自定义封面或手动平台切换，关闭自动播放。进入项目页时卸载首页播放器，返回后恢复。
-- **可访问性细节**：语言菜单支持方向键、Home / End、Tab 和 Esc；手机导航管理背景交互，二维码与地区提示使用原生弹窗。减少动态效果规则由 `site-accessibility.css` 统一处理；脚本不可用时正文仍可阅读。
-- **手机联系方式**：保留账号文字，支持复制、二维码放大，以及适用平台的直接打开入口。
-
-### 本地状态与第三方服务
-
-站点用 `localStorage` 保存语言偏好和访问提示展示时间，用 `sessionStorage` 保存背景音乐会话状态；地区识别结果不会持久化。地区检测依次使用 `api.country.is`、`ipapi.co`，无共享检测任务时访问提示使用 `ipwho.is`。识别为中国大陆时选择哔哩哔哩，其余地区或检测失败时使用 YouTube；界面语言及旧的手动平台偏好不参与选源。内嵌项目页复用父页检测结果，不重复查询或弹出提示。
-
-地区识别和嵌入视频依赖第三方网络服务，实际可用性由访客网络决定；以上存储说明仅描述本站脚本，不包括第三方播放器的存储行为。
-
-## 本地运行
-
-这是无需安装依赖的静态站点。在仓库根目录运行：
-
-```bash
-python3 -m http.server 8000
-```
-
-然后访问 <http://localhost:8000/>。
-
-请使用 HTTP 静态服务器，而非直接双击 HTML 文件。`file://` 协议下，地区检测、第三方视频、跨页面通信和浏览器媒体策略可能无法正常工作。
-
-## 维护指南
-
-| 更新内容 | 维护入口与必要检查 |
-| --- | --- |
-| 三语文字 | 修改对应 HTML 原文，并核对 [i18n.js](i18n.js) 翻译映射；切换三种语言检查标题、日期、换行和语义对应。 |
-| 简历 PDF | 更新 `assets/` 内的正式文件；核对 `resumeAssets`、`resumeVersion` 及 HTML 初始链接；检查下载结果、浏览器 PDF 预览名与页序。 |
-| CSS / JavaScript | 改动资源后更新四个主站页面的 `?v=`；连续导航还需同步 `continuous-navigation.js` 内的 `nav-version`，使内嵌 HTML 同时更新。共用脚本要逐页检查。 |
-| 玻璃卡片 | 维护 [style.css](style.css) 的 `.glass` 与 `--module-glass-*`；同时核对移动端覆盖，不为单一模块另设背景或模糊。 |
-| 粒子背景 | 维护 [soundshare-particles.js](soundshare-particles.js)；`viewportMode` 区分全页与局部粒子，调整后检查桌面、iPad、iPhone 的尺寸、密度与交互。 |
-
-玻璃卡片的入场动画应优先放在卡片自身。父容器长期使用 `will-change: opacity` 会建立背景采样边界，使内部 `backdrop-filter` 不能模糊容器外的粒子；即使参数相同，不同模块也会呈现不同效果。当前主页采用卡片级入场和 `will-change: transform`。调整后应滚动检查能力、实习和项目模块的视觉一致性。
-
-### 发布前检查
-
-- 三种语言的文字、日期与简历入口均正确对应。
-- 桌面、iPad、iPhone 下无横向溢出、内容遮挡或菜单错位。
-- 玻璃卡片效果一致，滚动入场和鼠标粒子互动正常。
-- 首页 → 超声波 → 音享贴 → 后退两次 → 前进，确认地址、标题、语言、焦点和阅读位置一致。
-- 详情页锚点刷新仍定位到对应章节；简、繁、英切换后返回首页，简历入口保持对应。
-- 手机菜单、语言菜单键盘操作、二维码放大／关闭／复制可用；两个视频均为原生 iframe，验证中国大陆、其他地区及检测失败时的自动选源。
-- 背景音乐跨项目连续，焦点进入原生视频播放器时静音；进入详情后首页视频停止，背景粒子暂停；浏览器往返缓存和减少动态效果偏好可恢复。
-- 执行 `git diff --check`，发布后重新验证线上资源确实更新。
-
-## 发布到 GitHub Pages
-
-1. 在仓库设置中启用 GitHub Pages。
-2. 将发布源设为包含 `index.html` 的根目录和目标分支。
-3. 发布后访问 [roylyl.github.io](https://roylyl.github.io/) 检查主页、项目页、语言切换、简历下载、视频和移动端菜单。
-
-站点不需要 npm 依赖或构建命令；本地预览只需静态 HTTP 服务。视频播放与地区识别仍依赖第三方网络服务。
-
-## 主站文件结构
-
-```text
-.
-├── index.html                   # 个人主页
-├── style.css / script.js        # 主页样式与交互
-├── ultrasonic.html / .css / .js # 超声波项目页面
-├── soundshare.html / .css / .js # 音享贴项目页面
-├── philosophy.html / .css / .js # 产品与创业理念页面
-├── soundshare-particles.js      # 主页与项目页共用的 WebGL2 粒子
-├── i18n.css / i18n.js           # 多语言界面与简历映射
-├── background-music.*           # 背景音乐控制与样式
-├── continuous-navigation.*      # 跨页面连续导航
-├── regional-video.js           # IP 地区识别与原生视频嵌入
-├── social-controls.css          # 二维码与复制账号交互
-├── site-accessibility.css       # 全站焦点、无脚本回退与减少动态效果
-├── region-notice.*              # 访问提示
-├── nav-scroll.js                # 导航滚动状态
-└── assets/                      # 图片、音频、图标与三语简历
-```
-
-页面共用多语言、背景音乐、连续导航、地区提示与滚动导航等基础脚本；项目页再按内容加载独立样式和交互。`kuncode/`、`lululu/`、`weijiba/` 是独立页面目录，不属于上述个人作品集主站维护入口。
 
 ## 联系
 
