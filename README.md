@@ -1,13 +1,30 @@
+<div align="center">
+
+<img src="assets/portrait-160.jpg" width="96" alt="罗宇伦 Roy Luo">
+
 # 罗宇伦 · Roy Luo
 
-> Hardware · Embedded · Engineering Portfolio
-> 以工程能力为主线，把想法做成样机。
+### Hardware · Embedded · Engineering Portfolio
 
-[访问网站](https://roylyl.github.io/) · [GitHub](https://github.com/Roylyl) · [邮件联系](mailto:L3092105572@gmail.com)
+以工程能力为主线，把想法做成样机。
+
+[![Website](https://img.shields.io/badge/website-roylyl.github.io-0f172a?style=flat-square)](https://roylyl.github.io/)
+[![Pages](https://img.shields.io/github/deployments/Roylyl/roylyl.github.io/github-pages?style=flat-square&label=GitHub%20Pages)](https://roylyl.github.io/)
+[![HTML](https://img.shields.io/badge/HTML5-native-e34f26?style=flat-square&logo=html5&logoColor=white)](index.html)
+[![Stars](https://img.shields.io/github/stars/Roylyl/roylyl.github.io?style=flat-square)](https://github.com/Roylyl/roylyl.github.io/stargazers)
+[![Forks](https://img.shields.io/github/forks/Roylyl/roylyl.github.io?style=flat-square)](https://github.com/Roylyl/roylyl.github.io/forks)
+[![Last Commit](https://img.shields.io/github/last-commit/Roylyl/roylyl.github.io?style=flat-square)](https://github.com/Roylyl/roylyl.github.io/commits/main)
+
+[访问网站](https://roylyl.github.io/) · [项目入口](#快速入口) · [本地预览](#本地预览) · [验证](#验证) · [维护指南](#维护指南) · [联系](#联系)
+
+</div>
 
 这是罗宇伦的个人作品集网站。内容围绕硬件开发、嵌入式系统、音频产品和工程验证展开，记录从需求与技术判断，到样机实现、调试与验证的实践过程；音乐与音频设备实践、行业调研和产品思考则呈现工程工作如何连接真实场景。
 
-[本地预览](#本地预览) · [验证](#验证) · [网站组成](#网站组成) · [维护指南](#维护指南) · [发布](#发布到-github-pages)
+<p align="center">
+  <a href="https://roylyl.github.io/"><img src="assets/home-hero-1200.jpg" width="380" alt="罗宇伦个人作品集首页视觉"></a><br>
+  <sub>访问线上作品集，查看项目、履历与工程实践。</sub>
+</p>
 
 ## 快速入口
 
