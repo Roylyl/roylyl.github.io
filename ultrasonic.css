@@ -89,9 +89,9 @@ section { padding: 92px 0; }
 .loop-step span { color: var(--accent); font: 700 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing: .1em; }
 .loop-step strong { display: block; margin: 24px 0 8px; font-size: 24px; letter-spacing: -.035em; }
 .loop-step p { margin: 0; color: var(--muted); font-size: 13px; }
-.gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.gallery-grid { display: grid; grid-template-columns: minmax(0, 9fr) minmax(0, 16fr); align-items: start; gap: 18px; }
 .gallery-card { margin: 0; border-radius: 28px; overflow: hidden; }
-.gallery-card img { display: block; width: 100%; height: auto; object-fit: cover; }
+.gallery-card img { display: block; width: 100%; height: auto; object-fit: contain; }
 .gallery-card figcaption { padding: 14px 18px; color: var(--muted); font-size: 14px; }
 .detail-footer { padding: 24px 0 38px; display: flex; justify-content: space-between; gap: 16px; color: var(--muted); font-size: 12px; }
 .reveal { opacity: 0; transform: translateY(20px); transition: opacity .8s ease, transform .8s ease; }
@@ -217,3 +217,6 @@ section { padding: 92px 0; }
 @supports (font-size: 1cqi) {
   .detail-hero h1 { font-size: clamp(36px, 13.5cqi, 76px); }
 }
+
+/* Keep the complete exhibition board and group photograph visible. */
+.gallery-card:hover img { transform: none; }

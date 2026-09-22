@@ -85,3 +85,43 @@
     window.addEventListener('site:close-menu', () => setDetailMenu(false));
   }
 })();
+
+// Track the reading section without changing the URL or navigation history.
+(() => {
+  const header = document.querySelector('.site-header, .ss-nav, .detail-nav, .p-nav');
+  const links = [...(header?.querySelectorAll('nav a[href^="#"]') || [])];
+  const sections = links.map(link => ({ link, section: document.getElementById(link.hash.slice(1)) })).filter(item => item.section);
+  if (!sections.length) return;
+  let scheduled = false;
+  let visible = true;
+  const update = () => {
+    scheduled = false;
+    if (!visible || document.hidden) return;
+    const line = Math.max((header?.getBoundingClientRect().bottom || 0) + 24, innerHeight * .25);
+    let current = null;
+    for (const item of sections) {
+      if (item.section.getBoundingClientRect().top <= line) current = item;
+    }
+    if (scrollY > 0 && scrollY + innerHeight >= document.documentElement.scrollHeight - 3) current = sections.at(-1);
+    for (const item of sections) {
+      if (item === current) item.link.setAttribute('aria-current', 'location');
+      else item.link.removeAttribute('aria-current');
+    }
+  };
+  const schedule = () => {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(update);
+  };
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', schedule);
+  window.addEventListener('pageshow', schedule);
+  window.addEventListener('site-language-change', schedule);
+  window.addEventListener('site:visibility-change', event => { visible = event.detail?.visible !== false; schedule(); });
+  document.addEventListener('visibilitychange', schedule);
+  if ('ResizeObserver' in window) {
+    const observer = new ResizeObserver(schedule);
+    sections.forEach(({ section }) => observer.observe(section));
+  }
+  schedule();
+})();

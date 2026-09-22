@@ -302,3 +302,22 @@
 @media (min-width: 861px) and (max-width: 940px) {
   :is(.ss-nav, .detail-nav) .brand-label-compact { display: none; }
 }
+
+/* Shared reading-position highlight; preserve label widths and keyboard focus. */
+:is(.site-header, .ss-nav, .detail-nav, .p-nav) nav a[aria-current="location"] {
+  color: #8dcbff;
+  background: rgba(41,151,255,.13);
+  border-radius: 8px;
+  box-shadow: 0 0 0 7px rgba(41,151,255,.13);
+  text-shadow: 0 0 16px rgba(41,151,255,.32);
+  transition: color .2s ease, background-color .2s ease, box-shadow .2s ease;
+}
+:is(.site-header.menu-open, .ss-nav.nav-open, .detail-nav.nav-open, .p-nav.nav-open) nav a[aria-current="location"] {
+  border-color: rgba(104,188,255,.45);
+  background: rgba(41,151,255,.16);
+  box-shadow: inset 0 0 0 1px rgba(104,188,255,.08);
+  border-radius: 16px;
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(.site-header, .ss-nav, .detail-nav, .p-nav) nav a[aria-current="location"] { transition: none; }
+}
