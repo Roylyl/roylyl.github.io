@@ -15,6 +15,9 @@
   <link rel="stylesheet" href="background-music.css?v=20260922-1" />
   <link rel="stylesheet" href="region-notice.css?v=20260918-4" />
   <link rel="stylesheet" href="site-accessibility.css?v=20260922-2" />
+  <link rel="stylesheet" href="image-loading.css?v=20260923-1" />
+  <script src="image-loading.js?v=20260923-1" defer></script>
+  <link rel="stylesheet" href="portfolio-cards.css?v=20260923-1" />
 </head>
 <body>
   <div class="ss-progress"><span id="ssProgress"></span></div>
@@ -68,13 +71,13 @@
           <p>两个人已经各自拥有耳机，却不一定能方便地一起听同一段内容。我希望用轻量中继改善设备之间的协作，并保留各自的音量与控制选择。音享贴由此展开硬件、音频链路和多端交互的设计，先把共同收听这一段体验说明白。</p>
         </div>
         <div class="feature-cards">
-          <article class="feature reveal"><span>01</span><h3>跨生态共享</h3><p>从一个音源、两台播放设备的任务出发，让已有耳机获得共同收听的新用途。</p></article>
-          <article class="feature reveal"><span>02</span><h3>磁吸轻量形态</h3><p>新增的携带与设置负担，应小于它消除的麻烦。磁吸与轻量形态仍需结合结构、功耗继续打磨。</p></article>
-          <article class="feature reveal"><span>03</span><h3>可视化延迟校准</h3><p>共同收听不等于相同音量。独立调节之外，还要让人看清参数作用于哪一路、当前处于什么状态。</p></article>
-          <article class="feature reveal"><span>04</span><h3>多端可视化控制</h3><p>手机承担连接与日常控制，手表适合快速微调，平板提供总览，小程序提供轻量入口。</p></article>
+          <article class="feature reveal portfolio-card"><span>01</span><h3>跨生态共享</h3><p>从一个音源、两台播放设备的任务出发，让已有耳机获得共同收听的新用途。</p></article>
+          <article class="feature reveal portfolio-card"><span>02</span><h3>磁吸轻量形态</h3><p>新增的携带与设置负担，应小于它消除的麻烦。磁吸与轻量形态仍需结合结构、功耗继续打磨。</p></article>
+          <article class="feature reveal portfolio-card"><span>03</span><h3>可视化延迟校准</h3><p>共同收听不等于相同音量。独立调节之外，还要让人看清参数作用于哪一路、当前处于什么状态。</p></article>
+          <article class="feature reveal portfolio-card"><span>04</span><h3>多端可视化控制</h3><p>手机承担连接与日常控制，手表适合快速微调，平板提供总览，小程序提供轻量入口。</p></article>
         </div>
 
-        <div class="project-context context-flow reveal">
+        <div class="project-context context-flow reveal portfolio-card">
           <div class="context-heading">
             <p class="context-label">预期使用流程</p>
             <h3>从一起开始，到各自离开。</h3>
@@ -98,31 +101,31 @@
         </div>
 
         <div class="prototype-grid">
-          <article class="prototype-card reveal"><span>VERIFIED</span><h3>PCB 与板级验证</h3><p>完成首版 PCB 设计、打样、焊接调试及板级功能验证，硬件原型可稳定连接移动设备。</p></article>
-          <article class="prototype-card reveal"><span>IMPLEMENTED</span><h3>双路音频与同步</h3><p>完成双 A2DP、多设备同步及延迟调节，并将独立音量与声道控制纳入系统逻辑。</p></article>
-          <article class="prototype-card reveal"><span>DEVELOPED</span><h3>iOS 与 Android 控制应用</h3><p>面向当前硬件原型开发 iOS 与 Android App，围绕 BLE 设备发现、连接控制、状态展示与配置建立移动端控制体系。</p></article>
-          <article class="prototype-card reveal"><span>DESIGNED</span><h3>五端交互体系</h3><p>完成 iPhone、iPad、Android、微信小程序与 Apple Watch 交互设计，覆盖连接、校准、异常反馈与配置。</p></article>
+          <article class="prototype-card reveal portfolio-card"><span>VERIFIED</span><h3>PCB 与板级验证</h3><p>完成首版 PCB 设计、打样、焊接调试及板级功能验证，硬件原型可稳定连接移动设备。</p></article>
+          <article class="prototype-card reveal portfolio-card"><span>IMPLEMENTED</span><h3>双路音频与同步</h3><p>完成双 A2DP、多设备同步及延迟调节，并将独立音量与声道控制纳入系统逻辑。</p></article>
+          <article class="prototype-card reveal portfolio-card"><span>DEVELOPED</span><h3>iOS 与 Android 控制应用</h3><p>面向当前硬件原型开发 iOS 与 Android App，围绕 BLE 设备发现、连接控制、状态展示与配置建立移动端控制体系。</p></article>
+          <article class="prototype-card reveal portfolio-card"><span>DESIGNED</span><h3>五端交互体系</h3><p>完成 iPhone、iPad、Android、微信小程序与 Apple Watch 交互设计，覆盖连接、校准、异常反馈与配置。</p></article>
         </div>
 
-        <div class="architecture-card reveal" aria-label="SoundShare 三板音频与控制架构">
+        <div class="architecture-card reveal portfolio-card" aria-label="SoundShare 三板音频与控制架构">
           <div class="architecture-head">
             <div><p class="ss-kicker">SYSTEM ARCHITECTURE</p><h3>控制链路与音频链路分离。</h3></div>
             <p>BLE 负责控制与状态；音频由 A 板接收后，经 I²S 向 B1/B2 分发 PCM，再由两个节点分别输出到蓝牙播放设备。</p>
           </div>
           <div class="architecture-flow">
-            <div class="architecture-node"><span>SOURCE</span><strong>移动设备</strong><small>A2DP 音频输入</small></div>
+            <div class="architecture-node portfolio-card"><span>SOURCE</span><strong>移动设备</strong><small>A2DP 音频输入</small></div>
             <div class="architecture-arrow" aria-hidden="true">→</div>
-            <div class="architecture-node relay"><span>A BOARD</span><strong>ESP32 中继</strong><small>BLE 控制 · PCM 缓冲 · I²S Master</small></div>
+            <div class="architecture-node relay portfolio-card"><span>A BOARD</span><strong>ESP32 中继</strong><small>BLE 控制 · PCM 缓冲 · I²S Master</small></div>
             <div class="architecture-arrow" aria-hidden="true">→</div>
             <div class="architecture-outputs">
-              <div class="architecture-node"><span>B1</span><strong>播放节点 1</strong><small>I²S Slave · A2DP Source</small></div>
-              <div class="architecture-node"><span>B2</span><strong>播放节点 2</strong><small>I²S Slave · A2DP Source</small></div>
+              <div class="architecture-node portfolio-card"><span>B1</span><strong>播放节点 1</strong><small>I²S Slave · A2DP Source</small></div>
+              <div class="architecture-node portfolio-card"><span>B2</span><strong>播放节点 2</strong><small>I²S Slave · A2DP Source</small></div>
             </div>
           </div>
           <div class="architecture-tags"><span>BLE GATT Control</span><span>I²S PCM</span><span>Dual A2DP</span><span>Independent Volume</span><span>Channel</span><span>Sync & Delay</span></div>
         </div>
 
-        <p class="evidence-note reveal"><strong>工程状态说明：</strong>本页区分已验证硬件、已实现功能与已完成交互设计；其他平台仍需持续进行真机覆盖和长期稳定性测试。</p>
+        <p class="evidence-note reveal portfolio-card"><strong>工程状态说明：</strong>本页区分已验证硬件、已实现功能与已完成交互设计；其他平台仍需持续进行真机覆盖和长期稳定性测试。</p>
       </div>
     </section>
 
@@ -135,27 +138,27 @@
         </div>
 
         <div class="ui-grid">
-          <article class="ui-card compact-ui reveal">
+          <article class="ui-card compact-ui reveal portfolio-card">
             <div class="ui-copy"><span>iOS APP</span><h3>iOS 控制应用</h3><p>基于 iOS 开发设备连接、音量控制与播放状态管理功能。</p></div>
             <div class="ui-frame phone"><img src="assets/soundshare-iphone.webp" width="827" height="1800" loading="lazy" decoding="async" alt="音享贴 iPhone UI" /></div>
           </article>
-          <article class="ui-card compact-ui reveal">
+          <article class="ui-card compact-ui reveal portfolio-card">
             <div class="ui-copy"><span>ANDROID APP</span><h3>Android 控制应用</h3><p>基于 Android 开发设备连接、音量控制与播放状态管理功能。</p></div>
             <div class="ui-frame phone"><img src="assets/soundshare-android.webp" width="809" height="1800" loading="lazy" decoding="async" alt="音享贴 Android UI" /></div>
           </article>
-          <article class="ui-card wide reveal">
+          <article class="ui-card wide reveal portfolio-card">
             <div class="ui-copy"><span>微信小程序 UI</span><h3>轻量化跨端控制入口</h3><p>适合作为更低门槛的设备控制入口，方便用户快速连接与管理。</p></div>
             <div class="ui-frame desktop"><img src="assets/soundshare-miniapp.png" width="2047" height="1460" loading="lazy" decoding="async" alt="音享贴微信小程序 UI" /></div>
           </article>
-          <article class="ui-card compact-watch reveal">
+          <article class="ui-card compact-watch reveal portfolio-card">
             <div class="ui-copy"><span>Apple Watch UI</span><h3>节点音量控制</h3><p>在腕上查看与微调不同节点设备的音量状态。</p></div>
             <div class="ui-frame watch"><img src="assets/soundshare-watch-volume.jpg" width="586" height="904" loading="lazy" decoding="async" alt="音享贴 Apple Watch 音量界面" /></div>
           </article>
-          <article class="ui-card compact-watch reveal">
+          <article class="ui-card compact-watch reveal portfolio-card">
             <div class="ui-copy"><span>Apple Watch UI</span><h3>延迟与同步提示</h3><p>在更轻量的场景里查看双设备同步状态与延迟信息。</p></div>
             <div class="ui-frame watch"><img src="assets/soundshare-watch-delay.jpg" width="586" height="904" loading="lazy" decoding="async" alt="音享贴 Apple Watch 延迟界面" /></div>
           </article>
-          <article class="ui-card large reveal">
+          <article class="ui-card large reveal portfolio-card">
             <div class="ui-copy"><span>iPad UI</span><h3>大屏控制总览</h3><p>适合在更大视图下查看多设备状态与高级设置。</p></div>
             <div class="ui-frame ipad"><img src="assets/soundshare-ipad.webp" width="1800" height="1251" loading="lazy" decoding="async" alt="音享贴 iPad UI" /></div>
           </article>
@@ -171,16 +174,16 @@
           <p>共同收听是当前核心任务；K 歌与户外使用保留为拓展设想，仍需各自的验证条件。</p>
         </div>
         <div class="scene-grid">
-          <article class="scene reveal"><span>01</span><h3>情侣 / 朋友影音共享</h3><p>多人使用各自耳机同步观影或听音，兼顾私密性与陪伴感。</p></article>
-          <article class="scene reveal"><span>02</span><h3>居家 / 聚会 K 歌</h3><p>耳机与音箱共同使用的拓展设想。监听延迟与两路播放时差需要分别验证，不能由同步功能直接推定。</p></article>
-          <article class="scene reveal"><span>03</span><h3>户外多音箱组网</h3><p>户外连接、同步与持续使用仍需验证；当前双路原型不代表更多节点的组网效果已成立。</p></article>
+          <article class="scene reveal portfolio-card"><span>01</span><h3>情侣 / 朋友影音共享</h3><p>多人使用各自耳机同步观影或听音，兼顾私密性与陪伴感。</p></article>
+          <article class="scene reveal portfolio-card"><span>02</span><h3>居家 / 聚会 K 歌</h3><p>耳机与音箱共同使用的拓展设想。监听延迟与两路播放时差需要分别验证，不能由同步功能直接推定。</p></article>
+          <article class="scene reveal portfolio-card"><span>03</span><h3>户外多音箱组网</h3><p>户外连接、同步与持续使用仍需验证；当前双路原型不代表更多节点的组网效果已成立。</p></article>
         </div>
       </div>
     </section>
 
     <section class="ss-section closing-section">
       <div class="ss-wrap">
-        <div class="closing-card reveal">
+        <div class="closing-card reveal portfolio-card">
           <img src="assets/soundshare-icon.webp" alt="音享贴图标" />
           <p class="ss-kicker">LENGHE SOUND SHARE</p>
           <h2>从硬件原型到更完整的产品验证，继续推进。</h2>
@@ -204,9 +207,9 @@
   <script src="i18n.js?v=20260922-6"></script>
   <script src="background-music.js?v=20260922-2"></script>
   <script src="soundshare-particles.js?v=20260921-1"></script>
-  <script src="continuous-navigation.js?v=20260923-2"></script>
-  <script src="soundshare.js?v=20260918-4"></script>
+  <script src="continuous-navigation.js?v=20260923-5"></script>
+  <script src="soundshare.js?v=20260923-1"></script>
   <script src="region-notice.js?v=20260918-4"></script>
-  <script src="nav-scroll.js?v=20260918-4"></script>
+  <script src="nav-scroll.js?v=20260923-1"></script>
 </body>
 </html>

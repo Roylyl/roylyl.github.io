@@ -26,21 +26,3 @@ window.addEventListener('scroll', () => {
   if (!dTicking) { requestAnimationFrame(dUpdate); dTicking = true; }
 }, { passive: true });
 dUpdate();
-
-
-const detailReduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-if (!detailReduceMotion && window.matchMedia('(hover: hover)').matches) {
-  document.querySelectorAll('.glass').forEach((glass) => {
-    glass.addEventListener('pointermove', (event) => {
-      const rect = glass.getBoundingClientRect();
-      const x = ((event.clientX - rect.left) / Math.max(rect.width, 1)) * 100;
-      const y = ((event.clientY - rect.top) / Math.max(rect.height, 1)) * 100;
-      glass.style.setProperty('--glass-x', `${x.toFixed(1)}%`);
-      glass.style.setProperty('--glass-y', `${y.toFixed(1)}%`);
-    });
-    glass.addEventListener('pointerleave', () => {
-      glass.style.setProperty('--glass-x', '50%');
-      glass.style.setProperty('--glass-y', '0%');
-    });
-  });
-}

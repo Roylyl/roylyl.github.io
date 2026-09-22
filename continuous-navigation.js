@@ -9,6 +9,7 @@
     return url;
   };
   const hrefOf = (url) => `${url.pathname}${url.search}${url.hash}`;
+  const addressOf = (url) => `${url.pathname}${url.search}`;
   const plainClick = (event, link) => link && !event.defaultPrevented && event.button === 0 &&
     !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey &&
     !link.hasAttribute('download') && (!link.target || link.target === '_self') && !link.hasAttribute('data-native-nav');
@@ -122,8 +123,8 @@
     }
     ensureShell();
     activeHref = hrefOf(url);
-    if (push && location.pathname + location.search + location.hash !== activeHref) {
-      history.pushState({ detail: activeHref, homeScrollY }, '', activeHref);
+    if (push && location.pathname + location.search !== addressOf(url)) {
+      history.pushState({ detail: activeHref, homeScrollY }, '', addressOf(url));
     }
     shell.hidden = false;
     shell.classList.add('open');
@@ -173,8 +174,9 @@
     };
     frame.addEventListener('load', completeFrame);
     const embedded = new URL(url);
+    embedded.hash = '';
     embedded.searchParams.set('embedded', '1');
-    embedded.searchParams.set('nav-version', '20260923-2');
+    embedded.searchParams.set('nav-version', '20260923-5');
     frame.src = hrefOf(embedded);
     shell.append(frame);
     frame.focus({ preventScroll: true });
@@ -183,7 +185,7 @@
     clearTimeout(scrollTimer);
     const url = publicUrl(href);
     if (push) savePosition();
-    if (push) history.pushState({ detail: null, homeScrollY }, '', hrefOf(url));
+    if (push) history.pushState({ detail: null, homeScrollY }, '', addressOf(url));
     clearTimeout(loadingTimer);
     frame?.remove();
     frame = null;

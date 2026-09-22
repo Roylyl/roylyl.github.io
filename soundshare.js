@@ -40,20 +40,3 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 window.addEventListener('resize', update);
 update();
-
-
-if (!reduceMotion && window.matchMedia('(hover: hover)').matches) {
-  document.querySelectorAll('.feature, .scene, .closing-card, .hero-line, .ss-nav').forEach((glass) => {
-    glass.addEventListener('pointermove', (event) => {
-      const rect = glass.getBoundingClientRect();
-      const x = ((event.clientX - rect.left) / Math.max(rect.width, 1)) * 100;
-      const y = ((event.clientY - rect.top) / Math.max(rect.height, 1)) * 100;
-      glass.style.setProperty('--glass-x', `${x.toFixed(1)}%`);
-      glass.style.setProperty('--glass-y', `${y.toFixed(1)}%`);
-    });
-    glass.addEventListener('pointerleave', () => {
-      glass.style.setProperty('--glass-x', '50%');
-      glass.style.setProperty('--glass-y', '0%');
-    });
-  });
-}

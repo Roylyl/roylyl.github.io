@@ -15,6 +15,9 @@
   <link rel="stylesheet" href="background-music.css?v=20260922-1" />
   <link rel="stylesheet" href="region-notice.css?v=20260918-4" />
   <link rel="stylesheet" href="site-accessibility.css?v=20260922-2" />
+  <link rel="stylesheet" href="image-loading.css?v=20260923-1" />
+  <script src="image-loading.js?v=20260923-1" defer></script>
+  <link rel="stylesheet" href="portfolio-cards.css?v=20260923-1" />
 </head>
 <body>
   <div class="p-progress" aria-hidden="true"><span id="pProgress"></span></div>
@@ -39,21 +42,21 @@
     </header>
 
 
-    <section class="p-chapter" id="product" aria-labelledby="productTitle" tabindex="-1">
+    <section class="p-chapter portfolio-card" id="product" aria-labelledby="productTitle" tabindex="-1">
       <div class="p-chapter-label"><span class="p-number" aria-hidden="true" data-i18n-static>01</span><span>产品判断</span></div>
       <h2 id="productTitle">主动提出新的使用方式</h2>
       <p>我会从自己的使用经验和具体场景发现问题，也愿意先提出一种尚未被清楚表达的用法。用户能够描述麻烦，却未必能提前说出一种从未体验过的交互。设计者需要把想法做成可以亲手操作的原型，再看人是否理解、学会以后是否仍愿意使用。</p>
       <p>技术指标的意义，要放回任务中判断。延迟影响演奏反馈、底噪妨碍聆听时，改善参数就有直接价值。当继续提升某项规格已经很难改变体验，我更想研究设备之间的配合，以及人能否以更自然的方式完成原来的活动。</p>
     </section>
 
-    <section class="p-chapter" id="interaction" aria-labelledby="interactionTitle" tabindex="-1">
+    <section class="p-chapter portfolio-card" id="interaction" aria-labelledby="interactionTitle" tabindex="-1">
       <div class="p-chapter-label"><span class="p-number" aria-hidden="true" data-i18n-static>02</span><span>交互与学习</span></div>
       <h2 id="interactionTitle">让学习换来更好的控制</h2>
       <p>我希望工具能让人放心试探：临时看看或听听另一种选择时，原来的内容和位置仍然保留；决定采用以后，再正式改变结果。以声音比较为例，我想探索一种可以临时预听、返回原选择、再明确确认的方式，让注意力留在声音的差别上。</p>
       <p>我接受有回报的学习。入口应该让人找得到，基本动作应该讲得清；熟练以后，工具还可以提供更细的控制。压力、键盘和按钮都可以承载这种关系。如果学会以后仍然没有收益，或经常误触，就应调整实现。连续交互的价值，也要体现在状态和返回路径上。</p>
     </section>
 
-    <section class="p-chapter" id="fusion" aria-labelledby="fusionTitle" tabindex="-1">
+    <section class="p-chapter portfolio-card" id="fusion" aria-labelledby="fusionTitle" tabindex="-1">
       <div class="p-chapter-label"><span class="p-number" aria-hidden="true" data-i18n-static>03</span><span>技术融合</span></div>
       <h2 id="fusionTitle">让成熟技术形成协同</h2>
       <p>在当前的资源和能力条件下，我会优先评估成熟技术的组合机会。广州展会上，键盘与声卡结合的产品让我注意到，把原本分散的操作组织起来，也可能形成有价值的新体验。真正要解决的工作包括状态、控制、供电和结构怎样配合。</p>
@@ -61,7 +64,7 @@
       <a class="p-project-link" href="soundshare.html">查看音享贴项目 →</a>
     </section>
 
-    <section class="p-chapter" id="validation" aria-labelledby="validationTitle" tabindex="-1">
+    <section class="p-chapter portfolio-card" id="validation" aria-labelledby="validationTitle" tabindex="-1">
       <div class="p-chapter-label"><span class="p-number" aria-hidden="true" data-i18n-static>04</span><span>使用验证</span></div>
       <h2 id="validationTitle">把一次完整使用验证清楚</h2>
       <p>我希望每一次验证都对应一个明确的问题。音频产品除了能否出声，还要看人怎样开始、独立调整、暂时离开、重新加入和结束。原型在我准备好的顺序里运行，只说明了那组条件；其他人换一种顺序操作，仍可能遇到需要重新设计的地方。</p>
@@ -69,7 +72,7 @@
       <a class="p-project-link" href="ultrasonic.html">查看超声波定向扬声器项目 →</a>
     </section>
 
-    <section class="p-chapter" id="startup" aria-labelledby="startupTitle" tabindex="-1">
+    <section class="p-chapter portfolio-card" id="startup" aria-labelledby="startupTitle" tabindex="-1">
       <div class="p-chapter-label"><span class="p-number" aria-hidden="true" data-i18n-static>05</span><span>经营与研究</span></div>
       <h2 id="startupTitle">用经营支持持续研究</h2>
       <p>我希望做出用户愿意使用和付费的产品，逐步积累制造、交付和经营经验，为定向声、空间音频等长期方向争取资源。我会从需求具体、自己能够认真完成的范围开始；一个市场被大公司忽略，并不能直接说明它值得做。</p>
@@ -77,7 +80,7 @@
       <p>用户付费获得什么，应当说得明白。当前能提供的能力、使用条件与仍在探索的方向需要分开介绍。我希望收入来自清楚且值得的交换，也会保留为表达和探索而做的作品，不要求每项尝试都成为生意。</p>
     </section>
 
-    <section class="p-chapter" id="future" aria-labelledby="futureTitle" tabindex="-1">
+    <section class="p-chapter portfolio-card" id="future" aria-labelledby="futureTitle" tabindex="-1">
       <div class="p-chapter-label"><span class="p-number" aria-hidden="true" data-i18n-static>06</span><span>长期方向</span></div>
       <h2 id="futureTitle">继续研究声音与空间的关系</h2>
       <p>我想继续深入定向声音、空间音频和新的声音交互。对我有吸引力的问题是：声音怎样与位置、内容和人的行动配合；录制与回放怎样保留现场的空间感；人在比较和调整声音时，怎样始终理解自己正在控制什么。</p>
@@ -92,9 +95,9 @@
   <footer class="p-footer wrap"><span>© <span id="pYear"></span> 罗宇伦 Roy Luo</span><span>Product · Technology · Entrepreneurship</span><span class="music-copyright">背景音乐仅用于个人非商业展示 · 音乐版权归原权利人所有</span></footer>
   <script src="i18n.js?v=20260922-6"></script>
   <script src="background-music.js?v=20260922-2"></script>
-  <script src="continuous-navigation.js?v=20260923-2"></script>
+  <script src="continuous-navigation.js?v=20260923-5"></script>
   <script src="philosophy.js?v=20260922-2"></script>
   <script src="region-notice.js?v=20260918-4"></script>
-  <script src="nav-scroll.js?v=20260918-4"></script>
+  <script src="nav-scroll.js?v=20260923-1"></script>
 </body>
 </html>

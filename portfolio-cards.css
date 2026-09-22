@@ -1,0 +1,79 @@
+/* The home-page glass surface is the reference for all portfolio text cards. */
+:root {
+  --module-glass-background: linear-gradient(145deg, rgba(255,255,255,.085), rgba(255,255,255,.035) 48%, rgba(255,255,255,.022));
+  --module-glass-border: rgba(255,255,255,.13);
+  --module-glass-shadow: 0 24px 70px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.09);
+  --module-glass-blur: blur(4px);
+  --portfolio-card-radius: 28px;
+}
+.portfolio-card,
+.portfolio-card:hover {
+  border: 1px solid var(--module-glass-border);
+  border-radius: var(--portfolio-card-radius);
+  background: var(--module-glass-background);
+  box-shadow: var(--module-glass-shadow);
+  backdrop-filter: var(--module-glass-blur);
+  -webkit-backdrop-filter: var(--module-glass-blur);
+}
+.portfolio-card:not(.hero-floating) { position: relative; }
+.portfolio-card::before,
+.portfolio-card:hover::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  width: auto;
+  height: auto;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255,255,255,.13), transparent 24%, transparent 78%, rgba(255,255,255,.025));
+  opacity: .42;
+  pointer-events: none;
+  transition: none;
+}
+.portfolio-card.scene::after { display: none; }
+/* Reading surfaces are not controls: no mouse-triggered lift, sheen or zoom. */
+.portfolio-card:not(.reveal):hover,
+.portfolio-card.reveal.in:hover { transform: none; }
+.portfolio-card.ui-card:hover img { transform: none; }
+
+/* Use the same dark surface for the UI showcase, including its text colours. */
+.ui-section { --dark-text: #f5f7fb; --dark-muted: #adb8c7; background: #05070b; color: var(--dark-text); }
+.ui-section .section-title.light .ss-kicker { color: #adb8c7; }
+
+.feature.portfolio-card,
+.scene.portfolio-card,
+.prototype-card.portfolio-card,
+.panel.portfolio-card,
+.context-question.portfolio-card { min-height: 0; padding: 26px; }
+.feature.portfolio-card h3,
+.scene.portfolio-card h3,
+.prototype-card.portfolio-card h3 { margin: 16px 0 12px; line-height: 1.3; }
+.loop-step.portfolio-card strong { margin-top: 16px; line-height: 1.3; }
+.scene.portfolio-card > span,
+.feature.portfolio-card > span,
+.prototype-card.portfolio-card > span { display: block; line-height: 1.5; color: #8fd8ff; }
+
+/* Keep long-form chapters fully visible and use one clear card per topic. */
+.p-chapter.portfolio-card,
+.other-project.portfolio-card { margin-top: 18px; padding: 32px; }
+.p-intro + .portfolio-card { margin-top: 32px; }
+.p-chapter.portfolio-card h2 { line-height: 1.35; }
+.architecture-node.portfolio-card,
+.context-space-node.portfolio-card { --portfolio-card-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.06); }
+
+@media (max-width: 700px) {
+  :root { --portfolio-card-radius: 22px; }
+  .feature.portfolio-card,
+  .scene.portfolio-card,
+  .prototype-card.portfolio-card,
+  .panel.portfolio-card,
+  .context-question.portfolio-card,
+  .p-chapter.portfolio-card,
+  .other-project.portfolio-card { padding: 22px; }
+  .feature.portfolio-card h3,
+  .scene.portfolio-card h3,
+  .prototype-card.portfolio-card h3 { margin-top: 12px; }
+}
+
+/* Avoid compressed multi-line headings and isolated final words. */
+.section-title h2,
+.title-row h2 { line-height: 1.18; text-wrap: balance; }

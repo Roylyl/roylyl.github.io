@@ -1,36 +1,42 @@
 (() => {
-  // A shell URL becomes a real document when refreshed. Restore its deep link
-  // explicitly, including entries that inherited the shell's manual scrolling.
-  if (window.parent === window && location.hash) {
+  const pages = new Set(['/', '/index.html', '/soundshare.html', '/ultrasonic.html', '/philosophy.html', '/other-projects.html']);
+  const pendingKey = 'roylyl.navigation-target';
+  const scrollTarget = (hash) => {
+    let target;
+    try { target = document.getElementById(decodeURIComponent(hash.slice(1))); } catch (_) {}
+    if (!target) return;
+    window.dispatchEvent(new Event('site:close-menu'));
+    target.scrollIntoView({ behavior: 'instant' });
+    if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+    target.focus({ preventScroll: true });
+  };
+  if (window.parent === window) {
+    history.scrollRestoration = 'manual';
+    if (location.hash) history.replaceState(history.state, '', location.pathname + location.search);
     window.addEventListener('pageshow', (event) => {
       if (event.persisted) return;
-      // Run after the browser's reload scroll restoration, which can otherwise
-      // replace the anchor position with the former shell's scroll offset.
+      let pending;
+      try { pending = JSON.parse(sessionStorage.getItem(pendingKey)); sessionStorage.removeItem(pendingKey); } catch (_) {}
+      const reload = performance.getEntriesByType('navigation')[0]?.type === 'reload';
       requestAnimationFrame(() => requestAnimationFrame(() => {
-        let target;
-        try { target = document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch (_) {}
-        target?.scrollIntoView({ behavior: 'instant' });
+        window.scrollTo({ top: 0, behavior: 'instant' });
+        if (!reload && pending?.path === location.pathname) scrollTarget(pending.hash);
       }));
     });
   }
-  const samePageHash = (link) => {
-    if (link.getAttribute('href')?.startsWith('#')) return link.hash;
+  // Keep section IDs for scrolling without adding fragments or history entries.
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest('a[href]');
+    if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target || link.hasAttribute('download')) return;
     const url = new URL(link.href, location.href);
-    return url.pathname === location.pathname && url.search === location.search ? url.hash : '';
-  };
-
-  document.querySelectorAll('.site-header a[href*="#"], .detail-nav a[href*="#"], .ss-nav a[href*="#"], .p-nav a[href*="#"]').forEach((link) => {
-    link.addEventListener('click', (event) => {
-      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      const hash = samePageHash(link);
-      const target = hash ? document.getElementById(decodeURIComponent(hash.slice(1))) : null;
-      if (!target) return;
-      if (detailHeader?.contains(link)) setDetailMenu(false);
-      // Native anchors preserve shareable URLs and browser history. CSS handles
-      // the sticky-header offset and reduced-motion scrolling preference.
-      if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
-      target.focus({ preventScroll: true });
-    });
+    if (url.origin !== location.origin || !pages.has(url.pathname) || !url.hash) return;
+    event.preventDefault();
+    if (url.pathname === location.pathname || (['/', '/index.html'].includes(url.pathname) && ['/', '/index.html'].includes(location.pathname))) {
+      scrollTarget(url.hash);
+    } else {
+      try { sessionStorage.setItem(pendingKey, JSON.stringify({ path: url.pathname, hash: url.hash })); } catch (_) {}
+      location.assign(url.pathname + url.search);
+    }
   });
 
   const detailHeader = document.querySelector('.ss-nav, .detail-nav, .p-nav');
