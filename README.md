@@ -33,7 +33,10 @@
 | 个人作品集 | [roylyl.github.io](https://roylyl.github.io/) | 个人介绍、能力、实习、项目、理念、音乐与联系方式 |
 | 超声波定向扬声器 | [ultrasonic.html](ultrasonic.html) | ESP32 驱动的定向音频第一代 Demo |
 | 音享贴 · LENGHE SoundShare | [soundshare.html](soundshare.html) | 跨生态多人蓝牙音频共享硬件原型与产品设计 |
-| 产品与创业理念 | [philosophy.html](philosophy.html) | 从真实需求出发、先做可落地产品的工作方法 |
+| DeerWebTranslator | [首页项目卡](https://roylyl.github.io/#deer-web-translator) · [源码](https://github.com/Roylyl/DeerWebTranslator) | 原位翻译、阅读状态与取消恢复 |
+| MacDuo | [首页项目卡](https://roylyl.github.io/#macduo) · [源码](https://github.com/Roylyl/MacDuo) | 基于 MacBook-Duo 的形态交互实验 |
+| 晚渡 · WANDU | [测试产物试听](https://roylyl.github.io/#wandu) · [测试工程](https://github.com/Roylyl/Astra-Music) | Codex GPT-6 Astra 操作 MacBook 上 FL Studio 的 Computer Use 测试，非个人作品 |
+| 产品与创业理念 | [首页简短入口](https://roylyl.github.io/#philosophy) · [完整理念](philosophy.html) | 产品判断、交互与学习、技术融合、使用验证、经营与研究、长期方向 |
 
 ## 本地预览
 
@@ -61,6 +64,7 @@ py -3 -m http.server 8000 --bind 127.0.0.1
 
 ```sh
 node --test tests/particle-input.test.cjs
+node --test tests/project-audio.test.cjs
 git diff --check
 ```
 
@@ -72,7 +76,9 @@ git diff --check
 2. **项目导航**：首页 → 超声波 → 音享贴 → 后退两次 → 前进，检查地址、标题、语言、焦点和阅读位置；直接打开带章节锚点的详情页并刷新。
 3. **粒子与布局**：桌面、触屏电脑、平板、手机均无横向溢出；鼠标可以接管粒子，手指滚动不受干扰；减少动态效果、切后台和返回页面正常。
 4. **菜单与联系方式**：检查手机导航、语言菜单的键盘操作，以及二维码放大、Esc 关闭、账号复制与反馈。
-5. **视频与音乐**：检查两段原生视频在中国大陆、其他地区和检测失败时的自动选源；进入详情页后首页视频停止、首页粒子暂停；返回后重新加载播放器，保持自动播放关闭。背景音乐在连续导航中保持会话，焦点进入视频播放器时静音。
+5. **视频与音乐**：检查两段原生视频在中国大陆、其他地区和检测失败时的自动选源；进入详情页后首页视频停止、首页粒子暂停；返回后重新加载播放器，保持自动播放关闭。检查《晚渡》原生试听、暂停、进度与独立音频入口；试听与背景音乐互斥，进入详情页或点击视频时试听暂停，返回后不自动续播。
+6. **新增项目**：展开与收起 DeerWebTranslator、MacDuo 的设计说明，核对仓库和源码入口；三语与窄屏下标题、试听控制条和说明均完整可读。
+7. **理念阅读**：从首页简短入口进入二级页，逐章检查目录跳转、三语正文和项目链接；核对旧章节锚点仍可访问，以及查看项目后返回理念页的阅读位置。检查桌面、平板和手机代表宽度下的标题、正文与按钮，不把静态检查视为实机验证。
 
 ## 网站组成
 
@@ -80,6 +86,8 @@ git diff --check
 .
 ├── index.html                    # 个人主页
 ├── style.css / script.js         # 主页样式、菜单与二维码交互
+├── portfolio-additions.css       # 软件项目与晚渡 Computer Use 测试
+├── project-context.css           # 音享贴设计取舍与定向声空间场景
 ├── ultrasonic.html / .css / .js  # 超声波定向扬声器
 ├── soundshare.html / .css / .js  # 音享贴 · LENGHE SoundShare
 ├── philosophy.html / .css / .js  # 产品与创业理念
@@ -94,6 +102,7 @@ git diff --check
 ├── nav-scroll.js                 # 锚点恢复与详情页移动导航
 ├── assets/                       # 正式图片、音频、图标与三语简历
 ├── tests/particle-input.test.cjs # 粒子输入回归测试
+├── tests/project-audio.test.cjs  # 试听与背景音乐、详情导航的状态测试
 ├── kuncode/                      # 独立页面目录
 ├── lululu/                       # 独立页面目录
 └── weijiba/                      # 独立页面目录
@@ -106,8 +115,10 @@ git diff --check
 - **三语与响应式布局**：主站支持简体中文、繁體中文（香港用语）和 English；导航、卡片、图片与联系方式适配桌面、平板和手机。
 - **粒子与玻璃效果**：粒子按实际 `pointerType === 'mouse'` 事件跟随，兼容触屏与鼠标并存的设备；触摸操作保持自动动画。缺少 WebGL2 或浮点颜色缓冲扩展时不启动粒子，系统启用减少动态效果时停止动画。
 - **连续导航**：从首页进入详情时，由首页保留背景音乐会话，并同步地址、标题、语言、焦点和阅读位置；详情页也支持独立打开，直接打开或刷新后的音乐状态恢复仍受浏览器播放策略影响。
+- **理念阅读**：首页仅保留标题、短摘要与一个阅读入口；完整内容集中在理念页的六个章节，通过页内目录跳读，主要观点始终展开。相关项目链接放在对应章节旁，不在首页重复长文或经营宣言。
 - **自动视频选源**：两段视频按 IP 识别结果选择播放源：中国大陆使用哔哩哔哩，其他地区及检测失败时使用 YouTube。直接使用平台原生 iframe，关闭自动播放，不添加自定义缩略图或手动平台选择。
 - **音乐与可访问性**：背景音乐初次访问默认静音、按需加载，由访客主动开启。语言菜单支持方向键、Home / End、Tab 和 Esc；手机菜单管理背景交互，二维码与地区提示使用原生弹窗；脚本不可用时正文仍可阅读。
+- **测试产物试听**：《晚渡》使用原生 `audio`，`preload="none"`，仅在访客播放后加载。开始试听会关闭背景音乐，重新开启背景音乐会暂停试听；进入项目详情或点击视频时暂停试听，保留进度但不自动恢复。跨域视频内部的实际播放状态由平台控制。
 
 ### 本地状态与外部请求
 
@@ -119,14 +130,18 @@ git diff --check
 | 首页地区检测 | 依次请求 `api.country.is`、`ipapi.co`；仅在页面内共享结果，不持久化地区 |
 | 独立详情页访问提示 | 没有共享检测任务时使用 `ipwho.is`；内嵌详情页复用父页任务，不重复查询或弹窗 |
 | 视频播放 | 由 YouTube 或哔哩哔哩原生播放器处理 |
+| 晚渡试听 | 同源静态文件 `assets/wandu.m4a`，不增加外部播放器或 CDN 请求 |
 
 界面语言不参与视频选源。地区识别与视频的可用性取决于访客网络；表中的存储说明仅涵盖本站脚本，不包含第三方播放器自身的行为。
+
+《晚渡》试听文件来自 [Astra-Music 公开提交 df51e74](https://github.com/Roylyl/Astra-Music/blob/df51e74ce1cf666fce768b21702116cdc9f091d7/%E8%AF%95%E5%90%AC/%E6%99%9A%E6%B8%A1.m4a)，保留原始 AAC / M4A，8,552,981 字节；SHA-256 为 `85efe92b86a6a61134397e60d17505c03ca57868d482c7ba7718907cc587cc00`。FL Studio 工程、MIDI 和生成脚本链接到源仓库，不复制到网站。此音频属于正式展示资产，不是编译产物。
 
 ## 维护指南
 
 | 修改内容 | 入口与检查重点 |
 | --- | --- |
 | 主站文字 | 对应 HTML 与 [i18n.js](i18n.js)；同步三语映射并检查换行。 |
+| 产品与创业理念 | 首页 `#philosophy` 的短入口，以及 [philosophy.html](philosophy.html) 的完整正文；同步目录、旧章节锚点和三语映射，区分当前判断、已有成果与后续问题。 |
 | 简历 PDF | `assets/` 内三份正式文件，以及 `i18n.js` 的 `resumeAssets`、`resumeVersion` 和 HTML 初始下载链接；核对文件名、页序与语言。 |
 | 粒子交互 | [soundshare-particles.js](soundshare-particles.js)；先运行输入回归测试，再检查首页与两个项目页的真实渲染、尺寸和交互。 |
 | 视频选源 | [regional-video.js](regional-video.js) 与首页原生 iframe；维持 IP 自动选源、原生嵌入和关闭自动播放。 |

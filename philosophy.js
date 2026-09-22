@@ -1,1 +1,24 @@
-const y=document.getElementById('pYear');const p=document.getElementById('pProgress');if(y)y.textContent=new Date().getFullYear();const o=new IntersectionObserver(e=>{e.forEach(i=>{if(i.isIntersecting){i.target.classList.add('in');o.unobserve(i.target)}})},{threshold:.12});document.documentElement.classList.add('reveal-ready');document.querySelectorAll('.reveal').forEach(el=>o.observe(el));let t=false;const u=()=>{const m=document.documentElement.scrollHeight-window.innerHeight;const r=m>0?window.scrollY/m:0;if(p)p.style.width=`${Math.min(100,r*100)}%`;t=false};window.addEventListener('scroll',()=>{if(!t){requestAnimationFrame(u);t=true}},{passive:true});u();
+(() => {
+  const year = document.getElementById('pYear');
+  const progress = document.getElementById('pProgress');
+  if (year) year.textContent = new Date().getFullYear();
+  if (!progress) return;
+
+  let frame = 0;
+  const update = () => {
+    frame = 0;
+    const distance = document.documentElement.scrollHeight - window.innerHeight;
+    const ratio = distance > 0 ? window.scrollY / distance : 0;
+    progress.style.width = `${Math.max(0, Math.min(100, ratio * 100))}%`;
+  };
+  const schedule = () => {
+    if (!frame) frame = requestAnimationFrame(update);
+  };
+
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', schedule, { passive: true });
+  window.addEventListener('pageshow', schedule);
+  window.addEventListener('site-language-change', schedule);
+  document.fonts?.ready.then(schedule);
+  update();
+})();

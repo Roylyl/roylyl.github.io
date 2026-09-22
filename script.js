@@ -8,7 +8,6 @@ const heroPhoto = document.querySelector('.hero-photo');
 const revealEls = [...document.querySelectorAll('.reveal')];
 const parallaxEls = [...document.querySelectorAll('[data-depth]')];
 const projectCards = [...document.querySelectorAll('.project-card')];
-const pointerPanel = document.querySelector('.philosophy-statement');
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 if (yearEl) yearEl.textContent = new Date().getFullYear();
@@ -18,7 +17,6 @@ const staggerGroups = [
   '.focus-grid .reveal, .focus-grid > *',
   '.project-grid .reveal, .project-grid > *',
   '.skills-grid .reveal, .skills-grid > *',
-  '.philosophy-grid .reveal, .philosophy-grid > *',
   '.social-grid .reveal, .social-grid > *',
   '.stage-gallery .reveal, .stage-gallery > *'
 ];
@@ -103,16 +101,6 @@ function requestTick() {
 window.addEventListener('scroll', requestTick, { passive: true });
 window.addEventListener('resize', requestTick);
 updateMotion();
-
-// A restrained cursor glow on the philosophy statement; disabled on touch/reduced motion.
-if (pointerPanel && !reduceMotion && window.matchMedia('(hover: hover)').matches) {
-  pointerPanel.addEventListener('pointermove', (event) => {
-    const rect = pointerPanel.getBoundingClientRect();
-    pointerPanel.style.setProperty('--pointer-x', `${event.clientX - rect.left}px`);
-    pointerPanel.style.setProperty('--pointer-y', `${event.clientY - rect.top}px`);
-  });
-}
-
 
 // Slow liquid-glass highlight follows the pointer only on devices with a real hover state.
 if (!reduceMotion && window.matchMedia('(hover: hover)').matches) {

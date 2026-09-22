@@ -30,7 +30,7 @@ html:not(.reveal-ready) .reveal {
   .hero-copy, .hero-photo, .hero-photo img, .hero-floating,
   .project-card, .focus-card, .experience-card, .social-card,
   .panel, .gallery-card, .app-icon-stage, .feature, .scene,
-  .skill-card, .philosophy-card, .music-card, .contact-card,
+  .skill-card, .music-card, .contact-card,
   .stage-photo, .stage-photo img, .video-card, .qr-frame img,
   .hero-visual img, .gallery-card img, .ui-card, .ui-frame img,
   .closing-card, .button::after, .header-cta::after {

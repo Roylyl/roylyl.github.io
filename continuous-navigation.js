@@ -168,7 +168,7 @@
     });
     const embedded = new URL(url);
     embedded.searchParams.set('embedded', '1');
-    embedded.searchParams.set('nav-version', '20260918-5');
+    embedded.searchParams.set('nav-version', '20260922-1');
     frame.src = hrefOf(embedded);
     shell.append(frame);
     shell.querySelector('[data-native-nav]').focus({ preventScroll: true });

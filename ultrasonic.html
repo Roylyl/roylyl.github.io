@@ -10,10 +10,11 @@
   <link rel="apple-touch-icon" href="assets/ultrasonic-icon.png?v=20260821-4" />
   <title>超声波定向扬声器 · Roy Luo</title>
   <link rel="stylesheet" href="ultrasonic.css?v=20260918-4" />
+  <link rel="stylesheet" href="project-context.css?v=20260922-1" />
   <link rel="stylesheet" href="i18n.css?v=20260918-4" />
   <link rel="stylesheet" href="background-music.css?v=20260918-4" />
   <link rel="stylesheet" href="region-notice.css?v=20260918-4" />
-  <link rel="stylesheet" href="site-accessibility.css?v=20260918-4" />
+  <link rel="stylesheet" href="site-accessibility.css?v=20260922-2" />
 </head>
 <body>
   <div class="detail-progress"><span id="detailProgress"></span></div>
@@ -125,6 +126,52 @@
       </div>
     </section>
 
+    <section class="wrap project-context" id="spatial-questions">
+      <div class="title-row reveal">
+        <p class="eyebrow">声音与空间</p>
+        <h2>发出声音之后，还要看它在哪里被听见。</h2>
+        <p class="context-intro">我关注声音在空间中的分配：讲解应该在哪里被听见，邻近区域受到多少影响，人移动后体验怎样变化。第一代 Demo 让基础链路成立，下一步希望把问题放进明确的位置、内容与使用条件中。</p>
+      </div>
+
+      <figure class="context-space-map reveal" aria-labelledby="spatial-map-caption">
+        <div class="context-map-header">
+          <span class="context-label">空间关系设想</span>
+          <span>以一个展项、一段讲解为起点</span>
+        </div>
+        <div class="context-room">
+          <p class="context-room-boundary">墙面、背景声与空间条件</p>
+          <div class="context-space-nodes">
+            <div class="context-space-node context-source">
+              <svg class="context-source-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><rect x="8" y="8" width="22" height="32" rx="6"/><circle cx="19" cy="19" r="3"/><circle cx="19" cy="31" r="5"/><path d="M36 16c4 4 4 12 0 16"/></svg>
+              <strong>声源与内容</strong>
+              <span>固定位置 · 同一段讲解</span>
+            </div>
+            <div class="context-space-node context-listener">
+              <span class="context-position-mark" aria-hidden="true"></span>
+              <strong>关注的收听位置</strong>
+              <span>走近 · 停留 · 移动</span>
+            </div>
+            <div class="context-space-node context-neighbor">
+              <span class="context-position-mark" aria-hidden="true"></span>
+              <strong>邻近区域</strong>
+              <span>观察对旁人的影响</span>
+            </div>
+          </div>
+        </div>
+        <figcaption id="spatial-map-caption">场景设想示意，未按比例绘制；不表示实测声束角、传播距离或隔音边界。</figcaption>
+      </figure>
+
+      <div class="context-heading context-next-heading reveal">
+        <p class="context-label">下一步研究问题</p>
+        <h3>先让一个边界清楚的场景成立。</h3>
+      </div>
+      <div class="context-questions">
+        <article class="context-question reveal"><span class="context-number" aria-hidden="true">01</span><h3>位置与移动</h3><p>固定声源和内容，再比较站位、角度与移动过程，记录讲解在哪些条件下清楚可听。</p></article>
+        <article class="context-question reveal"><span class="context-number" aria-hidden="true">02</span><h3>邻区与内容</h3><p>观察邻近区域与背景声的影响，比较不同讲解内容，不用单个最佳位置代替完整使用过程。</p></article>
+        <article class="context-question reveal"><span class="context-number" aria-hidden="true">03</span><h3>结构与持续工作</h3><p>继续研究阵列、功耗、结构与持续工作表现，并补充 DSP 与声场仿真的研究，让改进有可解释的依据。</p></article>
+      </div>
+    </section>
+
     <section class="wrap reveal" id="gallery">
       <div class="title-row">
         <p class="eyebrow">GALLERY</p>
@@ -149,10 +196,10 @@
     <span class="music-copyright">背景音乐仅用于个人非商业展示 · 音乐版权归原权利人所有</span>
   </footer>
 
-  <script src="i18n.js?v=20260918-4"></script>
-  <script src="background-music.js?v=20260918-4"></script>
+  <script src="i18n.js?v=20260922-2"></script>
+  <script src="background-music.js?v=20260922-1"></script>
   <script src="soundshare-particles.js?v=20260921-1"></script>
-  <script src="continuous-navigation.js?v=20260918-5"></script>
+  <script src="continuous-navigation.js?v=20260922-1"></script>
   <script src="ultrasonic.js?v=20260918-4"></script>
   <script src="region-notice.js?v=20260918-4"></script>
   <script src="nav-scroll.js?v=20260918-4"></script>

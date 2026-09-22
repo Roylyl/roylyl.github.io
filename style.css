@@ -156,17 +156,36 @@ section { padding: 92px 0; }
 .tag-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 24px; }
 .tag-row span { padding: 8px 10px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255,255,255,.03); color: var(--muted); font: 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }
 
-.philosophy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-.philosophy-card { position: relative; padding: 30px; border-radius: 30px; overflow: hidden; }
-.philosophy-index { position: absolute; right: 24px; top: 22px; color: rgba(255,255,255,.12); font: 800 52px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }
-.philosophy-card h3 { margin: 14px 0 14px; max-width: 80%; font-size: clamp(30px, 3.4vw, 46px); line-height: 1.04; letter-spacing: -.05em; }
-.philosophy-card > p:not(.project-tag) { color: var(--muted); margin: 0; }
-.philosophy-card ul { margin: 24px 0 0; padding-left: 1.15em; color: var(--muted); }
-.philosophy-card li { margin: 8px 0; }
-.philosophy-statement { margin-top: 18px; padding: 28px 30px; border-radius: 30px; display: flex; justify-content: space-between; gap: 24px; align-items: center; background: radial-gradient(circle at 84% 0, rgba(105,201,255,.13), transparent 34%), linear-gradient(180deg, rgba(255,255,255,.065), rgba(255,255,255,.025)); }
-.philosophy-statement span { display: block; margin-bottom: 10px; color: var(--muted); font: 700 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .14em; }
-.philosophy-statement strong { display: block; max-width: 800px; font-size: clamp(22px, 3vw, 34px); line-height: 1.18; letter-spacing: -.04em; }
-.philosophy-statement .button { flex-shrink: 0; }
+.philosophy-preview {
+  position: relative;
+  isolation: isolate;
+  padding: 32px;
+  border-radius: 26px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 28px;
+}
+.philosophy-preview-copy { min-width: 0; max-width: 760px; }
+.philosophy-preview .eyebrow { margin-bottom: 14px; line-height: 1.6; }
+.philosophy-preview h2 {
+  margin: 0;
+  font-size: clamp(28px, 3.2vw, 38px);
+  line-height: 1.25;
+  letter-spacing: -.035em;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+.philosophy-preview-summary { margin: 16px 0 0; color: var(--muted); font-size: 15px; line-height: 1.8; }
+.philosophy-preview .button { width: fit-content; text-align: center; }
+@media (max-width: 860px) {
+  .philosophy-preview { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+}
+@media (max-width: 700px) {
+  .philosophy-preview { padding: 22px; border-radius: 22px; }
+  .philosophy-preview h2 { font-size: clamp(26px, 7vw, 32px); }
+  .philosophy-preview .button { width: 100%; min-height: 48px; display: inline-flex; align-items: center; justify-content: center; }
+}
 
 .music-card, .contact-card { padding: 30px; border-radius: 32px; overflow: hidden; }
 .studio-lockup { display: flex; gap: 16px; align-items: center; margin-bottom: 18px; }
@@ -230,8 +249,7 @@ section { padding: 92px 0; }
     bottom: 18px;
   }
   section { padding: 70px 0; }
-  .focus-grid, .skills-grid, .video-grid, .philosophy-grid, .stage-gallery { grid-template-columns: 1fr; }
-  .philosophy-statement { flex-direction: column; align-items: flex-start; }
+  .focus-grid, .skills-grid, .video-grid, .stage-gallery { grid-template-columns: 1fr; }
   .focus-card, .skill-card, .music-card, .contact-card { min-height: auto; padding: 22px; border-radius: 24px; }
   .project-thumb { min-height: 260px; }
   .project-copy { padding: 22px; }
@@ -335,7 +353,6 @@ section { padding: 92px 0; }
 
 /* Apple-like motion system */
 html { scroll-padding-top: 104px; }
-body { --pointer-x: 50%; --pointer-y: 50%; }
 .site-header {
   transition: background .45s cubic-bezier(.2,.7,.2,1), border-color .45s cubic-bezier(.2,.7,.2,1), box-shadow .45s cubic-bezier(.2,.7,.2,1), transform .45s cubic-bezier(.2,.7,.2,1);
   will-change: transform, background;
@@ -399,14 +416,14 @@ body { --pointer-x: 50%; --pointer-y: 50%; }
 .section-head.reveal { transform: translate3d(0,48px,0) scale(.985); }
 .section-head.reveal.in { transform: translate3d(0,0,0) scale(1); }
 
-.focus-card, .skill-card, .project-card, .philosophy-card, .music-card, .social-card, .contact-card, .stage-photo {
+.focus-card, .skill-card, .project-card, .music-card, .social-card, .contact-card, .stage-photo {
   transition:
     transform .65s cubic-bezier(.16,1,.3,1),
     border-color .55s ease,
     box-shadow .65s cubic-bezier(.16,1,.3,1),
     background .55s ease;
 }
-.focus-card:hover, .skill-card:hover, .philosophy-card:hover, .social-card:hover {
+.focus-card:hover, .skill-card:hover, .social-card:hover {
   transform: translateY(-6px) scale(1.01);
   border-color: rgba(255,255,255,.17);
   box-shadow: 0 34px 90px rgba(0,0,0,.38);
@@ -427,26 +444,6 @@ body { --pointer-x: 50%; --pointer-y: 50%; }
   transition: transform 1.2s cubic-bezier(.16,1,.3,1), filter .7s ease;
 }
 .project-card.is-active .project-thumb img { transform: scale(1.035); }
-
-.philosophy-statement {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-}
-.philosophy-statement::before {
-  content: "";
-  position: absolute;
-  width: 420px;
-  height: 420px;
-  border-radius: 50%;
-  left: calc(var(--pointer-x) - 210px);
-  top: calc(var(--pointer-y) - 210px);
-  background: radial-gradient(circle, rgba(105,201,255,.14), transparent 68%);
-  opacity: .8;
-  z-index: -1;
-  transition: left .18s linear, top .18s linear;
-  pointer-events: none;
-}
 
 .stage-photo { overflow: hidden; }
 .stage-photo img {
@@ -494,7 +491,7 @@ body { --pointer-x: 50%; --pointer-y: 50%; }
   .hero-copy { transform: none !important; opacity: 1 !important; }
   .hero-photo { transform: none !important; }
   .hero-floating { transform: none !important; }
-  .focus-card:hover, .skill-card:hover, .philosophy-card:hover, .social-card:hover,
+  .focus-card:hover, .skill-card:hover, .social-card:hover,
   .video-card:hover { transform: none; }
 }
 
@@ -611,14 +608,14 @@ body { --pointer-x: 50%; --pointer-y: 50%; }
 }
 .section-head.reveal { transform: translate3d(0,54px,0) scale(.982); }
 
-.focus-card, .skill-card, .project-card, .philosophy-card, .music-card, .social-card, .contact-card, .stage-photo {
+.focus-card, .skill-card, .project-card, .music-card, .social-card, .contact-card, .stage-photo {
   transition:
     transform 1.05s var(--apple-ease-out),
     border-color 1s var(--apple-ease),
     box-shadow 1.05s var(--apple-ease-out),
     background 1s var(--apple-ease);
 }
-.focus-card:hover, .skill-card:hover, .philosophy-card:hover, .social-card:hover {
+.focus-card:hover, .skill-card:hover, .social-card:hover {
   transform: translateY(-4px) scale(1.006);
   border-color: rgba(255,255,255,.21);
   box-shadow: 0 34px 96px rgba(0,0,0,.31), inset 0 1px 0 rgba(255,255,255,.13);
@@ -644,7 +641,7 @@ body { --pointer-x: 50%; --pointer-y: 50%; }
 
 
 /* Keep glass highlights contained inside individual cards */
-.focus-card, .skill-card, .music-card, .contact-card, .social-card, .philosophy-card { isolation: isolate; }
+.focus-card, .skill-card, .music-card, .contact-card, .social-card { isolation: isolate; }
 
 
 /* Hero corner-card layout: two independent glass cards anchored to opposite photo corners. */
@@ -975,10 +972,6 @@ body { --pointer-x: 50%; --pointer-y: 50%; }
   .project-copy .button { width: 100%; justify-content: center; margin-top: 18px; }
   .tag-row { margin-top: 18px; gap: 6px; }
   .tag-row span { font-size: 11px; padding: 7px 10px; }
-  .philosophy-card h3 { max-width: 100%; font-size: clamp(26px, 8vw, 36px); }
-  .philosophy-index { top: 18px; right: 18px; font-size: 42px; }
-  .philosophy-card ul { padding-left: 1.1em; }
-  .philosophy-statement strong { font-size: clamp(20px, 7vw, 28px); }
   .music-card, .contact-card { padding: 22px; }
   .studio-lockup { flex-direction: column; align-items: flex-start; gap: 12px; }
   .studio-lockup strong { font-size: 22px; line-height: 1.18; }
@@ -1446,17 +1439,6 @@ body { --pointer-x: 50%; --pointer-y: 50%; }
   .project-facts span { padding: 6px 7px; font-size: 9.5px; }
   .project-copy .button { min-height: 44px; }
 
-  .philosophy-card { padding: 20px; border-radius: 24px; }
-  .philosophy-card > p:not(.project-tag) {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 4;
-    overflow: hidden;
-  }
-  .philosophy-card ul { display: none; }
-  .philosophy-statement { padding: 22px; }
-  .philosophy-statement strong { font-size: 21px; }
-
   .music-card { padding: 18px; }
   .stage-gallery,
   .video-grid { gap: 10px; margin-top: 18px; }
@@ -1856,7 +1838,6 @@ body {
 
 .focus-card,
 .project-card,
-.philosophy-card,
 .music-card,
 .social-card,
 .contact-card,
@@ -1866,7 +1847,6 @@ body {
 }
 
 .focus-card:hover,
-.philosophy-card:hover,
 .social-card:hover {
   transform: translateY(-3px) scale(1.003);
   border-color: rgba(255, 255, 255, .18);
@@ -1902,7 +1882,6 @@ body {
 
   .focus-card,
   .project-card,
-  .philosophy-card,
   .music-card,
   .social-card,
   .contact-card,
@@ -1931,7 +1910,6 @@ body {
 /* Mobile action buttons share one full-width, 48px control size. */
 @media (max-width: 700px) {
   .project-copy .button,
-  .philosophy-statement .button,
   .contact-actions .button {
     width: 100%;
     height: 48px;
@@ -2202,8 +2180,8 @@ body { line-break: strict; }
   -webkit-backdrop-filter: var(--module-glass-blur);
 }
 
-/* Gently soften the particle field through every module, including reveals.
-   Reset the statement's former pointer spotlight to the shared glass highlight. */
+/* Gently soften the particle field through every module, including reveals,
+   with the same restrained glass highlight. */
 .glass::before {
   inset: 1px;
   width: auto;

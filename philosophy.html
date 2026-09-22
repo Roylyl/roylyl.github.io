@@ -3,101 +3,99 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="罗宇伦的产品理念与创业理念：技术融合、场景创新与务实的理想主义。" />
+  <meta name="description" content="罗宇伦关于产品判断、交互设计、技术融合、工程验证与长期研究的思考。" />
   <meta name="theme-color" content="#05070b" />
   
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-avatar-32.png?v=20260902-1" />
   <link rel="icon" type="image/png" sizes="180x180" href="assets/favicon-avatar-180.png?v=20260902-1" />
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=20260902-1" />
-  <title>产品理念与创业理念 · 罗宇伦 Roy Luo</title>
-  <link rel="stylesheet" href="philosophy.css?v=20260918-4" />
+  <title>产品与创业理念 · 罗宇伦 Roy Luo</title>
+  <link rel="stylesheet" href="philosophy.css?v=20260922-2" />
   <link rel="stylesheet" href="i18n.css?v=20260918-4" />
   <link rel="stylesheet" href="background-music.css?v=20260918-4" />
   <link rel="stylesheet" href="region-notice.css?v=20260918-4" />
-  <link rel="stylesheet" href="site-accessibility.css?v=20260918-4" />
+  <link rel="stylesheet" href="site-accessibility.css?v=20260922-2" />
 </head>
 <body>
-  <div class="p-progress"><span id="pProgress"></span></div>
+  <div class="p-progress" aria-hidden="true"><span id="pProgress"></span></div>
   <header class="p-nav">
-    <a class="p-brand" href="index.html">← 罗宇伦 Roy Luo</a>
-    <button class="secondary-menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="philosophyNav"><span></span><span></span></button>
-    <nav id="philosophyNav">
-      <a href="#product">Product</a>
-      <a href="#fusion">Fusion</a>
-      <a href="#startup">Startup</a>
-      <a href="#future">Future</a>
-    </nav>
+    <a class="p-home-link" href="index.html#philosophy" aria-label="返回主页"><span aria-hidden="true">←</span><span class="p-home-label">返回主页</span></a>
+    <a class="p-contents-link" href="#contents">本页目录</a>
   </header>
 
-  <main>
-    <section class="p-hero wrap reveal">
-      <p class="eyebrow">PRODUCT & ENTREPRENEURSHIP PHILOSOPHY</p>
-      <h1>做能落地的产品，<br><span>保留改变未来的野心。</span></h1>
-      <p class="lead">这不是一套固定不变的答案，而是我在项目实践、行业调研和创业思考中逐渐形成的工作方法。核心只有两个问题：今天怎样把产品做出来，长期又想把技术带到哪里。</p>
-      <a class="btn primary" href="#product">开始阅读</a>
+  <main class="wrap p-reading">
+    <header class="p-intro">
+      <p class="eyebrow">PRODUCT &amp; ENTREPRENEURSHIP PHILOSOPHY</p>
+      <h1>产品与创业理念</h1>
+      <p class="lead">我希望做出带有自己判断的产品：它可以提出新的使用方式，也应在真实使用中不断修正。音乐、硬件项目和展会观察，让我持续关注设备怎样协作、交互怎样保留控制，以及怎样为长期研究创造条件。以下是我当前的判断，其中仍有需要用原型和实验回答的问题。</p>
+    </header>
+
+    <nav class="p-toc" id="contents" aria-label="本页目录" tabindex="-1">
+      <ol>
+        <li><a href="#product"><span class="p-number" aria-hidden="true" data-i18n-static>01</span><span>产品判断</span></a></li>
+        <li><a href="#interaction"><span class="p-number" aria-hidden="true" data-i18n-static>02</span><span>交互与学习</span></a></li>
+        <li><a href="#fusion"><span class="p-number" aria-hidden="true" data-i18n-static>03</span><span>技术融合</span></a></li>
+        <li><a href="#validation"><span class="p-number" aria-hidden="true" data-i18n-static>04</span><span>使用验证</span></a></li>
+        <li><a href="#startup"><span class="p-number" aria-hidden="true" data-i18n-static>05</span><span>经营与研究</span></a></li>
+        <li><a href="#future"><span class="p-number" aria-hidden="true" data-i18n-static>06</span><span>长期方向</span></a></li>
+      </ol>
+    </nav>
+
+    <section class="p-chapter" id="product" aria-labelledby="productTitle" tabindex="-1">
+      <div class="p-chapter-label"><span class="p-number" aria-hidden="true" data-i18n-static>01</span><span>产品判断</span></div>
+      <h2 id="productTitle">主动提出新的使用方式</h2>
+      <p>我会从自己的使用经验和具体场景发现问题，也愿意先提出一种尚未被清楚表达的用法。用户能够描述麻烦，却未必能提前说出一种从未体验过的交互。设计者需要把想法做成可以亲手操作的原型，再看人是否理解、学会以后是否仍愿意使用。</p>
+      <p>技术指标的意义，要放回任务中判断。延迟影响演奏反馈、底噪妨碍聆听时，改善参数就有直接价值。当继续提升某项规格已经很难改变体验，我更想研究设备之间的配合，以及人能否以更自然的方式完成原来的活动。</p>
     </section>
 
-    <section class="wrap reveal" id="product">
-      <div class="title-row">
-        <p class="eyebrow">01 · PRODUCT</p>
-        <h2>产品不是参数表，而是一个问题被更聪明地解决。</h2>
-      </div>
-      <div class="essay glass">
-        <p>我更关注产品是否真正解决问题，而不是它堆叠了多少参数。在消费电子和音频行业，很多底层技术已经足够成熟，继续把采样率、位深度、连接规格或功能数量往上堆，并不一定能带来同等幅度的用户体验提升。</p>
-        <p>因此，我更愿意从真实场景出发，再决定技术应该如何被使用。一个好的产品不一定需要发明新的元件，也不一定需要挑战新的物理极限。很多时候，把成熟的 A 技术和成熟的 B 技术，通过一个新的 C 场景重新组合，就能产生新的价值。</p>
-        <blockquote>不为了创新而创新，不为了参数而堆参数，而是用尽可能简单、可靠和成熟的技术，解决一个过去没有被认真解决的问题。</blockquote>
-        <p>这也是我理解音享贴和超声波定向扬声器的共同点。两者技术路线完全不同，但都不是为了展示技术本身，而是希望改变声音在真实场景中的使用方式。</p>
-      </div>
+    <section class="p-chapter" id="interaction" aria-labelledby="interactionTitle" tabindex="-1">
+      <div class="p-chapter-label"><span class="p-number" aria-hidden="true" data-i18n-static>02</span><span>交互与学习</span></div>
+      <h2 id="interactionTitle">让学习换来更好的控制</h2>
+      <p>我希望工具能让人放心试探：临时看看或听听另一种选择时，原来的内容和位置仍然保留；决定采用以后，再正式改变结果。以声音比较为例，我想探索一种可以临时预听、返回原选择、再明确确认的方式，让注意力留在声音的差别上。</p>
+      <p>我接受有回报的学习。入口应该让人找得到，基本动作应该讲得清；熟练以后，工具还可以提供更细的控制。压力、键盘和按钮都可以承载这种关系。如果学会以后仍然没有收益，或经常误触，就应调整实现。连续交互的价值，也要体现在状态和返回路径上。</p>
     </section>
 
-    <section class="wrap reveal" id="fusion">
-      <div class="title-row">
-        <p class="eyebrow">02 · TECHNOLOGY FUSION</p>
-        <h2>初创者更适合横向重组，而不是一开始就纵向挑战巨头。</h2>
-      </div>
-      <div class="cards">
-        <article class="card glass"><span>01</span><h3>成熟技术重新组合</h3><p>如果单一技术的纵向突破太难、太贵，就横向寻找机会，把供应链成熟的技术重新定义。</p></article>
-        <article class="card glass"><span>02</span><h3>不是简单功能相加</h3><p>真正有价值的融合应该产生协同效应，让组合后的产品拥有原本两个独立设备都不具备的能力。</p></article>
-        <article class="card glass"><span>03</span><h3>从细分场景切入</h3><p>大公司通常更适合大市场，小团队则可以在足够明确、但巨头动力不足的细分市场里建立第一块阵地。</p></article>
-      </div>
+    <section class="p-chapter" id="fusion" aria-labelledby="fusionTitle" tabindex="-1">
+      <div class="p-chapter-label"><span class="p-number" aria-hidden="true" data-i18n-static>03</span><span>技术融合</span></div>
+      <h2 id="fusionTitle">让成熟技术形成协同</h2>
+      <p>在当前的资源和能力条件下，我会优先评估成熟技术的组合机会。广州展会上，键盘与声卡结合的产品让我注意到，把原本分散的操作组织起来，也可能形成有价值的新体验。真正要解决的工作包括状态、控制、供电和结构怎样配合。</p>
+      <p>整合还要计算升级和维护的代价。少一个盒子、少几根线，如果换来整机更换或额外设置，收益就未必成立。音享贴让我持续思考同一件事：两个人已经有各自的耳机，新增的中继应该让共同收听更方便，并把额外的携带与设置负担控制得更小。成熟方案帮助我开始，深入理解关键链路则决定我能继续改进什么。</p>
+      <a class="p-project-link" href="soundshare.html">查看音享贴项目 →</a>
     </section>
 
-    <section class="wrap reveal" id="startup">
-      <div class="title-row">
-        <p class="eyebrow">03 · ENTREPRENEURSHIP</p>
-        <h2>我更认同一种务实的理想主义。</h2>
-      </div>
-      <div class="essay glass">
-        <p>商业落地和技术理想并不是互相排斥的方向。对于一个资源有限的初创团队来说，先把容易落地、供应链成熟、用户需求清晰的产品做出来，是获得继续研发资格的一种方式。</p>
-        <p>短期产品的价值，不只是赚钱。它还会带来供应链关系、制造经验、工程方法、用户反馈和市场判断。这些东西会成为下一阶段研发能力的一部分。</p>
-        <blockquote>先做出用户愿意使用、愿意付费的产品；用现金流换取研发自由，再把积累投入更长期、更困难的技术方向。</blockquote>
-        <p>所以我并不把“先活下来”和“做有理想的技术”看成二选一。前者解决的是如何继续做下去，后者决定的是最终想走到哪里。</p>
-      </div>
+    <section class="p-chapter" id="validation" aria-labelledby="validationTitle" tabindex="-1">
+      <div class="p-chapter-label"><span class="p-number" aria-hidden="true" data-i18n-static>04</span><span>使用验证</span></div>
+      <h2 id="validationTitle">把一次完整使用验证清楚</h2>
+      <p>我希望每一次验证都对应一个明确的问题。音频产品除了能否出声，还要看人怎样开始、独立调整、暂时离开、重新加入和结束。原型在我准备好的顺序里运行，只说明了那组条件；其他人换一种顺序操作，仍可能遇到需要重新设计的地方。</p>
+      <p>对于定向声音，我想进一步比较同一空间中的目标位置、邻近位置和移动路径，理解声音与空间的关系。展示位置听起来合适，还不足以说明整个场景成立。我会把设备、环境与观察结果一起记录，让结论对应实际检查过的范围，再决定继续扩展还是先缩小问题。</p>
+      <a class="p-project-link" href="ultrasonic.html">查看超声波定向扬声器项目 →</a>
     </section>
 
-    <section class="wrap reveal" id="future">
-      <div class="title-row">
-        <p class="eyebrow">04 · ROADMAP</p>
-        <h2>短期落地，中期积累，长期押注真正值得探索的方向。</h2>
-      </div>
-      <div class="roadmap">
-        <article class="road-step glass"><span>SHORT TERM</span><h3>把产品做出来</h3><p>选择技术门槛可控、供应链成熟、目标用户清晰的方向，建立现金流与真实市场反馈。</p></article>
-        <article class="road-step glass"><span>MID TERM</span><h3>把工程能力做深</h3><p>持续补齐 DSP、声场仿真、功耗、结构和量产能力，让核心项目从功能样机走向更完整的产品。</p></article>
-        <article class="road-step glass"><span>LONG TERM</span><h3>继续探索前沿音频</h3><p>持续关注定向声、原生空间音频、AI 音频与新型交互方式，寻找长期技术差异化。</p></article>
-      </div>
-      <div class="closing glass">
-        <p class="eyebrow">WORKING PRINCIPLE</p>
-        <h2>用能够落地的产品养活团队，用团队积累的资源继续投入真正值得长期研究的技术。</h2>
-        <div class="actions"><a class="btn primary" href="index.html">返回主页</a><a class="btn ghost" href="soundshare.html">音享贴</a><a class="btn ghost" href="ultrasonic.html">超声波项目</a></div>
-      </div>
+    <section class="p-chapter" id="startup" aria-labelledby="startupTitle" tabindex="-1">
+      <div class="p-chapter-label"><span class="p-number" aria-hidden="true" data-i18n-static>05</span><span>经营与研究</span></div>
+      <h2 id="startupTitle">用经营支持持续研究</h2>
+      <p>我希望做出用户愿意使用和付费的产品，逐步积累制造、交付和经营经验，为定向声、空间音频等长期方向争取资源。我会从需求具体、自己能够认真完成的范围开始；一个市场被大公司忽略，并不能直接说明它值得做。</p>
+      <p>带来收入的业务，也可能占满研究时间。考虑一项业务时，我需要把安装说明、兼容处理、返修和持续支持一起算进去。只有兑现交付以后，仍能留下时间与资金投入研究，经营才真正支持了下一步。我更愿意选择范围清楚、已有工作能够复用的产品，并在需求不断扩张时重新评估投入。</p>
+      <p>用户付费获得什么，应当说得明白。当前能提供的能力、使用条件与仍在探索的方向需要分开介绍。我希望收入来自清楚且值得的交换，也会保留为表达和探索而做的作品，不要求每项尝试都成为生意。</p>
     </section>
+
+    <section class="p-chapter" id="future" aria-labelledby="futureTitle" tabindex="-1">
+      <div class="p-chapter-label"><span class="p-number" aria-hidden="true" data-i18n-static>06</span><span>长期方向</span></div>
+      <h2 id="futureTitle">继续研究声音与空间的关系</h2>
+      <p>我想继续深入定向声音、空间音频和新的声音交互。对我有吸引力的问题是：声音怎样与位置、内容和人的行动配合；录制与回放怎样保留现场的空间感；人在比较和调整声音时，怎样始终理解自己正在控制什么。</p>
+      <p>我重视原生空间录制，也对算法和 AI 能把声音做到什么程度保持兴趣。两者让我留下一个还没想清楚的问题：当生成的听感已经足够接近，真实事件的记录、空间定位和创作者的控制，分别还有什么价值？我愿意围绕具体任务比较这些路径，让后续的原型和实验继续改变判断。</p>
+    </section>
+
+    <div class="p-return">
+      <a class="p-home-link" href="index.html#philosophy"><span aria-hidden="true">←</span><span>返回主页</span></a>
+    </div>
   </main>
 
   <footer class="p-footer wrap"><span>© <span id="pYear"></span> 罗宇伦 Roy Luo</span><span>Product · Technology · Entrepreneurship</span><span class="music-copyright">背景音乐仅用于个人非商业展示 · 音乐版权归原权利人所有</span></footer>
-  <script src="i18n.js?v=20260918-4"></script>
-  <script src="background-music.js?v=20260918-4"></script>
-  <script src="continuous-navigation.js?v=20260918-5"></script>
-  <script src="philosophy.js?v=20260918-4"></script>
+  <script src="i18n.js?v=20260922-2"></script>
+  <script src="background-music.js?v=20260922-1"></script>
+  <script src="continuous-navigation.js?v=20260922-1"></script>
+  <script src="philosophy.js?v=20260922-2"></script>
   <script src="region-notice.js?v=20260918-4"></script>
   <script src="nav-scroll.js?v=20260918-4"></script>
 </body>

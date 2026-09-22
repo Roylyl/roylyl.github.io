@@ -68,20 +68,16 @@
     '嘉立创 EDA': '嘉立創 EDA',
     '从概念、分工到原型展示的完整推进能力，能在学生项目中承担负责人角色。': '從概念、分工到原型展示的完整推進能力，能在學生項目中承擔負責人角色。',
     '音乐与音频设备实践让我能从用戶视角理解延迟、底噪、动态响应与交互体验。': '音樂與音頻設備實踐讓我能從用戶視角理解延遲、底噪、動態響應與互動體驗。',
-    '产品先解决真实问题，创业先让理想拥有继续存在的条件。': '產品先解決真實問題，創業先讓理想擁有繼續存在的條件。',
     '不为了创新而创新。': '不為了創新而創新。',
-    '我更关心产品是否真正改善了使用体验，而不是参数是否足够夸张。对初创团队而言，很多机会并不来自重新发明底层技术，而来自把成熟技术重新组合，用新的交互和结构去解决被忽略的具体场景。': '我更關心產品是否真正改善了使用體驗，而不是參數是否足夠誇張。對初創團隊而言，很多機會並不來自重新發明底層技術，而來自把成熟技術重新組合，用新的互動和結構去解決被忽略的具體場景。',
     '从真实场景和用户痛点出发，再决定技术方案': '從真實場景和用戶痛點出發，再決定技術方案',
     '避免无意义的参数堆叠和功能堆砌': '避免無意義的參數堆疊和功能堆砌',
     '尊重用户已有设备，尽量创造增量价值而非强制替代': '尊重用戶已有設備，盡量創造增量價值而非強制替代',
     '让多个成熟功能形成协同，而不是简单做功能加法': '讓多個成熟功能形成協同，而不是簡單做功能加法',
     '务实的理想主义。': '務實的理想主義。',
-    '我不把商业落地和技术理想看成冲突关系。早期团队资源有限，应该先做技术门槛可控、供应链成熟、用户明确的产品，获得现金流、制造经验和市场认知，再把这些积累投入更长期、更困难的技术方向。': '我不把商業落地和技術理想看成衝突關係。早期團隊資源有限，應該先做技術門檻可控、供應鏈成熟、用戶明確的產品，獲得現金流、製造經驗和市場認知，再把這些積累投入更長期、更困難的技術方向。',
     '先做出用户愿意使用、愿意付费的产品': '先做出用戶願意使用、願意付費的產品',
     '用现金流换取研发自由与更长的技术周期': '用現金流換取研發自由與更長的技術週期',
     '选择巨头动力不足、但足以支撑小团队的细分市场': '選擇巨頭動力不足、但足以支撐小團隊的細分市場',
     '短期务实落地，长期继续探索定向声与空间音频': '短期務實落地，長期繼續探索定向聲與空間音頻',
-    '用能够落地的产品养活团队，用团队积累的资源继续投入真正值得长期研究的技术。': '用能夠落地的產品養活團隊，用團隊積累的資源繼續投入真正值得長期研究的技術。',
     '阅读全文 →': '閱讀全文 →',
     '音乐是第二主线，但依然能说明我与音频产品的关系。': '音樂是第二主線，但依然能說明我與音頻產品的關係。',
     '乐队演出 / 基础音频制作 / 音色实践': '樂隊演出 / 基礎音頻製作 / 音色實踐',
@@ -134,25 +130,16 @@
     '项目相关画面': '項目相關畫面', '项目展板': '項目展板', '团队与样机': '團隊與樣機', '概念形态图': '概念形態圖',
 
     '做能落地的产品，': '做能落地的產品，', '保留改变未来的野心。': '保留改變未來的野心。',
-    '这不是一套固定不变的答案，而是我在项目实践、行业调研和创业思考中逐渐形成的工作方法。核心只有两个问题：今天怎样把产品做出来，长期又想把技术带到哪里。': '這不是一套固定不變的答案，而是我在項目實踐、行業調研和創業思考中逐漸形成的工作方法。核心只有兩個問題：今天怎樣把產品做出來，長期又想把技術帶到哪裡。',
     '开始阅读': '開始閱讀', '产品不是参数表，而是一个问题被更聪明地解决。': '產品不是參數表，而是一個問題被更聰明地解決。',
-    '我更关注产品是否真正解决问题，而不是它堆叠了多少参数。在消费电子和音频行业，很多底层技术已经足够成熟，继续把采样率、位深度、连接规格或功能数量往上堆，并不一定能带来同等幅度的用户体验提升。': '我更關注產品是否真正解決問題，而不是它堆疊了多少參數。在消費電子和音頻行業，很多底層技術已經足夠成熟，繼續把採樣率、位元深度、連接規格或功能數量往上堆，並不一定能帶來同等幅度的使用體驗提升。',
-    '因此，我更愿意从真实场景出发，再决定技术应该如何被使用。一个好的产品不一定需要发明新的元件，也不一定需要挑战新的物理极限。很多时候，把成熟的 A 技术和成熟的 B 技术，通过一个新的 C 场景重新组合，就能产生新的价值。': '因此，我更願意從真實場景出發，再決定技術應該如何被使用。一個好的產品不一定需要發明新的元件，也不一定需要挑戰新的物理極限。很多時候，把成熟的 A 技術和成熟的 B 技術，透過一個新的 C 場景重新組合，就能產生新的價值。',
-    '不为了创新而创新，不为了参数而堆参数，而是用尽可能简单、可靠和成熟的技术，解决一个过去没有被认真解决的问题。': '不為了創新而創新，不為了參數而堆參數，而是用盡可能簡單、可靠和成熟的技術，解決一個過去沒有被認真解決的問題。',
-    '这也是我理解音享贴和超声波定向扬声器的共同点。两者技术路线完全不同，但都不是为了展示技术本身，而是希望改变声音在真实场景中的使用方式。': '這也是我理解音享貼和超聲波定向揚聲器的共同點。兩者技術路線完全不同，但都不是為了展示技術本身，而是希望改變聲音在真實場景中的使用方式。',
     '初创者更适合横向重组，而不是一开始就纵向挑战巨头。': '初創者更適合橫向重組，而不是一開始就縱向挑戰巨頭。',
-    '成熟技术重新组合': '成熟技術重新組合', '如果单一技术的纵向突破太难、太贵，就横向寻找机会，把供应链成熟的技术重新定义。': '如果單一技術的縱向突破太難、太貴，就橫向尋找機會，把供應鏈成熟的技術重新定義。',
-    '不是简单功能相加': '不是簡單功能相加', '真正有价值的融合应该产生协同效应，让组合后的产品拥有原本两个独立设备都不具备的能力。': '真正有價值的融合應該產生協同效應，讓組合後的產品擁有原本兩個獨立設備都不具備的能力。',
-    '从细分场景切入': '從細分場景切入', '大公司通常更适合大市场，小团队则可以在足够明确、但巨头动力不足的细分市场里建立第一块阵地。': '大公司通常更適合大市場，小團隊則可以在足夠明確、但巨頭動力不足的細分市場裡建立第一塊陣地。',
+    '成熟技术重新组合': '成熟技術重新組合',
+    '不是简单功能相加': '不是簡單功能相加',
+    '从细分场景切入': '從細分場景切入',
     '我更认同一种务实的理想主义。': '我更認同一種務實的理想主義。',
-    '商业落地和技术理想并不是互相排斥的方向。对于一个资源有限的初创团队来说，先把容易落地、供应链成熟、用户需求清晰的产品做出来，是获得继续研发资格的一种方式。': '商業落地和技術理想並不是互相排斥的方向。對於一個資源有限的初創團隊來說，先把容易落地、供應鏈成熟、用戶需求清晰的產品做出來，是獲得繼續研發資格的一種方式。',
-    '短期产品的价值，不只是赚钱。它还会带来供应链关系、制造经验、工程方法、用户反馈和市场判断。这些东西会成为下一阶段研发能力的一部分。': '短期產品的價值，不只是賺錢。它還會帶來供應鏈關係、製造經驗、工程方法、用戶反饋和市場判斷。這些東西會成為下一階段研發能力的一部分。',
-    '先做出用户愿意使用、愿意付费的产品；用现金流换取研发自由，再把积累投入更长期、更困难的技术方向。': '先做出用戶願意使用、願意付費的產品；用現金流換取研發自由，再把積累投入更長期、更困難的技術方向。',
-    '所以我并不把“先活下来”和“做有理想的技术”看成二选一。前者解决的是如何继续做下去，后者决定的是最终想走到哪里。': '所以我並不把「先活下來」和「做有理想的技術」看成二選一。前者解決的是如何繼續做下去，後者決定的是最終想走到哪裡。',
     '短期落地，中期积累，长期押注真正值得探索的方向。': '短期落地，中期積累，長期押注真正值得探索的方向。',
-    '把产品做出来': '把產品做出來', '选择技术门槛可控、供应链成熟、目标用户清晰的方向，建立现金流与真实市场反馈。': '選擇技術門檻可控、供應鏈成熟、目標用戶清晰的方向，建立現金流與真實市場反饋。',
-    '把工程能力做深': '把工程能力做深', '持续补齐 DSP、声场仿真、功耗、结构和量产能力，让核心项目从功能样机走向更完整的产品。': '持續補齊 DSP、聲場模擬、功耗、結構和量產能力，讓核心項目從功能樣機走向更完整的產品。',
-    '继续探索前沿音频': '繼續探索前沿音頻', '持续关注定向声、原生空间音频、AI 音频与新型交互方式，寻找长期技术差异化。': '持續關注定向聲、原生空間音頻、AI 音頻與新型互動方式，尋找長期技術差異化。',
+    '把产品做出来': '把產品做出來',
+    '把工程能力做深': '把工程能力做深',
+    '继续探索前沿音频': '繼續探索前沿音頻',
     'PCB 设计、板级验证、硬件调试与系统联调。': 'PCB 設計、板級驗證、硬件調試與系統聯調。',
     '以 ESP32 为主，围绕 BLE/A2DP、嵌入式控制与原型功能验证。': '以 ESP32 為主，圍繞 BLE/A2DP、嵌入式控制與原型功能驗證。',
     '硬件与验证': '硬件與驗證', 'PCB 设计、样机组装、硬件调试、功能测试与系统联调。': 'PCB 設計、樣機組裝、硬件調試、功能測試與系統聯調。',
@@ -247,20 +234,16 @@
     '基础 PCB 设计、硬件调试、样机搭建、功放联调、现场功能验证与展示。': 'Basic PCB design, hardware debugging, prototype assembly, amplifier integration, on-site validation, and demonstrations.',
     '从概念、分工到原型展示的完整推进能力，能在学生项目中承担负责人角色。': 'End-to-end project execution from concept and task breakdown to prototype demonstration, including team leadership responsibilities.',
     '音乐与音频设备实践让我能从使用者视角理解延迟、底噪、动态响应与交互体验。': 'Music and audio-equipment practice helps me evaluate latency, noise floor, dynamic response, and UX from the user perspective.',
-    '产品先解决真实问题，创业先让理想拥有继续存在的条件。': 'Products should solve real problems; entrepreneurship should create the conditions for long-term ambition.',
     '不为了创新而创新。': 'Innovation should serve the problem.',
-    '我更关心产品是否真正改善了使用体验，而不是参数是否足够夸张。对初创团队而言，很多机会并不来自重新发明底层技术，而来自把成熟技术重新组合，用新的交互和结构去解决被忽略的具体场景。': 'I care more about whether a product meaningfully improves the user experience than whether its specifications look impressive. For an early-stage team, many opportunities come from recombining mature technologies and applying new interaction and product structures to overlooked scenarios.',
     '从真实场景和用户痛点出发，再决定技术方案': 'Start with real scenarios and user pain points, then choose the technology',
     '避免无意义的参数堆叠和功能堆砌': 'Avoid meaningless specification and feature stacking',
     '尊重用户已有设备，尽量创造增量价值而非强制替代': 'Respect devices users already own and create incremental value instead of forced replacement',
     '让多个成熟功能形成协同，而不是简单做功能加法': 'Make mature functions work together rather than simply adding features',
     '务实的理想主义。': 'Pragmatic idealism.',
-    '我不把商业落地和技术理想看成冲突关系。早期团队资源有限，应该先做技术门槛可控、供应链成熟、用户明确的产品，获得现金流、制造经验和市场认知，再把这些积累投入更长期、更困难的技术方向。': 'I do not see commercial execution and technical ambition as opposites. With limited resources, an early-stage team should first build products with manageable technical risk, mature supply chains, and clear users, gaining cash flow, manufacturing experience, and market understanding before investing in harder, longer-term technology.',
     '先做出用户愿意使用、愿意付费的产品': 'Build something users are willing to use and pay for',
     '用现金流换取研发自由与更长的技术周期': 'Use cash flow to buy R&D freedom and longer development cycles',
     '选择巨头动力不足、但足以支撑小团队的细分市场': 'Choose niches too small for giants but large enough to sustain a focused team',
     '短期务实落地，长期继续探索定向声与空间音频': 'Execute pragmatically in the short term while continuing to explore directional and spatial audio',
-    '用能够落地的产品养活团队，用团队积累的资源继续投入真正值得长期研究的技术。': 'Use products that can ship to sustain the team, then reinvest accumulated resources into technologies worth pursuing for the long term.',
     '阅读全文 →': 'Read the full philosophy →',
     '音乐是第二主线，但依然能说明我与音频产品的关系。': 'Music is a secondary thread, but it still explains how I think about audio products.',
     '乐队演出 / 基础音频制作 / 音色实践': 'Live performance / basic production / tone exploration',
@@ -309,25 +292,16 @@
     '项目相关画面': 'Project gallery', '项目展板': 'Project board', '团队与样机': 'Team & prototype', '概念形态图': 'Concept render',
 
     '做能落地的产品，': 'Build products that can ship,', '保留改变未来的野心。': 'keep the ambition to change what comes next.',
-    '这不是一套固定不变的答案，而是我在项目实践、行业调研和创业思考中逐渐形成的工作方法。核心只有两个问题：今天怎样把产品做出来，长期又想把技术带到哪里。': 'This is not a fixed doctrine. It is a working method formed through projects, industry research, and entrepreneurial thinking. It comes down to two questions: how do I build the product today, and where do I want the technology to go over the long term?',
     '开始阅读': 'Start reading', '产品不是参数表，而是一个问题被更聪明地解决。': 'A product is not a specification sheet; it is a problem solved more intelligently.',
-    '我更关注产品是否真正解决问题，而不是它堆叠了多少参数。在消费电子和音频行业，很多底层技术已经足够成熟，继续把采样率、位深度、连接规格或功能数量往上堆，并不一定能带来同等幅度的用户体验提升。': 'I care more about whether a product genuinely solves a problem than how many specifications it stacks. In consumer electronics and audio, many underlying technologies are already mature; pushing sample rates, bit depth, connectivity specifications, or feature counts higher does not necessarily create proportional gains in user experience.',
-    '因此，我更愿意从真实场景出发，再决定技术应该如何被使用。一个好的产品不一定需要发明新的元件，也不一定需要挑战新的物理极限。很多时候，把成熟的 A 技术和成熟的 B 技术，通过一个新的 C 场景重新组合，就能产生新的价值。': 'I therefore prefer to start from real scenarios and then decide how technology should be used. A good product does not always require a new component or a new physical limit. Often, combining mature technology A and mature technology B in a new scenario C can create meaningful value.',
-    '不为了创新而创新，不为了参数而堆参数，而是用尽可能简单、可靠和成熟的技术，解决一个过去没有被认真解决的问题。': 'Do not innovate for innovation’s sake or stack specifications for their own sake. Use the simplest, most reliable mature technology possible to solve a problem that has not been taken seriously enough.',
-    '这也是我理解音享贴和超声波定向扬声器的共同点。两者技术路线完全不同，但都不是为了展示技术本身，而是希望改变声音在真实场景中的使用方式。': 'This is the common thread I see between SoundShare and the ultrasonic directional speaker. Their technical paths are very different, but neither exists merely to showcase technology; both aim to change how sound is used in real situations.',
     '初创者更适合横向重组，而不是一开始就纵向挑战巨头。': 'Early-stage teams are often better suited to horizontal recombination than immediately challenging giants vertically.',
-    '成熟技术重新组合': 'Recombine mature technologies', '如果单一技术的纵向突破太难、太贵，就横向寻找机会，把供应链成熟的技术重新定义。': 'If a vertical breakthrough is too difficult or expensive, look horizontally and redefine technologies that already have mature supply chains.',
-    '不是简单功能相加': 'More than feature addition', '真正有价值的融合应该产生协同效应，让组合后的产品拥有原本两个独立设备都不具备的能力。': 'Valuable integration should create synergy, giving the combined product abilities that neither standalone device had before.',
-    '从细分场景切入': 'Enter through a focused niche', '大公司通常更适合大市场，小团队则可以在足够明确、但巨头动力不足的细分市场里建立第一块阵地。': 'Large companies are usually better suited to large markets; small teams can build their first foothold in focused niches that are clear enough to matter but too small to motivate giants.',
+    '成熟技术重新组合': 'Recombine mature technologies',
+    '不是简单功能相加': 'More than feature addition',
+    '从细分场景切入': 'Enter through a focused niche',
     '我更认同一种务实的理想主义。': 'I believe in pragmatic idealism.',
-    '商业落地和技术理想并不是互相排斥的方向。对于一个资源有限的初创团队来说，先把容易落地、供应链成熟、用户需求清晰的产品做出来，是获得继续研发资格的一种方式。': 'Commercial execution and technical ambition are not mutually exclusive. For a resource-constrained early-stage team, shipping products with mature supply chains and clear user needs is a way to earn the right to keep doing R&D.',
-    '短期产品的价值，不只是赚钱。它还会带来供应链关系、制造经验、工程方法、用户反馈和市场判断。这些东西会成为下一阶段研发能力的一部分。': 'The value of a short-term product is not only revenue. It also brings supplier relationships, manufacturing experience, engineering methods, user feedback, and market judgment—all of which become part of the next stage of R&D capability.',
-    '先做出用户愿意使用、愿意付费的产品；用现金流换取研发自由，再把积累投入更长期、更困难的技术方向。': 'First build products people will use and pay for; use cash flow to gain R&D freedom, then reinvest accumulated resources into longer-term and more difficult technologies.',
-    '所以我并不把“先活下来”和“做有理想的技术”看成二选一。前者解决的是如何继续做下去，后者决定的是最终想走到哪里。': 'I do not see “survive first” and “build ambitious technology” as mutually exclusive. The former answers how to keep going; the latter determines where I ultimately want to go.',
     '短期落地，中期积累，长期押注真正值得探索的方向。': 'Ship in the short term, build capability in the medium term, and invest long-term in directions worth exploring.',
-    '把产品做出来': 'Build the product', '选择技术门槛可控、供应链成熟、目标用户清晰的方向，建立现金流与真实市场反馈。': 'Choose directions with manageable technical risk, mature supply chains, and clear target users to establish cash flow and real market feedback.',
-    '把工程能力做深': 'Deepen engineering capability', '持续补齐 DSP、声场仿真、功耗、结构和量产能力，让核心项目从功能样机走向更完整的产品。': 'Continue strengthening DSP, sound-field simulation, power, mechanical design, and manufacturability so core projects can move from functional prototypes toward complete products.',
-    '继续探索前沿音频': 'Keep exploring frontier audio', '持续关注定向声、原生空间音频、AI 音频与新型交互方式，寻找长期技术差异化。': 'Keep exploring directional sound, native spatial audio, AI audio, and new interaction models to find durable technical differentiation.',
+    '把产品做出来': 'Build the product',
+    '把工程能力做深': 'Deepen engineering capability',
+    '继续探索前沿音频': 'Keep exploring frontier audio',
     'PCB 设计、板级验证、硬件调试与系统联调。': 'PCB design, board-level validation, hardware debugging, and system integration.',
     '以 ESP32 为主，围绕 BLE/A2DP、嵌入式控制与原型功能验证。': 'ESP32-based development covering BLE/A2DP, embedded control, and prototype validation.',
     '硬件与验证': 'Hardware & validation', 'PCB 设计、样机组装、硬件调试、功能测试与系统联调。': 'PCB design, prototype assembly, hardware debugging, functional testing, and system integration.',
@@ -385,11 +359,367 @@
     '返回主页': 'Back to home', '音享贴': 'SoundShare', '超声波项目': 'Ultrasonic project'
   };
 
+  // Approved project additions: keep the original text-node translation flow.
+  Object.assign(cn, {
+  "两个人各自拥有耳机，也能更方便地共同收听。音享贴以轻量中继连接已有设备，保留独立调节的选择；已完成首版 PCB 与板级功能验证，并实现双 A2DP、多设备同步及延迟调节。": "两个人各自拥有耳机，也能更方便地共同收听。音享贴以轻量中继连接已有设备，保留独立调节的选择；已完成首版 PCB 与板级功能验证，并实现双 A2DP、多设备同步及延迟调节。",
+  "PROJECT 03 · WEB EXTENSION": "项目 03 · 浏览器扩展",
+  "在原来的页面里，继续阅读。": "在原来的页面里，继续阅读。",
+  "浏览器扩展": "浏览器扩展",
+  "原位翻译 · 双语切换": "原位翻译 · 双语切换",
+  "我围绕网页原位阅读构建翻译扩展，接入可配置的模型服务，让译文进入当前页面，并提供原文与双语切换。工程重点包括保留原有节点和交互、按阅读范围安排请求，以及在停止、恢复和网页更新时维护一致的状态。": "我围绕网页原位阅读构建翻译扩展，接入可配置的模型服务，让译文进入当前页面，并提供原文与双语切换。工程重点包括保留原有节点和交互、按阅读范围安排请求，以及在停止、恢复和网页更新时维护一致的状态。",
+  "翻译之外，怎样保留阅读体验": "翻译之外，怎样保留阅读体验",
+  "翻译能力之外，产品还要保留阅读任务、页面状态和用户的控制权。": "翻译能力之外，产品还要保留阅读任务、页面状态和用户的控制权。",
+  "阅读：优先处理可见内容，保留原有链接和页面操作。": "阅读：优先处理可见内容，保留原有链接和页面操作。",
+  "停止：取消当前任务，隔离迟到的翻译结果。": "停止：取消当前任务，隔离迟到的翻译结果。",
+  "恢复：切回原文时，避免覆盖网页自身的新内容。": "恢复：切回原文时，避免覆盖网页自身的新内容。",
+  "设计参考 KISS Translator 与 TWP，翻译由所配置的模型服务提供。": "设计参考 KISS Translator 与 TWP，翻译由所配置的模型服务提供。",
+  "查看状态回归用例 ↗": "查看状态回归用例 ↗",
+  "查看翻译扩展源码 ↗": "查看翻译扩展源码 ↗",
+  "PROJECT 04 · macOS EXPERIMENT": "项目 04 · macOS 实验",
+  "从铰链动作，到屏幕反馈。": "从铰链动作，到屏幕反馈。",
+  "macOS 视觉实验": "macOS 视觉实验",
+  "基于 MacBook-Duo 改进": "基于 MacBook-Duo 改进",
+  "MacDuo 是基于 MacBook-Duo 改进的 macOS 视觉实验，将兼容设备的铰链角度与桌面效果关联。我围绕菜单栏控制、自定义快捷键、独立设置以及捕获和渲染状态恢复继续完善体验，探索物理动作与屏幕反馈之间的关系。": "MacDuo 是基于 MacBook-Duo 改进的 macOS 视觉实验，将兼容设备的铰链角度与桌面效果关联。我围绕菜单栏控制、自定义快捷键、独立设置以及捕获和渲染状态恢复继续完善体验，探索物理动作与屏幕反馈之间的关系。",
+  "动作、控制与恢复": "动作、控制与恢复",
+  "物理动作可以成为输入维度；完整体验也需要可控的进入、停止与恢复。": "物理动作可以成为输入维度；完整体验也需要可控的进入、停止与恢复。",
+  "用菜单栏和自定义快捷键提供明确的控制入口。": "用菜单栏和自定义快捷键提供明确的控制入口。",
+  "通过独立设置调整效果，保留手动预览方式。": "通过独立设置调整效果，保留手动预览方式。",
+  "处理捕获与渲染生命周期，改善暂停和恢复行为。": "处理捕获与渲染生命周期，改善暂停和恢复行为。",
+  "桌面捕获、铰链读取和玻璃效果的基础来自上游。这是软件视觉实验，实际体验取决于兼容机型与桌面环境。": "桌面捕获、铰链读取和玻璃效果的基础来自上游。这是软件视觉实验，实际体验取决于兼容机型与桌面环境。",
+  "查看上游与引用说明 ↗": "查看上游与引用说明 ↗",
+  "查看 MacDuo 源码 ↗": "查看 MacDuo 源码 ↗",
+  "晚渡 · WANDU": "晚渡 · WANDU",
+  "单独打开音频 ↗": "单独打开音频 ↗",
+  "编曲": "编曲",
+  "九声部 MIDI · 88 BPM · E 小调": "九声部 MIDI · 88 BPM · E 小调",
+  "浏览 MIDI 素材 ↗": "浏览 MIDI 素材 ↗",
+  "也可以查看我的 GitHub、简历与项目的完整介绍。": "也可以查看我的 GitHub、简历与项目的完整介绍。",
+  "ASTRA COMPUTER USE TEST": "Astra 电脑操作测试",
+  "《晚渡》完全由 Codex GPT-6 Astra 模型操作 MacBook 上的 FL Studio 完成。这不是我的个人作品，而是一次 Astra Computer Use 测试；此处保留试听、工程与 MIDI，供查看测试产物。": "《晚渡》完全由 Codex GPT-6 Astra 模型操作 MacBook 上的 FL Studio 完成。这不是我的个人作品，而是一次 Astra Computer Use 测试；此处保留试听、工程与 MIDI，供查看测试产物。",
+  "测试产物试听 · 约 4 分 28 秒": "测试产物试听 · 约 4 分 28 秒",
+  "测试方式": "测试方式",
+  "Codex GPT-6 Astra · MacBook · FL Studio": "Codex GPT-6 Astra · MacBook · FL Studio",
+  "公开产物": "公开产物",
+  "FL Studio 工程 · MIDI · 生成源文件": "FL Studio 工程 · MIDI · 生成源文件",
+  "这次测试留下了什么": "这次测试留下了什么",
+  "本案例用于展示模型操作桌面音乐软件后留下的文件与音频，不作为个人作曲、编曲或演奏能力的证明。": "本案例用于展示模型操作桌面音乐软件后留下的文件与音频，不作为个人作曲、编曲或演奏能力的证明。",
+  "小号承担主旋律，乐器由 MIDI 驱动音源演奏，没有真实乐手或人声录音。生成脚本负责 MIDI 与曲目清单，FL Studio 工程和试听音频分别保留。": "小号承担主旋律，乐器由 MIDI 驱动音源演奏，没有真实乐手或人声录音。生成脚本负责 MIDI 与曲目清单，FL Studio 工程和试听音频分别保留。",
+  "测试说明与工程 ↗": "测试说明与工程 ↗"
+});
+  Object.assign(tw, {
+  "两个人各自拥有耳机，也能更方便地共同收听。音享贴以轻量中继连接已有设备，保留独立调节的选择；已完成首版 PCB 与板级功能验证，并实现双 A2DP、多设备同步及延迟调节。": "兩個人各自擁有耳機，也能更方便地共同收聽。音享貼以輕量中繼連接已有設備，保留獨立調節的選擇；已完成首版 PCB 與板級功能驗證，並實現雙 A2DP、多設備同步及延遲調節。",
+  "PROJECT 03 · WEB EXTENSION": "項目 03 · 瀏覽器擴充功能",
+  "在原来的页面里，继续阅读。": "在原來的頁面裡，繼續閱讀。",
+  "浏览器扩展": "瀏覽器擴充功能",
+  "原位翻译 · 双语切换": "原位翻譯 · 雙語切換",
+  "我围绕网页原位阅读构建翻译扩展，接入可配置的模型服务，让译文进入当前页面，并提供原文与双语切换。工程重点包括保留原有节点和交互、按阅读范围安排请求，以及在停止、恢复和网页更新时维护一致的状态。": "我圍繞網頁原位閱讀建立翻譯擴充功能，接入可設定的模型服務，讓譯文進入目前頁面，並提供原文與雙語切換。工程重點包括保留原有節點和互動、按閱讀範圍安排請求，以及在停止、還原和網頁更新時維持一致的狀態。",
+  "翻译之外，怎样保留阅读体验": "翻譯之外，怎樣保留閱讀體驗",
+  "翻译能力之外，产品还要保留阅读任务、页面状态和用户的控制权。": "翻譯能力之外，產品還要保留閱讀任務、頁面狀態和用戶的控制權。",
+  "阅读：优先处理可见内容，保留原有链接和页面操作。": "閱讀：優先處理可見內容，保留原有連結和頁面操作。",
+  "停止：取消当前任务，隔离迟到的翻译结果。": "停止：取消目前任務，隔離延遲返回的翻譯結果。",
+  "恢复：切回原文时，避免覆盖网页自身的新内容。": "還原：切回原文時，避免覆蓋網頁自身的新內容。",
+  "设计参考 KISS Translator 与 TWP，翻译由所配置的模型服务提供。": "設計參考 KISS Translator 與 TWP，翻譯由所設定的模型服務提供。",
+  "查看状态回归用例 ↗": "查看狀態回歸測試 ↗",
+  "查看翻译扩展源码 ↗": "查看翻譯擴充功能原始碼 ↗",
+  "PROJECT 04 · macOS EXPERIMENT": "項目 04 · macOS 實驗",
+  "从铰链动作，到屏幕反馈。": "從鉸鏈動作，到螢幕回饋。",
+  "macOS 视觉实验": "macOS 視覺實驗",
+  "基于 MacBook-Duo 改进": "基於 MacBook-Duo 改進",
+  "MacDuo 是基于 MacBook-Duo 改进的 macOS 视觉实验，将兼容设备的铰链角度与桌面效果关联。我围绕菜单栏控制、自定义快捷键、独立设置以及捕获和渲染状态恢复继续完善体验，探索物理动作与屏幕反馈之间的关系。": "MacDuo 是基於 MacBook-Duo 改進的 macOS 視覺實驗，將相容設備的鉸鏈角度與桌面效果連結。我圍繞選單列控制、自訂快捷鍵、獨立設定，以及擷取和渲染狀態恢復持續完善體驗，探索物理動作與螢幕回饋之間的關係。",
+  "动作、控制与恢复": "動作、控制與恢復",
+  "物理动作可以成为输入维度；完整体验也需要可控的进入、停止与恢复。": "物理動作可以成為輸入維度；完整體驗也需要可控的啟動、停止與恢復。",
+  "用菜单栏和自定义快捷键提供明确的控制入口。": "用選單列和自訂快捷鍵提供明確的控制入口。",
+  "通过独立设置调整效果，保留手动预览方式。": "透過獨立設定調整效果，保留手動預覽方式。",
+  "处理捕获与渲染生命周期，改善暂停和恢复行为。": "處理擷取與渲染生命週期，改善暫停和恢復行為。",
+  "桌面捕获、铰链读取和玻璃效果的基础来自上游。这是软件视觉实验，实际体验取决于兼容机型与桌面环境。": "桌面擷取、鉸鏈讀取和玻璃效果的基礎來自上游。這是軟件視覺實驗，實際體驗取決於相容機型與桌面環境。",
+  "查看上游与引用说明 ↗": "查看上游與引用說明 ↗",
+  "查看 MacDuo 源码 ↗": "查看 MacDuo 原始碼 ↗",
+  "晚渡 · WANDU": "晚渡 · WANDU",
+  "单独打开音频 ↗": "單獨開啟音訊 ↗",
+  "编曲": "編曲",
+  "九声部 MIDI · 88 BPM · E 小调": "九聲部 MIDI · 88 BPM · E 小調",
+  "浏览 MIDI 素材 ↗": "瀏覽 MIDI 素材 ↗",
+  "也可以查看我的 GitHub、简历与项目的完整介绍。": "也可以查看我的 GitHub、履歷與項目的完整介紹。",
+  "ASTRA COMPUTER USE TEST": "Astra 電腦操作測試",
+  "《晚渡》完全由 Codex GPT-6 Astra 模型操作 MacBook 上的 FL Studio 完成。这不是我的个人作品，而是一次 Astra Computer Use 测试；此处保留试听、工程与 MIDI，供查看测试产物。": "《晚渡》完全由 Codex GPT-6 Astra 模型操作 MacBook 上的 FL Studio 完成。這不是我的個人作品，而是一次 Astra Computer Use 測試；此處保留試聽、工程與 MIDI，供查看測試產物。",
+  "测试产物试听 · 约 4 分 28 秒": "測試產物試聽 · 約 4 分 28 秒",
+  "测试方式": "測試方式",
+  "Codex GPT-6 Astra · MacBook · FL Studio": "Codex GPT-6 Astra · MacBook · FL Studio",
+  "公开产物": "公開產物",
+  "FL Studio 工程 · MIDI · 生成源文件": "FL Studio 工程 · MIDI · 生成原始碼",
+  "这次测试留下了什么": "這次測試留下了什麼",
+  "本案例用于展示模型操作桌面音乐软件后留下的文件与音频，不作为个人作曲、编曲或演奏能力的证明。": "本案例用於展示模型操作桌面音樂軟件後留下的檔案與音訊，不作為個人作曲、編曲或演奏能力的證明。",
+  "小号承担主旋律，乐器由 MIDI 驱动音源演奏，没有真实乐手或人声录音。生成脚本负责 MIDI 与曲目清单，FL Studio 工程和试听音频分别保留。": "小號承擔主旋律，樂器由 MIDI 驅動音源演奏，沒有真實樂手或人聲錄音。生成腳本負責 MIDI 與曲目清單，FL Studio 工程和試聽音訊分別保留。",
+  "测试说明与工程 ↗": "測試說明與工程 ↗",
+  "两个人已经各自拥有耳机，却不一定能方便地一起听同一段内容。我希望用轻量中继改善设备之间的协作，并保留各自的音量与控制选择。音享贴由此展开硬件、音频链路和多端交互的设计，先把共同收听这一段体验说明白。": "兩個人已經各自擁有耳機，卻不一定能方便地一起聽同一段內容。我希望用輕量中繼改善設備之間的協作，並保留各自的音量與控制選擇。音享貼由此展開硬件、音頻鏈路和多端互動的設計，先把共同收聽這一段體驗說明白。",
+  "从一个音源、两台播放设备的任务出发，让已有耳机获得共同收听的新用途。": "從一個音源、兩台播放設備的任務出發，讓已有耳機獲得共同收聽的新用途。",
+  "新增的携带与设置负担，应小于它消除的麻烦。磁吸与轻量形态仍需结合结构、功耗继续打磨。": "新增的攜帶與設定負擔，應小於它消除的麻煩。磁吸與輕量形態仍需結合結構、功耗繼續打磨。",
+  "共同收听不等于相同音量。独立调节之外，还要让人看清参数作用于哪一路、当前处于什么状态。": "共同收聽不等於相同音量。獨立調節之外，還要讓人看清參數作用於哪一路、目前處於什麼狀態。",
+  "手机承担连接与日常控制，手表适合快速微调，平板提供总览，小程序提供轻量入口。": "手機承擔連線與日常控制，手錶適合快速微調，平板提供總覽，小程式提供輕量入口。",
+  "预期使用流程": "預期使用流程",
+  "从一起开始，到各自离开。": "從一起開始，到各自離開。",
+  "以下流程用于明确设计目标，不代表所有设备组合都已完成验证。": "以下流程用於明確設計目標，不代表所有設備組合都已完成驗證。",
+  "一起开始": "一起開始",
+  "选择同一音源，确认两路播放设备与连接状态，再进入共同收听。": "選擇同一音源，確認兩路播放設備與連線狀態，再進入共同收聽。",
+  "各自调整": "各自調整",
+  "分别调整音量与延迟，让每次操作对应清楚的设备与参数。": "分別調整音量與延遲，讓每次操作對應清楚的設備與參數。",
+  "暂时离开": "暫時離開",
+  "一方断开或重新加入时，怎样保留另一方的播放与各自设置，是后续要验证的体验。": "一方斷開或重新加入時，怎樣保留另一方的播放與各自設定，是後續要驗證的體驗。",
+  "共同收听是当前核心任务；K 歌与户外使用保留为拓展设想，仍需各自的验证条件。": "共同收聽是目前核心任務；K 歌與戶外使用保留為拓展設想，仍需各自的驗證條件。",
+  "耳机与音箱共同使用的拓展设想。监听延迟与两路播放时差需要分别验证，不能由同步功能直接推定。": "耳機與音箱共同使用的拓展設想。監聽延遲與兩路播放時差需要分別驗證，不能由同步功能直接推定。",
+  "户外连接、同步与持续使用仍需验证；当前双路原型不代表更多节点的组网效果已成立。": "戶外連線、同步與持續使用仍需驗證；目前雙路原型不代表更多節點的組網效果已成立。",
+  "声音与空间": "聲音與空間",
+  "发出声音之后，还要看它在哪里被听见。": "發出聲音之後，還要看它在哪裡被聽見。",
+  "我关注声音在空间中的分配：讲解应该在哪里被听见，邻近区域受到多少影响，人移动后体验怎样变化。第一代 Demo 让基础链路成立，下一步希望把问题放进明确的位置、内容与使用条件中。": "我關注聲音在空間中的分配：講解應該在哪裡被聽見，鄰近區域受到多少影響，人移動後體驗怎樣變化。第一代 Demo 讓基礎鏈路成立，下一步希望把問題放進明確的位置、內容與使用條件中。",
+  "空间关系设想": "空間關係設想",
+  "以一个展项、一段讲解为起点": "以一個展項、一段講解為起點",
+  "墙面、背景声与空间条件": "牆面、背景聲與空間條件",
+  "声源与内容": "聲源與內容",
+  "固定位置 · 同一段讲解": "固定位置 · 同一段講解",
+  "关注的收听位置": "關注的收聽位置",
+  "走近 · 停留 · 移动": "走近 · 停留 · 移動",
+  "邻近区域": "鄰近區域",
+  "观察对旁人的影响": "觀察對旁人的影響",
+  "场景设想示意，未按比例绘制；不表示实测声束角、传播距离或隔音边界。": "場景設想示意，未按比例繪製；不表示實測聲束角、傳播距離或隔音邊界。",
+  "下一步研究问题": "下一步研究問題",
+  "先让一个边界清楚的场景成立。": "先讓一個邊界清楚的場景成立。",
+  "位置与移动": "位置與移動",
+  "固定声源和内容，再比较站位、角度与移动过程，记录讲解在哪些条件下清楚可听。": "固定聲源和內容，再比較站位、角度與移動過程，記錄講解在哪些條件下清楚可聽。",
+  "邻区与内容": "鄰區與內容",
+  "观察邻近区域与背景声的影响，比较不同讲解内容，不用单个最佳位置代替完整使用过程。": "觀察鄰近區域與背景聲的影響，比較不同講解內容，不用單個最佳位置代替完整使用過程。",
+  "结构与持续工作": "結構與持續工作",
+  "继续研究阵列、功耗、结构与持续工作表现，并补充 DSP 与声场仿真的研究，让改进有可解释的依据。": "繼續研究陣列、功耗、結構與持續工作表現，並補充 DSP 與聲場模擬的研究，讓改進有可解釋的依據。"
+});
+  Object.assign(en, {
+  "两个人各自拥有耳机，也能更方便地共同收听。音享贴以轻量中继连接已有设备，保留独立调节的选择；已完成首版 PCB 与板级功能验证，并实现双 A2DP、多设备同步及延迟调节。": "Two people can listen together more easily with their own headphones. SoundShare uses a lightweight relay to connect existing devices while preserving independent controls. The first PCB has completed board-level functional validation, and dual A2DP, multi-device synchronization, and delay adjustment have been implemented.",
+  "PROJECT 03 · WEB EXTENSION": "PROJECT 03 · WEB EXTENSION",
+  "在原来的页面里，继续阅读。": "Keep reading on the same page.",
+  "浏览器扩展": "Browser extension",
+  "原位翻译 · 双语切换": "In-page translation · Bilingual view",
+  "我围绕网页原位阅读构建翻译扩展，接入可配置的模型服务，让译文进入当前页面，并提供原文与双语切换。工程重点包括保留原有节点和交互、按阅读范围安排请求，以及在停止、恢复和网页更新时维护一致的状态。": "I built a browser extension for reading translations within the original page, with configurable model services and options to switch between the original text and a bilingual view. The engineering work focuses on preserving page elements and interactions, scheduling requests around the reading area, and keeping state consistent when stopping, restoring content, or handling page updates.",
+  "翻译之外，怎样保留阅读体验": "Preserving the reading experience",
+  "翻译能力之外，产品还要保留阅读任务、页面状态和用户的控制权。": "Beyond translating text, the product needs to preserve the reading task, page state, and the user's control.",
+  "阅读：优先处理可见内容，保留原有链接和页面操作。": "Read: prioritize visible content while preserving existing links and page interactions.",
+  "停止：取消当前任务，隔离迟到的翻译结果。": "Stop: cancel the current task and prevent late translation results from changing the page.",
+  "恢复：切回原文时，避免覆盖网页自身的新内容。": "Restore: return to the original text without overwriting new content added by the page.",
+  "设计参考 KISS Translator 与 TWP，翻译由所配置的模型服务提供。": "The design draws on KISS Translator and TWP. Translations are provided by the configured model service.",
+  "查看状态回归用例 ↗": "View state regression tests ↗",
+  "查看翻译扩展源码 ↗": "View extension source ↗",
+  "PROJECT 04 · macOS EXPERIMENT": "PROJECT 04 · macOS EXPERIMENT",
+  "从铰链动作，到屏幕反馈。": "From hinge movement to screen feedback.",
+  "macOS 视觉实验": "macOS visual experiment",
+  "基于 MacBook-Duo 改进": "Built on MacBook-Duo",
+  "MacDuo 是基于 MacBook-Duo 改进的 macOS 视觉实验，将兼容设备的铰链角度与桌面效果关联。我围绕菜单栏控制、自定义快捷键、独立设置以及捕获和渲染状态恢复继续完善体验，探索物理动作与屏幕反馈之间的关系。": "MacDuo is a macOS visual experiment built on MacBook-Duo, linking hinge angles on compatible devices to desktop effects. I have continued refining menu bar controls, custom shortcuts, dedicated settings, and recovery of capture and rendering state to explore the relationship between physical movement and screen feedback.",
+  "动作、控制与恢复": "Movement, control, and recovery",
+  "物理动作可以成为输入维度；完整体验也需要可控的进入、停止与恢复。": "Physical movement can serve as an input. A complete experience also needs clear control over starting, stopping, and resuming.",
+  "用菜单栏和自定义快捷键提供明确的控制入口。": "Provide clear controls through the menu bar and custom shortcuts.",
+  "通过独立设置调整效果，保留手动预览方式。": "Adjust effects through dedicated settings and retain a manual preview option.",
+  "处理捕获与渲染生命周期，改善暂停和恢复行为。": "Manage capture and rendering lifecycles to improve pause and resume behavior.",
+  "桌面捕获、铰链读取和玻璃效果的基础来自上游。这是软件视觉实验，实际体验取决于兼容机型与桌面环境。": "The foundations for desktop capture, hinge readings, and glass effects come from the upstream project. This is a software visual experiment; the experience depends on compatible hardware and the desktop environment.",
+  "查看上游与引用说明 ↗": "View upstream sources and credits ↗",
+  "查看 MacDuo 源码 ↗": "View MacDuo source ↗",
+  "晚渡 · WANDU": "Wandu",
+  "单独打开音频 ↗": "Open audio separately ↗",
+  "编曲": "Arrangement",
+  "九声部 MIDI · 88 BPM · E 小调": "Nine-part MIDI · 88 BPM · E minor",
+  "浏览 MIDI 素材 ↗": "Browse MIDI files ↗",
+  "也可以查看我的 GitHub、简历与项目的完整介绍。": "You can also explore my GitHub, résumé, and full project descriptions.",
+  "ASTRA COMPUTER USE TEST": "ASTRA COMPUTER USE TEST",
+  "《晚渡》完全由 Codex GPT-6 Astra 模型操作 MacBook 上的 FL Studio 完成。这不是我的个人作品，而是一次 Astra Computer Use 测试；此处保留试听、工程与 MIDI，供查看测试产物。": "Wandu was created entirely by the Codex GPT-6 Astra model operating FL Studio on a MacBook. It is not my own musical work, but an Astra Computer Use test. The audio preview, project, and MIDI files are provided here to show the test outputs.",
+  "测试产物试听 · 约 4 分 28 秒": "Listen to the test output · About 4 min 28 sec",
+  "测试方式": "Test setup",
+  "Codex GPT-6 Astra · MacBook · FL Studio": "Codex GPT-6 Astra · MacBook · FL Studio",
+  "公开产物": "Public outputs",
+  "FL Studio 工程 · MIDI · 生成源文件": "FL Studio project · MIDI · Generation source code",
+  "这次测试留下了什么": "What the test produced",
+  "本案例用于展示模型操作桌面音乐软件后留下的文件与音频，不作为个人作曲、编曲或演奏能力的证明。": "This case shows the files and audio produced by a model operating desktop music software. It is not evidence of my personal composition, arrangement, or performance skills.",
+  "小号承担主旋律，乐器由 MIDI 驱动音源演奏，没有真实乐手或人声录音。生成脚本负责 MIDI 与曲目清单，FL Studio 工程和试听音频分别保留。": "Trumpet carries the main melody, with instruments played through MIDI-driven sound sources. There are no live musician or vocal recordings. The generation script produces MIDI and the score manifest; the FL Studio project and audio preview are retained separately.",
+  "测试说明与工程 ↗": "Test notes and project ↗",
+  "两个人已经各自拥有耳机，却不一定能方便地一起听同一段内容。我希望用轻量中继改善设备之间的协作，并保留各自的音量与控制选择。音享贴由此展开硬件、音频链路和多端交互的设计，先把共同收听这一段体验说明白。": "Two people may each own headphones yet still struggle to listen together. I want a lightweight relay to help their devices work together while keeping individual volume and control. This shared listening task guides SoundShare's hardware, audio path and interfaces.",
+  "从一个音源、两台播放设备的任务出发，让已有耳机获得共同收听的新用途。": "Start with one source and two playback devices, giving existing headphones a new way to be used together.",
+  "新增的携带与设置负担，应小于它消除的麻烦。磁吸与轻量形态仍需结合结构、功耗继续打磨。": "The relay should add less carrying and setup effort than it removes. The magnetic, lightweight form still needs refinement alongside structure and power use.",
+  "共同收听不等于相同音量。独立调节之外，还要让人看清参数作用于哪一路、当前处于什么状态。": "Listening together need not mean matching volume. Alongside independent controls, each setting should clearly identify its output and current state.",
+  "手机承担连接与日常控制，手表适合快速微调，平板提供总览，小程序提供轻量入口。": "Phones handle connection and everyday control, watches offer quick adjustments, tablets provide an overview, and the mini program offers a lightweight entry point.",
+  "预期使用流程": "INTENDED USE",
+  "从一起开始，到各自离开。": "Start together. Leave independently.",
+  "以下流程用于明确设计目标，不代表所有设备组合都已完成验证。": "This flow describes the intended experience; it does not mean every device combination has been validated.",
+  "一起开始": "Start together",
+  "选择同一音源，确认两路播放设备与连接状态，再进入共同收听。": "Choose one source, confirm both playback devices and their connections, then start listening together.",
+  "各自调整": "Adjust individually",
+  "分别调整音量与延迟，让每次操作对应清楚的设备与参数。": "Adjust volume and delay separately, with a clear device and setting attached to each action.",
+  "暂时离开": "Step away",
+  "一方断开或重新加入时，怎样保留另一方的播放与各自设置，是后续要验证的体验。": "How one listener can disconnect and rejoin while preserving the other output and each person's settings remains to be tested.",
+  "共同收听是当前核心任务；K 歌与户外使用保留为拓展设想，仍需各自的验证条件。": "Shared listening is the current core task. Karaoke and outdoor use remain possible extensions, each requiring its own validation.",
+  "耳机与音箱共同使用的拓展设想。监听延迟与两路播放时差需要分别验证，不能由同步功能直接推定。": "A possible extension using headphones and speakers together. Monitoring latency and the timing difference between outputs need separate validation; synchronization alone does not establish both.",
+  "户外连接、同步与持续使用仍需验证；当前双路原型不代表更多节点的组网效果已成立。": "Outdoor connections, synchronization and sustained use still need testing. The current two-output prototype does not establish performance with more nodes.",
+  "声音与空间": "SOUND IN SPACE",
+  "发出声音之后，还要看它在哪里被听见。": "Beyond making sound: understanding where it is heard.",
+  "我关注声音在空间中的分配：讲解应该在哪里被听见，邻近区域受到多少影响，人移动后体验怎样变化。第一代 Demo 让基础链路成立，下一步希望把问题放进明确的位置、内容与使用条件中。": "I am interested in where narration should be heard, how it affects nearby areas, and what changes as people move. The first-generation demo established the basic signal path. Next, I want to study these questions with defined positions, content and conditions of use.",
+  "空间关系设想": "SPATIAL CONCEPT",
+  "以一个展项、一段讲解为起点": "Start with one exhibit and one piece of narration",
+  "墙面、背景声与空间条件": "Walls, background sound and room conditions",
+  "声源与内容": "Source and content",
+  "固定位置 · 同一段讲解": "Fixed position · Same narration",
+  "关注的收听位置": "Listening position of interest",
+  "走近 · 停留 · 移动": "Approach · Stay · Move",
+  "邻近区域": "Nearby areas",
+  "观察对旁人的影响": "Observe the effect on other people",
+  "场景设想示意，未按比例绘制；不表示实测声束角、传播距离或隔音边界。": "A scenario concept, not drawn to scale. It does not show a measured beam angle, propagation distance or sound isolation boundary.",
+  "下一步研究问题": "NEXT QUESTIONS",
+  "先让一个边界清楚的场景成立。": "Start with one clearly defined setting.",
+  "位置与移动": "Position and movement",
+  "固定声源和内容，再比较站位、角度与移动过程，记录讲解在哪些条件下清楚可听。": "Fix the source and content, then compare positions, angles and movement. Record the conditions in which narration remains clear.",
+  "邻区与内容": "Nearby areas and content",
+  "观察邻近区域与背景声的影响，比较不同讲解内容，不用单个最佳位置代替完整使用过程。": "Observe nearby areas and background sound, and compare narration content. One ideal listening position cannot stand in for the whole experience.",
+  "结构与持续工作": "Structure and sustained operation",
+  "继续研究阵列、功耗、结构与持续工作表现，并补充 DSP 与声场仿真的研究，让改进有可解释的依据。": "Continue studying the array, power use, structure and sustained operation, with further research into DSP and sound-field simulation to explain what makes an improvement."
+});
+
+  // Keep the reviewed philosophy copy together so all three languages share exact source keys.
+  const philosophyCopy = [
+    [
+      '我怎样做产品与选择方向',
+      '我怎樣做產品與選擇方向',
+      'How I build products and choose a direction'
+    ],
+    [
+      '我关注声音、设备与人之间的关系，尝试用新的组合和交互改善体验，也在探索怎样通过可持续经营，为长期研究留下时间与资源。',
+      '我關注聲音、設備與人之間的關係，嘗試用新的組合和互動改善體驗，也在探索怎樣透過可持續經營，為長期研究留下時間與資源。',
+      'I explore the relationships between sound, devices and people, looking for new combinations and interactions that improve the experience. I am also exploring how a sustainable business could make time and resources available for long-term research.'
+    ],
+    [
+      '产品与创业理念',
+      '產品與創業理念',
+      'Product and entrepreneurship philosophy'
+    ],
+    [
+      '我希望做出带有自己判断的产品：它可以提出新的使用方式，也应在真实使用中不断修正。音乐、硬件项目和展会观察，让我持续关注设备怎样协作、交互怎样保留控制，以及怎样为长期研究创造条件。以下是我当前的判断，其中仍有需要用原型和实验回答的问题。',
+      '我希望做出帶有自己判斷的產品：它可以提出新的使用方式，也應在真實使用中不斷修正。音樂、硬件項目和展會觀察，讓我持續關注設備怎樣協作、互動怎樣保留控制，以及怎樣為長期研究創造條件。以下是我目前的判斷，其中仍有需要用原型和實驗回答的問題。',
+      'I want to build products that reflect my own judgment: products that can introduce new ways of doing things and evolve through real use. Music, hardware projects and observations at trade shows keep me thinking about how devices work together, how interactions preserve control, and how to create the conditions for long-term research. These are my current views, with questions that still need prototypes and experiments to answer.'
+    ],
+    [
+      '主动提出新的使用方式',
+      '主動提出新的使用方式',
+      'Propose new ways of doing things'
+    ],
+    [
+      '我会从自己的使用经验和具体场景发现问题，也愿意先提出一种尚未被清楚表达的用法。用户能够描述麻烦，却未必能提前说出一种从未体验过的交互。设计者需要把想法做成可以亲手操作的原型，再看人是否理解、学会以后是否仍愿意使用。',
+      '我會從自己的使用經驗和具體場景發現問題，也願意先提出一種尚未被清楚表達的用法。用戶能夠描述麻煩，卻未必能提前說出一種從未體驗過的互動。設計者需要把想法做成可以親手操作的原型，再看人是否理解、學會以後是否仍願意使用。',
+      'I look for problems in my own experience and in specific situations, and I am willing to propose a way of using a product that nobody has clearly articulated yet. People can describe a frustration without being able to imagine an interaction they have never experienced. Designers need to turn ideas into hands-on prototypes, then see whether people understand them and still want to use them after learning how.'
+    ],
+    [
+      '技术指标的意义，要放回任务中判断。延迟影响演奏反馈、底噪妨碍聆听时，改善参数就有直接价值。当继续提升某项规格已经很难改变体验，我更想研究设备之间的配合，以及人能否以更自然的方式完成原来的活动。',
+      '技術指標的意義，要放回任務中判斷。延遲影響演奏回饋、底噪妨礙聆聽時，改善參數就有直接價值。當繼續提升某項規格已經很難改變體驗，我更想研究設備之間的配合，以及人能否以更自然的方式完成原來的活動。',
+      'A specification matters in the context of a task. When latency disrupts performance feedback or noise interferes with listening, improving those measurements has direct value. When further gains in a specification make little difference to the experience, I would rather investigate how devices work together and whether people can carry out the same activity more naturally.'
+    ],
+    [
+      '让学习换来更好的控制',
+      '讓學習換來更好的控制',
+      'Make learning lead to better control'
+    ],
+    [
+      '我希望工具能让人放心试探：临时看看或听听另一种选择时，原来的内容和位置仍然保留；决定采用以后，再正式改变结果。以声音比较为例，我想探索一种可以临时预听、返回原选择、再明确确认的方式，让注意力留在声音的差别上。',
+      '我希望工具能讓人放心試探：臨時看看或聽聽另一種選擇時，原來的內容和位置仍然保留；決定採用以後，再正式改變結果。以聲音比較為例，我想探索一種可以臨時預聽、返回原選擇、再明確確認的方式，讓注意力留在聲音的差別上。',
+      'I want tools to make exploration feel safe: when someone briefly looks at or listens to another option, the original content and position should remain intact. The result should change only when they decide to use that option. For sound comparisons, I want to explore a way to preview an option, return to the original and explicitly confirm a choice, keeping attention on the differences in sound.'
+    ],
+    [
+      '我接受有回报的学习。入口应该让人找得到，基本动作应该讲得清；熟练以后，工具还可以提供更细的控制。压力、键盘和按钮都可以承载这种关系。如果学会以后仍然没有收益，或经常误触，就应调整实现。连续交互的价值，也要体现在状态和返回路径上。',
+      '我接受有回報的學習。入口應該讓人找得到，基本動作應該講得清；熟練以後，工具還可以提供更細的控制。壓力、鍵盤和按鈕都可以承載這種關係。如果學會以後仍然沒有收益，或經常誤觸，就應調整實現。連續互動的價值，也要體現在狀態和返回路徑上。',
+      'I accept learning that pays off. Controls should be discoverable and basic actions easy to explain; with practice, a tool can offer finer control. Pressure-sensitive input, keyboards and buttons can all support this progression. If learning brings no benefit, or accidental actions remain common, the implementation should change. Continuous interactions should also make their state and the way back clear.'
+    ],
+    [
+      '让成熟技术形成协同',
+      '讓成熟技術形成協同',
+      'Make established technologies work together'
+    ],
+    [
+      '在当前的资源和能力条件下，我会优先评估成熟技术的组合机会。广州展会上，键盘与声卡结合的产品让我注意到，把原本分散的操作组织起来，也可能形成有价值的新体验。真正要解决的工作包括状态、控制、供电和结构怎样配合。',
+      '在目前的資源和能力條件下，我會優先評估成熟技術的組合機會。廣州展會上，鍵盤與聲卡結合的產品讓我注意到，把原本分散的操作組織起來，也可能形成有價值的新體驗。真正要解決的工作包括狀態、控制、供電和結構怎樣配合。',
+      'Given my current resources and capabilities, I would first evaluate opportunities to combine established technologies. At a trade show in Guangzhou, a product combining a keyboard and an audio interface drew my attention to how bringing separate operations together might create a valuable new experience. The real work includes coordinating state, controls, power and physical construction.'
+    ],
+    [
+      '整合还要计算升级和维护的代价。少一个盒子、少几根线，如果换来整机更换或额外设置，收益就未必成立。音享贴让我持续思考同一件事：两个人已经有各自的耳机，新增的中继应该让共同收听更方便，并把额外的携带与设置负担控制得更小。成熟方案帮助我开始，深入理解关键链路则决定我能继续改进什么。',
+      '整合還要計算升級和維護的代價。少一個盒子、少幾根線，如果換來整機更換或額外設定，收益就未必成立。音享貼讓我持續思考同一件事：兩個人已經有各自的耳機，新增的中繼應該讓共同收聽更方便，並把額外的攜帶與設定負擔控制得更小。成熟方案幫助我開始，深入理解關鍵鏈路則決定我能繼續改進什麼。',
+      'Integration also has to account for the cost of upgrades and maintenance. One fewer box and a few fewer cables may not be a gain if they mean replacing the whole device or adding more setup. SoundShare keeps me thinking about the same issue: when two people already have their own headphones, an added relay should make shared listening easier while minimizing what they have to carry and configure. Established solutions help me get started; a deeper understanding of the critical parts of the system determines what I can improve next.'
+    ],
+    [
+      '把一次完整使用验证清楚',
+      '把一次完整使用驗證清楚',
+      'Test the full experience of using a product'
+    ],
+    [
+      '我希望每一次验证都对应一个明确的问题。音频产品除了能否出声，还要看人怎样开始、独立调整、暂时离开、重新加入和结束。原型在我准备好的顺序里运行，只说明了那组条件；其他人换一种顺序操作，仍可能遇到需要重新设计的地方。',
+      '我希望每一次驗證都對應一個明確的問題。音頻產品除了能否出聲，還要看人怎樣開始、獨立調整、暫時離開、重新加入和結束。原型在我準備好的順序裡運行，只說明了那組條件；其他人換一種順序操作，仍可能遇到需要重新設計的地方。',
+      'I want each test to address a specific question. For audio products, making sound is only part of the task: I also need to consider how people start, adjust their own settings, step away, rejoin and finish. A prototype working through a sequence I have prepared establishes only what happens under those conditions. Someone following a different sequence may still encounter problems that call for a redesign.'
+    ],
+    [
+      '对于定向声音，我想进一步比较同一空间中的目标位置、邻近位置和移动路径，理解声音与空间的关系。展示位置听起来合适，还不足以说明整个场景成立。我会把设备、环境与观察结果一起记录，让结论对应实际检查过的范围，再决定继续扩展还是先缩小问题。',
+      '對於定向聲音，我想進一步比較同一空間中的目標位置、鄰近位置和移動路徑，理解聲音與空間的關係。展示位置聽起來合適，還不足以說明整個場景成立。我會把設備、環境與觀察結果一起記錄，讓結論對應實際檢查過的範圍，再決定繼續擴展還是先縮小問題。',
+      'For directional sound, I want to compare intended listening positions, nearby positions and paths of movement within the same space to understand the relationship between sound and space. Good results at the demonstration spot alone do not establish that the whole setting works. I would record the equipment, environment and observations together, keep conclusions within the scope actually checked, and then decide whether to expand the work or first narrow the question.'
+    ],
+    [
+      '用经营支持持续研究',
+      '用經營支持持續研究',
+      'Build a business that supports continued research'
+    ],
+    [
+      '我希望做出用户愿意使用和付费的产品，逐步积累制造、交付和经营经验，为定向声、空间音频等长期方向争取资源。我会从需求具体、自己能够认真完成的范围开始；一个市场被大公司忽略，并不能直接说明它值得做。',
+      '我希望做出用戶願意使用和付費的產品，逐步積累製造、交付和經營經驗，為定向聲、空間音頻等長期方向爭取資源。我會從需求具體、自己能夠認真完成的範圍開始；一個市場被大公司忽略，並不能直接說明它值得做。',
+      'I want to build products that people are willing to use and pay for, gradually gaining experience in manufacturing, delivery and running a business while securing resources for long-term interests such as directional sound and spatial audio. I would start with a specific need and a scope I can give proper attention to. A market being overlooked by large companies does not, by itself, make it worth pursuing.'
+    ],
+    [
+      '带来收入的业务，也可能占满研究时间。考虑一项业务时，我需要把安装说明、兼容处理、返修和持续支持一起算进去。只有兑现交付以后，仍能留下时间与资金投入研究，经营才真正支持了下一步。我更愿意选择范围清楚、已有工作能够复用的产品，并在需求不断扩张时重新评估投入。',
+      '帶來收入的業務，也可能佔滿研究時間。考慮一項業務時，我需要把安裝說明、相容處理、返修和持續支援一起算進去。只有兌現交付以後，仍能留下時間與資金投入研究，經營才真正支持了下一步。我更願意選擇範圍清楚、已有工作能夠複用的產品，並在需求不斷擴張時重新評估投入。',
+      'A business that generates revenue can also consume all the time intended for research. When considering an opportunity, I need to account for setup instructions, compatibility issues, repairs and ongoing support. It supports the next step only if time and money remain for research after delivery commitments are met. I would favor products with a clear scope that can reuse existing work, and reassess the investment when requirements keep expanding.'
+    ],
+    [
+      '用户付费获得什么，应当说得明白。当前能提供的能力、使用条件与仍在探索的方向需要分开介绍。我希望收入来自清楚且值得的交换，也会保留为表达和探索而做的作品，不要求每项尝试都成为生意。',
+      '用戶付費獲得什麼，應當說得明白。目前能提供的能力、使用條件與仍在探索的方向需要分開介紹。我希望收入來自清楚且值得的交換，也會保留為表達和探索而做的作品，不要求每項嘗試都成為生意。',
+      'People should know clearly what they receive when they pay. What a product can currently do, its conditions of use and directions still being explored should be explained separately. I want income to come from a clear, worthwhile exchange. I also want room for work made for expression and exploration, without requiring every experiment to become a business.'
+    ],
+    [
+      '继续研究声音与空间的关系',
+      '繼續研究聲音與空間的關係',
+      'Keep exploring the relationship between sound and space'
+    ],
+    [
+      '我想继续深入定向声音、空间音频和新的声音交互。对我有吸引力的问题是：声音怎样与位置、内容和人的行动配合；录制与回放怎样保留现场的空间感；人在比较和调整声音时，怎样始终理解自己正在控制什么。',
+      '我想繼續深入定向聲音、空間音頻和新的聲音互動。對我有吸引力的問題是：聲音怎樣與位置、內容和人的行動配合；錄製與回放怎樣保留現場的空間感；人在比較和調整聲音時，怎樣始終理解自己正在控制什麼。',
+      'I want to go deeper into directional sound, spatial audio and new ways of interacting with sound. The questions that interest me are how sound can work with position, content and human actions; how recording and playback can preserve the sense of space at an event; and how people can always understand what they are controlling as they compare and adjust sound.'
+    ],
+    [
+      '我重视原生空间录制，也对算法和 AI 能把声音做到什么程度保持兴趣。两者让我留下一个还没想清楚的问题：当生成的听感已经足够接近，真实事件的记录、空间定位和创作者的控制，分别还有什么价值？我愿意围绕具体任务比较这些路径，让后续的原型和实验继续改变判断。',
+      '我重視原生空間錄製，也對算法和 AI 能把聲音做到什麼程度保持興趣。兩者讓我留下一個還沒想清楚的問題：當生成的聽感已經足夠接近，真實事件的記錄、空間定位和創作者的控制，分別還有什麼價值？我願意圍繞具體任務比較這些路徑，讓後續的原型和實驗繼續改變判斷。',
+      'I value capturing spatial sound directly, and I remain curious about what algorithms and AI can achieve with sound. Together, they leave me with a question I have not resolved: when a generated listening experience is close enough, what value remains in a record of a real event, spatial positioning and the control available to its creator? I am willing to compare these approaches for specific tasks and let future prototypes and experiments continue to change my views.'
+    ],
+    ['产品判断', '產品判斷', 'Product decisions'],
+    ['交互与学习', '互動與學習', 'Interaction and learning'],
+    ['技术融合', '技術融合', 'Technology integration'],
+    ['使用验证', '使用驗證', 'Testing in use'],
+    ['经营与研究', '經營與研究', 'Business and research'],
+    ['长期方向', '長期方向', 'Long-term direction'],
+    ['本页目录', '本頁目錄', 'On this page'],
+    ['返回主页', '返回首頁', 'Back to home'],
+    ['查看音享贴项目 →', '查看音享貼項目 →', 'View the SoundShare project →'],
+    ['查看超声波定向扬声器项目 →', '查看超聲波定向揚聲器項目 →', 'View the ultrasonic directional speaker project →'],
+    ['阅读完整理念 →', '閱讀完整理念 →', 'Read the full philosophy →'],
+    [
+      '罗宇伦关于产品判断、交互设计、技术融合、工程验证与长期研究的思考。',
+      '羅宇倫關於產品判斷、互動設計、技術融合、工程驗證與長期研究的思考。',
+      'Roy Luo’s reflections on product decisions, interaction design, technology integration, engineering validation and long-term research.'
+    ]
+  ];
+  philosophyCopy.forEach(([source, traditional, english]) => {
+    cn[source] = source;
+    tw[source] = traditional;
+    en[source] = english;
+  });
+
   const pageTitles = {
     'index.html': { 'zh-CN': '罗宇伦 Roy Luo', 'zh-TW': '羅宇倫 Roy Luo', en: 'Roy Luo · Engineering Portfolio' },
     'soundshare.html': { 'zh-CN': '音享贴 · LENGHE SoundShare', 'zh-TW': '音享貼 · LENGHE SoundShare', en: 'LENGHE SoundShare · Roy Luo' },
     'ultrasonic.html': { 'zh-CN': '超声波定向扬声器 · Roy Luo', 'zh-TW': '超聲波定向揚聲器 · Roy Luo', en: 'Ultrasonic Directional Speaker · Roy Luo' },
-    'philosophy.html': { 'zh-CN': '产品理念与创业理念 · 罗宇伦 Roy Luo', 'zh-TW': '產品理念與創業理念 · 羅宇倫 Roy Luo', en: 'Product & Entrepreneurship Philosophy · Roy Luo' }
+    'philosophy.html': { 'zh-CN': '产品与创业理念 · 罗宇伦 Roy Luo', 'zh-TW': '產品與創業理念 · 羅宇倫 Roy Luo', en: 'Product & Entrepreneurship Philosophy · Roy Luo' }
   };
 
   const labels = {
@@ -458,19 +788,21 @@
   }
 
   function translateAttributes(lang) {
-    document.querySelectorAll('[alt],[title],[aria-label]').forEach((el) => {
+    document.querySelectorAll('[alt],[title],[aria-label],meta[name="description"]').forEach((el) => {
       if (el.closest('[data-i18n-ui],[data-i18n-static]')) return;
       if (!originalAttrs.has(el)) {
         originalAttrs.set(el, {
           alt: el.hasAttribute('alt') ? el.getAttribute('alt') : null,
           title: el.hasAttribute('title') ? el.getAttribute('title') : null,
-          aria: el.hasAttribute('aria-label') ? el.getAttribute('aria-label') : null
+          aria: el.hasAttribute('aria-label') ? el.getAttribute('aria-label') : null,
+          description: el.matches('meta[name="description"]') ? el.getAttribute('content') : null
         });
       }
       const attrs = originalAttrs.get(el);
       if (attrs.alt !== null) el.setAttribute('alt', translateValue(attrs.alt, lang));
       if (attrs.title !== null) el.setAttribute('title', translateValue(attrs.title, lang));
       if (attrs.aria !== null) el.setAttribute('aria-label', translateValue(attrs.aria, lang));
+      if (attrs.description !== null) el.setAttribute('content', translateValue(attrs.description, lang));
     });
   }
 

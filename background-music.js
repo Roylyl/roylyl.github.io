@@ -80,8 +80,18 @@
     return;
   }
 
+  let playbackRequest = 0;
+  let homeVisible = !document.documentElement.classList.contains('detail-shell-open');
+  const projectAudioSelector = 'audio[data-project-audio]';
+  function pauseProjectAudio(except = null) {
+    document.querySelectorAll(projectAudioSelector).forEach((preview) => {
+      if (preview !== except) preview.pause();
+    });
+  }
+
   async function playFromState(state) {
     if (!state?.enabled) { render(false); return; }
+    const request = ++playbackRequest;
     const elapsed = Math.max(0, (Date.now() - (state.savedAt || Date.now())) / 1000);
     const setTime = () => {
       if (Number.isFinite(audio.duration) && audio.duration > 0) {
@@ -93,14 +103,16 @@
     audio.muted = false;
     try {
       await audio.play();
-      render(true);
+      if (request === playbackRequest) render(!audio.paused && !audio.muted);
     } catch (_) {
+      if (request !== playbackRequest) return;
       audio.muted = true;
       render(false);
     }
   }
 
   function mute() {
+    playbackRequest++;
     audio.pause();
     audio.muted = true;
     saveState(false);
@@ -109,17 +121,38 @@
 
   async function togglePlayback() {
     if (!audio.paused && !audio.muted) { mute(); return; }
+    const request = ++playbackRequest;
     audio.muted = false;
     try {
       await audio.play();
-      saveState(true);
-      render(true);
+      if (request !== playbackRequest) return;
+      const enabled = !audio.paused && !audio.muted;
+      saveState(enabled);
+      render(enabled);
     } catch (_) {
-      mute();
+      if (request === playbackRequest) mute();
     }
   }
 
   toggle.addEventListener('click', togglePlayback);
+
+  // Media play events do not bubble. Capture both directions, including plays
+  // started by native controls, and ignore events from already-cancelled plays.
+  document.addEventListener('play', (event) => {
+    const playing = event.target;
+    if (playing.paused) return;
+    if (playing === audio) {
+      pauseProjectAudio();
+    } else if (playing.matches?.(projectAudioSelector)) {
+      if (!homeVisible) { playing.pause(); return; }
+      mute();
+      pauseProjectAudio(playing);
+    }
+  }, true);
+  window.addEventListener('site:visibility-change', (event) => {
+    homeVisible = event.detail?.visible !== false;
+    if (!homeVisible) pauseProjectAudio();
+  });
 
   function sendState(target) {
     target?.postMessage({ type: 'site:music-state', enabled: !audio.paused && !audio.muted }, location.origin);
@@ -138,7 +171,10 @@
   // Cross-origin players do not expose their internal controls to the parent page.
   // Focusing one of their iframes is the reliable signal that the visitor clicked it.
   window.addEventListener('blur', () => {
-    if (document.activeElement?.matches('.video-grid iframe')) mute();
+    if (document.activeElement?.matches('.video-grid iframe')) {
+      mute();
+      pauseProjectAudio();
+    }
   });
   window.addEventListener('site-language-change', () => render(!audio.paused && !audio.muted));
   window.addEventListener('pagehide', () => saveState(), { capture: true });
