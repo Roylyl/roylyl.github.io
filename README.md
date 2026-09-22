@@ -26,17 +26,37 @@
 
 | 内容 | 入口 | 说明 |
 | --- | --- | --- |
-| 个人作品集 | [roylyl.github.io](https://roylyl.github.io/) | 个人介绍、能力、实习、项目、理念、音乐与联系方式 |
-| 超声波定向扬声器 | [ultrasonic.html](ultrasonic.html) | ESP32 驱动的定向音频第一代 Demo |
-| 音享贴 · LENGHE SoundShare | [soundshare.html](soundshare.html) | 跨生态多人蓝牙音频共享硬件原型与产品设计 |
+| 个人作品集 | [roylyl.github.io](https://roylyl.github.io/) | 个人介绍、能力、实习、项目、音乐与联系方式 |
+| 01 · 音享贴 · LENGHE SoundShare | [soundshare.html](soundshare.html) | 跨生态多人蓝牙音频共享硬件原型与产品设计 |
+| 02 · 超声波定向扬声器 | [ultrasonic.html](ultrasonic.html) | ESP32 驱动的定向音频第一代 Demo |
+| 其他项目 | [other-projects.html](other-projects.html) | DeerWebTranslator、MacDuo 与 Astra Computer Use 音乐制作测试 |
 | DeerWebTranslator | [其他项目详情](https://roylyl.github.io/other-projects.html#deer-web-translator) · [源码](https://github.com/Roylyl/DeerWebTranslator) | 原位翻译、阅读状态与取消恢复 |
 | MacDuo | [其他项目详情](https://roylyl.github.io/other-projects.html#macduo) · [源码](https://github.com/Roylyl/MacDuo) | 基于 MacBook-Duo 的形态交互实验 |
-| 晚渡 · WANDU | [测试产物试听](https://roylyl.github.io/other-projects.html#wandu) · [测试工程](https://github.com/Roylyl/Astra-Music) | Codex GPT-6 Astra 操作 MacBook 上 FL Studio 的 Computer Use 测试，非个人作品 |
+| 晚渡 | [测试产物试听](https://roylyl.github.io/other-projects.html#wandu) · [测试工程](https://github.com/Roylyl/Astra-Music) | Codex GPT-6 Astra 操作 MacBook 上 FL Studio 的 Computer Use 测试，非个人作品 |
 | 产品与创业理念 | [首页简短入口](https://roylyl.github.io/#philosophy) · [完整理念](philosophy.html) | 产品判断、交互与学习、技术融合、使用验证、经营与研究、长期方向 |
+
+## 页面组织
+
+首页的“项目”区将以下内容放在同一个网格内，卡片之间统一保留 18 像素间距：
+
+1. **音享贴（01）与超声波定向扬声器（02）**：桌面并排显示，音享贴在左；手机按相同顺序纵向排列。
+2. **其他项目入口**：只保留简短介绍与进入二级页的按钮。
+3. **产品与创业理念入口**：只保留短摘要与阅读按钮，不再单列首页顶部导航项。
+
+| 二级页面 | 顶部目录 | 正文组织 |
+| --- | --- | --- |
+| 音享贴 | 介绍、产品价值、原型状态、界面、场景及相关页面入口 | 硬件原型、工程状态与多终端界面 |
+| 超声波定向扬声器 | 介绍、概览、工程、画面及相关页面入口 | 定向音频 Demo、工程过程与空间场景思考 |
+| 其他项目 | DeerWebTranslator、MacDuo、晚渡 | 三个条目依次展示，设计说明与测试说明全部展开 |
+| 产品与创业理念 | 产品判断、交互与学习、技术融合、使用验证、经营与研究、长期方向 | 六个章节直接展开，项目链接放在相关论述旁 |
+
+四个二级页统一采用“左侧品牌或返回入口、中间目录、右侧音乐与语言”的导航布局。桌面目录按导航栏中心对齐，窄屏收进顶部菜单；正文不再重复设置目录按钮。《晚渡》的标题和导航名称在简、繁中文下显示“晚渡”，英文下显示“WANDU”。
+
+`other-projects.html#deer-web-translator`、`#macduo`、`#wandu` 可直接定位到对应条目。旧首页同名锚点保留在“其他项目”入口处，便于旧链接仍能找到新的入口。
 
 ## 本地预览
 
-主站使用原生 HTML、CSS 和 JavaScript，没有安装依赖或构建步骤。先进入仓库根目录，再用 Python 3 启动静态服务器。
+先进入仓库根目录，再用 Python 3 启动静态服务器：
 
 macOS / Linux：
 
@@ -67,7 +87,7 @@ git diff --check
 
 [粒子输入回归测试](tests/particle-input.test.cjs) 执行实际粒子脚本，模拟浏览器输入与 WebGL 接口，检查传入渲染器的交互坐标。覆盖普通鼠标、触屏与鼠标并存、主指针为触摸时接入鼠标、合并事件采样、触摸切换、窗口失焦、局部坐标和减少动态效果。它不替代真实浏览器与显卡的渲染验证；仅预览网站不需要 Node.js。
 
-[音频状态回归测试](tests/project-audio.test.cjs) 检查试听与背景音乐互斥、详情导航暂停试听等状态逻辑。两组测试都不验证第三方播放器的实际可用性。
+[音频状态回归测试](tests/project-audio.test.cjs) 在模拟页面环境中检查试听与背景音乐互斥、异步播放请求及页面可见性等状态逻辑。内嵌详情页与首页之间的实际音频协作仍需用浏览器验证；两组测试都不验证第三方播放器的可用性。
 
 ### 浏览器检查
 
@@ -75,23 +95,23 @@ git diff --check
 
 | 维度 | 检查范围 |
 | --- | --- |
-| 主站页面 | `index.html`、`ultrasonic.html`、`soundshare.html`、`philosophy.html`、`other-projects.html` |
-| 视口宽度 | 320、390、768、1440 CSS 像素，覆盖窄屏手机、手机、平板与桌面代表尺寸 |
+| 主站页面 | `index.html`、`soundshare.html`、`ultrasonic.html`、`other-projects.html`、`philosophy.html` |
+| 视口宽度 | 320、390、768、1440 CSS 像素；修改导航时加测 860 / 861、1100 / 1101 等断点两侧 |
 | 界面语言 | 简体中文、繁體中文、English |
-| 可见布局 | 横向溢出、标题换行、图片说明裁切、截图可读性、点击区域、固定导航遮挡 |
+| 可见布局 | 横向溢出、标题换行、图片说明裁切、截图可读性、点击区域、固定导航遮挡、目录居中、圆形语言按钮的图标居中 |
 | 使用方式 | 鼠标、键盘焦点、菜单展开、页面滚动、前进与后退 |
 
 视口尺寸只代表布局条件，不代表操作系统或设备。Windows Chrome、macOS、Android 平板、iPad、Android 手机与 iPhone 的实机结果应分别记录；没有相应环境时明确标注未验证。不要把本机 Chrome 的布局检查写成 Safari、移动设备或 Windows 的实机兼容结论。
 
 发布前按实际浏览顺序检查：
 
-1. **首页与语言**：切换简、繁、英，检查文字、日期、换行及对应简历下载。
-2. **项目导航**：首页 → 超声波 → 音享贴 → 后退两次 → 前进，检查地址、标题、语言、焦点和阅读位置；直接打开带章节锚点的详情页并刷新。
-3. **粒子与布局**：桌面、触屏电脑、平板、手机均无横向溢出；鼠标可以接管粒子，手指滚动不受干扰；减少动态效果、切后台和返回页面正常。
+1. **首页与语言**：确认音享贴在超声波前，两个详情页编号与首页一致；“其他项目”和理念入口紧接硬件项目，顶部不再有“理念”按钮。切换简、繁、英，检查文字、日期、换行与简历下载。
+2. **项目导航**：首页 → 音享贴 → 超声波 → 后退两次 → 前进，检查地址、标题、语言、焦点和阅读位置；直接打开带章节锚点的详情页并刷新。
+3. **粒子与布局**：在代表视口下检查横向溢出；在可用输入设备上检查交互：鼠标可以接管粒子，手指滚动不受干扰；减少动态效果、切后台和返回页面正常。
 4. **菜单与联系方式**：检查手机导航、语言菜单的键盘操作，以及二维码放大、Esc 关闭、账号复制与反馈。
 5. **视频与音乐**：检查两段原生视频在中国大陆、其他地区和检测失败时的自动选源；进入详情页后首页视频停止、首页粒子暂停；返回后重新加载播放器，保持自动播放关闭。检查《晚渡》原生试听、暂停、进度与独立音频入口；试听与背景音乐互斥；分别检查独立打开和首页内嵌导航，离开《晚渡》所在页面后不继续播放，返回后不自动续播。
-6. **其他项目**：从首页入口进入 `other-projects.html`，检查顶部项目目录、返回主页、直达项目锚点；确认 DeerWebTranslator、MacDuo 的设计说明始终展示，核对仓库和源码入口；三语与窄屏下标题和说明均完整可读。
-7. **理念阅读**：从首页简短入口进入二级页，逐章检查目录跳转、三语正文和项目链接；核对旧章节锚点仍可访问，以及查看项目后返回理念页的阅读位置。检查桌面、平板和手机代表宽度下的标题、正文与按钮，不把静态检查视为实机验证。
+6. **其他项目**：从首页入口进入 `other-projects.html`，检查顶部项目目录、返回主页、直达项目锚点；确认两个软件项目的设计说明及《晚渡》的测试说明始终展示，核对源码、测试工程与 MIDI 入口；中文显示“晚渡”，英文显示“WANDU”。
+7. **理念阅读**：从首页简短入口进入二级页，逐章检查顶部目录跳转、三语正文和项目链接；核对旧章节锚点仍可访问，以及查看项目后返回理念页的阅读位置。检查桌面、平板和手机代表宽度下的标题、正文与按钮，不把静态检查视为实机验证。
 
 ## 网站组成
 
@@ -99,15 +119,16 @@ git diff --check
 .
 ├── index.html                    # 个人主页
 ├── style.css / script.js         # 主页样式、菜单与二维码交互
-├── portfolio-additions.css       # 软件项目与晚渡 Computer Use 测试
+├── portfolio-additions.css       # 项目区入口网格、软件项目与试听共用样式
 ├── project-context.css           # 音享贴设计取舍与定向声空间场景
-├── ultrasonic.html / .css / .js  # 超声波定向扬声器
-├── soundshare.html / .css / .js  # 音享贴 · LENGHE SoundShare
-├── philosophy.html / .css / .js  # 产品与创业理念与共用阅读进度脚本
-├── other-projects.html / .css    # 软件项目与晚渡 Computer Use 测试二级页
+├── soundshare.html / .css / .js   # 项目 01：音享贴
+├── ultrasonic.html / .css / .js   # 项目 02：超声波定向扬声器
+├── philosophy.html / .css / .js   # 理念页及两个阅读页共用的基础样式、进度脚本
+├── other-projects.html / .css     # 软件项目与晚渡 Computer Use 测试二级页
 ├── soundshare-particles.js       # 首页与两个项目页共用的 WebGL2 粒子
 ├── i18n.css / i18n.js            # 三语界面、语言菜单与简历映射
-├── background-music.*            # 背景音乐会话与控制
+├── background-music.js           # 背景音乐会话、试听互斥与内嵌页协作
+├── background-music.css          # 音乐按钮与共用顶部导航布局
 ├── continuous-navigation.*       # 详情页嵌入、历史记录与阅读位置
 ├── regional-video.js            # IP 地区识别与原生视频选源
 ├── social-controls.css          # 联系方式与二维码区域样式
@@ -154,7 +175,8 @@ git diff --check
 
 ### 修改边界
 
-- 首页的理念模块保持简短，完整论述集中在 `philosophy.html`，避免两处重复维护长文。
+- 首页项目区保留硬件项目、其他项目入口和理念入口的连续结构；软件项目与《晚渡》全文集中在 `other-projects.html`，理念全文集中在 `philosophy.html`。
+- 目录直接放在二级页顶部；设计说明与理念正文保持展开。修改共用导航时同时检查五页、三语与宽度断点，避免只修正单页。
 - 两段视频继续按 IP 自动选源，使用播放平台原生 iframe；不添加手动选源或自定义缩略图。
 - 保留《晚渡》的 Computer Use 测试声明，项目列表与试听区域都不将其归为个人音乐作品。
 - 联系二维码须保持扫描能力。调整颜色、尺寸或弹窗后，检查原图完整性与实际扫码结果。
@@ -165,6 +187,10 @@ git diff --check
 | 修改内容 | 入口与检查重点 |
 | --- | --- |
 | 主站文字 | 对应 HTML 与 [i18n.js](i18n.js)；同步三语映射并检查换行。 |
+| 项目顺序与入口 | [index.html](index.html) 的 `#projects` 和 [portfolio-additions.css](portfolio-additions.css)；保持卡片顺序、间距与详情页编号一致。 |
+| 其他项目与晚渡 | [other-projects.html](other-projects.html)、[other-projects.css](other-projects.css)；同步顶部目录、项目锚点、完整说明、测试归属和试听链接。 |
+| 顶部导航与语言按钮 | [background-music.css](background-music.css)、[i18n.css](i18n.css)、各页导航 HTML 与 [nav-scroll.js](nav-scroll.js)；检查居中、控件重叠和手机菜单。 |
+| 试听与背景音乐 | [background-music.js](background-music.js)；先运行音频回归测试，再验证独立打开与内嵌详情页的双向互斥及离页停止。 |
 | 产品与创业理念 | 首页 `#philosophy` 的短入口，以及 [philosophy.html](philosophy.html) 的完整正文；同步目录、旧章节锚点和三语映射，区分当前判断、已有成果与后续问题。 |
 | 简历 PDF | `assets/` 内三份正式文件，以及 `i18n.js` 的 `resumeAssets`、`resumeVersion` 和 HTML 初始下载链接；核对文件名、页序与语言。 |
 | 粒子交互 | [soundshare-particles.js](soundshare-particles.js)；先运行输入回归测试，再检查首页与两个项目页的真实渲染、尺寸和交互。 |
@@ -176,8 +202,9 @@ git diff --check
 ### 更新资源版本
 
 1. 修改 CSS、JavaScript 或固定文件名的素材后，更新**实际引用该资源的页面**中的 `?v=`。不必给无关资源一起改版本。例如粒子脚本由 `index.html`、`soundshare.html`、`ultrasonic.html` 引用，理念页没有加载它。
-2. 更新需要通过连续导航加载的详情页 HTML 时，同时更新 `continuous-navigation.js` 中的 `nav-version`，并更新引用该脚本的页面中的脚本版本，让访客拿到新的内嵌 HTML 地址。
-3. 发布后从首页进入详情页，并直接打开详情页各检查一次，确认新资源和页面均已生效。
+2. `philosophy.css` 与 `philosophy.js` 同时服务理念页和其他项目页；`background-music.css` 也负责共用导航。修改这些文件时检查全部实际引用页。
+3. 更新需要通过连续导航加载的详情页 HTML 时，同时更新 `continuous-navigation.js` 中的 `nav-version`，并更新引用该脚本的页面中的脚本版本，让访客拿到新的内嵌 HTML 地址。
+4. 发布后从首页进入详情页，并直接打开详情页各检查一次，确认新资源和页面均已生效。
 
 玻璃卡片的入场动画优先放在卡片自身。父容器长期使用 `will-change: opacity` 会影响内部 `backdrop-filter` 的背景采样；当前主页使用卡片级入场和 `will-change: transform`。调整后滚动检查能力、实习与项目模块的一致性。
 
