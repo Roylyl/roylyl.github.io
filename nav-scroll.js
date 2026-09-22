@@ -1,12 +1,12 @@
 (() => {
   const pages = new Set(['/', '/index.html', '/soundshare.html', '/ultrasonic.html', '/philosophy.html', '/other-projects.html']);
   const pendingKey = 'roylyl.navigation-target';
-  const scrollTarget = (hash) => {
+  const scrollTarget = (hash, smooth = true) => {
     let target;
     try { target = document.getElementById(decodeURIComponent(hash.slice(1))); } catch (_) {}
     if (!target) return;
     window.dispatchEvent(new Event('site:close-menu'));
-    target.scrollIntoView({ behavior: 'instant' });
+    target.scrollIntoView({ behavior: smooth ? 'smooth' : 'instant' });
     if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
     target.focus({ preventScroll: true });
   };
@@ -20,7 +20,7 @@
       const reload = performance.getEntriesByType('navigation')[0]?.type === 'reload';
       requestAnimationFrame(() => requestAnimationFrame(() => {
         window.scrollTo({ top: 0, behavior: 'instant' });
-        if (!reload && pending?.path === location.pathname) scrollTarget(pending.hash);
+        if (!reload && pending?.path === location.pathname) scrollTarget(pending.hash, false);
       }));
     });
   }

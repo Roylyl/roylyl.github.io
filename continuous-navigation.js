@@ -1,4 +1,5 @@
 (() => {
+  window.siteNavigationVersion = '20260923-7';
   const detailPages = new Set(['/ultrasonic.html', '/soundshare.html', '/philosophy.html', '/other-projects.html']);
   const isHomeUrl = (url) => ['/', '/index.html'].includes(url.pathname);
   const isDetailUrl = (url) => detailPages.has(url.pathname);
@@ -46,6 +47,7 @@
   history.scrollRestoration = 'manual';
 
   let shell, frame, returnFocus, loadingTimer, scrollTimer, completeFrame;
+  const retiringFrames = new Set();
   let activeHref = null;
   let homeScrollY = window.scrollY;
   let currentFramePath = '';
@@ -106,7 +108,7 @@
   function positionFrame(url, scrollY, smooth = false) {
     const doc = frame.contentDocument;
     const target = hashTarget(doc, url.hash);
-    const behavior = smooth && !matchMedia('(prefers-reduced-motion: reduce)').matches ? 'smooth' : 'instant';
+    const behavior = smooth ? 'smooth' : 'instant';
     if (Number.isFinite(scrollY)) frame.contentWindow.scrollTo({ top: scrollY, behavior });
     else if (target) target.scrollIntoView({ behavior });
     else frame.contentWindow.scrollTo({ top: 0, behavior });
@@ -133,10 +135,18 @@
     const path = `${url.pathname}${url.search}`;
     if (frame && currentFramePath === path && frame.dataset.ready === 'true') {
       positionFrame(url, restoredScroll, push);
+      window.sitePreloader?.activate(frame.contentDocument);
       return;
     }
     clearTimeout(loadingTimer);
-    frame?.remove();
+    const previousFrame = frame;
+    if (previousFrame) {
+      previousFrame.inert = true;
+      previousFrame.dataset.ready = 'retiring';
+      previousFrame.className = 'detail-shell-retiring';
+      previousFrame.contentDocument?.querySelectorAll('audio,video').forEach(media => media.pause());
+      retiringFrames.add(previousFrame);
+    }
     // A new context's initial navigation replaces about:blank, so only the
     // parent's pushState adds history; reused iframe.src would add another entry.
     frame = document.createElement('iframe');
@@ -157,6 +167,13 @@
         const lang = window.siteLanguage?.get();
         if (lang) frame.contentWindow.siteLanguage?.set(lang, { persist: false, broadcast: false });
         frame.dataset.ready = 'true';
+        shell.classList.add('has-page');
+        const retired = [...retiringFrames];
+        const clearRetired = () => retired.forEach(old => { old.remove(); retiringFrames.delete(old); });
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          const animation = frame.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 320, easing: 'cubic-bezier(.16,1,.3,1)' });
+          animation.finished.catch(() => {}).finally(clearRetired);
+        } else clearRetired();
         frame.inert = false;
         frame.contentWindow.postMessage({ type: 'site:visibility', visible: true }, location.origin);
         frame.contentWindow.addEventListener('scroll', () => schedulePosition(nextFrame), { passive: true });
@@ -176,7 +193,7 @@
     const embedded = new URL(url);
     embedded.hash = '';
     embedded.searchParams.set('embedded', '1');
-    embedded.searchParams.set('nav-version', '20260923-5');
+    embedded.searchParams.set('nav-version', '20260923-7');
     frame.src = hrefOf(embedded);
     shell.append(frame);
     frame.focus({ preventScroll: true });
@@ -188,11 +205,13 @@
     if (push) history.pushState({ detail: null, homeScrollY }, '', addressOf(url));
     clearTimeout(loadingTimer);
     frame?.remove();
+    retiringFrames.forEach(old => old.remove()); retiringFrames.clear();
     frame = null;
     currentFramePath = '';
     activeHref = null;
-    if (shell) { shell.classList.remove('open'); shell.hidden = true; }
+    if (shell) { shell.classList.remove('open', 'has-page'); shell.hidden = true; }
     setBackgroundActive(true);
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.querySelector('main')?.animate([{ opacity: .4 }, { opacity: 1 }], { duration: 280, easing: 'ease-out' });
     updateTitle();
     const target = hashTarget(document, url.hash);
     if (Number.isFinite(restoredScroll)) window.scrollTo({ top: restoredScroll, behavior: 'instant' });

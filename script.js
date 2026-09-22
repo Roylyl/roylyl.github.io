@@ -224,7 +224,7 @@ if (socialCarousel) {
     const gap = Number.parseFloat(getComputedStyle(socialTrack).gap) || 0;
     return card.getBoundingClientRect().width + gap;
   };
-  const socialBehavior = () => matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth';
+  const socialBehavior = () => 'smooth';
   socialPrev?.addEventListener('click', () => socialTrack?.scrollBy({ left: -socialStep(), behavior: socialBehavior() }));
   socialNext?.addEventListener('click', () => socialTrack?.scrollBy({ left: socialStep(), behavior: socialBehavior() }));
   socialTrack?.addEventListener('scroll', updateSocialArrows, { passive: true });
