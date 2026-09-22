@@ -64,6 +64,19 @@
 
   if (window.parent !== window) {
     audio.remove();
+    document.addEventListener('play', (event) => {
+      const preview = event.target;
+      if (preview.paused || !preview.matches?.('audio[data-project-audio]')) return;
+      // Detail frames are same-origin; stop the shared track synchronously.
+      window.parent.siteBackgroundMusic?.mute();
+      render(false);
+      document.querySelectorAll('audio[data-project-audio]').forEach((other) => {
+        if (other !== preview) other.pause();
+      });
+    }, true);
+    window.addEventListener('pagehide', () => {
+      document.querySelectorAll('audio[data-project-audio]').forEach((preview) => preview.pause());
+    });
     toggle.addEventListener('click', () => {
       window.parent.postMessage({ type: 'site:music-toggle' }, location.origin);
     });
@@ -85,6 +98,10 @@
   const projectAudioSelector = 'audio[data-project-audio]';
   function pauseProjectAudio(except = null) {
     document.querySelectorAll(projectAudioSelector).forEach((preview) => {
+      if (preview !== except) preview.pause();
+    });
+    // A project preview may live inside the active same-origin detail page.
+    document.querySelector('.detail-shell-frame')?.contentDocument?.querySelectorAll(projectAudioSelector).forEach((preview) => {
       if (preview !== except) preview.pause();
     });
   }

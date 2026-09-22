@@ -1,0 +1,26 @@
+/* Shared reading shell, with project details kept in a single readable column. */
+:root { --line-strong: rgba(255,255,255,.18); }
+
+
+.other-project { padding: 44px 0; border-bottom: 1px solid var(--line); scroll-margin-top: 108px; }
+.other-project h2 { margin: 12px 0 20px; font-size: clamp(28px, 5vw, 44px); line-height: 1.18; letter-spacing: -.04em; overflow-wrap: anywhere; }
+.project-tag { margin: 0; color: var(--muted); font: 600 11px/1.7 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .08em; }
+.project-facts { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.project-facts span { padding: 5px 10px; border: 1px solid var(--line); border-radius: 16px; color: var(--muted); font-size: 12px; }
+.project-copy > p { font-size: 16px; line-height: 1.85; }
+.project-copy .button { display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 10px 20px; border: 1px solid rgba(255,255,255,.25); border-radius: 24px; background: #1679d9; color: #fff; font-size: 14px; font-weight: 650; text-align: center; }
+.project-copy .button:hover { background: #2087e8; }
+@media (max-width: 480px) {
+  .other-project { padding-block: 32px; }
+  .project-copy .button { width: 100%; }
+
+}
+
+.project-notes-title { margin: 0; padding: 20px 0 12px; color: var(--text); font-size: 18px; font-weight: 650; line-height: 1.55; }
+.project-notes-body > p:first-child { margin-top: 0; }
+
+.wandu-project .production-process { margin-top: 28px; }
+.wandu-project .production-facts { gap: 18px; }
+.wandu-project .audio-help { margin-top: 12px; font-size: 14px; }
+.wandu-project .audio-help a { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
+.wandu-project .production-links .secondary { background: rgba(255,255,255,.05); }

@@ -1,3 +1,6 @@
+/* Project directories and philosophy share the featured-project grid spacing. */
+.project-grid > .philosophy-preview { grid-column: 1 / -1; }
+
 /* Approved software projects and the Wandu production case. */
 .software-project-card { display: flex; align-self: start; }
 .software-project-card .project-copy { width: 100%; gap: 0; }

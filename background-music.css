@@ -249,3 +249,56 @@
 @media (prefers-reduced-motion: reduce) {
   .secondary-menu-toggle span { transition: none; }
 }
+
+/* Detail pages share a centered directory with balanced side columns. */
+@media (min-width: 861px) {
+  :is(.ss-nav, .detail-nav, .p-nav) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: 16px;
+  }
+  :is(.ss-nav, .detail-nav, .p-nav) > :is(.ss-brand, .detail-brand, .p-home-link) {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+    min-width: 0;
+  }
+  :is(.ss-nav, .detail-nav, .p-nav) > :is(nav, .p-contents-link) {
+    display: flex;
+    grid-column: 2;
+    grid-row: 1;
+    justify-content: center;
+    justify-self: center;
+    margin: 0;
+  }
+  :is(.ss-nav, .detail-nav, .p-nav) > .music-toggle,
+  :is(.ss-nav, .detail-nav, .p-nav) > .lang-switcher {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    margin: 0;
+  }
+  :is(.ss-nav, .detail-nav, .p-nav) > .music-toggle { margin-right: 54px; }
+  :is(.ss-nav, .detail-nav, .p-nav) .music-toggle,
+  :is(.ss-nav, .detail-nav, .p-nav) .lang-toggle {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
+  }
+  :is(.ss-nav, .detail-nav, .p-nav) .music-label,
+  :is(.ss-nav, .detail-nav, .p-nav) [data-lang-current],
+  :is(.ss-nav, .detail-nav, .p-nav) .lang-chevron { display: none; }
+}
+@media (min-width: 861px) and (max-width: 1100px) {
+  :is(.ss-nav, .detail-nav) .brand-label-full { display: none; }
+  :is(.ss-nav, .detail-nav) .brand-label-compact { display: inline; }
+  :is(.ss-nav, .detail-nav) > nav { gap: 12px; font-size: 12px; }
+}
+@media (min-width: 861px) and (max-width: 940px) {
+  :is(.ss-nav, .detail-nav) .brand-label-compact { display: none; }
+}

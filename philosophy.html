@@ -10,9 +10,9 @@
   <link rel="icon" type="image/png" sizes="180x180" href="assets/favicon-avatar-180.png?v=20260902-1" />
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=20260902-1" />
   <title>产品与创业理念 · 罗宇伦 Roy Luo</title>
-  <link rel="stylesheet" href="philosophy.css?v=20260922-2" />
-  <link rel="stylesheet" href="i18n.css?v=20260918-4" />
-  <link rel="stylesheet" href="background-music.css?v=20260918-4" />
+  <link rel="stylesheet" href="philosophy.css?v=20260922-3" />
+  <link rel="stylesheet" href="i18n.css?v=20260922-1" />
+  <link rel="stylesheet" href="background-music.css?v=20260922-1" />
   <link rel="stylesheet" href="region-notice.css?v=20260918-4" />
   <link rel="stylesheet" href="site-accessibility.css?v=20260922-2" />
 </head>
@@ -20,7 +20,15 @@
   <div class="p-progress" aria-hidden="true"><span id="pProgress"></span></div>
   <header class="p-nav">
     <a class="p-home-link" href="index.html#philosophy" aria-label="返回主页"><span aria-hidden="true">←</span><span class="p-home-label">返回主页</span></a>
-    <a class="p-contents-link" href="#contents">本页目录</a>
+    <button class="secondary-menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="contents"><span></span><span></span></button>
+    <nav id="contents" aria-label="本页目录">
+      <a href="#product">PRODUCT JUDGMENT</a>
+      <a href="#interaction">INTERACTION & LEARNING</a>
+      <a href="#fusion">TECHNOLOGY FUSION</a>
+      <a href="#validation">USE VALIDATION</a>
+      <a href="#startup">BUSINESS & RESEARCH</a>
+      <a href="#future">LONG-TERM DIRECTION</a>
+    </nav>
   </header>
 
   <main class="wrap p-reading">
@@ -30,16 +38,6 @@
       <p class="lead">我希望做出带有自己判断的产品：它可以提出新的使用方式，也应在真实使用中不断修正。音乐、硬件项目和展会观察，让我持续关注设备怎样协作、交互怎样保留控制，以及怎样为长期研究创造条件。以下是我当前的判断，其中仍有需要用原型和实验回答的问题。</p>
     </header>
 
-    <nav class="p-toc" id="contents" aria-label="本页目录" tabindex="-1">
-      <ol>
-        <li><a href="#product"><span class="p-number" aria-hidden="true" data-i18n-static>01</span><span>产品判断</span></a></li>
-        <li><a href="#interaction"><span class="p-number" aria-hidden="true" data-i18n-static>02</span><span>交互与学习</span></a></li>
-        <li><a href="#fusion"><span class="p-number" aria-hidden="true" data-i18n-static>03</span><span>技术融合</span></a></li>
-        <li><a href="#validation"><span class="p-number" aria-hidden="true" data-i18n-static>04</span><span>使用验证</span></a></li>
-        <li><a href="#startup"><span class="p-number" aria-hidden="true" data-i18n-static>05</span><span>经营与研究</span></a></li>
-        <li><a href="#future"><span class="p-number" aria-hidden="true" data-i18n-static>06</span><span>长期方向</span></a></li>
-      </ol>
-    </nav>
 
     <section class="p-chapter" id="product" aria-labelledby="productTitle" tabindex="-1">
       <div class="p-chapter-label"><span class="p-number" aria-hidden="true" data-i18n-static>01</span><span>产品判断</span></div>
@@ -92,9 +90,9 @@
   </main>
 
   <footer class="p-footer wrap"><span>© <span id="pYear"></span> 罗宇伦 Roy Luo</span><span>Product · Technology · Entrepreneurship</span><span class="music-copyright">背景音乐仅用于个人非商业展示 · 音乐版权归原权利人所有</span></footer>
-  <script src="i18n.js?v=20260922-2"></script>
-  <script src="background-music.js?v=20260922-1"></script>
-  <script src="continuous-navigation.js?v=20260922-1"></script>
+  <script src="i18n.js?v=20260922-6"></script>
+  <script src="background-music.js?v=20260922-2"></script>
+  <script src="continuous-navigation.js?v=20260922-8"></script>
   <script src="philosophy.js?v=20260922-2"></script>
   <script src="region-notice.js?v=20260918-4"></script>
   <script src="nav-scroll.js?v=20260918-4"></script>

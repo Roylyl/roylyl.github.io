@@ -388,7 +388,7 @@
   "桌面捕获、铰链读取和玻璃效果的基础来自上游。这是软件视觉实验，实际体验取决于兼容机型与桌面环境。": "桌面捕获、铰链读取和玻璃效果的基础来自上游。这是软件视觉实验，实际体验取决于兼容机型与桌面环境。",
   "查看上游与引用说明 ↗": "查看上游与引用说明 ↗",
   "查看 MacDuo 源码 ↗": "查看 MacDuo 源码 ↗",
-  "晚渡 · WANDU": "晚渡 · WANDU",
+  "晚渡": "晚渡",
   "单独打开音频 ↗": "单独打开音频 ↗",
   "编曲": "编曲",
   "九声部 MIDI · 88 BPM · E 小调": "九声部 MIDI · 88 BPM · E 小调",
@@ -434,7 +434,7 @@
   "桌面捕获、铰链读取和玻璃效果的基础来自上游。这是软件视觉实验，实际体验取决于兼容机型与桌面环境。": "桌面擷取、鉸鏈讀取和玻璃效果的基礎來自上游。這是軟件視覺實驗，實際體驗取決於相容機型與桌面環境。",
   "查看上游与引用说明 ↗": "查看上游與引用說明 ↗",
   "查看 MacDuo 源码 ↗": "查看 MacDuo 原始碼 ↗",
-  "晚渡 · WANDU": "晚渡 · WANDU",
+  "晚渡": "晚渡",
   "单独打开音频 ↗": "單獨開啟音訊 ↗",
   "编曲": "編曲",
   "九声部 MIDI · 88 BPM · E 小调": "九聲部 MIDI · 88 BPM · E 小調",
@@ -518,7 +518,7 @@
   "桌面捕获、铰链读取和玻璃效果的基础来自上游。这是软件视觉实验，实际体验取决于兼容机型与桌面环境。": "The foundations for desktop capture, hinge readings, and glass effects come from the upstream project. This is a software visual experiment; the experience depends on compatible hardware and the desktop environment.",
   "查看上游与引用说明 ↗": "View upstream sources and credits ↗",
   "查看 MacDuo 源码 ↗": "View MacDuo source ↗",
-  "晚渡 · WANDU": "Wandu",
+  "晚渡": "WANDU",
   "单独打开音频 ↗": "Open audio separately ↗",
   "编曲": "Arrangement",
   "九声部 MIDI · 88 BPM · E 小调": "Nine-part MIDI · 88 BPM · E minor",
@@ -715,7 +715,41 @@
     en[source] = english;
   });
 
+  [
+  [
+    "其他项目",
+    "其他項目",
+    "Other projects"
+  ],
+  [
+    "SOFTWARE & INTERACTION",
+    "軟件與互動",
+    "Software & interaction"
+  ],
+  [
+    "查看其他项目 →",
+    "查看其他項目 →",
+    "Explore other projects →"
+  ],
+  [
+    "DeerWebTranslator 与 MacDuo：从网页阅读到桌面交互，记录两个开源项目的实现与设计思考。",
+    "DeerWebTranslator 與 MacDuo：從網頁閱讀到桌面互動，記錄兩個開源項目的實現與設計思考。",
+    "DeerWebTranslator and MacDuo: implementation and design ideas across web reading and desktop interaction."
+  ],
+  [
+    "DeerWebTranslator 与 MacDuo 的项目介绍、设计思考与源码入口。",
+    "DeerWebTranslator 與 MacDuo 的項目介紹、設計思考與原始碼入口。",
+    "Project overviews, design ideas and source code for DeerWebTranslator and MacDuo."
+  ]
+].forEach(([source, traditional, english]) => { cn[source] = source; tw[source] = traditional; en[source] = english; });
+  cn['SOFTWARE & INTERACTION'] = '软件与交互';
+
+  [["PRODUCT JUDGMENT", "产品判断", "產品判斷", "Product"], ["INTERACTION & LEARNING", "交互与学习", "互動與學習", "Interaction"], ["TECHNOLOGY FUSION", "技术融合", "技術融合", "Technology"], ["USE VALIDATION", "使用验证", "使用驗證", "Validation"], ["BUSINESS & RESEARCH", "经营与研究", "經營與研究", "Business"], ["LONG-TERM DIRECTION", "长期方向", "長期方向", "Direction"]].forEach(([source, simplified, traditional, english]) => { cn[source] = simplified; tw[source] = traditional; en[source] = english; });
+
+  [["DeerWebTranslator、MacDuo 与《晚渡》：浏览器扩展、桌面交互实验，以及 Astra Computer Use 音乐制作测试。", "DeerWebTranslator、MacDuo 與《晚渡》：瀏覽器擴充功能、桌面互動實驗，以及 Astra Computer Use 音樂製作測試。", "DeerWebTranslator, MacDuo and Wandu: a browser extension, a desktop interaction experiment, and an Astra Computer Use music production test."], ["DeerWebTranslator、MacDuo 与晚渡的项目介绍、设计思考和 Astra Computer Use 测试产物。", "DeerWebTranslator、MacDuo 與晚渡的項目介紹、設計思考和 Astra Computer Use 測試產物。", "Project overviews, design ideas and Astra Computer Use test outputs from DeerWebTranslator, MacDuo and Wandu."]].forEach(([source, traditional, english]) => { cn[source] = source; tw[source] = traditional; en[source] = english; });
+
   const pageTitles = {
+    'other-projects.html': { 'zh-CN': '其他项目 · 罗宇伦 Roy Luo', 'zh-TW': '其他項目 · 羅宇倫 Roy Luo', en: 'Other Projects · Roy Luo' },
     'index.html': { 'zh-CN': '罗宇伦 Roy Luo', 'zh-TW': '羅宇倫 Roy Luo', en: 'Roy Luo · Engineering Portfolio' },
     'soundshare.html': { 'zh-CN': '音享贴 · LENGHE SoundShare', 'zh-TW': '音享貼 · LENGHE SoundShare', en: 'LENGHE SoundShare · Roy Luo' },
     'ultrasonic.html': { 'zh-CN': '超声波定向扬声器 · Roy Luo', 'zh-TW': '超聲波定向揚聲器 · Roy Luo', en: 'Ultrasonic Directional Speaker · Roy Luo' },

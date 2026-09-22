@@ -8,6 +8,7 @@
   min-height: 42px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 9px 12px;
   color: inherit;

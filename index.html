@@ -15,9 +15,9 @@
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=20260902-1" />
   <title>罗宇伦 Roy Luo</title>
   <link rel="stylesheet" href="style.css?v=20260922-2" />
-  <link rel="stylesheet" href="portfolio-additions.css?v=20260922-1" />
-  <link rel="stylesheet" href="i18n.css?v=20260918-4" />
-  <link rel="stylesheet" href="background-music.css?v=20260918-4" />
+  <link rel="stylesheet" href="portfolio-additions.css?v=20260922-3" />
+  <link rel="stylesheet" href="i18n.css?v=20260922-1" />
+  <link rel="stylesheet" href="background-music.css?v=20260922-1" />
   <link rel="stylesheet" href="continuous-navigation.css?v=20260918-4" />
   <link rel="stylesheet" href="region-notice.css?v=20260918-4" />
   <link rel="stylesheet" href="social-controls.css?v=20260918-5" />
@@ -39,7 +39,6 @@
       <a href="#about">About</a>
       <a href="#experience">Experience</a>
       <a href="#projects">Projects</a>
-      <a href="#philosophy">Philosophy</a>
       <a href="#music">Music</a>
       <a href="#social">Social</a>
       <a href="#contact">Contact</a>
@@ -192,24 +191,11 @@
       </div>
       <div class="project-grid">
         <article class="project-card glass reveal">
-          <figure class="project-thumb dark ultrasonic-thumb">
-            <img src="assets/ultrasonic-concept.webp" width="1747" height="1800" loading="lazy" decoding="async" alt="超声波定向扬声器概念图" />
-          </figure>
-          <div class="project-copy">
-            <p class="project-tag">PROJECT 01</p>
-            <h3>超声波定向扬声器</h3>
-            <div class="project-facts"><span>角色：项目负责人</span><span>平台：ESP32</span><span>阶段：第一代 Demo</span></div>
-            <p>基于 ESP32 平台推进的定向音频项目，围绕蓝牙音频接收、样机搭建、基础硬件系统与工程验证展开。</p>
-            <a class="button primary" href="ultrasonic.html">了解更多</a>
-          </div>
-        </article>
-
-        <article class="project-card glass reveal">
           <figure class="project-thumb dark soundshare-thumb">
             <img src="assets/soundshare-icon.webp" width="1254" height="1254" loading="lazy" decoding="async" alt="音享贴应用图标" />
           </figure>
           <div class="project-copy">
-            <p class="project-tag">PROJECT 02</p>
+            <p class="project-tag">PROJECT 01</p>
             <h3>音享贴 · LENGHE SoundShare</h3>
             <div class="project-facts"><span>角色：硬件原型 / 嵌入式与产品设计</span><span>形态：蓝牙音频中继</span><span>阶段：首版 PCB 已验证</span></div>
             <p>两个人各自拥有耳机，也能更方便地共同收听。音享贴以轻量中继连接已有设备，保留独立调节的选择；已完成首版 PCB 与板级功能验证，并实现双 A2DP、多设备同步及延迟调节。</p>
@@ -217,64 +203,36 @@
           </div>
         </article>
 
-        <article class="project-card software-project-card glass reveal" id="deer-web-translator">
+        <article class="project-card glass reveal">
+          <figure class="project-thumb dark ultrasonic-thumb">
+            <img src="assets/ultrasonic-concept.webp" width="1747" height="1800" loading="lazy" decoding="async" alt="超声波定向扬声器概念图" />
+          </figure>
           <div class="project-copy">
-            <p class="project-tag">PROJECT 03 · WEB EXTENSION</p>
-            <h3 data-i18n-static>Deer<wbr>Web<wbr>Translator</h3>
-            <p class="project-subtitle">在原来的页面里，继续阅读。</p>
-            <div class="project-facts"><span>浏览器扩展</span><span>原位翻译 · 双语切换</span></div>
-            <p>我围绕网页原位阅读构建翻译扩展，接入可配置的模型服务，让译文进入当前页面，并提供原文与双语切换。工程重点包括保留原有节点和交互、按阅读范围安排请求，以及在停止、恢复和网页更新时维护一致的状态。</p>
-            <details class="project-notes">
-              <summary>翻译之外，怎样保留阅读体验</summary>
-              <div class="project-notes-body">
-                <p>翻译能力之外，产品还要保留阅读任务、页面状态和用户的控制权。</p>
-                <ul>
-                  <li>阅读：优先处理可见内容，保留原有链接和页面操作。</li>
-                  <li>停止：取消当前任务，隔离迟到的翻译结果。</li>
-                  <li>恢复：切回原文时，避免覆盖网页自身的新内容。</li>
-                </ul>
-                <p>设计参考 KISS Translator 与 TWP，翻译由所配置的模型服务提供。</p>
-                <a class="project-source-link" href="https://github.com/Roylyl/DeerWebTranslator/blob/a47dc574bcae99f85d27f93eeea3ebf05d40dbeb/tests/browser-regression.cjs" target="_blank" rel="noopener noreferrer">查看状态回归用例 ↗</a>
-              </div>
-            </details>
-            <a class="button primary" href="https://github.com/Roylyl/DeerWebTranslator" target="_blank" rel="noopener noreferrer">查看翻译扩展源码 ↗</a>
+            <p class="project-tag">PROJECT 02</p>
+            <h3>超声波定向扬声器</h3>
+            <div class="project-facts"><span>角色：项目负责人</span><span>平台：ESP32</span><span>阶段：第一代 Demo</span></div>
+            <p>基于 ESP32 平台推进的定向音频项目，围绕蓝牙音频接收、样机搭建、基础硬件系统与工程验证展开。</p>
+            <a class="button primary" href="ultrasonic.html">了解更多</a>
           </div>
         </article>
 
-        <article class="project-card software-project-card glass reveal" id="macduo">
-          <div class="project-copy">
-            <p class="project-tag">PROJECT 04 · macOS EXPERIMENT</p>
-            <h3 data-i18n-static>MacDuo</h3>
-            <p class="project-subtitle">从铰链动作，到屏幕反馈。</p>
-            <div class="project-facts"><span>macOS 视觉实验</span><span>基于 MacBook-Duo 改进</span></div>
-            <p>MacDuo 是基于 MacBook-Duo 改进的 macOS 视觉实验，将兼容设备的铰链角度与桌面效果关联。我围绕菜单栏控制、自定义快捷键、独立设置以及捕获和渲染状态恢复继续完善体验，探索物理动作与屏幕反馈之间的关系。</p>
-            <details class="project-notes">
-              <summary>动作、控制与恢复</summary>
-              <div class="project-notes-body">
-                <p>物理动作可以成为输入维度；完整体验也需要可控的进入、停止与恢复。</p>
-                <ul>
-                  <li>用菜单栏和自定义快捷键提供明确的控制入口。</li>
-                  <li>通过独立设置调整效果，保留手动预览方式。</li>
-                  <li>处理捕获与渲染生命周期，改善暂停和恢复行为。</li>
-                </ul>
-                <p>桌面捕获、铰链读取和玻璃效果的基础来自上游。这是软件视觉实验，实际体验取决于兼容机型与桌面环境。</p>
-                <a class="project-source-link" href="https://github.com/Roylyl/MacDuo/blob/0a974ba6f5f2ff08a5c4ec7e6e807b6ee2598c32/THIRD_PARTY_NOTICES.md" target="_blank" rel="noopener noreferrer">查看上游与引用说明 ↗</a>
-              </div>
-            </details>
-            <a class="button primary" href="https://github.com/Roylyl/MacDuo" target="_blank" rel="noopener noreferrer">查看 MacDuo 源码 ↗</a>
+        <div class="other-projects philosophy-preview glass reveal" id="other-projects" aria-labelledby="otherProjectsTitle">
+          <div class="philosophy-preview-copy">
+            <p class="eyebrow">SOFTWARE &amp; INTERACTION</p>
+            <h2 id="otherProjectsTitle">其他项目</h2>
+            <p class="philosophy-preview-summary">DeerWebTranslator、MacDuo 与《晚渡》：浏览器扩展、桌面交互实验，以及 Astra Computer Use 音乐制作测试。</p>
+            <span id="deer-web-translator" aria-hidden="true"></span><span id="macduo" aria-hidden="true"></span><span id="wandu" aria-hidden="true"></span>
           </div>
-        </article>
-      </div>
-    </section>
-
-    <section class="philosophy wrap" id="philosophy">
-      <div class="philosophy-preview glass reveal">
-        <div class="philosophy-preview-copy">
-          <p class="eyebrow">PRODUCT & ENTREPRENEURSHIP PHILOSOPHY</p>
-          <h2>我怎样做产品与选择方向</h2>
-          <p class="philosophy-preview-summary">我关注声音、设备与人之间的关系，尝试用新的组合和交互改善体验，也在探索怎样通过可持续经营，为长期研究留下时间与资源。</p>
+          <a class="button primary" href="other-projects.html">查看其他项目 →</a>
         </div>
-        <a class="button primary" href="philosophy.html">阅读完整理念 →</a>
+        <div class="philosophy-preview glass reveal" id="philosophy" aria-labelledby="philosophyPreviewTitle">
+          <div class="philosophy-preview-copy">
+            <p class="eyebrow">PRODUCT & ENTREPRENEURSHIP PHILOSOPHY</p>
+            <h2 id="philosophyPreviewTitle">我怎样做产品与选择方向</h2>
+            <p class="philosophy-preview-summary">我关注声音、设备与人之间的关系，尝试用新的组合和交互改善体验，也在探索怎样通过可持续经营，为长期研究留下时间与资源。</p>
+          </div>
+          <a class="button primary" href="philosophy.html">阅读完整理念 →</a>
+        </div>
       </div>
     </section>
 
@@ -308,36 +266,6 @@
           </div>
         </div>
       </div>
-      <article class="music-production glass reveal" id="wandu">
-        <div class="production-copy">
-          <p class="project-tag">ASTRA COMPUTER USE TEST</p>
-          <h3>晚渡 · WANDU</h3>
-          <p>《晚渡》完全由 Codex GPT-6 Astra 模型操作 MacBook 上的 FL Studio 完成。这不是我的个人作品，而是一次 Astra Computer Use 测试；此处保留试听、工程与 MIDI，供查看测试产物。</p>
-          <span class="work-audio-label" id="wandu-listen-label">测试产物试听 · 约 4 分 28 秒</span>
-          <audio class="work-audio" controls preload="none" data-project-audio aria-labelledby="wandu-listen-label">
-            <source src="assets/wandu.m4a" type="audio/mp4" />
-          </audio>
-          <p class="audio-help"><a href="assets/wandu.m4a" target="_blank" rel="noopener">单独打开音频 ↗</a></p>
-        </div>
-        <div class="production-process">
-          <dl class="production-facts">
-            <div><dt>测试方式</dt><dd>Codex GPT-6 Astra · MacBook · FL Studio</dd></div>
-            <div><dt>编曲</dt><dd>九声部 MIDI · 88 BPM · E 小调</dd></div>
-            <div><dt>公开产物</dt><dd>FL Studio 工程 · MIDI · 生成源文件</dd></div>
-          </dl>
-          <details class="project-notes">
-            <summary>这次测试留下了什么</summary>
-            <div class="project-notes-body">
-              <p>本案例用于展示模型操作桌面音乐软件后留下的文件与音频，不作为个人作曲、编曲或演奏能力的证明。</p>
-              <p>小号承担主旋律，乐器由 MIDI 驱动音源演奏，没有真实乐手或人声录音。生成脚本负责 MIDI 与曲目清单，FL Studio 工程和试听音频分别保留。</p>
-            </div>
-          </details>
-          <div class="production-links">
-            <a class="button primary" href="https://github.com/Roylyl/Astra-Music" target="_blank" rel="noopener noreferrer">测试说明与工程 ↗</a>
-            <a class="button secondary" href="https://github.com/Roylyl/Astra-Music/tree/df51e74ce1cf666fce768b21702116cdc9f091d7/MIDI" target="_blank" rel="noopener noreferrer">浏览 MIDI 素材 ↗</a>
-          </div>
-        </div>
-      </article>
     </section>
 
     <section class="social wrap" id="social">
@@ -404,10 +332,10 @@
     <span class="music-copyright">背景音乐仅用于个人非商业展示 · 音乐版权归原权利人所有</span>
   </footer>
 
-  <script src="i18n.js?v=20260922-2"></script>
-  <script src="background-music.js?v=20260922-1"></script>
+  <script src="i18n.js?v=20260922-6"></script>
+  <script src="background-music.js?v=20260922-2"></script>
   <script src="soundshare-particles.js?v=20260921-1"></script>
-  <script src="continuous-navigation.js?v=20260922-1"></script>
+  <script src="continuous-navigation.js?v=20260922-8"></script>
   <script src="regional-video.js?v=20260918-6"></script>
   <script src="script.js?v=20260922-2"></script>
   <script src="region-notice.js?v=20260918-4"></script>

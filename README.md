@@ -11,20 +11,16 @@
 [![Website](https://img.shields.io/badge/website-roylyl.github.io-0f172a?style=flat-square)](https://roylyl.github.io/)
 [![Pages](https://img.shields.io/github/deployments/Roylyl/roylyl.github.io/github-pages?style=flat-square&label=GitHub%20Pages)](https://roylyl.github.io/)
 [![HTML](https://img.shields.io/badge/HTML5-native-e34f26?style=flat-square&logo=html5&logoColor=white)](index.html)
-[![Stars](https://img.shields.io/github/stars/Roylyl/roylyl.github.io?style=flat-square)](https://github.com/Roylyl/roylyl.github.io/stargazers)
-[![Forks](https://img.shields.io/github/forks/Roylyl/roylyl.github.io?style=flat-square)](https://github.com/Roylyl/roylyl.github.io/forks)
-[![Last Commit](https://img.shields.io/github/last-commit/Roylyl/roylyl.github.io?style=flat-square)](https://github.com/Roylyl/roylyl.github.io/commits/main)
 
-[访问网站](https://roylyl.github.io/) · [项目入口](#快速入口) · [本地预览](#本地预览) · [验证](#验证) · [维护指南](#维护指南) · [联系](#联系)
+[访问网站](https://roylyl.github.io/) · [页面与项目](#快速入口) · [本地预览](#本地预览) · [检查与验证](#验证) · [维护指南](#维护指南) · [联系](#联系)
 
 </div>
 
 这是罗宇伦的个人作品集网站。内容围绕硬件开发、嵌入式系统、音频产品和工程验证展开，记录从需求与技术判断，到样机实现、调试与验证的实践过程；音乐与音频设备实践、行业调研和产品思考则呈现工程工作如何连接真实场景。
 
-<p align="center">
-  <a href="https://roylyl.github.io/"><img src="assets/home-hero-1200.jpg" width="380" alt="罗宇伦个人作品集首页视觉"></a><br>
-  <sub>访问线上作品集，查看项目、履历与工程实践。</sub>
-</p>
+主站由五个静态页面组成，使用原生 HTML、CSS 和 JavaScript，无需安装前端依赖或执行构建。仓库同时保留三个独立站点目录，它们不属于主站的五页导航体系。
+
+> 《晚渡》完全由 Codex GPT-6 Astra 模型操作 MacBook 上的 FL Studio 完成，仅用于 Astra Computer Use 能力测试，不是罗宇伦的个人音乐作品。
 
 ## 快速入口
 
@@ -33,9 +29,9 @@
 | 个人作品集 | [roylyl.github.io](https://roylyl.github.io/) | 个人介绍、能力、实习、项目、理念、音乐与联系方式 |
 | 超声波定向扬声器 | [ultrasonic.html](ultrasonic.html) | ESP32 驱动的定向音频第一代 Demo |
 | 音享贴 · LENGHE SoundShare | [soundshare.html](soundshare.html) | 跨生态多人蓝牙音频共享硬件原型与产品设计 |
-| DeerWebTranslator | [首页项目卡](https://roylyl.github.io/#deer-web-translator) · [源码](https://github.com/Roylyl/DeerWebTranslator) | 原位翻译、阅读状态与取消恢复 |
-| MacDuo | [首页项目卡](https://roylyl.github.io/#macduo) · [源码](https://github.com/Roylyl/MacDuo) | 基于 MacBook-Duo 的形态交互实验 |
-| 晚渡 · WANDU | [测试产物试听](https://roylyl.github.io/#wandu) · [测试工程](https://github.com/Roylyl/Astra-Music) | Codex GPT-6 Astra 操作 MacBook 上 FL Studio 的 Computer Use 测试，非个人作品 |
+| DeerWebTranslator | [其他项目详情](https://roylyl.github.io/other-projects.html#deer-web-translator) · [源码](https://github.com/Roylyl/DeerWebTranslator) | 原位翻译、阅读状态与取消恢复 |
+| MacDuo | [其他项目详情](https://roylyl.github.io/other-projects.html#macduo) · [源码](https://github.com/Roylyl/MacDuo) | 基于 MacBook-Duo 的形态交互实验 |
+| 晚渡 · WANDU | [测试产物试听](https://roylyl.github.io/other-projects.html#wandu) · [测试工程](https://github.com/Roylyl/Astra-Music) | Codex GPT-6 Astra 操作 MacBook 上 FL Studio 的 Computer Use 测试，非个人作品 |
 | 产品与创业理念 | [首页简短入口](https://roylyl.github.io/#philosophy) · [完整理念](philosophy.html) | 产品判断、交互与学习、技术融合、使用验证、经营与研究、长期方向 |
 
 ## 本地预览
@@ -60,15 +56,32 @@ py -3 -m http.server 8000 --bind 127.0.0.1
 
 ## 验证
 
+### 自动回归检查
+
 运行自动测试时另需 Node.js 22 或更新版本，无需执行 `npm install`。在仓库根目录运行：
 
 ```sh
-node --test tests/particle-input.test.cjs
-node --test tests/project-audio.test.cjs
+node --test tests/particle-input.test.cjs tests/project-audio.test.cjs
 git diff --check
 ```
 
 [粒子输入回归测试](tests/particle-input.test.cjs) 执行实际粒子脚本，模拟浏览器输入与 WebGL 接口，检查传入渲染器的交互坐标。覆盖普通鼠标、触屏与鼠标并存、主指针为触摸时接入鼠标、合并事件采样、触摸切换、窗口失焦、局部坐标和减少动态效果。它不替代真实浏览器与显卡的渲染验证；仅预览网站不需要 Node.js。
+
+[音频状态回归测试](tests/project-audio.test.cjs) 检查试听与背景音乐互斥、详情导航暂停试听等状态逻辑。两组测试都不验证第三方播放器的实际可用性。
+
+### 浏览器检查
+
+日常布局检查使用本机浏览器调整视口即可，不需要启动虚拟机或手机模拟器。建议覆盖以下组合：
+
+| 维度 | 检查范围 |
+| --- | --- |
+| 主站页面 | `index.html`、`ultrasonic.html`、`soundshare.html`、`philosophy.html`、`other-projects.html` |
+| 视口宽度 | 320、390、768、1440 CSS 像素，覆盖窄屏手机、手机、平板与桌面代表尺寸 |
+| 界面语言 | 简体中文、繁體中文、English |
+| 可见布局 | 横向溢出、标题换行、图片说明裁切、截图可读性、点击区域、固定导航遮挡 |
+| 使用方式 | 鼠标、键盘焦点、菜单展开、页面滚动、前进与后退 |
+
+视口尺寸只代表布局条件，不代表操作系统或设备。Windows Chrome、macOS、Android 平板、iPad、Android 手机与 iPhone 的实机结果应分别记录；没有相应环境时明确标注未验证。不要把本机 Chrome 的布局检查写成 Safari、移动设备或 Windows 的实机兼容结论。
 
 发布前按实际浏览顺序检查：
 
@@ -76,8 +89,8 @@ git diff --check
 2. **项目导航**：首页 → 超声波 → 音享贴 → 后退两次 → 前进，检查地址、标题、语言、焦点和阅读位置；直接打开带章节锚点的详情页并刷新。
 3. **粒子与布局**：桌面、触屏电脑、平板、手机均无横向溢出；鼠标可以接管粒子，手指滚动不受干扰；减少动态效果、切后台和返回页面正常。
 4. **菜单与联系方式**：检查手机导航、语言菜单的键盘操作，以及二维码放大、Esc 关闭、账号复制与反馈。
-5. **视频与音乐**：检查两段原生视频在中国大陆、其他地区和检测失败时的自动选源；进入详情页后首页视频停止、首页粒子暂停；返回后重新加载播放器，保持自动播放关闭。检查《晚渡》原生试听、暂停、进度与独立音频入口；试听与背景音乐互斥，进入详情页或点击视频时试听暂停，返回后不自动续播。
-6. **新增项目**：展开与收起 DeerWebTranslator、MacDuo 的设计说明，核对仓库和源码入口；三语与窄屏下标题、试听控制条和说明均完整可读。
+5. **视频与音乐**：检查两段原生视频在中国大陆、其他地区和检测失败时的自动选源；进入详情页后首页视频停止、首页粒子暂停；返回后重新加载播放器，保持自动播放关闭。检查《晚渡》原生试听、暂停、进度与独立音频入口；试听与背景音乐互斥；分别检查独立打开和首页内嵌导航，离开《晚渡》所在页面后不继续播放，返回后不自动续播。
+6. **其他项目**：从首页入口进入 `other-projects.html`，检查顶部项目目录、返回主页、直达项目锚点；确认 DeerWebTranslator、MacDuo 的设计说明始终展示，核对仓库和源码入口；三语与窄屏下标题和说明均完整可读。
 7. **理念阅读**：从首页简短入口进入二级页，逐章检查目录跳转、三语正文和项目链接；核对旧章节锚点仍可访问，以及查看项目后返回理念页的阅读位置。检查桌面、平板和手机代表宽度下的标题、正文与按钮，不把静态检查视为实机验证。
 
 ## 网站组成
@@ -90,7 +103,8 @@ git diff --check
 ├── project-context.css           # 音享贴设计取舍与定向声空间场景
 ├── ultrasonic.html / .css / .js  # 超声波定向扬声器
 ├── soundshare.html / .css / .js  # 音享贴 · LENGHE SoundShare
-├── philosophy.html / .css / .js  # 产品与创业理念
+├── philosophy.html / .css / .js  # 产品与创业理念与共用阅读进度脚本
+├── other-projects.html / .css    # 软件项目与晚渡 Computer Use 测试二级页
 ├── soundshare-particles.js       # 首页与两个项目页共用的 WebGL2 粒子
 ├── i18n.css / i18n.js            # 三语界面、语言菜单与简历映射
 ├── background-music.*            # 背景音乐会话与控制
@@ -108,17 +122,17 @@ git diff --check
 └── weijiba/                      # 独立页面目录
 ```
 
-主站包含主页和三个详情页；后三个独立目录不接入主站的连续导航。它们与 `assets/`、`tests/` 一样属于正式仓库内容。
+主站包含主页和四个详情页；后三个独立目录不接入主站的连续导航。它们与 `assets/`、`tests/` 一样属于正式仓库内容。
 
 ## 网站行为
 
 - **三语与响应式布局**：主站支持简体中文、繁體中文（香港用语）和 English；导航、卡片、图片与联系方式适配桌面、平板和手机。
 - **粒子与玻璃效果**：粒子按实际 `pointerType === 'mouse'` 事件跟随，兼容触屏与鼠标并存的设备；触摸操作保持自动动画。缺少 WebGL2 或浮点颜色缓冲扩展时不启动粒子，系统启用减少动态效果时停止动画。
 - **连续导航**：从首页进入详情时，由首页保留背景音乐会话，并同步地址、标题、语言、焦点和阅读位置；详情页也支持独立打开，直接打开或刷新后的音乐状态恢复仍受浏览器播放策略影响。
-- **理念阅读**：首页仅保留标题、短摘要与一个阅读入口；完整内容集中在理念页的六个章节，通过页内目录跳读，主要观点始终展开。相关项目链接放在对应章节旁，不在首页重复长文或经营宣言。
+- **理念阅读**：首页仅保留标题、短摘要与一个阅读入口；完整内容集中在理念页的六个章节，通过顶部导航目录跳读，主要观点始终展开。相关项目链接放在对应章节旁，不在首页重复长文或经营宣言。
 - **自动视频选源**：两段视频按 IP 识别结果选择播放源：中国大陆使用哔哩哔哩，其他地区及检测失败时使用 YouTube。直接使用平台原生 iframe，关闭自动播放，不添加自定义缩略图或手动平台选择。
 - **音乐与可访问性**：背景音乐初次访问默认静音、按需加载，由访客主动开启。语言菜单支持方向键、Home / End、Tab 和 Esc；手机菜单管理背景交互，二维码与地区提示使用原生弹窗；脚本不可用时正文仍可阅读。
-- **测试产物试听**：《晚渡》使用原生 `audio`，`preload="none"`，仅在访客播放后加载。开始试听会关闭背景音乐，重新开启背景音乐会暂停试听；进入项目详情或点击视频时暂停试听，保留进度但不自动恢复。跨域视频内部的实际播放状态由平台控制。
+- **测试产物试听**：《晚渡》使用原生 `audio`，`preload="none"`，仅在访客播放后加载。开始试听会关闭背景音乐，重新开启背景音乐会暂停试听；试听位于“其他项目”二级页，直接打开和从首页内嵌进入时均与背景音乐互斥；离开页面后不继续播放，返回后不自动续播。
 
 ### 本地状态与外部请求
 
@@ -134,9 +148,19 @@ git diff --check
 
 界面语言不参与视频选源。地区识别与视频的可用性取决于访客网络；表中的存储说明仅涵盖本站脚本，不包含第三方播放器自身的行为。
 
-《晚渡》试听文件来自 [Astra-Music 公开提交 df51e74](https://github.com/Roylyl/Astra-Music/blob/df51e74ce1cf666fce768b21702116cdc9f091d7/%E8%AF%95%E5%90%AC/%E6%99%9A%E6%B8%A1.m4a)，保留原始 AAC / M4A，8,552,981 字节；SHA-256 为 `85efe92b86a6a61134397e60d17505c03ca57868d482c7ba7718907cc587cc00`。FL Studio 工程、MIDI 和生成脚本链接到源仓库，不复制到网站。此音频属于正式展示资产，不是编译产物。
+《晚渡》的试听文件来自 [Astra-Music 测试工程](https://github.com/Roylyl/Astra-Music)，网站仅保留播放所需的 `assets/wandu.m4a`。FL Studio 工程、MIDI 和生成脚本通过源仓库提供，不复制到本站。试听音频属于正式展示资源，不是编译缓存。
 
 ## 维护指南
+
+### 修改边界
+
+- 首页的理念模块保持简短，完整论述集中在 `philosophy.html`，避免两处重复维护长文。
+- 两段视频继续按 IP 自动选源，使用播放平台原生 iframe；不添加手动选源或自定义缩略图。
+- 保留《晚渡》的 Computer Use 测试声明，项目列表与试听区域都不将其归为个人音乐作品。
+- 联系二维码须保持扫描能力。调整颜色、尺寸或弹窗后，检查原图完整性与实际扫码结果。
+- 主站维护默认围绕五页及其共享资源展开；KunCode、加密鹿与魏鸡百科按各自任务单独检查。
+
+### 文件入口
 
 | 修改内容 | 入口与检查重点 |
 | --- | --- |
@@ -180,42 +204,17 @@ git check-ignore -v tmp/example.png
 
 完整配置见 [GitHub Pages 官方文档](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)。本地修改不会自动更新线上网站。
 
-## 关注方向
+## 简历与个人资料
 
-| 方向 | 关键词 |
-| --- | --- |
-| 嵌入式开发 | ESP32、ESP-IDF、BLE、A2DP、控制逻辑 |
-| 硬件与验证 | PCB 设计、样机组装、信号链检查、硬件调试、系统联调 |
-| 音频产品 | 蓝牙音频、定向音频、延迟与同步、跨设备交互 |
-| 产品工程 | 用户场景、竞品调研、产品定义、原型推进、项目展示 |
+实习经历、项目进度和个人介绍以[作品集主页](https://roylyl.github.io/)及正式简历为入口，README 不重复维护完整履历。
 
-## 简历下载
-
-网站会依据当前界面语言，经由 [i18n.js](i18n.js) 自动指向对应文件。三个 PDF 都是独立的三页文件，并各自保留既有的语言页面顺序。
+网站通过 `i18n.js` 中的语言映射提供对应简历：
 
 | 界面语言 | 下载文件 |
 | --- | --- |
 | 简体中文 | [罗宇伦_简历.pdf](assets/罗宇伦_简历.pdf) |
 | 繁體中文（香港用语） | [羅宇倫_履歷.pdf](assets/羅宇倫_履歷.pdf) |
 | English | [Roy Luo_Resume.pdf](assets/Roy%20Luo_Resume.pdf) |
-
-## 工程项目
-
-### 超声波定向扬声器
-
-基于 ESP32 推进的定向音频项目，围绕蓝牙音频接收、定向发声链路、样机搭建、硬件调试与系统联调完成第一代 Demo。详情见 [项目页面](ultrasonic.html)。
-
-### 音享贴 · LENGHE SoundShare
-
-面向跨生态多人蓝牙音频共享的硬件原型。首版 PCB 已完成打样、焊接调试及板级功能验证；双 A2DP、多设备同步与延迟调节已纳入系统实现。项目页面会区分已验证内容与仍需继续覆盖的平台兼容性、长期稳定性和产品化细节。详情见 [项目页面](soundshare.html)。
-
-## 实习与行业实践
-
-- **雷鸟创新｜AI 音频算法实习生（2026.09 — 至今）**：参与智能眼镜 AI 音频、语音处理及智能穿戴音频场景的技术调研与方案研究。
-- **湖南康通电子股份有限公司｜硬件部实习（2026.08 — 2026.09）**：参与消费级产品前期定义、音视频及智能硬件逆向分析，并协助算法与功能测试。
-- **深圳科创学院｜职能部门实习 · 市场调研（2026.01 — 2026.02）**：调研消费电子产品、竞品和用户场景，整理产品信息与阶段性结论。
-
-完整描述见 [主页的实习经历](https://roylyl.github.io/#experience) 与上方三语简历。
 
 ## 联系
 

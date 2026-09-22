@@ -1,5 +1,5 @@
 (() => {
-  const detailPages = new Set(['/ultrasonic.html', '/soundshare.html', '/philosophy.html']);
+  const detailPages = new Set(['/ultrasonic.html', '/soundshare.html', '/philosophy.html', '/other-projects.html']);
   const isHomeUrl = (url) => ['/', '/index.html'].includes(url.pathname);
   const isDetailUrl = (url) => detailPages.has(url.pathname);
   const publicUrl = (href) => {
@@ -168,7 +168,7 @@
     });
     const embedded = new URL(url);
     embedded.searchParams.set('embedded', '1');
-    embedded.searchParams.set('nav-version', '20260922-1');
+    embedded.searchParams.set('nav-version', '20260922-8');
     frame.src = hrefOf(embedded);
     shell.append(frame);
     shell.querySelector('[data-native-nav]').focus({ preventScroll: true });
