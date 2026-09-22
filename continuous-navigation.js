@@ -33,6 +33,9 @@
       window.dispatchEvent(new Event('site:close-menu'));
       window.parent.postMessage({ type: 'site:navigate', href: hrefOf(url) }, location.origin);
     }, true);
+    const notifyReady = () => window.parent.postMessage({ type: 'site:detail-ready' }, location.origin);
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', notifyReady, { once: true });
+    else notifyReady();
     return;
   }
   if (!document.querySelector('.site-header')) {
@@ -41,7 +44,7 @@
   }
   history.scrollRestoration = 'manual';
 
-  let shell, frame, returnFocus, loadingTimer, scrollTimer;
+  let shell, frame, returnFocus, loadingTimer, scrollTimer, completeFrame;
   let activeHref = null;
   let homeScrollY = window.scrollY;
   let currentFramePath = '';
@@ -60,7 +63,7 @@
     clearTimeout(scrollTimer);
     const href = location.href;
     scrollTimer = setTimeout(() => {
-      if (location.href !== href || sourceFrame !== frame || frame?.dataset.ready === 'false') return;
+      if (location.href !== href || sourceFrame !== (frame || null) || frame?.dataset.ready === 'false') return;
       savePosition();
     }, 120);
   }
@@ -79,7 +82,8 @@
     shell.className = 'detail-shell';
     shell.hidden = true;
     const loading = document.createElement('div');
-    loading.className = 'detail-loading';
+    loading.className = 'detail-load-error';
+    loading.hidden = true;
     loading.setAttribute('role', 'status');
     const label = document.createElement('p');
     const fallback = document.createElement('a');
@@ -89,16 +93,14 @@
     shell.append(loading);
     document.body.append(shell);
   }
-  function loadingState(slow = false) {
+  function showLoadError() {
     const lang = document.documentElement.lang;
     const en = lang === 'en', tw = lang === 'zh-TW';
-    shell.querySelector('.detail-loading p').textContent = slow
-      ? (en ? 'This page is taking longer to load.' : tw ? '頁面載入需要較長時間。' : '页面加载需要较长时间。')
-      : (en ? 'Loading…' : tw ? '載入中…' : '加载中…');
+    shell.querySelector('.detail-load-error p').textContent = en ? 'This page is taking longer to load.' : tw ? '頁面載入需要較長時間。' : '页面加载需要较长时间。';
     const fallback = shell.querySelector('[data-native-nav]');
     fallback.href = activeHref;
     fallback.textContent = en ? 'Open page directly' : tw ? '直接開啟頁面' : '直接打开页面';
-    shell.querySelector('.detail-loading').hidden = false;
+    shell.querySelector('.detail-load-error').hidden = false;
   }
   function positionFrame(url, scrollY, smooth = false) {
     const doc = frame.contentDocument;
@@ -143,15 +145,14 @@
     frame.title = document.title;
     frame.setAttribute('allow', 'fullscreen; picture-in-picture');
     frame.tabIndex = -1;
-    frame.inert = true;
     frame.dataset.ready = 'false';
     pendingScroll = restoredScroll;
-    loadingState();
-    loadingTimer = setTimeout(() => loadingState(true), 8000);
-    frame.addEventListener('load', () => {
-      if (frame !== nextFrame || !activeHref) return;
+    shell.querySelector('.detail-load-error').hidden = true;
+    loadingTimer = setTimeout(() => showLoadError(), 8000);
+    completeFrame = () => {
+      if (frame !== nextFrame || !activeHref || frame.dataset.ready === 'true') return;
       try {
-        if (!frame.contentDocument.querySelector('main')) { loadingState(true); return; }
+        if (!frame.contentDocument.querySelector('main')) { showLoadError(); return; }
         const lang = window.siteLanguage?.get();
         if (lang) frame.contentWindow.siteLanguage?.set(lang, { persist: false, broadcast: false });
         frame.dataset.ready = 'true';
@@ -159,19 +160,24 @@
         frame.contentWindow.postMessage({ type: 'site:visibility', visible: true }, location.origin);
         frame.contentWindow.addEventListener('scroll', () => schedulePosition(nextFrame), { passive: true });
         clearTimeout(loadingTimer);
-        shell.querySelector('.detail-loading').hidden = true;
-        positionFrame(publicUrl(activeHref), pendingScroll);
+        shell.querySelector('.detail-load-error').hidden = true;
+        // Do not pull readers back to the top if they already scrolled while
+        // a nonessential resource was still loading.
+        if (Number.isFinite(pendingScroll) || frame.contentWindow.scrollY === 0) {
+          positionFrame(publicUrl(activeHref), pendingScroll);
+        }
         pendingScroll = undefined;
         savePosition();
         updateTitle();
-      } catch (_) { loadingState(true); }
-    });
+      } catch (_) { showLoadError(); }
+    };
+    frame.addEventListener('load', completeFrame);
     const embedded = new URL(url);
     embedded.searchParams.set('embedded', '1');
-    embedded.searchParams.set('nav-version', '20260922-8');
+    embedded.searchParams.set('nav-version', '20260923-2');
     frame.src = hrefOf(embedded);
     shell.append(frame);
-    shell.querySelector('[data-native-nav]').focus({ preventScroll: true });
+    frame.focus({ preventScroll: true });
   }
   function closeDetail(href, push = true, restoredScroll) {
     clearTimeout(scrollTimer);
@@ -203,7 +209,9 @@
     openDetail(hrefOf(url));
   }, true);
   window.addEventListener('message', (event) => {
-    if (event.origin !== location.origin || event.source !== frame?.contentWindow || event.data?.type !== 'site:navigate') return;
+    if (event.origin !== location.origin || event.source !== frame?.contentWindow) return;
+    if (event.data?.type === 'site:detail-ready') { completeFrame?.(); return; }
+    if (event.data?.type !== 'site:navigate') return;
     let url;
     try { url = publicUrl(event.data.href); } catch (_) { return; }
     if (url.origin !== location.origin) return;

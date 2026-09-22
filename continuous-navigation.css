@@ -25,17 +25,23 @@ html.detail-shell-open body { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .detail-shell { transition: none; }
 }
-.detail-loading {
+/* No loading interstitial: the iframe is usable as its document renders. */
+.detail-load-error {
   position: absolute;
   z-index: 1;
-  inset: 0;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 24px;
-  background: #05070b;
+  padding: 12px 18px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 18px;
+  background: #101720;
   color: #eef3fa;
 }
-.detail-loading p { margin: 0; }
+.detail-load-error[hidden] { display: none; }
+.detail-load-error p { margin: 0; }
