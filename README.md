@@ -26,33 +26,60 @@
 
 | 内容 | 入口 | 说明 |
 | --- | --- | --- |
-| 个人作品集 | [roylyl.github.io](https://roylyl.github.io/) | 个人介绍、能力、实习、项目、音乐与联系方式 |
-| 01 · 音享贴 · LENGHE SoundShare | [soundshare.html](soundshare.html) | 跨生态多人蓝牙音频共享硬件原型与产品设计 |
-| 02 · 超声波定向扬声器 | [ultrasonic.html](ultrasonic.html) | ESP32 驱动的定向音频第一代 Demo |
-| 其他项目 | [other-projects.html](other-projects.html) | DeerWebTranslator、MacDuo 与 Astra Computer Use 音乐制作测试 |
-| DeerWebTranslator | [其他项目详情](https://roylyl.github.io/other-projects.html#deer-web-translator) · [源码](https://github.com/Roylyl/DeerWebTranslator) | 原位翻译、阅读状态与取消恢复 |
-| MacDuo | [其他项目详情](https://roylyl.github.io/other-projects.html#macduo) · [源码](https://github.com/Roylyl/MacDuo) | 基于 MacBook-Duo 的形态交互实验 |
-| 晚渡 | [测试产物试听](https://roylyl.github.io/other-projects.html#wandu) · [测试工程](https://github.com/Roylyl/Astra-Music) | Codex GPT-6 Astra 操作 MacBook 上 FL Studio 的 Computer Use 测试，非个人作品 |
-| 产品与创业理念 | [首页简短入口](https://roylyl.github.io/#philosophy) · [完整理念](philosophy.html) | 产品判断、交互与学习、技术融合、使用验证、经营与研究、长期方向 |
+| 个人作品集 | [作品集详情](https://roylyl.github.io/) · [源码](https://github.com/Roylyl/roylyl.github.io/blob/main/index.html) | 个人介绍、能力、实习、项目、音乐与联系方式 |
+| 01 · 音享贴 · LENGHE SoundShare | [音享贴详情](https://roylyl.github.io/soundshare.html) · [源码](https://github.com/Roylyl/roylyl.github.io/blob/main/soundshare.html) | 跨生态多人蓝牙音频共享硬件原型与产品设计 |
+| 02 · 超声波定向扬声器 | [超声波详情](https://roylyl.github.io/ultrasonic.html) · [源码](https://github.com/Roylyl/roylyl.github.io/blob/main/ultrasonic.html) | ESP32 驱动的定向音频第一代 Demo |
+| 其他项目 | [其他项目详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/roylyl.github.io/blob/main/other-projects.html) | DeerWebTranslator、MacDuo 与 Astra Computer Use 音乐制作测试 |
+| DeerWebTranslator | [DeerWebTranslator详情](https://roylyl.github.io/other-projects.html#deer-web-translator) · [源码](https://github.com/Roylyl/DeerWebTranslator) | 原位翻译、阅读状态与取消恢复 |
+| MacDuo | [MacDuo详情](https://roylyl.github.io/other-projects.html#macduo) · [源码](https://github.com/Roylyl/MacDuo) | 基于 MacBook-Duo 的形态交互实验 |
+| 晚渡 | [晚渡详情](https://roylyl.github.io/other-projects.html#wandu) · [源码](https://github.com/Roylyl/Astra-Music) | Codex GPT-6 Astra 操作 MacBook 上 FL Studio 的 Computer Use 测试，非个人作品 |
+| 产品与创业理念 | [理念详情](https://roylyl.github.io/philosophy.html) · [源码](https://github.com/Roylyl/roylyl.github.io/blob/main/philosophy.html) | 产品判断、交互与学习、技术融合、使用验证、经营与研究、长期方向 |
+
+“详情”链接打开网站页面或对应项目位置；DeerWebTranslator、MacDuo 与晚渡的“源码”链接进入各自项目仓库，其余“源码”链接打开本站对应页面的源文件。音享贴与超声波的链接为展示页源码，不代表硬件、固件或 PCB 工程已公开。
 
 ## 页面组织
 
-首页的“项目”区将以下内容放在同一个网格内，卡片之间统一保留 18 像素间距：
+主站由首页和四个二级页面组成。下面按实际浏览顺序说明首页的全部内容区、每个二级页的正文结构，以及页面之间的入口与返回关系。仓库内另有三个独立站点，归属见本节末尾。
 
-1. **音享贴（01）与超声波定向扬声器（02）**：桌面并排显示，音享贴在左；手机按相同顺序纵向排列。
-2. **其他项目入口**：只保留简短介绍与进入二级页的按钮。
-3. **产品与创业理念入口**：只保留短摘要与阅读按钮，不再单列首页顶部导航项。
+### 首页
 
-| 二级页面 | 顶部目录 | 正文组织 |
+[index.html](index.html) 的顶部导航依次为关于、经历、项目、音乐、社交媒体、联系；品牌入口返回页首，右侧提供背景音乐、语言切换与 GitHub 入口，窄屏使用折叠菜单。
+
+| 顺序 | 内容区与位置 | 展示内容与操作 |
 | --- | --- | --- |
-| 音享贴 | 介绍、产品价值、原型状态、界面、场景及相关页面入口 | 硬件原型、工程状态与多终端界面 |
-| 超声波定向扬声器 | 介绍、概览、工程、画面及相关页面入口 | 定向音频 Demo、工程过程与空间场景思考 |
-| 其他项目 | DeerWebTranslator、MacDuo、晚渡 | 三个条目依次展示，设计说明与测试说明全部展开 |
-| 产品与创业理念 | 产品判断、交互与学习、技术融合、使用验证、经营与研究、长期方向 | 六个章节直接展开，项目链接放在相关论述旁 |
+| 1 | 首屏介绍 · `#top` | 姓名与工程方向、个人简介、当前重点与音乐身份、形象图片；提供查看项目、联系和简历下载入口。 |
+| 2 | 关于与能力 · `#about` | 嵌入式开发、硬件与验证、项目推进、产品与调研四组能力。 |
+| 3 | 实习与行业经历 · `#experience` | 雷鸟创新、湖南康通电子、深圳科创学院的岗位、时间与实践内容。 |
+| 4 | 项目 · `#projects` | 音享贴（01）在前、超声波定向扬声器（02）在后；接着是“其他项目”短入口和“产品与创业理念”短入口，四部分同属项目区。桌面硬件卡片并排，窄屏按相同顺序纵向排列。 |
+| 5 | 音乐实践 · `#music` | DP 音乐工作室与 Desk Park 乐队介绍、现场照片、两段演出视频；视频使用平台原生播放器并按 IP 自动选源。 |
+| 6 | 社交媒体 · `#social` | 微信、Instagram、抖音、WhatsApp 的账号与二维码；支持二维码放大、账号复制，适用的平台提供外部入口。 |
+| 7 | 联系 · `#contact` | 交流说明、邮箱、GitHub 与简历下载入口。 |
+| 8 | 页脚 | 姓名与年份、网站署名及背景音乐版权说明。 |
 
-四个二级页统一采用“左侧品牌或返回入口、中间目录、右侧音乐与语言”的导航布局。桌面目录按导航栏中心对齐，窄屏收进顶部菜单；正文不再重复设置目录按钮。《晚渡》的标题和导航名称在简、繁中文下显示“晚渡”，英文下显示“WANDU”。
+“其他项目”入口位于 `#other-projects`，理念入口位于 `#philosophy`，二者都属于 `#projects`，不再单独占用首页顶部导航项。软件项目的完整介绍及《晚渡》试听在其他项目页，完整理念在理念页。
 
-`other-projects.html#deer-web-translator`、`#macduo`、`#wandu` 可直接定位到对应条目。旧首页同名锚点保留在“其他项目”入口处，便于旧链接仍能找到新的入口。
+### 四个二级页面
+
+| 页面 | 正文顺序与范围 | 导航与页面关系 |
+| --- | --- | --- |
+| [音享贴](soundshare.html) | 项目介绍（`#intro`）→ 产品价值与完整使用流程（`#value`）→ PCB、板级验证、双路音频、控制应用及系统架构（`#prototype`）→ iOS、Android、小程序、Apple Watch、iPad 界面（`#ui`）→ 影音共享、K 歌与户外组网场景（`#scenes`）→ 后续验证方向与收尾入口。 | 顶部目录直达介绍、产品价值、原型状态、界面、场景；另有个人主页与超声波页面入口。 |
+| [超声波定向扬声器](ultrasonic.html) | 项目介绍（`#intro`）→ 目标、角色与阶段（`#overview`）→ 系统、嵌入式、硬件及推进过程（`#engineering`）→ 目标位置、邻近区域与移动路径等空间验证问题（`#spatial-questions`）→ 展板和团队样机照片（`#gallery`）。 | 顶部目录直达介绍、概览、工程、画面；空间验证内容位于工程与画面之间。另有个人主页与音享贴页面入口。 |
+| [其他项目](other-projects.html) | 页面导言 → DeerWebTranslator 的原位翻译与阅读状态设计（`#deer-web-translator`）→ MacDuo 的桌面交互、控制与恢复（`#macduo`）→ 晚渡的 Astra Computer Use 测试声明、原生试听、参数、测试产物及工程与 MIDI 链接（`#wandu`）→ 返回主页。 | 顶部直接列出三个条目。软件项目的设计说明和晚渡的测试说明始终展开；源码链接分别进入对应仓库。返回入口定位到首页 `#other-projects`。 |
+| [产品与创业理念](philosophy.html) | 页面导言 → 产品判断（`#product`）→ 交互与学习（`#interaction`）→ 技术融合（`#fusion`）→ 使用验证（`#validation`）→ 经营与研究（`#startup`）→ 长期方向（`#future`）→ 返回主页。 | 六个章节直接放在顶部目录，正文始终展开；技术融合章节链接音享贴，使用验证章节链接超声波。返回入口定位到首页 `#philosophy`。 |
+
+四页末尾均保留姓名、年份、主题信息与背景音乐版权说明。晚渡的标题和目录名称在简、繁中文下显示“晚渡”，英文下显示“WANDU”；其测试性质与非个人作品声明在正文中明确保留。
+
+### 共用导航与访问方式
+
+- **顶部布局**：首页与二级页沿用同一设计语言。二级页左侧为项目品牌或返回入口，中间为目录，右侧为音乐与语言控制；桌面目录居中，窄屏收进顶部菜单，正文不重复设置目录按钮。
+- **首页进入详情**：通过同源内嵌页面连续导航，保留首页背景音乐会话，并同步地址、标题、界面语言与阅读位置。进入详情时暂停首页粒子与演出视频；返回时恢复首页浏览环境，视频不自动播放。
+- **独立打开详情**：四页均支持直接访问、章节锚点与刷新。背景音乐是否能恢复播放仍受浏览器策略限制；晚渡试听由用户主动开始，与背景音乐互斥。
+- **返回与历史记录**：品牌、返回链接及浏览器前进后退共同提供页面间移动；检查时同时覆盖首页进入、详情间跳转、返回首页与直接访问，不能只验证其中一条路径。
+- **旧链接**：首页 `#deer-web-translator`、`#macduo`、`#wandu` 保留在“其他项目”入口处。需要直接定位正文时，使用 `other-projects.html#deer-web-translator`、`other-projects.html#macduo`、`other-projects.html#wandu`。
+
+### 仓库内的独立站点
+
+[kuncode/](kuncode/)（KunCode）、[lululu/](lululu/)（加密鹿）、[weijiba/](weijiba/)（魏鸡百科）属于独立站点目录，不接入上述五页主站的连续导航、章节目录或内容层级。本 README 的页面结构与主站验证流程覆盖上述五页；独立站点按各自任务维护和验证。
 
 ## 本地预览
 
