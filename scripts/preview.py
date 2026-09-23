@@ -69,13 +69,19 @@ class PreviewHandler(SimpleHTTPRequestHandler):
             pass
 
 
+class PreviewServer(ThreadingHTTPServer):
+    # Chrome may request many page styles and media in parallel on first load.
+    request_queue_size = 128
+    daemon_threads = True
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('port', nargs='?', type=int, default=8000)
     parser.add_argument('--bind', default='127.0.0.1')
     args = parser.parse_args()
     root = Path(__file__).resolve().parent.parent
-    server = ThreadingHTTPServer((args.bind, args.port), partial(PreviewHandler, directory=str(root)))
+    server = PreviewServer((args.bind, args.port), partial(PreviewHandler, directory=str(root)))
     print(f'Preview: http://{args.bind}:{args.port}/', flush=True)
     try:
         server.serve_forever()
