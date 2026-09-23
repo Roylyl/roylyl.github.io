@@ -1,85 +1,100 @@
-// Adapted from the publicly loaded yimingxi.art navigation glass: the RGB
-// displacement map and hover highlight are scoped to this site's existing nav.
+// Element-local convex refraction: shared Snell map for navigation and hero cards.
+// Flat portions have no lateral shift; RGB dispersion follows the same rays.
 (() => {
   const header = document.querySelector('.site-header, .ss-nav, .detail-nav, .p-nav');
   const nav = header?.querySelector('nav');
   if (!header || !nav) return;
 
   header.classList.add('liquid-glass-header');
-  header.insertAdjacentHTML('afterbegin', `
-    <svg class="liquid-glass-filter" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-      <defs>
-        <filter id="portfolio-nav-glass-filter" color-interpolation-filters="sRGB" x="0%" y="0%" width="100%" height="100%">
-          <feImage id="portfolio-nav-glass-map" x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="map" />
-          <feDisplacementMap id="portfolio-nav-glass-red" in="SourceGraphic" in2="map" result="dispRed" />
-          <feColorMatrix in="dispRed" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="red" />
-          <feDisplacementMap id="portfolio-nav-glass-green" in="SourceGraphic" in2="map" result="dispGreen" />
-          <feColorMatrix in="dispGreen" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="green" />
-          <feDisplacementMap id="portfolio-nav-glass-blue" in="SourceGraphic" in2="map" result="dispBlue" />
-          <feColorMatrix in="dispBlue" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="blue" />
-          <feBlend in="red" in2="green" mode="screen" result="rg" />
-          <feBlend in="rg" in2="blue" mode="screen" result="output" />
-          <feGaussianBlur in="output" stdDeviation="0" />
-        </filter>
-      </defs>
-    </svg>`);
+  const surfaces = [header, ...document.querySelectorAll('.hero-floating')];
+  const mountSurface = (surface, index) => {
+    surface.classList.add('liquid-glass-surface');
+    const filterId = index === 0 ? 'portfolio-nav-glass-filter' : `portfolio-card-glass-filter-${index}`;
+    surface.style.setProperty('--glass-filter', `url(#${filterId})`);
+    surface.insertAdjacentHTML('afterbegin', `
+      <svg class="liquid-glass-filter" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <defs>
+          <filter id="${filterId}" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse" x="0" y="0">
+            <feImage x="0" y="0" preserveAspectRatio="none" result="encodedMap" />
+            <feColorMatrix in="encodedMap" type="matrix" values="1 0 0 0 -0.0019607843137254832  0 1 0 0 -0.0019607843137254832  0 0 1 0 0  0 0 0 1 0" result="map" />
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="0" xChannelSelector="R" yChannelSelector="G" result="dispRed" />
+            <feColorMatrix in="dispRed" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="red" />
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="0" xChannelSelector="R" yChannelSelector="G" result="dispGreen" />
+            <feColorMatrix in="dispGreen" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="green" />
+            <feDisplacementMap in="SourceGraphic" in2="map" scale="0" xChannelSelector="R" yChannelSelector="G" result="dispBlue" />
+            <feColorMatrix in="dispBlue" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="blue" />
+            <feBlend in="red" in2="green" mode="screen" result="rg" />
+            <feBlend in="rg" in2="blue" mode="screen" />
+          </filter>
+        </defs>
+      </svg>`);
 
-  const svgFilter = header.querySelector('#portfolio-nav-glass-filter');
-  const map = svgFilter.querySelector('#portfolio-nav-glass-map');
-  const supportsSvgBackdrop = (() => {
-    const isWebkit = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
-    const isFirefox = /Firefox/.test(navigator.userAgent);
-    const test = document.createElement('div');
-    test.style.backdropFilter = 'url(#portfolio-nav-glass-filter)';
-    return !isWebkit && !isFirefox && test.style.backdropFilter !== '';
-  })();
+    const svgFilter = surface.querySelector('filter');
+    const map = svgFilter.querySelector('feImage');
+    const supportsSvgBackdrop = (() => {
+      const isWebkit = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+      const isFirefox = /Firefox/.test(navigator.userAgent);
+      const test = document.createElement('div');
+      test.style.backdropFilter = 'url(#portfolio-nav-glass-filter)';
+      return !isWebkit && !isFirefox && test.style.backdropFilter !== '';
+    })();
 
-  if (supportsSvgBackdrop) {
-    // The portfolio header is roughly twice as tall as the source site's
-    // small link capsule; scale the refraction down to keep labels legible.
-    const channels = [
-      ['portfolio-nav-glass-red', -24],
-      ['portfolio-nav-glass-green', -20],
-      ['portfolio-nav-glass-blue', -16]
-    ];
-    for (const [id, scale] of channels) {
-      const node = svgFilter.querySelector(`#${id}`);
-      node.setAttribute('scale', String(scale));
-      node.setAttribute('xChannelSelector', 'R');
-      node.setAttribute('yChannelSelector', 'G');
-    }
-
+    const passes = [...svgFilter.querySelectorAll('feDisplacementMap')];
+    const mapCanvas = document.createElement('canvas');
+    const mapContext = mapCanvas.getContext('2d');
     let resizeFrame = 0;
+    let mapSize = '';
+    let lens;
+    let webgl;
+    let mountWebgl;
     const updateMap = () => {
       resizeFrame = 0;
-      const { width, height } = header.getBoundingClientRect();
-      if (!width || !height) return;
-      const edge = Math.min(width, height) * .035;
-      const insideWidth = Math.max(width - edge * 2, 0);
-      const insideHeight = Math.max(height - edge * 2, 0);
-      const svg = `
-        <svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="nav-red-grad" x1="100%" y1="0%" x2="0%" y2="0%"><stop offset="0%" stop-color="#0000"/><stop offset="100%" stop-color="red"/></linearGradient>
-            <linearGradient id="nav-blue-grad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#0000"/><stop offset="100%" stop-color="blue"/></linearGradient>
-          </defs>
-          <rect x="0" y="0" width="${width}" height="${height}" fill="black" />
-          <rect x="0" y="0" width="${width}" height="${height}" rx="40" fill="url(#nav-red-grad)" />
-          <rect x="0" y="0" width="${width}" height="${height}" rx="40" fill="url(#nav-blue-grad)" style="mix-blend-mode:difference" />
-          <rect x="${edge}" y="${edge}" width="${insideWidth}" height="${insideHeight}" rx="40" fill="hsl(0 0% 50% / .93)" style="filter:blur(11px)" />
-        </svg>`;
-      map.setAttribute('href', `data:image/svg+xml,${encodeURIComponent(svg)}`);
+      const width = surface.offsetWidth;
+      const height = surface.offsetHeight;
+      const radius = parseFloat(getComputedStyle(surface).borderTopLeftRadius);
+      const nextSize = `${width}:${height}:${radius}`;
+      if (!width || !height || nextSize === mapSize) return;
+      mapSize = nextSize;
+      lens = window.PortfolioGlassOptics.createMap(width, height, radius);
+      mapCanvas.width = lens.width;
+      mapCanvas.height = lens.height;
+      mapContext.putImageData(new ImageData(lens.pixels, lens.width, lens.height), 0, 0);
+      lens.url = mapCanvas.toDataURL('image/png');
+      for (const element of [svgFilter, map]) {
+        element.setAttribute('width', String(width));
+        element.setAttribute('height', String(height));
+      }
+      map.setAttribute('href', lens.url);
+      // Red bends least, blue most. No channel can reverse or fold the image.
+      const factors = [1 - lens.dispersion, 1, 1 + lens.dispersion];
+      passes.forEach((pass, index) => pass.setAttribute('scale', String(lens.scale * factors[index])));
+      if (webgl) webgl.update(lens);
+      else if (mountWebgl) webgl = mountWebgl(surface, lens);
+      if (supportsSvgBackdrop) {
+        surface.classList.add('glass-surface--refractive');
+        surface.dataset.glassRenderer = 'svg';
+      }
     };
     const scheduleMap = () => {
       if (!resizeFrame) resizeFrame = requestAnimationFrame(updateMap);
     };
     updateMap();
-    if ('ResizeObserver' in window) new ResizeObserver(scheduleMap).observe(header);
+    if ('ResizeObserver' in window) new ResizeObserver(scheduleMap).observe(surface);
     else window.addEventListener('resize', scheduleMap);
     window.addEventListener('site-language-change', scheduleMap);
-  } else {
-    header.classList.add('glass-surface--fallback');
-  }
+    if (!supportsSvgBackdrop) {
+      surface.classList.add('glass-surface--fallback');
+      // WebKit cannot apply an SVG URL to its backdrop. It uses the same lens
+      // with a small live WebGL surface and section snapshots, loaded on demand.
+      import('./nav-glass-webgl.js?v=20260923-4').then(({ mountGlassRenderer }) => {
+        mountWebgl = mountGlassRenderer;
+        // A responsive breakpoint may initially hide the cards. Wait for a
+        // measurable surface; ResizeObserver mounts it when it becomes visible.
+        if (lens) webgl = mountWebgl(surface, lens);
+      }).catch(() => { surface.dataset.glassRenderer = 'unavailable'; });
+    }
+  };
+  surfaces.forEach(mountSurface);
 
   const pill = document.createElement('span');
   pill.className = 'liquid-nav-hover';

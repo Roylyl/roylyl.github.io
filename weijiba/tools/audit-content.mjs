@@ -31,6 +31,8 @@ assert.equal(site.WEIJIBA_BASE_ENTRY_RECORDS.length, 1000);
 assert.equal(site.WEIJIBA_GENERATED_ENTRY_RECORDS.length, 2000);
 assert.equal(site.WEIJIBA_WRITING.cards.size, 100);
 assert(site.WEIJIBA_WRITING.glossary.size > 500);
+assert.equal(new Set([...site.WEIJIBA_WRITING.cards.values()].map(card => card.crooked)).size, 100,
+  "Each recurring subject needs its own sideways observation");
 
 const paragraphs = new Map();
 const introductions = new Set();
@@ -43,6 +45,7 @@ for (const [slug, entry] of all) {
     assert(!serialized.includes(banned), `${slug}: stale filler or placeholder: ${banned}`);
   }
   assert.equal(new Set(entry.sections.map(s => s.id)).size, entry.sections.length, `${slug}: duplicate anchors`);
+  if (slug.startsWith("odd-")) assert(entry.sections.some(s => s.id === "crooked-observation"), `${slug}: missing genre-specific observation`);
   if (entry.extensions?.length) assert(!entry.sections.some(s => s.id === "extensions"), `${slug}: duplicate extension anchor`);
   for (const target of [...entry.related, ...(entry.extensions || []).map(e => e.slug)]) {
     internalLinks++;
@@ -54,7 +57,7 @@ for (const [slug, entry] of all) {
   const html = fs.readFileSync(page, "utf8");
   assert(html.indexOf("entry-routes.js") < html.indexOf("entry-writing.js"), `${slug}: route load order`);
   assert(html.indexOf("entry-writing.js") < html.indexOf("entry-data.js"), `${slug}: writing load order`);
-  assert(/entry-data\.js\?v=20260923-20/.test(html), `${slug}: stale cache version`);
+  assert(/entry-data\.js\?v=20260923-21/.test(html), `${slug}: stale cache version`);
   assert(html.includes("wikipedia-logo-v2.svg.webp"), `${slug}: missing favicon`);
   introductions.add(entry.overview[0]);
   for (const paragraph of prose) {
@@ -79,6 +82,8 @@ for (const title of samples) {
   assert(rendered.toc.innerHTML.includes("资料来源"), `${title}: missing TOC`);
 }
 assert(catalog.kunkun.overview.join("").includes("詹绍源"));
+assert(catalog.kunkun.sections.some(s => s.id === "people-aside"));
+assert(all.find(([, entry]) => entry.title === "吃什么")?.[1].sections.some(s => s.id === "crooked-observation"));
 assert(catalog["luo-yulun"].overview.join("").includes("Roylyl"));
 
 const formats = site.WEIJIBA_GENERATED_ENTRY_RECORDS.filter(r => r.topic === "MacBook");

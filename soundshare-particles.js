@@ -614,6 +614,10 @@
       gl.uniform1f(particleUniforms.uAlpha, 1.0);
       gl.drawArrays(gl.POINTS, 0, particleCount);
 
+      // Only the active WebKit glass adapter subscribes. Read while the
+      // framebuffer is valid; never retain or copy the full drawing buffer.
+      canvas.onGlassFrame?.();
+
       gl.bindVertexArray(null);
       gl.bindTexture(gl.TEXTURE_2D, null);
       rafId = window.requestAnimationFrame(draw);
