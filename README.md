@@ -113,7 +113,7 @@ py -3 scripts/preview.py 8000
 运行自动测试时另需 Node.js 22 或更新版本，无需执行 `npm install`。在仓库根目录运行：
 
 ```sh
-node --test tests/particle-input.test.cjs tests/project-audio.test.cjs tests/nav-glass-optics.test.cjs
+node --test tests/particle-input.test.cjs tests/project-audio.test.cjs tests/nav-glass-optics.test.cjs tests/nav-glass-platform.test.cjs
 git diff --check
 ```
 
@@ -218,6 +218,8 @@ git diff --check
 后台预加载不包含音视频、PDF、外部域名资源或三个独立站点，也不预启动 YouTube、哔哩哔哩播放器。它使用浏览器 HTTP 缓存，没有离线资源包或永久缓存保证；实际复用受缓存策略与浏览器回收影响。视野外和后台暂停图片占位动画，减少动态效果模式使用静态占位。
 
 ### 页面切换、定位与统一外观
+
+移动端（iPhone、iPad 含桌面网站模式、Android 手机和平板）统一使用原生 `blur(16px) saturate(1.45)`，不生成折射贴图，也不加载玻璃 WebGL 与截图引擎。按设备身份分流，不按窗口宽度；Windows 触屏电脑与 Mac 保留液态玻璃。下述光学渲染说明仅适用于桌面端。
 
 - **连续导航**：首页承载内嵌详情，保留背景音乐会话，并同步地址、标题、语言、焦点与阅读位置。新详情正文就绪后淡入并轻微上移，随后移除旧详情；返回首页也使用短暂显现效果。切换期间旧详情不可交互，音视频停止。
 - **直接访问**：每个二级页可独立打开；支持原生跨文档视图过渡的浏览器使用淡入淡出，不支持时正常导航。系统启用减少动态效果时关闭页面过渡。

@@ -21,6 +21,14 @@
   backdrop-filter: var(--glass-filter) saturate(1.45);
 }
 
+/* Mobile devices use the compositor's live Gaussian backdrop, never snapshots. */
+:is(.site-header, .ss-nav, .detail-nav, .p-nav).liquid-glass-header.glass-surface--native-blur,
+.hero-floating.portfolio-card.liquid-glass-surface.glass-surface--native-blur,
+:is(.site-header, .ss-nav, .detail-nav, .p-nav).liquid-glass-header.glass-surface--native-blur > nav {
+  -webkit-backdrop-filter: blur(16px) saturate(1.45);
+  backdrop-filter: blur(16px) saturate(1.45);
+}
+
 /* The floating cards keep their own rounded rectangles, with the same clear
    optical material as the header. Exclude the old broad card sheen. */
 .hero-floating.liquid-glass-surface::before { display: none; }

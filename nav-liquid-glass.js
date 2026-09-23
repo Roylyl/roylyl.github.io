@@ -6,8 +6,25 @@
   if (!header || !nav) return;
 
   header.classList.add('liquid-glass-header');
+  const nativeBlur = window.PortfolioGlassPlatform.usesNativeBlur(navigator);
   const surfaces = [header, ...document.querySelectorAll('.hero-floating')];
   const mountSurface = (surface, index) => {
+    if (nativeBlur) {
+      // No displacement map, DOM capture, or WebGL adapter on phones/tablets.
+      const updateNativeSurface = () => {
+        const enabled = surface === header || (
+          getComputedStyle(surface).position === 'absolute' && surface.offsetWidth > 0 && surface.offsetHeight > 0
+        );
+        surface.classList.toggle('liquid-glass-surface', enabled);
+        surface.classList.toggle('glass-surface--native-blur', enabled);
+        if (enabled) surface.dataset.glassRenderer = 'native-blur';
+        else delete surface.dataset.glassRenderer;
+      };
+      updateNativeSurface();
+      if ('ResizeObserver' in window) new ResizeObserver(updateNativeSurface).observe(surface);
+      window.addEventListener('resize', updateNativeSurface);
+      return;
+    }
     const filterId = index === 0 ? 'portfolio-nav-glass-filter' : `portfolio-card-glass-filter-${index}`;
     surface.style.setProperty('--glass-filter', `url(#${filterId})`);
     surface.insertAdjacentHTML('afterbegin', `
