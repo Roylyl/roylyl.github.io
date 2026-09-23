@@ -5,6 +5,23 @@ import { watchGlassMotion } from './nav-glass-motion.js?v=20260923-1';
 
 let sharedScene;
 
+// The optical snapshot replaces the backdrop; it must not contain transparent
+// holes that expose a second, undisplaced copy of the live page underneath.
+// CSS background-image can cover the page while backgroundColor stays clear.
+export function resolveGlassBackground(doc = document) {
+  const base = doc.createElement('canvas');
+  base.width = base.height = 1;
+  const context = base.getContext('2d', { alpha: false });
+  context.fillStyle = '#05070b';
+  context.fillRect(0, 0, 1, 1);
+  for (const element of [doc.documentElement, doc.body]) {
+    context.fillStyle = getComputedStyle(element).backgroundColor;
+    context.fillRect(0, 0, 1, 1);
+  }
+  const [r, g, b] = context.getImageData(0, 0, 1, 1).data;
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
 function createScene() {
   const surfaces = new Map();
   const canvasOwners = new WeakMap();
@@ -92,7 +109,7 @@ function createScene() {
       captureMedia: false,
       maxCacheBytes: 24 * 1024 * 1024,
       fontEmbedCSS: '',
-      backgroundColor: getComputedStyle(document.body).backgroundColor,
+      backgroundColor: resolveGlassBackground(),
       paintBackground: (context, area) => {
         // Each registered surface has its own composition canvas but shares
         // cached section captures. Paint its corresponding particle crop once.

@@ -99,7 +99,7 @@
     if (!supportsSvgBackdrop) {
       // WebKit cannot apply an SVG URL to its backdrop. It uses the same lens
       // with a small live WebGL surface and section snapshots, loaded on demand.
-      import('./nav-glass-webgl.js?v=20260923-5').then(({ mountGlassRenderer }) => {
+      import('./nav-glass-webgl.js?v=20260923-6').then(({ mountGlassRenderer }) => {
         mountWebgl = mountGlassRenderer;
         // Re-read the layout: a resize may have happened during the import.
         mapSize = '';
