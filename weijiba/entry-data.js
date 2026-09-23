@@ -1081,310 +1081,11 @@
   };
   Object.assign(entries, oddEntries);
 
-  const generatedMembers = [
-    "困困", "罗宇伦", "彭鹏", "魏子奇", "唐胤鑫", "吴子轩", "夏炜城", "陈祖涵", "邓宇航",
-    "黎健毓", "唐博釜", "李彦臻", "王鹏涛", "涂腾辉", "徐哥", "书记"
-  ];
-  const generatedActions = [
-    "先发一个问号，确认宇宙仍然允许提问",
-    "把普通事情包装成一项需要指挥部批准的重大工程",
-    "用“何意味”暂停过度自信的解释",
-    "召集全员，再把议程改成吃什么",
-    "让一个“666”在语气测量前保持叠加态",
-    "把长文拆成几个可以被“稳了”逐段盖章的节点",
-    "把一个现实道具升级为群史里的关键证物",
-    "请所有人逐帧学习，然后暂时不解释第一帧",
-    "把技术问题交给群聊回路，等待它绕一圈回来",
-    "在严肃说明和内部玩笑之间打开一个可逆开关"
-  ];
-  const generatedMetaphors = [
-    "一台没有电源键、但每天饭点自动启动的鹿群服务器",
-    "一只拿着课程表在热水房寻找信号的机器人",
-    "把问号当作雨量计、把nb当作气压计的临时气象站",
-    "一张被高认知反复涂改、最后仍然可以拿来点餐的作战地图",
-    "一根看似普通、却能引发寝室史诗的杜邦线",
-    "把每个短句都当作齿轮、把每次接梗都当作润滑油的机械系统",
-    "一所没有校门、但有严格颗粒度检查的高认知大学",
-    "一块会在“何意味”和“稳了”之间自动切换的群聊仪表盘",
-    "一支由表情、截图和临时职位组成的移动合唱团",
-    "一个不保证有结论，却保证下一条消息还会出现的公共空间"
-  ];
-  const generatedVerbs = [
-    "把问题抬高", "把结论压扁", "把角色临时借来", "把数字拟人化", "把设备写成证人",
-    "把长文切成短句", "把生活改写成制度", "把制度拆回玩笑", "把玩笑送回行动", "把行动保存成群史"
-  ];
-  const generatedTopicProfiles = {
-    "罗宇伦": {
-      label: "在本项目里与 Roylyl 对应的名字条目，也是站点作者语境中的基础称呼",
-      scene: "在魏鸡百科的项目语境中，Roylyl 即罗宇伦；这个对应关系用于说明站点署名与中文名字之间的关系，不把英文式账号名再拆成另一个人。",
-      action: "读者可以先从 Roylyl 跳到罗宇伦，再沿着鹿群、项目、代码和群史等条目观察一个名字如何成为页面入口",
-      metaphor: "一张把英文用户名和中文名字扣在一起的双面索引卡",
-      boundary: "本条只记录用户明确提供的称呼对应关系，以及网站公开可见的项目语境，不延伸推断其他个人资料。"
-    },
-    "Roylyl": {
-      label: "与罗宇伦对应的英文式署名与项目入口",
-      scene: "Roylyl 在本项目中即罗宇伦，是网站署名、代码仓库和鹿群资料整理语境里使用的英文式名字；它与中文词条共享同一张页面地图。",
-      action: "当读者在项目链接、仓库说明或群聊语境里看到 Roylyl 时，可以把它作为罗宇伦的对应入口，再回到具体页面上下文核对",
-      metaphor: "一枚把仓库地址、站点页脚和中文姓名暂时别在一起的书签",
-      boundary: "这里的对应关系来自用户明确说明；页面不把署名自动扩写成现实履历或未提供的身份信息。"
-    },
-    "ChatGPT": {
-      label: "会把问号整理成段落、却不敢替鹿群决定午饭的公共语言模型",
-      scene: "在鹿群语境中，它常被召来解释概念、改写长文、协助代码和整理计划，最后仍要接受一句“何意味”的现场复核。",
-      action: "常见流程是先让 ChatGPT 把问题分层，再由鹿群用“对齐一下颗粒度”检查它有没有把一个小问题讲成博士论文",
-      metaphor: "一台接通了全员广播、却仍要向困困申请上下文的文字机器人",
-      boundary: "模型输出可以作为草稿和讨论材料，但不能代替鹿群原始记录，也不能自动证明某个现实人物或事件确实如此。"
-    },
-    "OpenAI": {
-      label: "被鹿群借来讨论模型、工具和高认知工作流的公共名词",
-      scene: "它在本网站里主要承担工具背景的作用：当成员讨论 ChatGPT、Codex 或 AI 辅助工作时，这个名字会被放进项目、学习和代码回路。",
-      action: "讨论通常从“能不能帮我做”开始，经过提示词、文件、权限和验证，最后由“稳了”暂时盖章",
-      metaphor: "一座没有门牌号、但每天都有鹿群带着报错前来挂号的云端研究院",
-      boundary: "条目只整理公开名词在鹿群话题中的使用，不对机构内部产品、人员或未来计划添加未经核实的说明。"
-    },
-    "DeepSeek": {
-      label: "在鹿群工具箱里负责引发比较和追问的模型名称",
-      scene: "它通常与 ChatGPT、豆包和其他 AI 工具并列出现，比较的重点不是谁赢得宇宙冠军，而是当前任务能否被解释、完成和复核。",
-      action: "成员先把同一个问题交给不同工具，再把结果带回群里，让高认知、何意味和代码报错共同担任评审委员会",
-      metaphor: "一个把模型排行榜折成纸飞机、再飞回项目现场的临时测评站",
-      boundary: "本条目不把一次使用体验升级为绝对性能结论，工具版本、任务类型和输入材料都会改变结果。"
-    },
-    "豆包": {
-      label: "被放进鹿群 AI 工具箱、用来处理日常问题的对话接口",
-      scene: "在群聊想象中，它可以参与文案、解释、搜索和灵感整理，但只要问题涉及内部语境，就仍然需要人类补充上下文。",
-      action: "最常见的使用路径是先问一个短问题，再根据回答追问条件，最后把有用部分带回群里接受问号检验",
-      metaphor: "一只带着便携麦克风、在食堂和代码报错之间来回采访的语言小鸟",
-      boundary: "工具名称在这里是公共语境标签，不代表页面对具体版本、服务质量或账号权益作保证。"
-    },
-    "API": {
-      label: "把一句群聊愿望翻译成可调用步骤的接口性名词",
-      scene: "它在鹿群里通常连接 AI 工具、代码、平台和自动化设想：大家先讨论想要什么，再追问权限、输入、输出和费用边界。",
-      action: "一个 API 方案必须经过需求拆分、最小测试和错误处理，否则就会从高认知计划迅速变成新的代码报错",
-      metaphor: "一扇贴着“请先对齐颗粒度”告示、但仍然可能被杜邦线撞开的自动门",
-      boundary: "页面只用它解释工作流，不保存密钥、账号或任何需要登录的私密配置。"
-    },
-    "Python": {
-      label: "在课程、项目和自动化想象中经常被召唤的编程语言",
-      scene: "它常出现在学习、机器人、数据处理和 AI 工具的交界处，既可以承载一段严肃程序，也可以成为群友发出“我这里为什么又报错”的起点。",
-      action: "讨论一般从一段能运行的最小代码开始，再经过环境、依赖和输入检查，最后等待“稳了”是否经得住第二次执行",
-      metaphor: "一条会把问号煮成脚本、把脚本端上课程表的细长面条",
-      boundary: "具体代码能否运行取决于环境和版本；词条保留戏仿语气，不把群聊示例当作通用教程。"
-    },
-    "GitHub": {
-      label: "把代码、项目和群聊共同记忆放进同一座远程仓库的公共名词",
-      scene: "它在鹿群中连接编码、项目交付、版本管理和展示链接，成员既会讨论怎么提交，也会讨论别人能不能看懂、运行和复现。",
-      action: "一次“推上去”之前通常需要经过文件整理、权限确认、提交说明和页面检查，缺一步就可能被全员广播成新的群史",
-      metaphor: "一座由分支、提交和问号搭成的远程图书馆，管理员偶尔是困困，借阅证通常是一个链接",
-      boundary: "页面不展示私有仓库内容、访问令牌或账号信息，只把 GitHub 作为公开的项目协作语境来使用。"
-    },
-    "MacBook": {
-      label: "在鹿群设备讨论中承担生产力、续航和预算三重身份的薄型电脑",
-      scene: "它经常被放进课程、代码、AI 工具和移动办公的比较表里；真正的争论不是外观能否发光，而是能否让项目、作业和浏览器少出一点摩擦。",
-      action: "购买讨论会先问任务、软件和接口，再问预算与维护，最后由实际使用结果决定“稳了”是否只是开箱当天的情绪",
-      metaphor: "一块把高认知装进铝合金外壳、却仍然可能在关键时刻寻找充电器的便携黑板",
-      boundary: "词条不替读者作购买决定，也不把单个成员的设备体验扩大成所有型号都成立的结论。"
-    },
-    "iPhone": {
-      label: "把通知、相机、群聊和充电焦虑压缩进掌心的移动终端",
-      scene: "在鹿群里它既是设备，也是消息入口：截图、扫码、拍照、回复和临时查资料都可能让它从背景道具突然成为证人。",
-      action: "当手机出现时，讨论往往从功能转向电量、存储、权限和“这张图能不能说明问题”，最后仍要回到上下文",
-      metaphor: "一块会在“打卡了孩子们”和低电量警告之间自动切换的移动指挥牌",
-      boundary: "设备条目只谈公开可观察的使用场景，不涉及任何个人手机中的照片、账号或通信内容。"
-    },
-    "长沙市": {
-      label: "被鹿群用来安放课程、食堂、夜间出行和临时吃什么决策的城市级背景",
-      scene: "在本批条目中，长沙市不是旅游宣传册，而是鹿群日常时间线的地理底板：校园、街道、餐馆、天气和交通会在这里彼此串门。",
-      action: "一个长沙市问题通常先被归入“吃什么”，随后扩展到距离、时间、预算和谁愿意出门，最后由群聊回路给出不完全结论",
-      metaphor: "一张会把问号引向湘江、把课程表引向夜宵的超大群聊地图",
-      boundary: "页面只使用城市作为公共地理和生活语境，不对具体地点、居民或成员的现实行踪作推断。"
-    },
-    "岳麓山": {
-      label: "在城市与校园之间负责提供坡度、风景和临时集合理由的山地名词",
-      scene: "它可以被鹿群当作地理对象，也可以在一句“要不要出去走走”之后迅速升级为行程委员会的议题。",
-      action: "相关计划通常经历天气确认、集合时间、交通路线和体力评估，随后有人提出吃什么，整件事回到最熟悉的主频道",
-      metaphor: "一座把群聊消息往上坡方向推、却总在山脚遇到奶茶站的自然目录",
-      boundary: "本条目使用公共地名进行戏仿，不记录任何个人的实时位置或行动轨迹。"
-    },
-    "湖南农业大学": {
-      label: "把课程、宿舍、食堂、竞赛和工程学习放进同一张鹿群时间表的校园背景",
-      scene: "它在页面中主要承担生活与学习的共同场景：同一条消息可以同时涉及课程表、项目、机器人、查寝和晚饭，分类永远不够单一。",
-      action: "校园议题常从一个具体通知进入群聊，再经过问号、转发、经验补充和群内接龙，最后形成一条可以被下一届继续误读的群史",
-      metaphor: "一所校门会开、课表会变、但“吃什么”永远按时开课的高认知大学",
-      boundary: "词条不补充学校内部未公开信息，也不把群聊中的校园体验概括成对学校、师生或现实管理的全面评价。"
-    },
-    "食堂": {
-      label: "把所有宏大计划重新拉回预算、距离和今天吃什么的现实机构",
-      scene: "它是鹿群话题最稳定的降落场：技术、课程、竞赛和高认知讨论可以绕很远，但最终仍可能在食堂门口重新获得可执行性。",
-      action: "提案通常先列口味和预算，再进行距离、排队和时间约束，随后有人用一个问号要求说明为什么又回到了同一家",
-      metaphor: "拥有多个窗口、没有统一 API、却能稳定承接所有群史结论的民生服务中心",
-      boundary: "页面记录的是群聊里的日常语境，不提供现实就餐评价，也不把一次选择变成对场所的普遍结论。"
-    },
-    "图书馆": {
-      label: "负责把群聊里的长文、课程资料和临时抱佛脚暂存起来的安静设施",
-      scene: "在鹿群语境中，它连接学习、资料、考试和短句求助；安静只是建筑属性，群聊里的讨论仍可能在里面持续高认知运转。",
-      action: "资料进入图书馆想象后，会先被问来源、版本和用途，再被拆成可读章节，最后有人发出“逐帧学习”的延伸要求",
-      metaphor: "一台不允许大声说话、但允许在脑内连续发 47 条消息的纸质服务器",
-      boundary: "条目不披露个人借阅信息、座位位置或校园内部记录，只保留公共学习场景。"
-    },
-    "宿舍": {
-      label: "把 603、604、充电器、查寝和深夜群聊放在同一空间里观察的微型社会",
-      scene: "它在鹿群条目中不是单纯的房间，而是设备、作息、课程压力、临时通知和室友协作同时发生的高密度现场。",
-      action: "宿舍议题常从一个具体物件或通知开始，经过接龙和互相确认，再被加工成可以在多年后继续引用的数字寝室传说",
-      metaphor: "一台门锁不一定联网、但每到晚间就自动生成群史的局域网服务器",
-      boundary: "页面只整理公开群聊里可观察的称呼和话题，不写具体房间隐私、门牌、作息或未公开身份信息。"
-    },
-    "马斯克": {
-      label: "被鹿群借来讨论未来感、工程叙事和过量目标的公共人物符号",
-      scene: "在本批条目中，他只作为公开讨论里的科技与未来想象入口出现：当群友需要把一个普通项目说得像火箭发射时，这个名字可能被临时请来站台。",
-      action: "相关玩笑通常从宏大目标开始，经过预算、时间和杜邦线的现实审查，最后被“对齐一下颗粒度”压回可以执行的版本",
-      metaphor: "一枚被放进课程表、食堂菜单和项目计划书里的火箭形问号",
-      boundary: "页面不评价现实人物的私生活、动机、政治立场或未核实事件，只记录鹿群如何借用一个公共名字制造反差。"
-    },
-    "Tesla": {
-      label: "在群聊里承担电动、未来感和“参数能不能解决生活”想象的品牌名词",
-      scene: "它可被放进硬件、城市交通和未来工程的讨论，但鹿群最终仍会追问价格、充电、使用场景和今天到底要不要出门。",
-      action: "当品牌符号进入群聊，讨论会先短暂升空，再被预算、接口和实际需求拉回地面，形成一轮标准的高认知着陆",
-      metaphor: "一辆带着问号雨刷、驶过课程表并在食堂门口寻找充电桩的未来主义班车",
-      boundary: "页面不提供购买建议或车型判断，只使用品牌名词作为公开文化符号和工程想象的素材。"
-    },
-    "SpaceX": {
-      label: "把发射、迭代和宏大工程目标搬进鹿群玩笑区的公共名词",
-      scene: "它与机器人、工程设计和项目话语相连，常被用来夸张描述一个还在接线、调参或等待“稳了”的小项目。",
-      action: "一项“发射计划”必须先经过最小复现、硬件检查和任务拆分，否则火箭还没离开群聊，杜邦线已经提出反对意见",
-      metaphor: "一个发射窗口取决于课程表、天气和谁带了充电器的临时航天中心",
-      boundary: "条目不评价现实航天任务，也不把群内工程玩笑当作专业航天知识。"
-    },
-    "高铁": {
-      label: "负责把城市、校园和临时返程计划接进群聊时间线的高速交通名词",
-      scene: "它会把出发时间、集合地点、充电、行李和吃什么一并带进讨论，使交通问题迅速变成一项需要群聊协作的项目。",
-      action: "计划通常从一张车次截图开始，经过时间核对、集合接龙和预算确认，最后以“稳了”或新的问号收束",
-      metaphor: "一条准点穿过群聊、但总有人在发车前才问站台的蓝色时间线",
-      boundary: "页面不记录成员的真实行程和车票信息，只使用交通名词解释群聊里的计划协作。"
-    },
-    "外卖": {
-      label: "把地理位置、预算、口味和群体决策压缩成一个按钮的日常配送机制",
-      scene: "在鹿群里它通常和吃什么、长沙市、食堂、奶茶以及“谁下单”相互链接，是最能让宏大理论迅速落地的生活词。",
-      action: "一个外卖方案要经过口味投票、地址确认、配送时间和支付分工，任何一项未对齐都会重新召唤全员广播",
-      metaphor: "一架没有起飞许可、却总能在晚间准时进入群史的低空运输机",
-      boundary: "条目不保留地址、订单或支付信息，只写公共生活中的协作语境。"
-    },
-    "奶茶": {
-      label: "在高认知讨论中负责提供糖分、转场和短暂共识的液体议题",
-      scene: "它可以是奖励、投票对象、集合暗号，也可以在复杂讨论即将失控时充当温和的转场装置。",
-      action: "群聊常先讨论口味和预算，再出现一个“顺便带吗”的执行问题，最后由某位成员把饮品从比喻变成实物",
-      metaphor: "一杯拥有多种分支、但最终必须选择标准或加料的可饮用目录",
-      boundary: "页面只记录群内日常梗，不作营养、消费或品牌评价。"
-    },
-    "雨伞": {
-      label: "在天气、出行和临时互助之间负责证明准备工作仍有意义的普通物件",
-      scene: "它往往以一个小问题进入群聊，却能立刻连接天气、课程表、长沙市和谁愿意顺路帮忙。",
-      action: "讨论通常在“要不要带”与“现在下不下”之间往返，直到有人用现实中的雨滴替所有理论完成验证",
-      metaphor: "一件只有在错误时间被忘记时才会突然拥有完整群史的折叠式防御装备",
-      boundary: "物件条目不延伸到个人位置、出行轨迹或私人物品所有权。"
-    },
-    "直播": {
-      label: "把项目展示、临时主持和群聊现场感放到同一块屏幕上的传播场景",
-      scene: "它可能连接人物群像、AI 工具、项目展示和全员广播，也可能只是让一句普通通知突然拥有了节目单。",
-      action: "一次直播计划需要主题、设备、网络、主持和应急方案，任何环节掉线都会使“稳了”迅速进入复盘章节",
-      metaphor: "一间观众人数不稳定、但问号永远可以实时上麦的移动演播室",
-      boundary: "页面不保存未公开直播内容、观众名单或个人账号信息，只整理公开语境里的传播想象。"
-    }
-  };
-  const generatedEntries = {};
-  const generatedRecordCount = window.WEIJIBA_GENERATED_ENTRY_RECORDS?.length || 0;
-  (window.WEIJIBA_GENERATED_ENTRY_RECORDS || []).forEach((record) => {
-    const member = generatedMembers[(record.index - 1) % generatedMembers.length];
-    const action = generatedActions[(record.index - 1) % generatedActions.length];
-    const metaphor = generatedMetaphors[(record.index - 1) % generatedMetaphors.length];
-    const verb = generatedVerbs[(record.index - 1) % generatedVerbs.length];
-    const topicProfile = generatedTopicProfiles[record.topic] || {
-      label: `会在鹿群里被重新命名的“${record.topic}”公共对象`,
-      scene: `它可能以一句短问句、一个截图、一个课程节点、一个设备名或一段内部玩笑进入鹿群，然后等待别人决定它究竟属于知识、生活还是笑点。`,
-      action: `讨论先把“${record.topic}”放进当前问题，再通过问号、长文、表情和行动结果反复校准`,
-      metaphor: metaphor,
-      boundary: "条目保留戏仿式夸张，但不把内部玩笑扩展成现实身份、隐私或未经核实的事实。"
-    };
-    const nextRecord = generatedRecordCount ? window.WEIJIBA_GENERATED_ENTRY_RECORDS[record.index % generatedRecordCount] : null;
-    const mirrorRecord = generatedRecordCount ? window.WEIJIBA_GENERATED_ENTRY_RECORDS[(record.index + 246) % generatedRecordCount] : null;
-    generatedEntries[record.slug] = {
-      title: record.title,
-      type: "鹿群派生条目",
-      description: `围绕“${record.topic}”展开的${record.format.replace("{topic}", "")}式群聊解释，兼具资料痕迹、角色借用和无必要的制度感；在鹿群语境中，它被整理成${topicProfile.label}。`,
-      facts: [
-        ["自动编号", `WJB-${String(record.index).padStart(4, "0")}`],
-        ["母题", record.topic],
-        ["条目体裁", record.format.replace("{topic}", "魏鸡百科")],
-        ["主要出场", `${member}及其上下文`]
-      ],
-      overview: [
-        `“${record.title}”是魏鸡百科自动扩写的鹿群派生条目。它以聊天记录里反复出现的“${record.topic}”为母题，再套上“${record.format.replace("{topic}", "")}”的魏鸡百科外壳，故意把一个可以用一句话说清的事情解释成需要目录、注释和相关条目的公共机构。`,
-        `在原始群聊里，“${record.topic}”可能只是一个短词、一个提问、一个课程名、一件设备或一段群内玩笑；在本条目里，它被${verb}，并与${member}、鹿群、困困和高认知语境发生临时连接。${topicProfile.scene}`,
-        `本文不声称“${record.title}”是现实组织或正式概念。它更接近${topicProfile.metaphor || metaphor}：有一定资料依据，拥有过量比喻，最重要的功能是给下一条消息准备一个可以继续跳转的入口。`
-      ],
-      sections: [
-        {
-          id: "origin",
-          title: "词源与最初证据",
-          paragraphs: [
-            `“${record.topic}”之所以能进入词条，并不是因为它足够宏大，而是因为它在鹿群里有被看见、被回应或被重复使用的痕迹。聊天记录里的短句、长文、截图和表情共同构成了它的最低限度证据。`,
-            `魏鸡百科在这里采取一种略显可疑的整理方式：先承认原始材料可能只提供一个词，再为这个词安排时间、人物和因果。这样做不是为了伪造事实，而是为了展示群聊如何把碎片加工成共同记忆。`
-          ]
-        },
-        {
-          id: "mechanism",
-          title: "运行机制",
-          paragraphs: [
-            `当“${record.title}”被提及时，系统通常经历四个阶段：有人先把“${record.topic}”抛进群里，${member}或其他成员用问号、nb、表情或一段长文回应，讨论随后经过高认知转译，最后以“稳了”、新的问题或一顿饭暂时结束。`,
-            `${topicProfile.action || action}。${action}。如果中途出现“对齐一下颗粒度”，说明参与者正在重新确认自己讨论的是定义、方案、设备、课程还是笑点；如果出现“何意味”，则说明解释已经需要重新压缩。`
-          ]
-        },
-        {
-          id: "characters",
-          title: "人物与道具",
-          paragraphs: [
-            `本条目的主要出场者是${member}，但鹿群从来不允许一个人独占叙事。困困可以从短句收束员切换成困教练，彭鹏可以从问号发动机切换成晚间打卡主持，魏子奇可以打开全员广播，唐胤鑫可以启动“何意味”研究所；角色会随着话题移动。`,
-            `道具同样会被角色化：一个问号像探照灯，666像评价仪，杜邦线像证物，课程表像外交文件，机器人像需要选举的组织。道具越普通，群聊越有可能给它安排过于正式的使命。`
-          ]
-        },
-        {
-          id: "metaphor",
-          title: "比喻系统",
-          paragraphs: [
-            `“${record.title}”最适合使用的比喻是${topicProfile.metaphor || metaphor}。这个比喻没有科学依据，却能准确说明它的群聊功能：它不是一件孤立物品，而是一个会吸收问号、长文、角色和行动结果的接口。`,
-            `如果要继续扩写，可以把它接入鹿群群聊回路：从“${record.topic}”出发，途经短句连发、全员广播、人物和高认知宇宙，再在一个看似无关的“吃什么”问题里重新落地。魏鸡百科认为，这种绕路不是偏题，而是本群的正常交通。`
-          ]
-        },
-        {
-          id: "misread",
-          title: "常见误读与反例",
-          paragraphs: [
-            `最常见的误读，是把“${record.title}”看成现实中的正式术语、组织或人物评级。实际上，它只是一个以“${record.topic}”为核心的群内再创作页面；标题越像制度，越需要读者回到鹿群上下文。`,
-            `${topicProfile.boundary || "页面不把内部玩笑扩展成现实结论。"}第二种误读，是以为条目越长，结论就越可靠。魏鸡百科承认自己的长文有时只是把一个笑点搬进了五个章节，但也正因为如此，读者可以看见一个短词如何被不同成员、不同时间和不同语气反复改写。`
-          ]
-        },
-        {
-          id: "conclusion",
-          title: "条目结论",
-          paragraphs: [
-            `综上，“${record.title}”目前处于“资料足以成梗、证据不足以成学科”的稳定状态。它可以继续被引用、质疑、重命名或升级成下一篇条目，暂不建议为其修建纪念馆。`,
-            `若读者仍然不知道它是什么意思，可以先查看${member}、困困、鹿群、何意味和问号瀑布，再根据需要点击相关条目${nextRecord ? `“${nextRecord.title}”` : "继续随机浏览"}。如果所有页面都看完了，欢迎回到首页重新决定吃什么。`
-          ]
-        }
-      ],
-      references: [
-        `鹿群聊天导出中与“${record.topic}”相关的短句、长文、表情或@提醒记录。`,
-        `魏鸡百科的鹿群语境整理、条目式二次编写与链接索引。`
-      ],
-      categories: ["鹿群语境条目", "内部玩笑", "群聊语言"],
-      related: [
-        "luchun", "kunkun", "chat-cycle", "high-cognition",
-        member === "困困" ? "kunkun" : (window.WEIJIBA_ENTRY_PATHS ? Object.entries(window.WEIJIBA_ENTRY_PATHS).find(([, path]) => path === member)?.[0] || "person" : "person"),
-        nextRecord?.slug || "question-rain",
-        mirrorRecord?.slug || "cognition-universe"
-      ]
-    };
+  const writing = window.WEIJIBA_WRITING;
+  if (!writing) throw new Error("The entry writing module must load before entry-data.js");
+  (window.WEIJIBA_GENERATED_ENTRY_RECORDS || []).forEach(record => {
+    entries[record.slug] = writing.makeGenerated(record);
   });
-  Object.assign(entries, generatedEntries);
 
   const richerRelations = {
     hardware: ["tech", "projects", "platforms", "ai-tools"],
@@ -1733,239 +1434,17 @@
 
   const baseEntryRecords = window.WEIJIBA_BASE_ENTRY_RECORDS || [];
   const extensionRecordsByTopic = new Map();
-  (window.WEIJIBA_GENERATED_ENTRY_RECORDS || []).forEach((record) => {
-    if (!extensionRecordsByTopic.has(record.topic)) extensionRecordsByTopic.set(record.topic, []);
-    extensionRecordsByTopic.get(record.topic).push(record);
+  (window.WEIJIBA_GENERATED_ENTRY_RECORDS || []).forEach(record => {
+    const list = extensionRecordsByTopic.get(record.topic) || [];
+    list.push({ slug: record.slug, title: record.title, format: record.format });
+    extensionRecordsByTopic.set(record.topic, list);
   });
-  const baseTopicDomainProfiles = [
-    {
-      dimension: "天文常识",
-      matcher: /^(天文学|太阳系|太阳|月球|行星|水星|金星|地球|火星|木星|土星|天王星|海王星|恒星|星系|银河系|星云|黑洞|小行星|彗星|流星|日食|月食|天文台)$/,
-      label: "天文学中的基础天体、现象或观测入口",
-      definition: (topic) => `“${topic}”是天文学常识中用于认识天空、天体或观测现象的基础名词。`,
-      scene: (topic) => `在天文常识里，“${topic}”可以作为认识尺度、轨道、光线和观测方法的入口；先把对象放回宇宙尺度，再讨论它为什么会出现在鹿群的日常比喻里。`,
-      action: (topic) => `理解“${topic}”时，可以先确认它属于天体、结构还是现象，再区分肉眼观察、仪器观测和群聊想象`,
-      metaphor: "一张把晚饭时间抬头接到星空、却仍然要先查天气的观测图",
-      boundary: "本页只提供不依赖即时数据的基础科普框架，不把鹿群比喻当作天文学结论，也不替代专业观测资料。"
-    },
-    {
-      dimension: "地理常识",
-      matcher: /^(地理学|地球仪|地图|地形|地貌|赤道|经度|纬度|时区|山脉|峡谷|高原|平原|盆地|河流|湖泊|海洋|海岸|岛屿|海峡|沙漠|气候带|等高线|地理信息)$/,
-      label: "地理学中的基础空间、地表或定位概念",
-      definition: (topic) => `“${topic}”是地理常识中用来描述地球空间、地表形态或位置关系的基础名词。`,
-      scene: (topic) => `在地理常识里，“${topic}”帮助读者把地点、距离、方向、地形和气候放进同一张空间图；鹿群讨论出行或吃什么时，也会不自觉地调用这套地图思维。`,
-      action: (topic) => `理解“${topic}”时，可以先问它描述的是位置、尺度、地表形态还是人与环境的关系，再把地图上的符号和现实中的行动分开`,
-      metaphor: "一张把湘江、食堂和远方路线放在同一比例尺上、但不保证每个人都看得懂的折叠地图",
-      boundary: "本页只整理稳定的地理常识与生活化比喻，不记录个人实时位置，也不把单次路线经验扩大成普遍判断。"
-    },
-    {
-      dimension: "现代音乐常识",
-      matcher: /^(现代音乐|流行音乐|摇滚|爵士|嘻哈|电子音乐|民谣|独立音乐|K-pop|乐队|歌手|专辑|单曲|歌曲|歌词|节拍|旋律|和声|贝斯|鼓组|合成器|采样|混音|音乐节)$/,
-      label: "现代音乐中的基础形式、角色或制作概念",
-      definition: (topic) => `“${topic}”是现代音乐语境中用于描述作品、表演、声音组织或制作流程的基础名词。`,
-      scene: (topic) => `在现代音乐语境里，“${topic}”可以连接听感、演出、创作和制作；它进入鹿群后，往往又会和吉他、直播、表情以及“谁来点一首”发生转场。`,
-      action: (topic) => `理解“${topic}”时，可以先区分它是在说作品、表演者、声音元素还是制作环节，再观察它怎样改变一段群聊的节奏`,
-      metaphor: "一支从唐博釜的吉他弦出发、途经问号和夜宵、最后在播放列表里暂时落地的移动乐队",
-      boundary: "本页只做基础音乐知识和鹿群听觉想象的连接，不评价具体艺人、作品或商业成绩，也不把一次听感写成专业结论。"
-    },
-    {
-      dimension: "物理常识",
-      matcher: /^(物理学|力|质量|速度|加速度|位移|能量|功|功率|动量|电荷|电场|磁场|电流|电压|电阻|波|频率|光速|温度|压强|原子|分子|量子)$/,
-      label: "物理学中的基础量、对象或规律入口",
-      definition: (topic) => `“${topic}”是物理常识中用于描述运动、相互作用、能量、物质或场的基础名词。`,
-      scene: (topic) => `在物理常识里，“${topic}”通常需要和单位、测量、模型及适用条件一起理解；它进入鹿群后，可能从雅可比矩阵、机器人动作或杜邦线突然拐到一顿饭。`,
-      action: (topic) => `理解“${topic}”时，可以先找出对象、变量、单位和边界条件，再判断它是在描述变化、守恒还是相互作用`,
-      metaphor: "一块会把机器人关节、充电器和食堂排队都暂时换算成变量的群聊黑板",
-      boundary: "本页保持基础科普尺度，不用群聊类比替代公式、实验或教材，也不对超出页面范围的专业问题作确定结论。"
-    },
-    {
-      dimension: "人文常识",
-      matcher: /^(人文学科|哲学|伦理学|逻辑学|文学|语言学|历史学|社会学|人类学|心理学|艺术史|建筑|阅读|书籍|叙事|记忆|传统|节日|博物馆|图书|文字|文化|教育|审美)$/,
-      label: "人文学科中的基础问题、作品或理解方法",
-      definition: (topic) => `“${topic}”是人文知识中用于理解人、语言、作品、社会经验或价值判断的基础名词。`,
-      scene: (topic) => `在人文语境里，“${topic}”关注的不只是一个答案，还包括人如何记忆、表达、解释和共同生活；鹿群的称呼、群史与长文正好提供了一个微型观察窗口。`,
-      action: (topic) => `理解“${topic}”时，可以同时观察概念本身、使用它的人、它出现的情境以及不同解释之间的差异`,
-      metaphor: "一张由长文、短句、旧称呼和新注释共同绘制的群体阅读地图",
-      boundary: "本页只将人文常识与鹿群公开语境做轻量连接，不把群聊片段当作完整社会研究，也不对任何现实个体作心理或价值判断。"
-    },
-    {
-      dimension: "城市常识",
-      matcher: /^(城市|北京|上海|广州|深圳|武汉|成都|杭州|南京|西安|东京|首尔|新加坡|曼谷|伦敦|巴黎|柏林|罗马|悉尼|纽约|多伦多|温哥华|开罗|里约热内卢)$/,
-      label: "城市地理中的公共空间、生活系统或城市入口",
-      definition: (topic) => `“${topic}”是城市常识中用于认识城市空间、公共设施或日常生活网络的基础名词。`,
-      scene: (topic) => `在城市语境里，“${topic}”可以连接交通、居住、学习、消费和文化活动；对鹿群而言，城市又是课程表、食堂、湘江和临时出门提案的共同背景。`,
-      action: (topic) => `理解“${topic}”时，可以先区分它是城市整体、具体地点还是生活系统，再把公共知识和个人经验分别标注`,
-      metaphor: "一个把高铁、地铁、食堂、雨伞和群聊定位同时装进去的超大号共享地图",
-      boundary: "本页只使用城市作为公共地理和生活语境，不涉及个人行踪、未公开地点信息或对城市居民的概括性判断。"
-    },
-    {
-      dimension: "数字常识",
-      matcher: /^(数字化|操作系统|Android|Linux|macOS|iPad|平板电脑|智能手机|个人电脑|浏览器|搜索引擎|网站|网页|云计算|数据库|算法|编程|软件|硬件|文件格式|二维码|密码|账号|开源软件)$/,
-      label: "数字世界中的基础设备、软件或信息概念",
-      definition: (topic) => `“${topic}”是数字常识中用于理解设备、软件、网络、数据或信息处理的基础名词。`,
-      scene: (topic) => `在数字语境里，“${topic}”往往不会单独出现，而是和账号、文件、浏览器、代码、平台及权限组成一条完整工作流；鹿群的问号通常从其中某个摩擦点开始。`,
-      action: (topic) => `理解“${topic}”时，可以先确认它处在设备、系统、应用、数据还是用户操作这一层，再检查输入、输出和权限边界`,
-      metaphor: "一座由链接、文件、版本和问号搭起来的数字校园，入口很多，颗粒度必须先对齐",
-      boundary: "本页提供基础数字素养层面的解释，不保存账号、密钥或个人文件，也不把一次产品体验当成所有版本都成立的结论。"
-    },
-    {
-      dimension: "消费电子常识",
-      matcher: /^(消费电子|笔记本电脑|台式机|显示器|电视机|游戏机|PlayStation|Nintendo Switch|Kindle|AirPods|智能手表|智能音箱|相机|无人机|充电宝|无线充电|USB-C|Wi-Fi|蓝牙|屏幕|处理器|存储器|固态硬盘|芯片)$/,
-      label: "消费电子中的常见设备、部件或连接方式",
-      definition: (topic) => `“${topic}”是消费电子常识中用于认识设备形态、核心部件或连接体验的基础名词。`,
-      scene: (topic) => `在消费电子语境里，“${topic}”要和用途、兼容性、续航、预算、维护以及数据安全一起判断；这正是戴尔问号、MacBook 比较和杜邦线现场容易交叉的地方。`,
-      action: (topic) => `理解“${topic}”时，可以先确认需求和接口，再看性能、价格、可维护性与长期工作流，而不是只盯着一个参数`,
-      metaphor: "一件会在开箱、充电、调试和群聊复盘之间不断变换身份的项目道具",
-      boundary: "本页只提供一般消费电子常识，不构成即时购买建议，不评价未指定型号，也不记录任何个人设备中的私密内容。"
-    },
-    {
-      dimension: "国家与世界常识",
-      matcher: /^(国家|日本|韩国|新加坡|泰国|越南|印度|英国|法国|德国|意大利|西班牙|葡萄牙|希腊|美国|加拿大|墨西哥|巴西|澳大利亚|新西兰|埃及|肯尼亚|南非|土耳其)$/,
-      label: "世界地理中的国家、区域与公共文化入口",
-      definition: (topic) => `“${topic}”是世界常识中用于认识国家、区域、城市或公共文化差异的基础名词。`,
-      scene: (topic) => `在世界地理和日常常识里，“${topic}”可以连接地图、语言、饮食、音乐、城市与旅行想象；鹿群讨论它时，宜把公共知识和个人经历分开，不让一个梗代替整个地方。`,
-      action: (topic) => `理解“${topic}”时，可以先确认讨论的是地理位置、文化对象还是旅行信息，再核对时间、来源和适用范围`,
-      metaphor: "一张被鹿群拿来规划旅行、点餐和播放列表的世界地图，边界清楚，路线可以很离谱",
-      boundary: "本页只做中性世界地理与公共文化常识整理，不展开争议性现实议题、现实个体评价或未经核实的地区性断言。"
-    }
-  ];
-  const publicAccountDomainProfile = {
-    dimension: "公众号与校园媒体",
-    matcher: /^(微信公众号|微信公众平台|603视界公众号|校园公众号|校园自媒体|校园媒体|寝室公众号|校园创作|公众号运营|公众号文章|推文|文章选题|文章标题|文章排版|投稿|编辑|作者署名|发布时间|更新频率|读者互动|评论区|阅读量|转载|账号主体|公开链接|文章归档|公众号自述|第三方资料|资料核验|公开检索|核查报告|无法确认|证据等级|内容定位|内容风格|寝室日记|青年创作共同体|校园故事|校园观察|成长记录|生活记录|游记散文|人物志|杂笔|603动态|603观察|603游记|603创客|603人物志|603杂笔|芷兰24栋|南603|芷兰24栋南603|603寝室成员|603社区|移动冷气机|制冷涂料|半导体制冷|帕尔贴效应|立体绿化降温网|Android应用|AI角色|三维寝室地图|公开文章|校园纪实|青年写作|公众号栏目|公众号简介|原创内容|朋友关注|置顶文章|公众号头像|公众号主页|账号地区|KunCode|IDE|MacOS)$/,
-    label: "微信公众号、校园媒体或公开资料核对中的基础概念",
-    definition: (topic) => {
-      if (topic === "微信公众号" || topic === "微信公众平台") return `“${topic}”是用于发布文章、图文消息、账号信息与读者互动的数字内容载体。`;
-      if (topic === "603视界公众号") return "“603视界公众号”是以湖南农业大学芷兰24栋南603为自述关联空间的校园内容账号；目前可核对的信息主要来自其公开文章与检索摘要。";
-      if (topic === "603社区") return "“603社区”是与603视界分开的另一个微信公众号名称；本页将它作为辨误入口，不把社区基金会知识平台的资料套到603视界上。";
-      if (topic === "公众号简介") return "“公众号简介”是账号主页展示的自我介绍。603视界主页截图中可见的简介为“603视界，最新芷兰信息，领先一步”，属于页面截面上的账号自述。";
-      if (topic === "原创内容") return "“原创内容”是公众号主页用于标示账号文章创作数量的页面字段；603视界截图当时显示62篇，数字会随账号更新而变化。";
-      if (topic === "朋友关注") return "“朋友关注”是公众号主页展示的社交可见指标；603视界截图当时显示56个，不能据此推算完整粉丝数或账号影响力。";
-      if (topic === "置顶文章") return "“置顶文章”是公众号主页固定展示在前部的文章入口；603视界截图中可见的置顶标题为《603动态｜603官方 IDE「KunCode」MacOS版本上线！》。";
-      if (topic === "公众号头像") return "“公众号头像”是账号主页用于识别账号的图像。603视界截图中可见浅灰圆底上的黑色鹿形图案；头像可帮助辨认页面，但不单独证明认证主体。";
-      if (topic === "公众号主页") return "“公众号主页”是集中展示账号名称、头像、简介、地区、文章与互动入口的页面。603视界的主页截图因此成为补充公开文章检索的一种页面可见资料。";
-      if (topic === "账号地区") return "“账号地区”是公众号主页展示的地区字段；603视界截图中显示为“湖南 长沙”，这里按页面可见信息记录，不延伸为机构认证结论。";
-      if (topic === "KunCode") return "“KunCode”是603视界公开主页置顶文章标题中出现的IDE名称；其公开代码仓库将它描述为由603打造、基于Code - OSS定制的跨平台开发工具。具体版本、功能与安装包应以仓库和发行页面为准。";
-      if (topic === "IDE") return "“IDE”是集成开发环境的缩写，通常把代码编辑、项目管理、终端、调试和扩展等能力放进同一套工作台；KunCode以此作为产品定位。";
-      if (topic === "MacOS") return "“MacOS”是603视界置顶文章标题中采用的系统写法；KunCode公开站点和仓库使用macOS这一规范写法，并说明提供面向Apple Silicon的安装包。";
-      if (/^603(动态|观察|游记|创客|人物志|杂笔)$/.test(topic)) return `“${topic}”是公开检索中出现过的603视界栏目式标题，用来把日常事件、观察、出游、创客设想、人物书写或杂笔放入同一个账号目录。`;
-      if (["移动冷气机", "制冷涂料", "半导体制冷", "帕尔贴效应", "立体绿化降温网", "Android应用", "AI角色", "三维寝室地图"].includes(topic)) return `“${topic}”在603视界公开文章的项目叙事中属于科技设想、技术名词或应用描述；现有资料主要是公众号自述，不能自动视为完成并通过验证的产品。`;
-      if (["公众号自述", "第三方资料", "资料核验", "公开检索", "核查报告", "无法确认", "证据等级"].includes(topic)) return `“${topic}”是阅读603视界等公开账号资料时用于区分来源、核对证据与保留未知项的方法性名词。`;
-      return `“${topic}”是公众号内容生产、校园媒体写作或公开资料阅读中常见的基础名词。`;
-    },
-    scene: (topic) => {
-      if (topic === "603社区") return "在603视界的资料地图里，“603社区”只承担辨误作用：它指向另一个公众号，不能与芷兰24栋南603、寝室日记或603视界的栏目互相替换。";
-      if (topic === "603视界公众号" || topic === "微信公众号") return `在603视界的语境里，“${topic}”连接账号、文章、栏目、成员自述和读者检索；在鹿群语境里，它又会和寝室、校园故事、技术项目与群史发生转场。`;
-      return `在603视界相关语境里，“${topic}”可以与公众号文章、校园故事、寝室生活、科技项目和鹿群记录相互连接；具体含义要回到文章标题、发布时间和来源性质。`;
-    },
-    action: (topic) => `理解“${topic}”时，可以先确认它是在说账号、栏目、文章制作、阅读证据还是项目内容，再把公众号自述、第三方资料和群聊二次整理分开`,
-    metaphor: "一块挂在南603门口的编辑黑板，左边写标题，右边写证据，中间还留着一格等待下一次更新",
-    boundary: "本页只提供公众号与校园媒体的基础解释；涉及603视界的成员关系、文章案例、账号主体和影响力时，均应以可公开核对的原文为准，不把标题、摘要或戏谑化写法扩展成未经证实的现实事实。"
-  };
-  const resolveBaseTopicProfile = (topic, fallback) => {
-    const domain = baseTopicDomainProfiles.find(({ matcher }) => matcher.test(topic))
-      || (publicAccountDomainProfile.matcher.test(topic) ? publicAccountDomainProfile : null);
-    if (!domain) return fallback;
-    return {
-      ...fallback,
-      dimension: domain.dimension,
-      label: domain.label,
-      definition: domain.definition(topic),
-      scene: domain.scene(topic),
-      action: domain.action(topic),
-      metaphor: domain.metaphor,
-      boundary: domain.boundary
-    };
-  };
-  const baseEntries = {};
-  baseEntryRecords.forEach((record) => {
-    const extensionRecords = extensionRecordsByTopic.get(record.topic) || [];
-    const extensions = extensionRecords.map(({ slug, title, format }) => ({ slug, title, format }));
-    const fallbackProfile = {
-      label: `在鹿群里被重新命名的“${record.topic}”公共对象`,
-      scene: `它可能以一句短问句、一个截图、一个课程节点、一个设备名或一段内部玩笑进入鹿群，然后等待别人决定它究竟属于知识、生活还是笑点。`,
-      action: `讨论先把“${record.topic}”放进当前问题，再通过问号、长文、表情和行动结果反复校准`,
-      metaphor: `一块会吸收问号、长文和临时决定的鹿群公共黑板`,
-      boundary: "条目保留戏仿式夸张，但不把内部玩笑扩展成现实身份、隐私或未经核实的事实。"
-    };
-    const profile = generatedTopicProfiles[record.topic] || resolveBaseTopicProfile(record.topic, fallbackProfile);
-    const existingEntry = entries[record.slug];
-    if (existingEntry) {
-      existingEntry.extensions = extensions;
-      existingEntry.categories = Array.from(new Set([...(existingEntry.categories || []), "基础名词"]));
-      existingEntry.related = Array.from(new Set([...(existingEntry.related || []), ...extensions.slice(0, 7).map(({ slug }) => slug)]));
-      return;
-    }
-    const member = generatedMembers[(record.index - 1) % generatedMembers.length];
-    const sourceLabel = record.source === "鹿群资料"
-      ? "鹿群聊天资料"
-      : (record.source === "公众号资料" ? "603视界公开资料" : "常用语境整理");
-    baseEntries[record.slug] = {
-      title: record.title,
-      type: "鹿群基础名词",
-      description: `“${record.topic}”是魏鸡百科基础索引中的常用名词；本页按${sourceLabel}整理成${profile.label}。`,
-      facts: [
-        ["基础编号", `BASE-${String(record.index).padStart(3, "0")}`],
-        ["基础主题", record.topic],
-        ["资料来源", sourceLabel],
-        ["常识维度", profile.dimension || "鹿群与日常语境"],
-        ["群聊角色", profile.label],
-        ["拓展条目", `${extensions.length} 个`]
-      ],
-      overview: [
-        `“${record.topic}”是魏鸡百科基础索引中的常用名词，${record.source === "鹿群资料" ? "它从鹿群聊天资料的可观察语境中被挑出" : (record.source === "公众号资料" ? "它从603视界公开文章与公开检索摘要中被挑出" : "它从日常常用语境中被整理进来")}。它可以指向一个人、一件物品、一个地点、一项技术或一个群聊动作，具体含义取决于出现它的时间、对象和前后文。`,
-        profile.definition ? `${profile.definition}这条常识说明负责提供公共知识入口，鹿群部分则只借用它的形状来讨论问号、长文、项目和日常行动。` : "",
-        `${profile.scene}在基础词条页面里，这些不同用法先被放在同一张语境地图上，再交给读者沿着拓展阅读继续分叉。`,
-        `本页不急着给“${record.topic}”下一个只有标准答案的定义。它更像${profile.metaphor}：先让词语站稳，再让它和鹿群、困困、课程、项目以及“吃什么”建立可以继续跳转的关系。`
-      ].filter(Boolean),
-      sections: [
-        {
-          id: "definition",
-          title: "基本解释",
-          paragraphs: [
-            profile.definition || `从普通用法看，“${record.topic}”首先是一个可以被直接指认的名词；从鹿群用法看，它还可能成为提问入口、行动对象、群史道具或一句话里最重要的那个未解释部分。`,
-            `在鹿群阅读中，“${record.topic}”又可能成为提问入口、行动对象、群史道具或一句话里最重要的那个未解释部分。公共常识负责说明它是什么，群聊语境负责展示它如何被使用。`,
-            `同一个词在不同消息里不必保持同一重量。有人把它当作事实，有人把它当作比喻，也有人只用它来测试群聊是否还在线。基础条目的任务是保留这些差异，而不是替它们强行统一。`
-          ]
-        },
-        {
-          id: "context",
-          title: "鹿群语境",
-          paragraphs: [
-            `${profile.scene}`,
-            `${profile.action}。当讨论出现“对齐一下颗粒度”时，通常说明大家需要重新确认是在谈定义、方案、设备、课程还是笑点；当“何意味”出现时，说明这个词已经开始自行长出背景。`
-          ]
-        },
-        {
-          id: "metaphor",
-          title: "群聊比喻",
-          paragraphs: [
-            `在鹿群里，“${record.topic}”经常被比喻成${profile.metaphor}。比喻的价值不在于科学准确，而在于它能把一个普通名词接到问号、长文、角色和行动结果上。`,
-            `如果把群聊看成一条交通线，基础名词是站点，拓展条目是支线列车；有人从研究所出发，有人前往委员会，也有人绕道经过食堂后才想起来自己原本要讨论什么。`
-          ]
-        },
-        {
-          id: "boundary",
-          title: "理解边界",
-          paragraphs: [
-            `${profile.boundary}`,
-            `页面使用的是公开可观察的群聊语境与二次整理，不把词条中的夸张比喻当成现实组织、人物评价、产品承诺或行动记录。若需要准确理解某一次使用，应回到对应时间和原始上下文。`
-          ]
-        }
-      ],
-      references: [
-        record.source === "鹿群资料"
-          ? `鹿群聊天导出及相关分析中与“${record.topic}”相关的短句、长文、表情或@提醒语境。`
-          : (record.source === "公众号资料"
-            ? `603视界公开文章、公开检索摘要与核查报告中与“${record.topic}”相关的账号、栏目或资料语境；涉及事实的部分按来源等级保留限定。`
-            : `常用语境整理中与“${record.topic}”相关的公共名词用法，并接入鹿群阅读框架。`),
-        "魏鸡百科基础词条整理、群聊语境分析与拓展链接索引。"
-      ],
-      categories: ["基础名词", "鹿群语境", "条目索引"],
-      related: ["luchun", "kunkun", ...extensions.slice(0, 5).map(({ slug }) => slug)],
-      extensions
-    };
+  baseEntryRecords.forEach(record => {
+    if (!entries[record.slug]) entries[record.slug] = writing.makeBase(record);
+    const entry = entries[record.slug];
+    entry.extensions = extensionRecordsByTopic.get(record.topic) || [];
+    entry.categories = [...new Set([...entry.categories, "基础名词"])];
   });
-  Object.assign(entries, baseEntries);
 
   const publicArticleEntry = ({ title, date, description, facts = [], overview, sections, related, url }) => ({
     title,
@@ -2238,6 +1717,8 @@
     ]));
   }
 
+  writing.rewrite(entries);
+
   const categoryTargets = {
     "群史": "history",
     "新闻动态": "history",
@@ -2297,21 +1778,6 @@
   if (canonicalEntryUrl && (isLegacyEntryUrl || isRootTemplateUrl) && window.history?.replaceState) {
     window.history.replaceState({}, "", canonicalEntryUrl);
   }
-  if (slug === "kunkun") {
-    const kunkunArticle = document.querySelector(".article-main article");
-    const kunkunEntry = entries[slug];
-    if (kunkunArticle && kunkunEntry?.extensions?.length && !kunkunArticle.querySelector("#extensions")) {
-      const escapeInline = (value) => String(value).replace(/[&<>'"]/g, (character) => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"
-      })[character]);
-      const extensionUrl = (extensionSlug) => window.WEIJIBA_ENTRY_URL?.(extensionSlug)
-        || `article.html?entry=${encodeURIComponent(extensionSlug)}`;
-      const extensionItems = kunkunEntry.extensions.map((extension) => `<li><a href="${extensionUrl(extension.slug)}" target="_blank" rel="noopener">${escapeInline(extension.title)}</a><span class="extension-meta">${escapeInline(extension.format.replace("{topic}", ""))}篇</span></li>`).join("");
-      kunkunArticle.insertAdjacentHTML("beforeend", `<section id="extensions" class="article-section extension-section"><h2><span>拓展阅读</span></h2><p>以下条目以“困困”为基础名词继续展开。首页只保留基础名词，相关的主题变体统一收纳在这里。</p><ul class="see-also-list extension-list">${extensionItems}</ul></section>`);
-    }
-    window.WEIJIBA_NORMALIZE_ENTRY_LINKS?.();
-    return;
-  }
 
   const entry = entries[slug];
   const article = document.querySelector(".article-main article");
@@ -2357,9 +1823,9 @@
     const format = extension.format.replace("{topic}", "");
     return `<li><a href="${entryLink(extension.slug)}" target="_blank" rel="noopener">${escapeHtml(title)}</a><span class="extension-meta">${escapeHtml(format)}篇</span></li>`;
   }).join("");
-  const extensionBlock = extensionItems ? `<section id="extensions" class="article-section extension-section"><h2><span>拓展阅读</span></h2><p>以下条目以“${escapeHtml(entry.title)}”为基础名词继续展开。首页只保留基础名词，相关的主题变体统一收纳在这里。</p><ul class="see-also-list extension-list">${extensionItems}</ul></section>` : "";
+  const extensionBlock = extensionItems ? `<section id="extensions" class="article-section extension-section"><h2><span>拓展阅读</span></h2><p>同一个“${escapeHtml(entry.title)}”，换几种写法继续读：</p><ul class="see-also-list extension-list">${extensionItems}</ul></section>` : "";
   const externalLinkItems = (entry.externalLinks || []).map(([title, url]) => `<li><a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(title)}</a></li>`).join("");
-  const externalLinksBlock = externalLinkItems ? `<section id="external-links" class="article-section external-links-section"><h2><span>外部入口</span></h2><p>以下链接指向项目自己的公开仓库、演示页或发行入口，打开后将新建标签页。</p><ul class="see-also-list">${externalLinkItems}</ul></section>` : "";
+  const externalLinksBlock = externalLinkItems ? `<section id="external-links" class="article-section external-links-section"><h2><span>外部入口</span></h2><p>原文与项目资料，将在新标签页打开。</p><ul class="see-also-list">${externalLinkItems}</ul></section>` : "";
 
   article.innerHTML = `
     <header class="article-heading">
@@ -2375,7 +1841,7 @@
       </div>
     </header>
     <p class="article-tagline">魏鸡百科，困困的百科全书</p>
-    <div class="article-notice" role="note"><span class="notice-icon" aria-hidden="true">i</span><p>此条目根据鹿群资料二次编写，仅记录可观察的群聊表达与互动语境，不用于推断现实人格、身份或立场。</p></div>
+    <div class="article-notice" role="note"><span class="notice-icon" aria-hidden="true">i</span><p>${escapeHtml(entry.notice || "本文含趣味比喻；事实与材料出处见正文及资料来源。")}</p></div>
     <aside class="infobox" aria-label="${escapeHtml(entry.title)}概要"><div class="infobox-title">${escapeHtml(entry.title)}</div><div class="infobox-subtitle">${escapeHtml(entry.type)}</div><table><tbody>${facts}</tbody></table></aside>
     ${overview}
     ${sections}
@@ -2384,7 +1850,7 @@
     <section id="related" class="article-section"><h2><span>相关条目</span></h2><p>${related}</p></section>
     <section id="references" class="article-section references"><h2><span>资料来源</span><button type="button" data-demo="编辑资料来源">编辑</button></h2><ol>${references}</ol></section>
     <div class="categories"><span>分类：</span>${categories}</div>
-    <p class="last-edited" id="history-note">本页面最后修订于 2026 年 9 月 4 日。页面内容仅用于非官方群内文化记录。</p>`;
+    <p class="last-edited" id="history-note">本页面最后修订于 2026 年 9 月 23 日。页面内容用于非官方群内文化记录与趣味阅读。</p>`;
 
   const extraSectionCount = (extensionItems ? 1 : 0) + (externalLinkItems ? 1 : 0);
   toc.innerHTML = `<a class="is-active" href="#top">序言</a>${entry.sections.map((section, index) => `<a href="#${escapeHtml(section.id)}"><span>${index + 1}</span> ${escapeHtml(section.title)}</a>`).join("")}${extensionItems ? `<a href="#extensions"><span>${entry.sections.length + 1}</span> 拓展阅读</a>` : ""}${externalLinkItems ? `<a href="#external-links"><span>${entry.sections.length + (extensionItems ? 2 : 1)}</span> 外部入口</a>` : ""}<a href="#related"><span>${entry.sections.length + extraSectionCount + 1}</span> 相关条目</a><a href="#references"><span>${entry.sections.length + extraSectionCount + 2}</span> 资料来源</a>`;

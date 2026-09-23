@@ -619,6 +619,14 @@ body.appearance-hidden .article-layout {
   scroll-margin-top: 20px;
 }
 
+/* Short, direct introductions should not leave a blank column beside the infobox. */
+@media (min-width: 1000px) {
+  .article-main article > .article-section:first-of-type {
+    clear: none;
+    display: flow-root;
+  }
+}
+
 .article-section.search-flash,
 article.search-flash {
   animation: search-highlight 1.5s ease;
