@@ -62,6 +62,9 @@
 
 @media (max-width: 700px) {
   :root { --portfolio-card-radius: 22px; }
+  /* In-flow hero cards use the same spacing and body type as experience cards. */
+  .hero-floating.portfolio-card { padding: 20px; transition: none; }
+  .hero-floating.portfolio-card p { font-size: 14px; line-height: 1.65; }
   .feature.portfolio-card,
   .scene.portfolio-card,
   .prototype-card.portfolio-card,

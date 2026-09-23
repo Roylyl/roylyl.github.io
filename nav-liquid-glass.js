@@ -8,7 +8,6 @@
   header.classList.add('liquid-glass-header');
   const surfaces = [header, ...document.querySelectorAll('.hero-floating')];
   const mountSurface = (surface, index) => {
-    surface.classList.add('liquid-glass-surface');
     const filterId = index === 0 ? 'portfolio-nav-glass-filter' : `portfolio-card-glass-filter-${index}`;
     surface.style.setProperty('--glass-filter', `url(#${filterId})`);
     surface.insertAdjacentHTML('afterbegin', `
@@ -49,6 +48,21 @@
     let mountWebgl;
     const updateMap = () => {
       resizeFrame = 0;
+      // Only cards floating over the portrait use optical glass. In-flow
+      // cards reuse .portfolio-card exactly like the experience section.
+      const enabled = surface === header || (
+        getComputedStyle(surface).position === 'absolute' && surface.offsetWidth > 0 && surface.offsetHeight > 0
+      );
+      surface.classList.toggle('liquid-glass-surface', enabled);
+      if (!enabled) {
+        webgl?.dispose();
+        webgl = lens = undefined;
+        mapSize = '';
+        surface.classList.remove('glass-surface--refractive', 'glass-surface--fallback');
+        delete surface.dataset.glassRenderer;
+        return;
+      }
+      if (!supportsSvgBackdrop) surface.classList.add('glass-surface--fallback');
       const width = surface.offsetWidth;
       const height = surface.offsetHeight;
       const radius = parseFloat(getComputedStyle(surface).borderTopLeftRadius);
@@ -80,17 +94,16 @@
     };
     updateMap();
     if ('ResizeObserver' in window) new ResizeObserver(scheduleMap).observe(surface);
-    else window.addEventListener('resize', scheduleMap);
+    window.addEventListener('resize', scheduleMap);
     window.addEventListener('site-language-change', scheduleMap);
     if (!supportsSvgBackdrop) {
-      surface.classList.add('glass-surface--fallback');
       // WebKit cannot apply an SVG URL to its backdrop. It uses the same lens
       // with a small live WebGL surface and section snapshots, loaded on demand.
-      import('./nav-glass-webgl.js?v=20260923-4').then(({ mountGlassRenderer }) => {
+      import('./nav-glass-webgl.js?v=20260923-5').then(({ mountGlassRenderer }) => {
         mountWebgl = mountGlassRenderer;
-        // A responsive breakpoint may initially hide the cards. Wait for a
-        // measurable surface; ResizeObserver mounts it when it becomes visible.
-        if (lens) webgl = mountWebgl(surface, lens);
+        // Re-read the layout: a resize may have happened during the import.
+        mapSize = '';
+        updateMap();
       }).catch(() => { surface.dataset.glassRenderer = 'unavailable'; });
     }
   };

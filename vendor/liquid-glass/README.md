@@ -21,3 +21,5 @@ Build: vanilla-entry.ts with esbuild 0.25.12, format esm, target safari16, bundl
 This directory contains only the deployed ESM bundle and required license notices; no package installation or build cache is shipped.
 
 - High-DPI captures default to min(devicePixelRatio, 2). Section rasters retain the 2 Mi-pixel cap; moving canvases use DPR-sized buffers with CSS-coordinate drawing transforms. Work-canvas compositing specifies the CSS destination size to avoid double scaling. DPR changes invalidate cached tiles.
+
+The portfolio adapter hides snapshot output synchronously during touch input, scrolling, and visual viewport movement. It restores ready outputs only after 180 ms of quiet and two render frames. Native live transparency remains during movement; RGB snapshot refraction resumes at rest. This is deliberately distinct from yimingxi.art, whose Safari branch uses a CSS blur fallback without HTML snapshots.
