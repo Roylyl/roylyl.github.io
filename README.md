@@ -8,6 +8,7 @@
 
 以工程能力为主线，把想法做成样机。
 
+[![License: GPL-3.0-only](https://img.shields.io/badge/license-GPL--3.0--only-2563eb?style=flat-square)](LICENSE)
 [![Website](https://img.shields.io/badge/website-roylyl.github.io-0f172a?style=flat-square)](https://roylyl.github.io/)
 [![Pages](https://img.shields.io/github/deployments/Roylyl/roylyl.github.io/github-pages?style=flat-square&label=GitHub%20Pages)](https://roylyl.github.io/)
 [![HTML](https://img.shields.io/badge/HTML5-native-e34f26?style=flat-square&logo=html5&logoColor=white)](index.html)
@@ -339,7 +340,7 @@ git check-ignore -v tmp/example.png
 
 ## 版权与第三方内容
 
-本仓库当前未提供开源许可证。除另有说明外，代码、文字、视频、简历、图片和其他原创内容由罗宇伦 Roy Luo 保留所有权利；未经书面许可，不得复制、修改、重新发布或用于商业用途。
+本仓库中由罗宇伦 Roy Luo 原创且有权授权的代码、文字、视频、简历、图片及其他内容采用 [GNU General Public License v3.0](LICENSE)（`GPL-3.0-only`，仅第 3 版）发布。第三方依赖、音乐、商标、嵌入内容及另有说明的材料不因本次许可变更而重新授权；本地依赖声明见 [vendor/liquid-glass/LICENSES.txt](vendor/liquid-glass/LICENSES.txt)。
 
 背景音乐《你离开了南京，从此没有人和我说话》仅用于个人作品集的非商业展示与页面体验演示。本人不主张拥有该音乐作品、录音制品或相关素材的著作权及其他权利，相关权利归原作者、表演者、录音制作者及其他合法权利人所有；此处不构成版权许可或对第三方的再授权。
 
@@ -347,4 +348,4 @@ git check-ignore -v tmp/example.png
 
 如相关权利人认为网站内容或素材侵犯其合法权益，请通过上方邮箱联系；核实权利信息后，将及时停止使用并移除相关内容。
 
-© Roy Luo. All rights reserved.
+Copyright © 2026 罗宇伦 Roy Luo. 原创内容按 GPL-3.0-only 授权；第三方权利如上所述。
