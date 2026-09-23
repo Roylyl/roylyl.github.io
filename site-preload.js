@@ -65,7 +65,7 @@
           template.content.querySelectorAll('script[src],link[rel="stylesheet"][href],img[src]').forEach(el => enqueue(urlFor(el.getAttribute('src') || el.getAttribute('href'), url)));
           template.content.querySelectorAll('img[srcset],source[srcset]').forEach(el => el.getAttribute('srcset').split(',').forEach(candidate => enqueue(urlFor(candidate.trim().split(/\s+/)[0], url))));
           if (!new URL(url).search) {
-            const embedded = new URL(url); embedded.searchParams.set('embedded', '1'); embedded.searchParams.set('nav-version', window.siteNavigationVersion || '20260923-24'); enqueue(embedded.href);
+            const embedded = new URL(url); embedded.searchParams.set('embedded', '1'); embedded.searchParams.set('nav-version', window.siteNavigationVersion || '20260923-25'); enqueue(embedded.href);
           }
         } else {
           for (const match of text.matchAll(/url\(\s*['"]?([^)'"\s]+)['"]?\s*\)/g)) enqueue(urlFor(match[1], url));

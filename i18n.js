@@ -748,6 +748,74 @@
 
   [["DeerWebTranslator、MacDuo 与《晚渡》：浏览器扩展、桌面交互实验，以及 Astra Computer Use 音乐制作测试。", "DeerWebTranslator、MacDuo 與《晚渡》：瀏覽器擴充功能、桌面互動實驗，以及 Astra Computer Use 音樂製作測試。", "DeerWebTranslator, MacDuo and Wandu: a browser extension, a desktop interaction experiment, and an Astra Computer Use music production test."], ["DeerWebTranslator、MacDuo 与晚渡的项目介绍、设计思考和 Astra Computer Use 测试产物。", "DeerWebTranslator、MacDuo 與晚渡的項目介紹、設計思考和 Astra Computer Use 測試產物。", "Project overviews, design ideas and Astra Computer Use test outputs from DeerWebTranslator, MacDuo and Wandu."]].forEach(([source, traditional, english]) => { cn[source] = source; tw[source] = traditional; en[source] = english; });
 
+  [
+  [
+    "DeerWebTranslator、MacDuo、《晚渡》与 READMEWriter：浏览器扩展、桌面交互、Astra Computer Use 音乐制作测试与文档写作技能。",
+    "DeerWebTranslator、MacDuo、《晚渡》與 READMEWriter：瀏覽器擴充功能、桌面互動、Astra Computer Use 音樂製作測試與文件寫作技能。",
+    "DeerWebTranslator, MacDuo, WANDU and READMEWriter: web translation, desktop interaction, an Astra Computer Use music production test, and a documentation skill."
+  ],
+  [
+    "DeerWebTranslator、MacDuo、晚渡与 READMEWriter 的项目介绍、设计思考和 Astra Computer Use 测试产物。",
+    "DeerWebTranslator、MacDuo、晚渡與 READMEWriter 的項目介紹、設計思考和 Astra Computer Use 測試產物。",
+    "Project overviews, design ideas and Astra Computer Use test outputs from DeerWebTranslator, MacDuo, WANDU and READMEWriter."
+  ],
+  [
+    "项目 05 · Codex 技能",
+    "項目 05 · Codex 技能",
+    "PROJECT 05 · CODEX SKILL"
+  ],
+  [
+    "让项目说明成为可靠的使用入口。",
+    "讓項目說明成為可靠的使用入口。",
+    "A reliable starting point for understanding and using a project."
+  ],
+  [
+    "Codex 写作技能",
+    "Codex 寫作技能",
+    "Codex writing skill"
+  ],
+  [
+    "仓库事实 · 文档规范",
+    "儲存庫事實 · 文件規範",
+    "Repository evidence · Documentation standards"
+  ],
+  [
+    "READMEWriter 是面向 Codex 的 README 写作技能，用于新建项目介绍、重构已有文档和统一多个仓库的展示风格。它先核对项目配置、脚本与现有资料，再组织图标、徽章、导航、安装步骤和技术说明；技能由 Markdown 指令与参考文件组成，无需编译或安装运行时依赖。",
+    "READMEWriter 是面向 Codex 的 README 寫作技能，用於新建項目介紹、重構現有文件和統一多個儲存庫的展示風格。它先核對項目設定、腳本與現有資料，再組織圖示、徽章、導覽、安裝步驟和技術說明；技能由 Markdown 指令與參考文件組成，無需編譯或安裝執行階段依賴。",
+    "READMEWriter is a Codex skill for creating project introductions, restructuring existing documentation and unifying presentation across repositories. It checks project configuration, scripts and existing material before organizing icons, badges, navigation, installation steps and technical explanations. The skill consists of Markdown instructions and reference files, with no compilation or runtime dependencies to install."
+  ],
+  [
+    "文档也是产品的一部分",
+    "文件也是產品的一部分",
+    "Documentation is part of the product"
+  ],
+  [
+    "项目介绍需要帮助读者判断是否适用、如何开始，以及哪些能力已经得到验证。统一视觉规范的同时，也要让每项说明有事实依据。",
+    "項目介紹需要幫助讀者判斷是否適用、如何開始，以及哪些能力已經得到驗證。統一視覺規範的同時，也要讓每項說明有事實依據。",
+    "Project documentation should help readers judge suitability, get started and understand what has been verified. Consistent presentation also needs claims grounded in evidence."
+  ],
+  [
+    "从读者任务出发：区分普通用户上手与贡献者开发，提供明确的操作入口。",
+    "從讀者任務出發：區分一般用戶入門與貢獻者開發，提供明確的操作入口。",
+    "Start with reader tasks: separate user setup from contributor development and provide clear next steps."
+  ],
+  [
+    "按项目组织内容：复用真实图标与截图，根据项目类型选择章节、表格与技术图解。",
+    "按項目組織內容：重用真實圖示與螢幕截圖，根據項目類型選擇章節、表格與技術圖解。",
+    "Adapt the structure to the project: use real icons and screenshots, selecting sections, tables and technical diagrams to suit the project type."
+  ],
+  [
+    "让状态可核对：区分源码实现、构建、模拟器、实机与发布状态，不补造功能或验证结果。",
+    "讓狀態可核對：區分原始碼實現、建置、模擬器、實機與發佈狀態，不虛構功能或驗證結果。",
+    "Make status verifiable: distinguish implementation, builds, simulator tests, real-device tests and releases without inventing features or results."
+  ],
+  [
+    "READMEWriter 详情 · 源码 ↗",
+    "READMEWriter 詳情 · 原始碼 ↗",
+    "READMEWriter details · Source ↗"
+  ]
+].forEach(([source, traditional, english]) => { cn[source] = source; tw[source] = traditional; en[source] = english; });
+
   const pageTitles = {
     'other-projects.html': { 'zh-CN': '其他项目 · 罗宇伦 Roy Luo', 'zh-TW': '其他項目 · 羅宇倫 Roy Luo', en: 'Other Projects · Roy Luo' },
     'index.html': { 'zh-CN': '罗宇伦 Roy Luo', 'zh-TW': '羅宇倫 Roy Luo', en: 'Roy Luo · Engineering Portfolio' },
