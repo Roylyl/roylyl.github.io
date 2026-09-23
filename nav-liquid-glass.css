@@ -61,7 +61,7 @@
   pointer-events: none;
 }
 .liquid-glass-webgl[hidden] { display: none; }
-/* One foreground material layer in both native-moving and WebGL states.
+/* One foreground material layer above native backdrops and WebGL output.
    Parent backgrounds/inset shadows paint BELOW child canvases. An opaque
    snapshot would cover those highlights, so put them after the optical layer
    while keeping both behind navigation text and controls. */

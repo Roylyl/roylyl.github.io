@@ -1,8 +1,6 @@
 // WebKit/Firefox adapter. Every glass surface uses the same optical map as SVG.
 import { createLiquidGlassBackdrop, createWebGLSurface } from './vendor/liquid-glass/renderer.js?v=20260923-3';
 
-import { watchGlassMotion } from './nav-glass-motion.js?v=20260923-1';
-
 let sharedScene;
 
 // The optical snapshot replaces the backdrop; it must not contain transparent
@@ -32,7 +30,6 @@ function createScene() {
   let routeVisible = !document.documentElement.classList.contains('detail-shell-open');
   let particleOpacity = 1;
   let disposed = false;
-  let moving = false;
 
   const options = ({ lens }) => ({
     map: lens.url, scale: lens.scale,
@@ -41,18 +38,16 @@ function createScene() {
     radius: lens.radius, blur: 0, saturation: 145, specular: 0
   });
   const setReady = (record) => {
-    const ready = !moving && record.captureReady && record.opticalStatus === 'active';
+    const ready = record.captureReady && record.opticalStatus === 'active';
     if (record.output) record.output.hidden = !ready;
     record.surface.classList.toggle('glass-surface--webgl', ready);
-    record.surface.dataset.glassRenderer = moving ? 'native-moving' : ready ? 'webgl' : record.opticalStatus;
+    record.surface.dataset.glassRenderer = ready ? 'webgl' : record.opticalStatus;
     if (ready) delete record.surface.dataset.glassCapture;
   };
 
-  const stopWatchingMotion = watchGlassMotion((active) => {
-    moving = active;
-    for (const record of surfaces.values()) setReady(record);
-  });
-
+  // Keep a single optical path during touch, momentum and idle. The scene
+  // compositor updates its crop every animation frame; its opaque background
+  // prevents live DOM text from showing through as an undisplaced second copy.
   // The particle canvas has a single synchronous callback, before its WebGL
   // framebuffer is cleared. Copy only each visible lens's small sampling area.
   const copyParticles = (...args) => {
@@ -62,7 +57,7 @@ function createScene() {
     const source = particle.getBoundingClientRect();
     for (const record of surfaces.values()) {
       record.particleRect = undefined;
-      if (moving || !record.engine || !source.width || !source.height) continue;
+      if (!record.engine || !source.width || !source.height) continue;
       const rect = record.surface.getBoundingClientRect();
       if (!rect.width || !rect.height || rect.bottom <= 0 || rect.top >= innerHeight ||
           rect.right <= 0 || rect.left >= innerWidth || source.bottom < rect.top || source.top > rect.bottom) continue;
@@ -186,7 +181,6 @@ function createScene() {
   };
   const dispose = () => {
     stop(); disposed = true;
-    stopWatchingMotion();
     document.removeEventListener('visibilitychange', sync);
     transparency.removeEventListener('change', sync);
     window.removeEventListener('site:visibility-change', onRoute);
