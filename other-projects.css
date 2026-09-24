@@ -27,3 +27,7 @@
 
 .experiments-section { margin-top:64px; padding-top:32px; border-top:1px solid var(--line-strong); scroll-margin-top:108px; }
 .experiments-section > h2 { font-size:28px; margin:12px 0 24px; }
+
+/* Secondary source links stay quieter than project navigation buttons. */
+.tool-source-link { display:inline-block; padding:6px 0; color:var(--muted); font-size:13px; line-height:1.5; text-decoration:underline; text-underline-offset:4px; }
+.tool-source-link:hover, .tool-source-link:focus-visible { color:var(--text); }
