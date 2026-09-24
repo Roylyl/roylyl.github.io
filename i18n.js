@@ -1074,6 +1074,250 @@
   ]
 ].forEach(([source, traditional, english]) => { cn[source] = source; tw[source] = traditional; en[source] = english; });
 
+  // Localize descriptive English labels; only product/protocol names stay static.
+  [
+  [
+    "CONSUMER ELECTRONICS · HARDWARE · EMBEDDED · AUDIO",
+    "消费电子 · 硬件 · 嵌入式 · 音频",
+    "消費電子 · 硬件 · 嵌入式 · 音頻"
+  ],
+  [
+    "Consumer Electronics · Embedded Audio",
+    "消费电子 · 嵌入式音频",
+    "消費電子 · 嵌入式音頻"
+  ],
+  [
+    "EQUIPMENT TESTING INTERNSHIP",
+    "设备调试与测试实习",
+    "設備調試與測試實習"
+  ],
+  [
+    "Embedded Audio",
+    "嵌入式音频",
+    "嵌入式音頻"
+  ],
+  [
+    "Prototype",
+    "原型开发",
+    "原型開發"
+  ],
+  [
+    "Validation",
+    "工程验证",
+    "工程驗證"
+  ],
+  [
+    "Bring-up",
+    "上电调试",
+    "上電調試"
+  ],
+  [
+    "Audio",
+    "音频",
+    "音頻"
+  ],
+  [
+    "Debugging",
+    "调试排障",
+    "調試排障"
+  ],
+  [
+    "Logging",
+    "日志记录",
+    "日誌記錄"
+  ],
+  [
+    "Integration",
+    "系统集成",
+    "系統整合"
+  ],
+  [
+    "Web",
+    "网页开发",
+    "網頁開發"
+  ],
+  [
+    "AI Audio",
+    "AI 音频",
+    "AI 音頻"
+  ],
+  [
+    "PROJECT 01",
+    "项目 01",
+    "項目 01"
+  ],
+  [
+    "PROJECT 02",
+    "项目 02",
+    "項目 02"
+  ],
+  [
+    "ENGINEERING TOOLS & SOFTWARE",
+    "工程工具与软件",
+    "工程工具與軟件"
+  ],
+  [
+    "Built for GitHub Pages · Engineering first",
+    "基于 GitHub Pages · 以工程为先",
+    "基於 GitHub Pages · 以工程為先"
+  ],
+  [
+    "PCB · Bring-up",
+    "PCB · 上电调试",
+    "PCB · 上電調試"
+  ],
+  [
+    "Embedded Bluetooth Audio",
+    "嵌入式蓝牙音频",
+    "嵌入式藍牙音頻"
+  ],
+  [
+    "First PCB · Hardware Bring-up",
+    "首版 PCB · 硬件上电调试",
+    "首版 PCB · 硬件上電調試"
+  ],
+  [
+    "Dual A2DP · Sync · Delay",
+    "双路 A2DP · 同步 · 延迟",
+    "雙路 A2DP · 同步 · 延遲"
+  ],
+  [
+    "I²S Slave · A2DP Source",
+    "I²S 从机 · A2DP 音源",
+    "I²S 從機 · A2DP 音源"
+  ],
+  [
+    "BLE GATT Control",
+    "BLE GATT 控制",
+    "BLE GATT 控制"
+  ],
+  [
+    "Dual A2DP",
+    "双路 A2DP",
+    "雙路 A2DP"
+  ],
+  [
+    "Independent Volume",
+    "独立音量",
+    "獨立音量"
+  ],
+  [
+    "Channel",
+    "声道",
+    "聲道"
+  ],
+  [
+    "Sync & Delay",
+    "同步与延迟",
+    "同步與延遲"
+  ],
+  [
+    "iOS APP",
+    "iOS 应用",
+    "iOS 應用"
+  ],
+  [
+    "ANDROID APP",
+    "Android 应用",
+    "Android 應用"
+  ],
+  [
+    "UI",
+    "界面",
+    "介面"
+  ],
+  [
+    "Apple Watch UI",
+    "Apple Watch 界面",
+    "Apple Watch 介面"
+  ],
+  [
+    "iPad UI",
+    "iPad 界面",
+    "iPad 介面"
+  ],
+  [
+    "SoundShare project page",
+    "SoundShare 项目介绍",
+    "SoundShare 項目介紹"
+  ],
+  [
+    "designed by Roy",
+    "由 Roy 设计",
+    "由 Roy 設計"
+  ],
+  [
+    "Bluetooth Audio",
+    "蓝牙音频",
+    "藍牙音頻"
+  ],
+  [
+    "Buffer",
+    "音频缓存",
+    "音頻緩存"
+  ],
+  [
+    "40 kHz Modulation / PWM",
+    "40 kHz 调制 / PWM",
+    "40 kHz 調制 / PWM"
+  ],
+  [
+    "Amplifier",
+    "功率放大",
+    "功率放大"
+  ],
+  [
+    "Ultrasonic Array",
+    "超声换能器阵列",
+    "超聲換能器陣列"
+  ],
+  [
+    "Audio signal path",
+    "音频信号链路",
+    "音頻信號鏈路"
+  ],
+  [
+    "Ultrasonic Directional Speaker",
+    "超声波定向扬声器",
+    "超聲波定向揚聲器"
+  ],
+  [
+    "TOOL 01 · AUDIO VALIDATION",
+    "工具 01 · 音频验证",
+    "工具 01 · 音頻驗證"
+  ],
+  [
+    "TOOL 02 · AUDIO VALIDATION",
+    "工具 02 · 音频验证",
+    "工具 02 · 音頻驗證"
+  ],
+  [
+    "TOOL 03 · WEB EXTENSION",
+    "工具 03 · 浏览器扩展",
+    "工具 03 · 瀏覽器擴充功能"
+  ],
+  [
+    "TOOL 04 · macOS",
+    "工具 04 · macOS",
+    "工具 04 · macOS"
+  ],
+  [
+    "EXPERIMENTS",
+    "实验",
+    "實驗"
+  ],
+  [
+    "WANDU · Astra Computer Use / FL Studio",
+    "晚渡 · Astra 计算机操作实验 / FL Studio",
+    "晚渡 · Astra 電腦操作實驗 / FL Studio"
+  ],
+  [
+    "Product · Technology · Entrepreneurship",
+    "产品 · 技术 · 创业",
+    "產品 · 技術 · 創業"
+  ]
+].forEach(([source, simplified, traditional]) => { cn[source] = simplified; tw[source] = traditional; en[source] = source; });
+
   const pageTitles = {
     'other-projects.html': { 'zh-CN': '工程工具与软件项目 · 罗宇伦 Roy Luo', 'zh-TW': '工程工具與軟件項目 · 羅宇倫 Roy Luo', en: 'Engineering Tools & Software · Roy Luo' },
     'index.html': { 'zh-CN': '罗宇伦 Roy Luo', 'zh-TW': '羅宇倫 Roy Luo', en: 'Roy Luo · Engineering Portfolio' },
