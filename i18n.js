@@ -816,8 +816,266 @@
   ]
 ].forEach(([source, traditional, english]) => { cn[source] = source; tw[source] = traditional; en[source] = english; });
 
+
+  // Resume-aligned portfolio copy; HTML remains the Simplified Chinese source.
+  [
+  [
+    "我是罗宇伦，湖南农业大学卓越工程师学院智能科学与技术本科生。重点关注消费电子硬件、嵌入式系统与音频产品，项目实践覆盖 PCB 设计、蓝牙音频链路、软硬件原型、多端交互与工程验证；同时参与智能眼镜 AI 音频相关的模型接入与测试工作。",
+    "我是羅宇倫，湖南農業大學卓越工程師學院智能科學與技術本科生。重點關注消費電子硬件、嵌入式系統與音頻產品，項目實踐涵蓋 PCB 設計、藍牙音頻鏈路、軟硬件原型、多端互動與工程驗證；同時參與智能眼鏡 AI 音頻相關的模型接入與測試工作。",
+    "I’m Roy Luo, an undergraduate in Intelligent Science and Technology at the College of Excellent Engineers, Hunan Agricultural University. My focus is consumer electronics hardware, embedded systems and audio products, with hands-on work in PCB design, Bluetooth audio, hardware/software prototypes, multi-platform controls and engineering validation. I also integrate and test AI audio models for smart glasses."
+  ],
+  [
+    "罗宇伦 Roy Luo 的工程作品集，聚焦消费电子硬件、嵌入式系统、音频产品与工程验证，展示 PCB、蓝牙音频、软硬件原型、多端交互及相关工程工具。",
+    "羅宇倫 Roy Luo 的工程作品集，聚焦消費電子硬件、嵌入式系統、音頻產品與工程驗證，展示 PCB、藍牙音頻、軟硬件原型、多端互動及相關工程工具。",
+    "Roy Luo’s engineering portfolio: consumer electronics hardware, embedded systems, audio products and engineering validation, featuring PCB design, Bluetooth audio, hardware/software prototypes, multi-platform controls and engineering tools."
+  ],
+  [
+    "PCB、嵌入式音频、产品原型与工程验证。",
+    "PCB、嵌入式音頻、產品原型與工程驗證。",
+    "PCB design, embedded audio, product prototypes and engineering validation."
+  ],
+  [
+    "硬件与 PCB",
+    "硬件與 PCB",
+    "Hardware & PCB"
+  ],
+  [
+    "PCB 原理图与 Layout、打样、焊接、Bring-up、硬件调试。",
+    "PCB 原理圖與 Layout、打樣、焊接、Bring-up、硬件調試。",
+    "PCB schematics and layout, fabrication, soldering, bring-up and hardware debugging."
+  ],
+  [
+    "嵌入式与音频",
+    "嵌入式與音頻",
+    "Embedded & Audio"
+  ],
+  [
+    "围绕 ESP32、BLE/A2DP、PCM 与音频链路进行功能实现和系统联调。",
+    "圍繞 ESP32、BLE/A2DP、PCM 與音頻鏈路進行功能實現和系統聯調。",
+    "Implementing and integrating ESP32, BLE/A2DP, PCM and audio signal paths."
+  ],
+  [
+    "工程验证",
+    "工程驗證",
+    "Engineering Validation"
+  ],
+  [
+    "从板级功能、信号链到软件日志进行测试、异常复现和问题定位。",
+    "從板級功能、信號鏈到軟件日誌進行測試、異常重現和問題定位。",
+    "Testing board functions and signal paths, reproducing failures and diagnosing issues with software logs."
+  ],
+  [
+    "软件与产品原型",
+    "軟件與產品原型",
+    "Software & Product Prototypes"
+  ],
+  [
+    "开发移动端、浏览器及测试工具，并将硬件状态、参数配置和多端交互连接起来。",
+    "開發流動端、瀏覽器及測試工具，並將硬件狀態、參數設定和多端互動連接起來。",
+    "Building mobile apps, browser extensions and test tools that connect hardware status, configuration and multi-platform interaction."
+  ],
+  [
+    "围绕智能眼镜音频场景开展声音事件、环境场景与语音识别模型的方案研究、接入与测试验证；搭建统一音频测试工具，支持模型比较、批量测试、日志记录和问题定位。",
+    "圍繞智能眼鏡音頻場景開展聲音事件、環境場景與語音識別模型的方案研究、接入與測試驗證；搭建統一音頻測試工具，支援模型比較、批量測試、日誌記錄和問題定位。",
+    "Research, integrate and validate sound-event, acoustic-scene and speech-recognition models for smart-glasses audio; build unified audio test tools for model comparison, batch testing, logging and issue diagnosis."
+  ],
+  [
+    "长沙市印梦科技有限公司",
+    "長沙市印夢科技有限公司",
+    "Changsha Yinmeng Technology Co., Ltd."
+  ],
+  [
+    "设备调试与测试实习",
+    "設備調試與測試實習",
+    "Equipment Debugging & Test Intern"
+  ],
+  [
+    "参与超声波刀设备参数调试、性能测试与样机异常复现，围绕工作频率、驱动参数及运行状态开展工程验证。",
+    "參與超聲波刀設備參數調試、性能測試與樣機異常重現，圍繞工作頻率、驅動參數及運行狀態開展工程驗證。",
+    "Assisted with ultrasonic cutting equipment tuning, performance testing and prototype fault reproduction, validating operating frequency, drive parameters and operating states."
+  ],
+  [
+    "角色：个人独立全链路开发",
+    "角色：個人獨立全鏈路開發",
+    "Role: Sole developer"
+  ],
+  [
+    "基于 ESP32 搭建蓝牙 PCM 接收、实时缓存、40 kHz 超声调制、功放与换能器阵列发声链路，完成第一代工程样机验证。",
+    "基於 ESP32 搭建藍牙 PCM 接收、即時緩存、40 kHz 超聲調制、功放與換能器陣列發聲鏈路，完成第一代工程樣機驗證。",
+    "Built and validated a first-generation ESP32 prototype spanning Bluetooth PCM reception, real-time buffering, 40 kHz modulation, amplification and an ultrasonic transducer array."
+  ],
+  [
+    "如果你在寻找消费电子、硬件、嵌入式或音频方向的实习生，欢迎联系我。",
+    "如果你正在尋找消費電子、硬件、嵌入式或音頻方向的實習生，歡迎聯絡我。",
+    "Looking for an intern in consumer electronics, hardware, embedded systems or audio? Let’s talk."
+  ],
+  [
+    "SoundTest、ASRtest、DeerWebTranslator、MacDuo 与 READMEWriter：覆盖音频模型测试、多 Runtime 集成、浏览器扩展、macOS 交互与工程文档工具。",
+    "SoundTest、ASRtest、DeerWebTranslator、MacDuo 與 READMEWriter：涵蓋音頻模型測試、多 Runtime 整合、瀏覽器擴充功能、macOS 互動與工程文件工具。",
+    "SoundTest, ASRtest, DeerWebTranslator, MacDuo and READMEWriter: audio model testing, multi-runtime integration, browser extensions, macOS interaction and engineering documentation tools."
+  ],
+  [
+    "工程工具与软件项目",
+    "工程工具與軟件項目",
+    "Engineering Tools & Software"
+  ],
+  [
+    "SoundTest、ASRtest、DeerWebTranslator、MacDuo 与 READMEWriter：覆盖音频模型测试、多 Runtime 集成、浏览器扩展、macOS 交互与工程文档工具。",
+    "SoundTest、ASRtest、DeerWebTranslator、MacDuo 與 READMEWriter：涵蓋音頻模型測試、多 Runtime 整合、瀏覽器擴充功能、macOS 互動與工程文件工具。",
+    "SoundTest, ASRtest, DeerWebTranslator, MacDuo and READMEWriter: audio model testing, multi-runtime integration, browser extensions, macOS interaction and engineering documentation tools."
+  ],
+  [
+    "工程工具与软件项目",
+    "工程工具與軟件項目",
+    "Engineering Tools & Software"
+  ],
+  [
+    "面向跨生态多人蓝牙音频共享的轻量化硬件中继。个人独立完成首版 PCB、嵌入式音频链路及多端控制开发，当前硬件原型与核心音频、控制流程已完成首轮验证。",
+    "面向跨生態多人藍牙音頻共享的輕量化硬件中繼。個人獨立完成首版 PCB、嵌入式音頻鏈路及多端控制開發，目前硬件原型與核心音頻、控制流程已完成首輪驗證。",
+    "A lightweight hardware relay for shared Bluetooth audio across ecosystems. As sole developer, I built the first PCB, embedded audio path and multi-platform controls; the hardware prototype and core audio and control flows have completed initial validation."
+  ],
+  [
+    "个人独立全链路开发",
+    "個人獨立全鏈路開發",
+    "SOLE DEVELOPER"
+  ],
+  [
+    "独立完成 iPhone、iPad、Android、微信小程序与 Apple Watch 控制端开发及联调，覆盖设备发现、连接状态、参数配置、同步校准与异常反馈。",
+    "獨立完成 iPhone、iPad、Android、微信小程式與 Apple Watch 控制端開發及聯調，涵蓋設備發現、連接狀態、參數設定、同步校準與異常回饋。",
+    "Independently developed and integrated controls for iPhone, iPad, Android, WeChat Mini Program and Apple Watch, covering discovery, connection status, configuration, sync calibration and error feedback."
+  ],
+  [
+    "硬件原型、嵌入式音频链路及多端控制已完成首轮验证；后续继续扩展设备覆盖与长期稳定性测试。",
+    "硬件原型、嵌入式音頻鏈路及多端控制已完成首輪驗證；後續繼續擴展設備覆蓋與長期穩定性測試。",
+    "The hardware prototype, embedded audio path and multi-platform controls have completed initial validation. Further work expands device coverage and long-duration stability testing."
+  ],
+  [
+    "基于 ESP32 的定向音频工程项目，围绕蓝牙 PCM 音频接收、实时缓存、40 kHz 超声调制、功率放大与换能器阵列建立完整发声链路，并完成第一代工程样机验证。",
+    "基於 ESP32 的定向音頻工程項目，圍繞藍牙 PCM 音頻接收、即時緩存、40 kHz 超聲調制、功率放大與換能器陣列建立完整發聲鏈路，並完成第一代工程樣機驗證。",
+    "An ESP32 directional-audio project spanning Bluetooth PCM reception, real-time buffering, 40 kHz ultrasonic modulation, power amplification and a transducer array, with a validated first-generation engineering prototype."
+  ],
+  [
+    "蓝牙 PCM 音频接收",
+    "藍牙 PCM 音頻接收",
+    "Bluetooth PCM audio reception"
+  ],
+  [
+    "实时音频缓存与更新",
+    "即時音頻緩存與更新",
+    "Real-time audio buffering and updates"
+  ],
+  [
+    "PWM / 40 kHz 超声调制",
+    "PWM / 40 kHz 超聲調制",
+    "PWM / 40 kHz ultrasonic modulation"
+  ],
+  [
+    "系统联调与异常排查",
+    "系統聯調與異常排查",
+    "System integration and troubleshooting"
+  ],
+  [
+    "功放与信号链搭建",
+    "功放與信號鏈搭建",
+    "Amplifier and signal-path assembly"
+  ],
+  [
+    "换能器阵列集成",
+    "換能器陣列整合",
+    "Transducer-array integration"
+  ],
+  [
+    "原理图 / PCB 设计与打样",
+    "原理圖 / PCB 設計與打樣",
+    "Schematics / PCB design and fabrication"
+  ],
+  [
+    "输出与系统状态测试",
+    "輸出與系統狀態測試",
+    "Output and system-state testing"
+  ],
+  [
+    "实验",
+    "實驗",
+    "Experiments"
+  ],
+  [
+    "移动端音频模型测试与验证工具",
+    "流動端音頻模型測試與驗證工具",
+    "Mobile audio model testing and validation"
+  ],
+  [
+    "在 iPhone / iPad 统一接入 6 组声音事件与环境场景模型，覆盖 sherpa-onnx / ONNX Runtime、TensorFlow Lite 等推理路径，并建立录音、批量 WAV、重采样、滑动分窗、日志及事件时间线流程。",
+    "在 iPhone / iPad 統一接入 6 組聲音事件與環境場景模型，涵蓋 sherpa-onnx / ONNX Runtime、TensorFlow Lite 等推理路徑，並建立錄音、批量 WAV、重新取樣、滑動分窗、日誌及事件時間線流程。",
+    "Integrated six groups of sound-event and acoustic-scene models on iPhone / iPad through sherpa-onnx / ONNX Runtime and TensorFlow Lite, with recording, batch WAV tests, resampling, sliding windows, logging and event timelines."
+  ],
+  [
+    "针对猫叫、狗叫、咳嗽、笑声和鼓掌，在 iPhone 模拟器完成 EfficientAT 500 条统一样本批测，并完成 ONNX 适配、Accelerate 前处理与 Golden Fixture 数值核对。",
+    "針對貓叫、狗叫、咳嗽、笑聲和鼓掌，在 iPhone 模擬器完成 EfficientAT 500 條統一樣本批測，並完成 ONNX 適配、Accelerate 前處理與 Golden Fixture 數值核對。",
+    "Ran a unified 500-sample EfficientAT batch test on an iPhone simulator for cat and dog sounds, coughing, laughter and applause; completed ONNX adaptation, Accelerate preprocessing and numerical checks against golden fixtures."
+  ],
+  [
+    "多 Runtime 本地语音识别测试工具",
+    "多 Runtime 本地語音識別測試工具",
+    "Multi-runtime local speech-recognition test tool"
+  ],
+  [
+    "在 iPhone / iPad 统一集成 Zipformer、Whisper、Vosk、SenseVoice、Paraformer 与 Fun-ASR-Nano 等 8 组模型，覆盖流式与非流式识别。",
+    "在 iPhone / iPad 統一整合 Zipformer、Whisper、Vosk、SenseVoice、Paraformer 與 Fun-ASR-Nano 等 8 組模型，涵蓋串流與非串流識別。",
+    "Integrated eight model groups on iPhone / iPad, including Zipformer, Whisper, Vosk, SenseVoice, Paraformer and Fun-ASR-Nano, covering streaming and non-streaming recognition."
+  ],
+  [
+    "整合 sherpa-onnx / ONNX Runtime、whisper.cpp、Vosk、llama.cpp / GGML，支持最多 100 个 WAV 批测及约 1.86 GB 模型资源的 Manifest / SHA256 管理。",
+    "整合 sherpa-onnx / ONNX Runtime、whisper.cpp、Vosk、llama.cpp / GGML，支援最多 100 個 WAV 批測及約 1.86 GB 模型資源的 Manifest / SHA256 管理。",
+    "Unified sherpa-onnx / ONNX Runtime, whisper.cpp, Vosk and llama.cpp / GGML; supports batches of up to 100 WAV files and Manifest / SHA256 management of approximately 1.86 GB of model assets."
+  ],
+  [
+    "工具 05 · Codex 技能",
+    "工具 05 · Codex 技能",
+    "TOOL 05 · Codex Skill"
+  ],
+  [
+    "深圳科创学院",
+    "深圳科創學院",
+    "Shenzhen InnoX Academy"
+  ],
+  [
+    "Audio signal path",
+    "音頻信號鏈路",
+    "Audio signal path"
+  ],
+  [
+    "ENGINEERING TOOLS & SOFTWARE",
+    "工程工具與軟件",
+    "ENGINEERING TOOLS & SOFTWARE"
+  ]
+].forEach(([source, traditional, english]) => { cn[source] = source; tw[source] = traditional; en[source] = english; });
+
+  [
+  [
+    "SoundTest、ASRtest、DeerWebTranslator、MacDuo 与 READMEWriter：音频测试、工程工具与软件项目，另附 Computer Use 实验。",
+    "SoundTest、ASRtest、DeerWebTranslator、MacDuo 與 READMEWriter：音頻測試、工程工具與軟件項目，另附 Computer Use 實驗。",
+    "SoundTest, ASRtest, DeerWebTranslator, MacDuo and READMEWriter: audio testing, engineering tools and software projects, plus a separate Computer Use experiment."
+  ],
+  [
+    "个人独立完成从 PCB、嵌入式蓝牙音频链路到多端控制的软硬件产品原型。以轻量中继连接音源与多个播放终端，支持独立音量、声道分配及同步校准，已完成首轮验证。",
+    "個人獨立完成從 PCB、嵌入式藍牙音頻鏈路到多端控制的軟硬件產品原型。以輕量中繼連接音源與多個播放終端，支援獨立音量、聲道分配及同步校準，已完成首輪驗證。",
+    "Independently built a hardware/software prototype from PCB design and embedded Bluetooth audio to multi-platform controls. A lightweight relay connects an audio source to multiple playback devices, with independent volume, channel assignment and sync calibration; initial validation is complete."
+  ],
+  [
+    "独立完成首版 PCB 原理图 / Layout、打样、焊接、Bring-up 与板级功能验证，实现硬件原型与移动终端稳定连接。",
+    "獨立完成首版 PCB 原理圖 / Layout、打樣、焊接、Bring-up 與板級功能驗證，實現硬件原型與流動終端穩定連接。",
+    "Independently completed PCB schematics and layout, fabrication, soldering, bring-up and board-level validation, establishing stable connections between the prototype and mobile devices."
+  ],
+  [
+    "独立实现并验证音源终端－蓝牙中继－多播放终端链路，覆盖 A2DP 输入 / 输出、多设备连接、音频缓存与同步、独立音量、声道分配及延迟校准。",
+    "獨立實現並驗證音源終端－藍牙中繼－多播放終端鏈路，涵蓋 A2DP 輸入 / 輸出、多設備連接、音頻緩存與同步、獨立音量、聲道分配及延遲校準。",
+    "Independently implemented and validated the source–Bluetooth relay–multiple playback device path, covering A2DP input/output, multi-device connections, buffering and synchronization, independent volume, channel assignment and latency calibration."
+  ]
+].forEach(([source, traditional, english]) => { cn[source] = source; tw[source] = traditional; en[source] = english; });
+
   const pageTitles = {
-    'other-projects.html': { 'zh-CN': '其他项目 · 罗宇伦 Roy Luo', 'zh-TW': '其他項目 · 羅宇倫 Roy Luo', en: 'Other Projects · Roy Luo' },
+    'other-projects.html': { 'zh-CN': '工程工具与软件项目 · 罗宇伦 Roy Luo', 'zh-TW': '工程工具與軟件項目 · 羅宇倫 Roy Luo', en: 'Engineering Tools & Software · Roy Luo' },
     'index.html': { 'zh-CN': '罗宇伦 Roy Luo', 'zh-TW': '羅宇倫 Roy Luo', en: 'Roy Luo · Engineering Portfolio' },
     'soundshare.html': { 'zh-CN': '音享贴 · LENGHE SoundShare', 'zh-TW': '音享貼 · LENGHE SoundShare', en: 'LENGHE SoundShare · Roy Luo' },
     'ultrasonic.html': { 'zh-CN': '超声波定向扬声器 · Roy Luo', 'zh-TW': '超聲波定向揚聲器 · Roy Luo', en: 'Ultrasonic Directional Speaker · Roy Luo' },
@@ -831,11 +1089,10 @@
   };
 
   const resumeAssets = {
-    'zh-CN': 'assets/罗宇伦_简历.pdf',
-    'zh-TW': 'assets/羅宇倫_履歷.pdf',
-    en: 'assets/Roy Luo_Resume.pdf'
+    'zh-CN': 'assets/resume-zh-cn.pdf',
+    'zh-TW': 'assets/resume-zh-hk.pdf',
+    en: 'assets/resume-en.pdf'
   };
-  const resumeVersion = '20260907-3';
 
   const originalText = new WeakMap();
   const originalAttrs = new WeakMap();
@@ -911,7 +1168,7 @@
   function updateResumeLinks(lang) {
     const asset = resumeAssets[lang] || resumeAssets['zh-CN'];
     document.querySelectorAll('[data-resume-link]').forEach((el) => {
-      el.setAttribute('href', `${asset}?v=${resumeVersion}`);
+      el.setAttribute('href', asset);
     });
   }
 

@@ -1,2 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# PDF cross-reference offsets must never be normalized as text.
+*.pdf binary

@@ -423,3 +423,5 @@ img { display: block; max-width: 100%; }
   .ss-section { padding: 88px 0; }
   .ui-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+.ss-ownership { margin:20px 0 0; color:var(--text); font-size:13px; font-weight:700; letter-spacing:.04em; line-height:1.6; }

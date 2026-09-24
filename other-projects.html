@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="DeerWebTranslator、MacDuo、晚渡与 READMEWriter 的项目介绍、设计思考和 Astra Computer Use 测试产物。" />
+  <meta name="description" content="SoundTest、ASRtest、DeerWebTranslator、MacDuo 与 READMEWriter：音频测试、工程工具与软件项目，另附 Computer Use 实验。" />
   <meta name="theme-color" content="#05070b" />
   <meta name="color-scheme" content="dark" />
   <style>html { background: #05070b; color-scheme: dark; } body { background-color: #05070b; }</style>
@@ -11,10 +11,10 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-avatar-32.png?v=20260902-1" />
   <link rel="icon" type="image/png" sizes="180x180" href="assets/favicon-avatar-180.png?v=20260902-1" />
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=20260902-1" />
-  <title>其他项目 · 罗宇伦 Roy Luo</title>
+  <title>工程工具与软件项目 · 罗宇伦 Roy Luo</title>
   <link rel="stylesheet" href="philosophy.css?v=20260922-3" />
   <link rel="stylesheet" href="portfolio-additions.css?v=20260922-3" />
-  <link rel="stylesheet" href="other-projects.css?v=20260922-4" />
+  <link rel="stylesheet" href="other-projects.css?v=20260925-1" />
   <link rel="stylesheet" href="i18n.css?v=20260922-1" />
   <link rel="stylesheet" href="background-music.css?v=20260923-8" />
   <link rel="stylesheet" href="region-notice.css?v=20260918-4" />
@@ -31,22 +31,42 @@
     <a class="p-home-link" href="index.html#other-projects" aria-label="返回主页"><span aria-hidden="true">←</span><span class="p-home-label">返回主页</span></a>
     <button class="secondary-menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="contents"><span></span><span></span></button>
     <nav id="contents" aria-label="本页目录">
+      <a href="#soundtest" data-i18n-static>SoundTest</a>
+      <a href="#asrtest" data-i18n-static>ASRtest</a>
       <a href="#deer-web-translator" data-i18n-static>DeerWebTranslator</a>
       <a href="#macduo" data-i18n-static>MacDuo</a>
-      <a href="#wandu">晚渡</a>
       <a href="#readme-writer" data-i18n-static>READMEWriter</a>
+      <a href="#experiments">实验</a>
     </nav>
   </header>
 
   <main class="wrap p-reading">
     <header class="p-intro">
-      <p class="eyebrow">SOFTWARE &amp; INTERACTION</p>
-      <h1>其他项目</h1>
-      <p class="lead">DeerWebTranslator、MacDuo、《晚渡》与 READMEWriter：浏览器扩展、桌面交互、Astra Computer Use 音乐制作测试与基于证据的文档工具。</p>
+      <p class="eyebrow">ENGINEERING TOOLS &amp; SOFTWARE</p>
+      <h1>工程工具与软件项目</h1>
+      <p class="lead">SoundTest、ASRtest、DeerWebTranslator、MacDuo 与 READMEWriter：覆盖音频模型测试、多 Runtime 集成、浏览器扩展、macOS 交互与工程文档工具。</p>
     </header>
+<article class="other-project software-project-card portfolio-card" id="soundtest" tabindex="-1">
+          <div class="project-copy">
+          <p class="project-tag" data-i18n-static>TOOL 01 · AUDIO VALIDATION</p>
+          <h2 data-i18n-static>SoundTest</h2>
+          <p class="project-subtitle">移动端音频模型测试与验证工具</p>
+          <p>在 iPhone / iPad 统一接入 6 组声音事件与环境场景模型，覆盖 sherpa-onnx / ONNX Runtime、TensorFlow Lite 等推理路径，并建立录音、批量 WAV、重采样、滑动分窗、日志及事件时间线流程。</p>
+          <p>针对猫叫、狗叫、咳嗽、笑声和鼓掌，在 iPhone 模拟器完成 EfficientAT 500 条统一样本批测，并完成 ONNX 适配、Accelerate 前处理与 Golden Fixture 数值核对。</p>
+          </div>
+          </article>
+<article class="other-project software-project-card portfolio-card" id="asrtest" tabindex="-1">
+          <div class="project-copy">
+          <p class="project-tag" data-i18n-static>TOOL 02 · AUDIO VALIDATION</p>
+          <h2 data-i18n-static>ASRtest</h2>
+          <p class="project-subtitle">多 Runtime 本地语音识别测试工具</p>
+          <p>在 iPhone / iPad 统一集成 Zipformer、Whisper、Vosk、SenseVoice、Paraformer 与 Fun-ASR-Nano 等 8 组模型，覆盖流式与非流式识别。</p>
+          <p>整合 sherpa-onnx / ONNX Runtime、whisper.cpp、Vosk、llama.cpp / GGML，支持最多 100 个 WAV 批测及约 1.86 GB 模型资源的 Manifest / SHA256 管理。</p>
+          </div>
+          </article>
         <article class="other-project software-project-card portfolio-card" id="deer-web-translator" tabindex="-1">
           <div class="project-copy">
-            <p class="project-tag">PROJECT 03 · WEB EXTENSION</p>
+            <p class="project-tag">TOOL 03 · WEB EXTENSION</p>
             <h2 data-i18n-static>Deer<wbr>Web<wbr>Translator</h2>
             <p class="project-subtitle">在原来的页面里，继续阅读。</p>
             <div class="project-facts"><span>浏览器扩展</span><span>原位翻译 · 双语切换</span></div>
@@ -70,7 +90,7 @@
 
         <article class="other-project software-project-card portfolio-card" id="macduo" tabindex="-1">
           <div class="project-copy">
-            <p class="project-tag">PROJECT 04 · macOS EXPERIMENT</p>
+            <p class="project-tag">TOOL 04 · macOS</p>
             <h2 data-i18n-static>MacDuo</h2>
             <p class="project-subtitle">从铰链动作，到屏幕反馈。</p>
             <div class="project-facts"><span>macOS 视觉实验</span><span>基于 MacBook-Duo 改进</span></div>
@@ -91,9 +111,32 @@
             <a class="button primary" href="https://github.com/Roylyl/MacDuo" target="_blank" rel="noopener noreferrer">查看 MacDuo 源码 ↗</a>
           </div>
         </article>
-      <article class="other-project wandu-project portfolio-card" id="wandu" tabindex="-1">
+
+        <article class="other-project software-project-card portfolio-card" id="readme-writer" tabindex="-1">
+          <div class="project-copy">
+            <p class="project-tag">工具 05 · Codex 技能</p>
+            <h2 data-i18n-static>README<wbr>Writer</h2>
+            <p class="project-subtitle">从仓库证据出发，让项目说明可追溯、可检查。</p>
+            <div class="project-facts"><span>Codex 文档技能</span><span>声明与证据 · 离线校验</span></div>
+            <p>READMEWriter 是面向 Codex 的文档技能，将项目分类、证据收集、README 编写、视觉规范与离线校验串成完整流程。它提供 15 类项目规范，将关键声明关联到配置、源码或验证记录，并检查链接、图片、锚点、占位符、徽章归属与证据完整性。写作指令无需编译；离线校验器使用 Python 3.9+ 标准库，不联网，也不执行 README 中的命令。</p>
+            <div class="project-notes">
+              <h3 class="project-notes-title">文档质量，从事实到验证</h3>
+              <div class="project-notes-body">
+                <p>读者需要知道项目能做什么，也需要知道这些结论依据什么。READMEWriter 将文档质量拆成可追溯的声明、可自动检查的结构，以及需要进一步判断的语义准确性。</p>
+                <ul>
+                  <li>按项目分类：针对应用、工具、软硬件与研究原型等 15 类项目，明确文档应回答的问题与验证目标。</li>
+                  <li>让声明可追溯：用证据记录关联原句、来源与摘录，可选哈希检测来源变化，区分配置、实现、测试和发布状态。</li>
+                  <li>分开检查与评审：离线校验支持严格模式与 CI；七类合成工程用于评估完整性。自动通过不代表事实正确，也不代表真实 Agent 的跨项目写作成功率，语义仍需单独复核。</li>
+                </ul>
+              </div>
+            </div>
+            <a class="button primary" href="https://github.com/Roylyl/READMEWriter" target="_blank" rel="noopener noreferrer">READMEWriter 详情 · 源码 ↗</a>
+          </div>
+        </article>
+
+    <section id="experiments" class="experiments-section" aria-labelledby="experiments-title"><p class="eyebrow" data-i18n-static>EXPERIMENTS</p><h2 id="experiments-title">实验</h2>      <article class="other-project wandu-project portfolio-card" id="wandu" tabindex="-1">
         <div class="production-copy">
-          <p class="project-tag">ASTRA COMPUTER USE TEST</p>
+          <p class="project-tag">WANDU · Astra Computer Use / FL Studio</p>
           <h2>晚渡</h2>
           <p>《晚渡》完全由 Codex GPT-6 Astra 模型操作 MacBook 上的 FL Studio 完成。这不是我的个人作品，而是一次 Astra Computer Use 测试；此处保留试听、工程与 MIDI，供查看测试产物。</p>
           <span class="work-audio-label" id="wandu-listen-label">测试产物试听 · 约 4 分 28 秒</span>
@@ -120,33 +163,11 @@
             <a class="button secondary" href="https://github.com/Roylyl/Astra-Music/tree/df51e74ce1cf666fce768b21702116cdc9f091d7/MIDI" target="_blank" rel="noopener noreferrer">浏览 MIDI 素材 ↗</a>
           </div>
         </div>
-      </article>
-        <article class="other-project software-project-card portfolio-card" id="readme-writer" tabindex="-1">
-          <div class="project-copy">
-            <p class="project-tag">项目 05 · Codex 技能</p>
-            <h2 data-i18n-static>README<wbr>Writer</h2>
-            <p class="project-subtitle">从仓库证据出发，让项目说明可追溯、可检查。</p>
-            <div class="project-facts"><span>Codex 文档技能</span><span>声明与证据 · 离线校验</span></div>
-            <p>READMEWriter 是面向 Codex 的文档技能，将项目分类、证据收集、README 编写、视觉规范与离线校验串成完整流程。它提供 15 类项目规范，将关键声明关联到配置、源码或验证记录，并检查链接、图片、锚点、占位符、徽章归属与证据完整性。写作指令无需编译；离线校验器使用 Python 3.9+ 标准库，不联网，也不执行 README 中的命令。</p>
-            <div class="project-notes">
-              <h3 class="project-notes-title">文档质量，从事实到验证</h3>
-              <div class="project-notes-body">
-                <p>读者需要知道项目能做什么，也需要知道这些结论依据什么。READMEWriter 将文档质量拆成可追溯的声明、可自动检查的结构，以及需要进一步判断的语义准确性。</p>
-                <ul>
-                  <li>按项目分类：针对应用、工具、软硬件与研究原型等 15 类项目，明确文档应回答的问题与验证目标。</li>
-                  <li>让声明可追溯：用证据记录关联原句、来源与摘录，可选哈希检测来源变化，区分配置、实现、测试和发布状态。</li>
-                  <li>分开检查与评审：离线校验支持严格模式与 CI；七类合成工程用于评估完整性。自动通过不代表事实正确，也不代表真实 Agent 的跨项目写作成功率，语义仍需单独复核。</li>
-                </ul>
-              </div>
-            </div>
-            <a class="button primary" href="https://github.com/Roylyl/READMEWriter" target="_blank" rel="noopener noreferrer">READMEWriter 详情 · 源码 ↗</a>
-          </div>
-        </article>
-
+      </article></section>
     <div class="p-return"><a class="p-home-link" href="index.html#other-projects"><span aria-hidden="true">←</span><span>返回主页</span></a></div>
   </main>
-  <footer class="p-footer wrap"><span>© <span id="pYear"></span> 罗宇伦 Roy Luo</span><span>SOFTWARE &amp; INTERACTION</span><span class="music-copyright">背景音乐仅用于个人非商业展示 · 音乐版权归原权利人所有</span></footer>
-  <script src="i18n.js?v=20260923-2"></script>
+  <footer class="p-footer wrap"><span>© <span id="pYear"></span> 罗宇伦 Roy Luo</span><span>ENGINEERING TOOLS &amp; SOFTWARE</span><span class="music-copyright">背景音乐仅用于个人非商业展示 · 音乐版权归原权利人所有</span></footer>
+  <script src="i18n.js?v=20260925-2"></script>
   <script src="background-music.js?v=20260922-2"></script>
   <script src="continuous-navigation.js?v=20260923-30"></script>
   <script src="philosophy.js?v=20260922-2"></script>

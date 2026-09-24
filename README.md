@@ -4,7 +4,7 @@
 
 # 罗宇伦 · Roy Luo
 
-### Hardware · Embedded · Engineering Portfolio
+### Consumer Electronics · Hardware · Embedded · Audio
 
 以工程能力为主线，把想法做成样机。
 
@@ -17,7 +17,7 @@
 
 </div>
 
-这是罗宇伦的个人作品集网站。内容围绕硬件开发、嵌入式系统、音频产品和工程验证展开，记录从需求与技术判断，到样机实现、调试与验证的实践过程；音乐与音频设备实践、行业调研和产品思考则呈现工程工作如何连接真实场景。
+这是罗宇伦的个人作品集网站。内容围绕消费电子硬件、嵌入式系统、音频产品和工程验证展开，记录从需求与技术判断，到样机实现、调试与验证的实践过程；音乐与音频设备实践、行业调研和产品思考则呈现工程工作如何连接真实场景。
 
 主站由五个静态页面组成，使用原生 HTML、CSS 和 JavaScript，无需安装前端依赖或执行构建。仓库同时保留三个独立站点目录，它们不属于主站的五页导航体系。
 
@@ -28,9 +28,9 @@
 | 内容 | 入口 | 说明 |
 | --- | --- | --- |
 | 个人作品集 | [作品集详情](https://roylyl.github.io/) · [源码](https://github.com/Roylyl/roylyl.github.io/blob/main/index.html) | 个人介绍、能力、实习、项目、音乐与联系方式 |
-| 01 · 音享贴 · LENGHE SoundShare | [音享贴详情](https://roylyl.github.io/soundshare.html) · [源码](https://github.com/Roylyl/roylyl.github.io/blob/main/soundshare.html) | 跨生态多人蓝牙音频共享硬件原型与产品设计 |
+| 01 · 音享贴 · LENGHE SoundShare | [音享贴详情](https://roylyl.github.io/soundshare.html) · [源码](https://github.com/Roylyl/roylyl.github.io/blob/main/soundshare.html) | 个人独立完成 PCB、嵌入式音频链路与多端控制的软硬件原型 |
 | 02 · 超声波定向扬声器 | [超声波详情](https://roylyl.github.io/ultrasonic.html) · [源码](https://github.com/Roylyl/roylyl.github.io/blob/main/ultrasonic.html) | ESP32 驱动的定向音频第一代 Demo |
-| 其他项目 | [其他项目详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/roylyl.github.io/blob/main/other-projects.html) | DeerWebTranslator、MacDuo、晚渡（Astra Computer Use 音乐制作测试）与 READMEWriter |
+| 其他项目 | [其他项目详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/roylyl.github.io/blob/main/other-projects.html) | SoundTest、ASRtest、DeerWebTranslator、MacDuo、READMEWriter；晚渡单列实验区 |
 | DeerWebTranslator | [DeerWebTranslator详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/DeerWebTranslator) | 原位翻译、阅读状态与取消恢复 |
 | MacDuo | [MacDuo详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/MacDuo) | 基于 MacBook-Duo 的形态交互实验 |
 | 晚渡 | [晚渡详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/Astra-Music) | Codex GPT-6 Astra 操作 MacBook 上 FL Studio 的 Computer Use 测试，非个人作品 |
@@ -54,13 +54,13 @@
 | 1 | 首屏介绍 · `#top` | 姓名与工程方向、个人简介、当前重点与音乐身份、形象图片；提供查看项目、联系和简历下载入口。 |
 | 2 | 关于与能力 · `#about` | 嵌入式开发、硬件与验证、项目推进、产品与调研四组能力。 |
 | 3 | 实习与行业经历 · `#experience` | 雷鸟创新、湖南康通电子、深圳科创学院的岗位、时间与实践内容。 |
-| 4 | 项目 · `#projects` | 音享贴（01）在前、超声波定向扬声器（02）在后；接着是“其他项目”短入口和“产品与创业理念”短入口，四部分同属项目区。桌面硬件卡片并排，窄屏按相同顺序纵向排列。 |
+| 4 | 项目 · `#projects` | 音享贴（01）在前、超声波定向扬声器（02）在后；接着是“工程工具与软件项目”短入口和“产品与创业理念”短入口，四部分同属项目区。桌面硬件卡片并排，窄屏按相同顺序纵向排列。 |
 | 5 | 音乐实践 · `#music` | DP 音乐工作室与 Desk Park 乐队介绍、现场照片、两段演出视频；视频使用平台原生播放器并按 IP 自动选源。 |
 | 6 | 社交媒体 · `#social` | 微信、Instagram、抖音、WhatsApp 的账号与二维码；支持二维码放大、账号复制，适用的平台提供外部入口。 |
 | 7 | 联系 · `#contact` | 交流说明、邮箱、GitHub 与简历下载入口。 |
 | 8 | 页脚 | 姓名与年份、网站署名及背景音乐版权说明。 |
 
-“其他项目”入口位于 `#other-projects`，理念入口位于 `#philosophy`，二者都属于 `#projects`，不再单独占用首页顶部导航项。软件项目的完整介绍及《晚渡》试听在其他项目页，完整理念在理念页。
+“工程工具与软件项目”入口位于 `#other-projects`，理念入口位于 `#philosophy`，二者都属于 `#projects`，不再单独占用首页顶部导航项。软件项目的完整介绍及《晚渡》试听在其他项目页，完整理念在理念页。
 
 ### 四个二级页面
 
@@ -68,7 +68,7 @@
 | --- | --- | --- |
 | [音享贴](soundshare.html) | 项目介绍（`#intro`）→ 产品价值与完整使用流程（`#value`）→ PCB、板级验证、双路音频、控制应用及系统架构（`#prototype`）→ iOS、Android、小程序、Apple Watch、iPad 界面（`#ui`）→ 影音共享、K 歌与户外组网场景（`#scenes`）→ 后续验证方向与收尾入口。 | 顶部目录直达介绍、产品价值、原型状态、界面、场景；另有个人主页与超声波页面入口。 |
 | [超声波定向扬声器](ultrasonic.html) | 项目介绍（`#intro`）→ 目标、角色与阶段（`#overview`）→ 系统、嵌入式、硬件及推进过程（`#engineering`）→ 目标位置、邻近区域与移动路径等空间验证问题（`#spatial-questions`）→ 展板和团队样机照片（`#gallery`）。 | 顶部目录直达介绍、概览、工程、画面；空间验证内容位于工程与画面之间。另有个人主页与音享贴页面入口。 |
-| [其他项目](other-projects.html) | 页面导言 → DeerWebTranslator 的原位翻译与阅读状态设计（`#deer-web-translator`）→ MacDuo 的桌面交互、控制与恢复（`#macduo`）→ 晚渡的 Astra Computer Use 测试声明、原生试听、参数、测试产物及工程与 MIDI 链接（`#wandu`）→ READMEWriter 的仓库事实核对与文档写作规范（`#readme-writer`）→ 返回主页。 | 顶部直接列出四个条目。软件项目的设计说明和晚渡的测试说明始终展开；源码链接分别进入对应仓库。返回入口定位到首页 `#other-projects`。 |
+| [工程工具与软件项目](other-projects.html) | 导言 → SoundTest（`#soundtest`）→ ASRtest（`#asrtest`）→ DeerWebTranslator（`#deer-web-translator`）→ MacDuo（`#macduo`）→ READMEWriter（`#readme-writer`）→ Experiments（`#experiments`）中的晚渡（`#wandu`）→ 返回主页。 | 音频工具仅展示技术说明，不提供源码入口；500 条 EfficientAT 批测注明 iPhone 模拟器范围。其他软件保留源码链接，晚渡保留非个人作品声明、试听及测试产物。 |
 | [产品与创业理念](philosophy.html) | 页面导言 → 产品判断（`#product`）→ 交互与学习（`#interaction`）→ 技术融合（`#fusion`）→ 使用验证（`#validation`）→ 经营与研究（`#startup`）→ 长期方向（`#future`）→ 返回主页。 | 六个章节直接放在顶部目录，正文始终展开；技术融合章节链接音享贴，使用验证章节链接超声波。返回入口定位到首页 `#philosophy`。 |
 
 四页末尾均保留姓名、年份、主题信息与背景音乐版权说明。晚渡的标题和目录名称在简、繁中文下显示“晚渡”，英文下显示“WANDU”；其测试性质与非个人作品声明在正文中明确保留。
@@ -104,7 +104,7 @@ py -3 scripts/preview.py 8000
 
 打开 [本地网站](http://127.0.0.1:8000/)，在终端按 `Ctrl+C` 停止。若端口已被占用，把命令和访问地址中的 `8000` 一起换成其他端口。
 
-使用 HTTP 服务预览，不要直接双击 HTML。`file://` 下的同源判断、跨页面通信和第三方请求可能与正式网站不同。预览服务需以仓库根目录为入口，连续导航按站点根路径识别页面。
+使用 HTTP 服务预览，不要直接双击 HTML。直接以本地文件方式打开时，同源判断、跨页面通信和第三方请求可能与正式网站不同。预览服务需以仓库根目录为入口，连续导航按站点根路径识别页面。
 
 ## 验证
 
@@ -144,7 +144,7 @@ git diff --check
 3. **粒子与布局**：在代表视口下检查横向溢出；在可用输入设备上检查交互：鼠标可以接管粒子，手指滚动不受干扰；减少动态效果、切后台和返回页面正常。
 4. **菜单与联系方式**：检查手机导航、语言菜单的键盘操作，以及二维码放大、Esc 关闭、账号复制与反馈。
 5. **视频与音乐**：检查两段原生视频在中国大陆、其他地区和检测失败时的自动选源；进入详情页后首页视频停止、首页粒子暂停；返回后重新加载播放器，保持自动播放关闭。检查《晚渡》原生试听、暂停、进度与独立音频入口；试听与背景音乐互斥；分别检查独立打开和首页内嵌导航，离开《晚渡》所在页面后不继续播放，返回后不自动续播。
-6. **其他项目**：从首页入口进入 `other-projects.html`，检查顶部项目目录、返回主页与刷新回到顶部；确认三个软件与工具项目的设计说明及《晚渡》的测试说明始终展示，核对源码、测试工程与 MIDI 入口；中文显示“晚渡”，英文显示“WANDU”。
+6. **工程工具与软件项目**：检查五个工具的顺序、顶部目录与返回主页，确认 SoundTest / ASRtest 没有公开源码链接；《晚渡》位于独立实验区，中文显示“晚渡”、英文显示“WANDU”，试听与工程入口正常。
 7. **理念阅读**：从首页简短入口进入二级页，逐章检查顶部目录跳转、三语正文和项目链接；核对目录定位有效且地址栏不添加锚点，以及查看项目后返回理念页的阅读位置。检查桌面、平板和手机代表宽度下的标题、正文与按钮，不把静态检查视为实机验证。
 
 ### 加载与切换专项检查
@@ -282,7 +282,7 @@ git diff --check
 | 导航与浮动卡片玻璃 | [nav-liquid-glass.css](nav-liquid-glass.css)、[nav-liquid-glass.js](nav-liquid-glass.js)；检查五页的整栏材质、首页两张浮动卡片的独立圆角折射、共享快照及前景排除、背景文字对齐、跨端胶囊圆角、Safari WebGL 分块捕获与透明回退、悬停高光、当前章节标记、移动菜单及内嵌详情；覆盖滚动、缩放和横竖屏尺寸变化。 |
 | 试听与背景音乐 | [background-music.js](background-music.js)；先运行音频回归测试，再验证独立打开与内嵌详情页的双向互斥及离页停止。 |
 | 产品与创业理念 | 首页 `#philosophy` 的短入口，以及 [philosophy.html](philosophy.html) 的完整正文；同步目录、章节 ID 和三语映射，区分当前判断、已有成果与后续问题。 |
-| 简历 PDF | `assets/` 内三份正式文件，以及 `i18n.js` 的 `resumeAssets`、`resumeVersion` 和 HTML 初始下载链接；核对文件名、页序与语言。 |
+| 简历 PDF | 覆盖 `assets/resume-zh-cn.pdf`、`assets/resume-zh-hk.pdf`、`assets/resume-en.pdf` 三份三语文件；`i18n.js` 的 `resumeAssets` 根据界面语言选择对应页序，HTML 初始入口使用简中路径。无需修改日期参数。 |
 | 粒子交互 | [soundshare-particles.js](soundshare-particles.js)；先运行输入回归测试，再检查首页与两个项目页的真实渲染、尺寸和交互。 |
 | 视频选源 | [regional-video.js](regional-video.js) 与首页原生 iframe；维持 IP 自动选源、原生嵌入和关闭自动播放。 |
 | 联系方式 | [index.html](index.html)、[script.js](script.js)、[social-controls.css](social-controls.css) 与原二维码图片；检查复制、放大和平台入口。 |
@@ -330,9 +330,11 @@ git check-ignore -v tmp/example.png
 
 | 界面语言 | 下载文件 |
 | --- | --- |
-| 简体中文 | [罗宇伦_简历.pdf](assets/罗宇伦_简历.pdf) |
-| 繁體中文（香港用语） | [羅宇倫_履歷.pdf](assets/羅宇倫_履歷.pdf) |
-| English | [Roy Luo_Resume.pdf](assets/Roy%20Luo_Resume.pdf) |
+| 简体中文 | [resume-zh-cn.pdf](assets/resume-zh-cn.pdf) |
+| 繁體中文（香港用语） | [resume-zh-hk.pdf](assets/resume-zh-hk.pdf) |
+| English | [resume-en.pdf](assets/resume-en.pdf) |
+
+三个固定路径均提供三语简历，分别以简体、繁体、英文开篇。旧文件名保留以兼容历史链接；后续更新以固定路径为准。固定路径不会主动清除浏览器或 CDN 缓存，发布后如仍看到旧内容，可重新加载并检查下载内容。
 
 ## 联系
 

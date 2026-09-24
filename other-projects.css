@@ -24,3 +24,6 @@
 .wandu-project .audio-help { margin-top: 12px; font-size: 14px; }
 .wandu-project .audio-help a { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
 .wandu-project .production-links .secondary { background: rgba(255,255,255,.05); }
+
+.experiments-section { margin-top:64px; padding-top:32px; border-top:1px solid var(--line-strong); scroll-margin-top:108px; }
+.experiments-section > h2 { font-size:28px; margin:12px 0 24px; }
