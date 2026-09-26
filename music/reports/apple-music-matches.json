@@ -1,0 +1,356 @@
+[
+  {
+    "appleTitle": "米店",
+    "appleAlbum": "我愛南京",
+    "trackId": "lizhi-355106ea-2263-4983-b24a-42d225d222ad-d02-t04",
+    "durationDifference": 0.04
+  },
+  {
+    "appleTitle": "天空之城",
+    "appleAlbum": "我愛南京",
+    "trackId": "lizhi-355106ea-2263-4983-b24a-42d225d222ad-d01-t05",
+    "durationDifference": 0.05
+  },
+  {
+    "appleTitle": "關於鄭州的記憶",
+    "appleAlbum": "你好,鄭州",
+    "trackId": "lizhi-38d58d47-5f00-4f4b-95aa-f499cdba365b-d01-t03",
+    "durationDifference": -0.54
+  },
+  {
+    "appleTitle": "蒼井空",
+    "appleAlbum": "我愛南京",
+    "trackId": "lizhi-355106ea-2263-4983-b24a-42d225d222ad-d01-t02",
+    "durationDifference": 0.05
+  },
+  {
+    "appleTitle": "定西",
+    "appleAlbum": "1701",
+    "trackId": "lizhi-bfe30cec-4119-41e4-9961-338356921a3c-d01-t03",
+    "durationDifference": 0.06
+  },
+  {
+    "appleTitle": "山陰路的夏天",
+    "appleAlbum": "F",
+    "trackId": "lizhi-3a52b24e-1c71-4e2d-91b2-b90e13b91617-d01-t05",
+    "durationDifference": 0.05
+  },
+  {
+    "appleTitle": "梵高先生",
+    "appleAlbum": "梵高先生",
+    "trackId": "lizhi-211ffdd9-238e-4c6d-858d-a38f725e0493-d01-t08",
+    "durationDifference": 0.04
+  },
+  {
+    "appleTitle": "和你在一起",
+    "appleAlbum": "這個世界會好嗎",
+    "trackId": "lizhi-083e1542-8767-4a92-8465-bc3fb233b8b9-d01-t03",
+    "durationDifference": 0.04
+  },
+  {
+    "appleTitle": "你離開了南京, 從此沒有人和我說話",
+    "appleAlbum": "梵高先生",
+    "trackId": "lizhi-211ffdd9-238e-4c6d-858d-a38f725e0493-d01-t01",
+    "durationDifference": 0.05
+  },
+  {
+    "appleTitle": "看見",
+    "appleAlbum": "1701",
+    "trackId": "lizhi-bfe30cec-4119-41e4-9961-338356921a3c-d01-t04",
+    "durationDifference": 0.04
+  },
+  {
+    "appleTitle": "倒影",
+    "appleAlbum": "我愛南京",
+    "trackId": "lizhi-355106ea-2263-4983-b24a-42d225d222ad-d01-t06",
+    "durationDifference": 0.04
+  },
+  {
+    "appleTitle": "牆上的向日葵 (2016跨年版)",
+    "appleAlbum": "李志、電聲與管弦樂",
+    "trackId": "lizhi-a2df0227-b7ae-4408-95c8-79baf1099f39-d01-t09",
+    "durationDifference": 0.04
+  },
+  {
+    "appleTitle": "和你在一起 (2016跨年版)",
+    "appleAlbum": "李志、電聲與管弦樂",
+    "trackId": "lizhi-a2df0227-b7ae-4408-95c8-79baf1099f39-d01-t08",
+    "durationDifference": 0.05
+  },
+  {
+    "appleTitle": "鉛筆 (2016跨年版)",
+    "appleAlbum": "李志、電聲與管弦樂",
+    "trackId": "lizhi-a2df0227-b7ae-4408-95c8-79baf1099f39-d01-t07",
+    "durationDifference": 0.04
+  },
+  {
+    "appleTitle": "盡頭 (2016跨年版)",
+    "appleAlbum": "李志、電聲與管弦樂",
+    "trackId": "lizhi-a2df0227-b7ae-4408-95c8-79baf1099f39-d01-t03",
+    "durationDifference": 0.05
+  },
+  {
+    "appleTitle": "春末的南方城市 (2016不插電版)",
+    "appleAlbum": "李志北京不插電現場",
+    "trackId": "lizhi-dfca4787-fa3a-442c-9fd7-877145bc471a-d01-t10",
+    "durationDifference": 0.03
+  },
+  {
+    "appleTitle": "黑色信封 (2016不插電版)",
+    "appleAlbum": "李志北京不插電現場",
+    "trackId": "lizhi-dfca4787-fa3a-442c-9fd7-877145bc471a-d01-t01",
+    "durationDifference": 0.04
+  },
+  {
+    "appleTitle": "熱河 (2015看見版)",
+    "appleAlbum": "看見",
+    "trackId": "lizhi-seen-2015-d01-t07",
+    "durationDifference": 0.05
+  },
+  {
+    "appleTitle": "鉛筆 (2014跨年版)",
+    "appleAlbum": "i/O",
+    "trackId": "lizhi-io-2015-d01-t03",
+    "durationDifference": 0.07
+  },
+  {
+    "appleTitle": "熱河",
+    "appleAlbum": "1701",
+    "trackId": "lizhi-bfe30cec-4119-41e4-9961-338356921a3c-d01-t06",
+    "durationDifference": 0.06
+  },
+  {
+    "appleTitle": "盡頭",
+    "appleAlbum": "F",
+    "trackId": "lizhi-3a52b24e-1c71-4e2d-91b2-b90e13b91617-d01-t02",
+    "durationDifference": 0.1
+  },
+  {
+    "appleTitle": "尋找",
+    "appleAlbum": "F",
+    "trackId": "lizhi-3a52b24e-1c71-4e2d-91b2-b90e13b91617-d01-t01",
+    "durationDifference": -0.13
+  },
+  {
+    "appleTitle": "春末的南方城市",
+    "appleAlbum": "梵高先生",
+    "trackId": "lizhi-211ffdd9-238e-4c6d-858d-a38f725e0493-d01-t03",
+    "durationDifference": 0.03
+  },
+  {
+    "appleTitle": "黑色信封",
+    "appleAlbum": "被禁忌的遊戲",
+    "trackId": "lizhi-758a394c-126c-487f-bca1-31ff28467d13-d01-t01",
+    "durationDifference": 0.03
+  },
+  {
+    "appleTitle": "她",
+    "appleAlbum": "你好,鄭州",
+    "trackId": "lizhi-38d58d47-5f00-4f4b-95aa-f499cdba365b-d01-t07",
+    "durationDifference": 2.08
+  },
+  {
+    "appleTitle": "忽然",
+    "appleAlbum": "你好,鄭州",
+    "trackId": "lizhi-38d58d47-5f00-4f4b-95aa-f499cdba365b-d01-t04",
+    "durationDifference": -0.81
+  },
+  {
+    "appleTitle": "牆上的向日葵",
+    "appleAlbum": "你好,鄭州",
+    "trackId": "lizhi-38d58d47-5f00-4f4b-95aa-f499cdba365b-d01-t01",
+    "durationDifference": -4.38
+  },
+  {
+    "appleTitle": "鉛筆",
+    "appleAlbum": "你好,鄭州",
+    "trackId": "lizhi-38d58d47-5f00-4f4b-95aa-f499cdba365b-d01-t02",
+    "durationDifference": 1.99
+  },
+  {
+    "appleTitle": "被禁忌的遊戲",
+    "appleAlbum": "被禁忌的遊戲",
+    "trackId": "lizhi-758a394c-126c-487f-bca1-31ff28467d13-d01-t07",
+    "durationDifference": 0.03
+  },
+  {
+    "appleTitle": "媽媽",
+    "appleAlbum": "這個世界會好嗎",
+    "trackId": "lizhi-083e1542-8767-4a92-8465-bc3fb233b8b9-d01-t01",
+    "durationDifference": 0.03
+  },
+  {
+    "appleTitle": "Snow in June",
+    "appleAlbum": "Stranger Under My Skin",
+    "trackId": "other-陳奕迅-2011-Stranger-Under-My-Skin-d01-t01",
+    "durationDifference": 0.03
+  },
+  {
+    "appleTitle": "結婚 (2016不插電版)",
+    "appleAlbum": "李志北京不插電現場",
+    "trackId": "lizhi-dfca4787-fa3a-442c-9fd7-877145bc471a-d01-t06",
+    "durationDifference": 0.03
+  },
+  {
+    "appleTitle": "關於鄭州的記憶 (2016不插電版)",
+    "appleAlbum": "李志北京不插電現場",
+    "trackId": "lizhi-dfca4787-fa3a-442c-9fd7-877145bc471a-d01-t07",
+    "durationDifference": 0.05
+  },
+  {
+    "appleTitle": "黑色信封 (2015看見版)",
+    "appleAlbum": "看見",
+    "trackId": "lizhi-seen-2015-d01-t02",
+    "durationDifference": 0.04
+  },
+  {
+    "appleTitle": "想起了他",
+    "appleAlbum": "梵高先生",
+    "trackId": "lizhi-211ffdd9-238e-4c6d-858d-a38f725e0493-d01-t07",
+    "durationDifference": 0.04
+  },
+  {
+    "appleTitle": "結婚",
+    "appleAlbum": "我愛南京",
+    "trackId": "lizhi-355106ea-2263-4983-b24a-42d225d222ad-d01-t03",
+    "durationDifference": 0.03
+  },
+  {
+    "appleTitle": "意味",
+    "appleAlbum": "我愛南京",
+    "trackId": "lizhi-355106ea-2263-4983-b24a-42d225d222ad-d01-t01",
+    "durationDifference": 0.04
+  },
+  {
+    "appleTitle": "哦吼 (2017跨年版)",
+    "appleAlbum": "李志、電聲與管弦樂II",
+    "trackId": "lizhi-6a798753-fe04-4301-b727-3b0b9be33fa1-d01-t06",
+    "durationDifference": 0.04
+  },
+  {
+    "appleTitle": "哦吼",
+    "appleAlbum": "在每一條傷心的應天大街上",
+    "trackId": "lizhi-dde3284d-3c53-4d81-b139-ac11bc831e73-d01-t06",
+    "durationDifference": 0.04
+  },
+  {
+    "appleTitle": "盡頭 (2015跨年版)",
+    "appleAlbum": "動靜",
+    "trackId": "lizhi-860b6bbc-fd99-42a9-94bb-0b08af0958f7-d01-t11",
+    "durationDifference": 0.03
+  },
+  {
+    "appleTitle": "天空之城 (2017跨年版)",
+    "appleAlbum": "李志、電聲與管弦樂II",
+    "trackId": "lizhi-6a798753-fe04-4301-b727-3b0b9be33fa1-d01-t07",
+    "durationDifference": 0.04
+  },
+  {
+    "appleTitle": "黑色信封 (2016跨年版)",
+    "appleAlbum": "李志、電聲與管弦樂",
+    "trackId": "lizhi-a2df0227-b7ae-4408-95c8-79baf1099f39-d01-t06",
+    "durationDifference": 0.05
+  },
+  {
+    "appleTitle": "鴕鳥 (2016不插電版)",
+    "appleAlbum": "李志北京不插電現場",
+    "trackId": "lizhi-dfca4787-fa3a-442c-9fd7-877145bc471a-d01-t02",
+    "durationDifference": 0.04
+  },
+  {
+    "appleTitle": "大象 (2016不插電版)",
+    "appleAlbum": "李志北京不插電現場",
+    "trackId": "lizhi-dfca4787-fa3a-442c-9fd7-877145bc471a-d01-t03",
+    "durationDifference": 0.05
+  },
+  {
+    "appleTitle": "定西 (2016不插電版)",
+    "appleAlbum": "李志北京不插電現場",
+    "trackId": "lizhi-dfca4787-fa3a-442c-9fd7-877145bc471a-d01-t04",
+    "durationDifference": 0.03
+  },
+  {
+    "appleTitle": "這個世界會好嗎 (2016不插電版)",
+    "appleAlbum": "李志北京不插電現場",
+    "trackId": "lizhi-dfca4787-fa3a-442c-9fd7-877145bc471a-d01-t05",
+    "durationDifference": 0.03
+  },
+  {
+    "appleTitle": "杭州 (2016不插電版)",
+    "appleAlbum": "李志北京不插電現場",
+    "trackId": "lizhi-dfca4787-fa3a-442c-9fd7-877145bc471a-d01-t08",
+    "durationDifference": 0.03
+  },
+  {
+    "appleTitle": "熱河 (2016不插電版)",
+    "appleAlbum": "李志北京不插電現場",
+    "trackId": "lizhi-dfca4787-fa3a-442c-9fd7-877145bc471a-d01-t09",
+    "durationDifference": 0.04
+  },
+  {
+    "appleTitle": "鼠說 (2016不插電版)",
+    "appleAlbum": "李志北京不插電現場",
+    "trackId": "lizhi-dfca4787-fa3a-442c-9fd7-877145bc471a-d01-t11",
+    "durationDifference": 0.03
+  },
+  {
+    "appleTitle": "山陰路的夏天 (2016不插電版)",
+    "appleAlbum": "李志北京不插電現場",
+    "trackId": "lizhi-dfca4787-fa3a-442c-9fd7-877145bc471a-d01-t12",
+    "durationDifference": 0.04
+  },
+  {
+    "appleTitle": "卡夫卡",
+    "appleAlbum": "被禁忌的遊戲",
+    "trackId": "lizhi-758a394c-126c-487f-bca1-31ff28467d13-d01-t06",
+    "durationDifference": 0.05
+  },
+  {
+    "appleTitle": "卡夫卡 (2017跨年版)",
+    "appleAlbum": "爵士樂與不插電新編12首",
+    "trackId": "lizhi-8b283e60-70fa-46ea-a564-675db0444a8b-d01-t05",
+    "durationDifference": 0.05
+  },
+  {
+    "appleTitle": "卡夫卡 (2009工体版)",
+    "appleAlbum": "工體東路沒有人",
+    "trackId": "lizhi-200dad30-e066-4956-bc59-88f98524563d-d01-t04",
+    "durationDifference": 0.08
+  },
+  {
+    "appleTitle": "一頭偶像",
+    "appleAlbum": "在每一條傷心的應天大街上",
+    "trackId": "lizhi-dde3284d-3c53-4d81-b139-ac11bc831e73-d01-t02",
+    "durationDifference": 0.05
+  },
+  {
+    "appleTitle": "一頭偶像 (2017跨年版)",
+    "appleAlbum": "李志、電聲與管弦樂II",
+    "trackId": "lizhi-6a798753-fe04-4301-b727-3b0b9be33fa1-d01-t02",
+    "durationDifference": 0.04
+  },
+  {
+    "appleTitle": "回答 (2016跨年版)",
+    "appleAlbum": "李志、電聲與管弦樂",
+    "trackId": "lizhi-a2df0227-b7ae-4408-95c8-79baf1099f39-d01-t12",
+    "durationDifference": 0.03
+  },
+  {
+    "appleTitle": "帶親",
+    "appleAlbum": "你好,鄭州",
+    "trackId": "lizhi-38d58d47-5f00-4f4b-95aa-f499cdba365b-d01-t06",
+    "durationDifference": 1.76
+  },
+  {
+    "appleTitle": "董卓瑤",
+    "appleAlbum": "梵高先生",
+    "trackId": "lizhi-211ffdd9-238e-4c6d-858d-a38f725e0493-d01-t02",
+    "durationDifference": 0.04
+  },
+  {
+    "appleTitle": "路",
+    "appleAlbum": "你好,鄭州",
+    "trackId": "lizhi-38d58d47-5f00-4f4b-95aa-f499cdba365b-d01-t08",
+    "durationDifference": -2.05
+  }
+]
