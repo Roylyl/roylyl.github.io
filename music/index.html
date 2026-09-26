@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#05070b"><meta name="color-scheme" content="dark"><meta name="robots" content="noindex,nofollow">
+<meta name="description" content="Roylyl的个人音乐收藏，按专辑与现场版本聆听。">
+<title>Music · Roylyl</title>
+<link rel="icon" href="../assets/favicon-avatar-32.png"><link rel="stylesheet" href="./music.css">
+<script src="./app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#content">跳到音乐库</a>
+<header class="topbar"><a class="brand" href="./"><span class="brand-icon" aria-hidden="true">♫</span>Roylyl<span class="muted">/</span>Music</a><span class="top-note">A PERSONAL LISTENING SPACE</span><a class="home" href="../">个人主页 ↗</a></header>
+<div class="layout">
+<aside class="sidebar"><p class="eyebrow">你的音乐空间</p><nav aria-label="音乐库"><button class="nav-item active" data-view="albums">▦<span>专辑收藏</span></button><button class="nav-item" data-view="songs">≋<span>全部歌曲</span></button><button class="nav-item" data-view="favorites">♡<span>我的喜欢</span><span id="fav-count">0</span></button></nav><div class="side-footer"><span class="signal"></span>听见，留下的声音。<p>PERSONAL COLLECTION<br>Roylyl / 2026</p></div></aside>
+<main id="content">
+<section class="intro"><div><p class="eyebrow">THE LISTENING ROOM</p><h1>给音乐，<span>留一点时间。</span></h1><p class="intro-note">从一张专辑开始，或重回某个现场。</p></div><div class="stats"><strong id="total">—</strong><span>首收藏曲目</span></div></section>
+<section class="feature" id="feature" hidden><button id="feature-full" class="feature-art cover-button" aria-label="全屏播放推荐专辑"><img id="feature-cover" alt="" width="240" height="240"></button><div class="feature-copy"><p class="eyebrow">从这张开始 · ALBUM SPOTLIGHT</p><h2 id="feature-title"></h2><p id="feature-meta"></p><div class="actions"><button class="primary" id="feature-play">▶ 播放专辑</button><button class="secondary" id="feature-open">查看曲目 ↗</button></div></div><span class="feature-number" aria-hidden="true">01</span></section>
+<section class="library"><div class="section-heading"><div><p class="eyebrow">YOUR COLLECTION</p><h2 id="view-title">专辑收藏</h2></div><label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="搜索歌曲、歌手、专辑" aria-label="搜索歌曲、歌手或专辑"><kbd>/</kbd></label></div>
+<div class="filters"><label>歌手<select id="artist"><option value="">全部歌手</option></select></label><label>排序<select id="sort"><option value="oldest">发行时间 · 从早到晚</option><option value="newest">发行时间 · 从晚到早</option><option value="title">名称</option></select></label><span id="result-count"></span></div>
+<div class="notice" id="notice" role="status">正在载入音乐收藏…</div><button id="retry" class="secondary" hidden>重新连接</button>
+<div id="album-detail" hidden></div><div id="albums" class="album-grid"></div><div id="songs" hidden></div><div id="empty" class="empty" hidden><span>♫</span><h3>这里还很安静</h3><p>试试其他关键词，或给喜欢的歌曲点一颗心。</p></div>
+</section><footer class="library-footer"><span>Roylyl’s listening room</span><span id="source-state">Music collection</span></footer>
+</main></div>
+<aside id="queue-panel" class="queue-panel" aria-label="播放队列" hidden><div class="queue-head"><div><p class="eyebrow">UP NEXT</p><h2>播放队列</h2></div><button id="close-queue" class="icon" aria-label="关闭播放队列">×</button></div><div id="queue-list"></div></aside>
+<footer class="player" aria-label="音乐播放器"><div class="now"><button id="open-full" class="cover-button" aria-label="打开全屏播放" disabled><img id="now-cover" src="./placeholder.svg" alt="" width="56" height="56"></button><div><strong id="now-title">选一首，慢慢听</strong><span id="now-artist">你的音乐，从这里开始</span></div><button id="now-like" class="icon" aria-label="喜欢当前歌曲" aria-pressed="false" disabled>♡</button></div><div class="transport"><div class="controls"><button id="shuffle" class="icon small" aria-label="随机播放" aria-pressed="false">⤨</button><button id="prev" class="icon" aria-label="上一首">◀Ⅰ</button><button id="play" class="play" aria-label="播放">▶</button><button id="next" class="icon" aria-label="下一首">Ⅰ▶</button><button id="repeat" class="icon small" aria-label="循环模式：顺序播放">↻</button></div><div class="timeline"><span id="elapsed">0:00</span><input id="seek" type="range" min="0" max="100" value="0" step="0.1" aria-label="播放进度" disabled><span id="duration">0:00</span></div></div><div class="player-extra"><button id="quality" class="quality" aria-label="查看音频参数" disabled>音频信息</button><label class="volume">音量<input id="volume" type="range" min="0" max="1" step="0.01" value="0.8" aria-label="音量"></label><button id="queue-toggle" class="icon" aria-label="播放队列" aria-expanded="false" aria-controls="queue-panel">☷</button></div><p id="player-status" role="status" class="player-status"></p></footer>
+<dialog id="full-player" aria-labelledby="full-title">
+<div class="full-shell"><header class="full-header"><span>Roylyl / NOW PLAYING</span><button id="close-full" class="icon" aria-label="退出全屏播放">⌄</button></header>
+<div class="full-content"><img id="full-cover" src="./placeholder.svg" alt="当前专辑封面"><section class="full-info"><p class="eyebrow">正在播放</p><h2 id="full-title"></h2><p id="full-artist"></p><p id="full-album"></p><dl id="audio-details"></dl><p class="audio-note">参数描述音源文件，蓝牙传输规格取决于设备。</p>
+<div class="full-timeline"><span id="full-elapsed">0:00</span><input id="full-seek" type="range" min="0" max="100" step="0.1" value="0" aria-label="全屏播放进度" disabled><span id="full-duration">0:00</span></div>
+<div class="full-controls"><button id="full-shuffle" class="icon" aria-label="全屏随机播放" aria-pressed="false">⤨</button><button id="full-prev" class="icon" aria-label="全屏上一首">◀Ⅰ</button><button id="full-play" class="play" aria-label="全屏播放">▶</button><button id="full-next" class="icon" aria-label="全屏下一首">Ⅰ▶</button><button id="full-like" class="icon" aria-label="喜欢全屏歌曲" aria-pressed="false">♡</button></div><button id="full-repeat" class="secondary">顺序播放</button><p id="full-status" role="status"></p></section></div></div>
+</dialog>
+<audio id="audio" preload="none"></audio>
+</body></html>
