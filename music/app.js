@@ -74,7 +74,7 @@
   };
   const icon = name => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${shapes[name]}</svg>`;
   const setIcon = (id,name) => { $(id).innerHTML=icon(name); };
-  for(const [id,name] of Object.entries({play:'play',prev:'prev',next:'next',repeat:'repeat','now-like':'heart','queue-toggle':'list','close-queue':'close','close-full':'down','full-play':'play','full-prev':'prev','full-next':'next','full-like':'heart','full-like-mobile':'heart','full-queue-toggle':'list','full-queue-close':'close'}))setIcon(id,name);
+  for(const [id,name] of Object.entries({play:'play',prev:'prev',next:'next',repeat:'repeat','now-like':'heart','queue-toggle':'list','mobile-queue-toggle':'list','close-queue':'close','close-full':'down','full-play':'play','full-prev':'prev','full-next':'next','full-like':'heart','full-like-mobile':'heart','full-queue-toggle':'list','full-queue-close':'close'}))setIcon(id,name);
   $('feature-play').innerHTML=icon('play')+'播放专辑';
   $('feature-open').innerHTML='查看曲目'+icon('arrow');
 
@@ -287,10 +287,17 @@
   $('repeat').onclick = () => { repeat=({all:'shuffle',shuffle:'one',one:'all'})[repeat]; updateModeControls(); };
   $('now-like').onclick = () => current && like(current.id);
   $('seek').oninput = () => { if (Number.isFinite(audio.duration)) audio.currentTime = Number($('seek').value)/100*audio.duration; };
-  audio.volume = .8;
-  $('volume').oninput = () => { audio.volume=Number($('volume').value); };
-  function toggleQueue(open) { $('queue-panel').hidden=!open; $('queue-toggle').setAttribute('aria-expanded',String(open)); if (open) { renderQueue(); $('close-queue').focus(); } else $('queue-toggle').focus(); }
-  $('queue-toggle').onclick = () => toggleQueue($('queue-panel').hidden); $('close-queue').onclick=()=>toggleQueue(false);
+  const mobileVolume = matchMedia('(max-width:700px)');
+  const savedVolume = read('volume',1);
+  const desktopVolume = typeof savedVolume === 'number' && Number.isFinite(savedVolume) && savedVolume >= 0 && savedVolume <= 1 ? savedVolume : 1;
+  $('volume').value = String(desktopVolume);
+  function applyVolume() { audio.volume = mobileVolume.matches ? 1 : Number($('volume').value); }
+  applyVolume();
+  mobileVolume.addEventListener('change',applyVolume);
+  $('volume').oninput = () => { if (mobileVolume.matches) return; const value=Number($('volume').value); audio.volume=value; save('volume',value); };
+  function toggleQueue(open) { $('queue-panel').hidden=!open; for(const id of ['queue-toggle','mobile-queue-toggle'])$(id).setAttribute('aria-expanded',String(open)); if (open) { renderQueue(); $('close-queue').focus(); } else (matchMedia('(max-width:700px)').matches?$('mobile-queue-toggle'):$('queue-toggle')).focus(); }
+  for(const id of ['queue-toggle','mobile-queue-toggle'])$(id).onclick = () => toggleQueue($('queue-panel').hidden);
+  $('close-queue').onclick=()=>toggleQueue(false);
   $('content').addEventListener('click',e=> {
     const albumPlay=e.target.closest('[data-album-play]');
     const playlist=e.target.closest('[data-playlist]');if(playlist){showPlaylist(playlist.dataset.playlist);return;}
