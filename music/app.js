@@ -37,7 +37,48 @@
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const time = n => { n = Number.isFinite(n) ? Math.max(0, Math.floor(n)) : 0; return Math.floor(n / 60) + ':' + String(n % 60).padStart(2, '0'); };
   const url = path => ROOT + path.split('/').map(encodeURIComponent).join('/');
-  const compareYear = (a, b) => !a.year && b.year ? 1 : a.year && !b.year ? -1 : ($('sort').value === 'newest' ? -1 : 1) * (a.year - b.year);
+  const compareText = (a,b) => String(a ?? '').localeCompare(String(b ?? ''),'zh-CN',{numeric:true});
+  function compareField(a,b,field,direction) {
+    if (field === 'release') {
+      const ay = Number(a.year)||0, by = Number(b.year)||0;
+      if (!ay || !by) return !ay && !by ? 0 : !ay ? 1 : -1;
+      return direction*(ay-by);
+    }
+    return direction*compareText(field === 'artist' ? a.artist : a.title,field === 'artist' ? b.artist : b.title);
+  }
+  function compareItems(a,b) {
+    if($('sort-primary').value==='default')return 0;
+    const direction=$('sort-direction').value==='desc'?-1:1;
+    const primary=compareField(a,b,$('sort-primary').value,direction);
+    if(primary)return primary;
+    const secondary=$('sort-secondary').value;
+    if(secondary!=='none')return compareField(a,b,secondary,direction);
+    return 0;
+  }
+  function updateSortControls() {
+    const primary=$('sort-primary').value,secondary=$('sort-secondary');
+    const fixedView=view==='playlist'||view==='favorites';
+    const defaultOption=$('sort-primary').querySelector('option[value="default"]');
+    defaultOption.disabled=!fixedView;defaultOption.hidden=!fixedView;
+    if(primary==='default'){$('sort-secondary').value='none';$('sort-direction').value='asc';}
+    if(secondary.value===primary)secondary.value='none';
+    for(const option of secondary.options)option.disabled=option.value===primary;
+    $('sort-primary').disabled=!!selected;
+    secondary.disabled=!!selected||primary==='default';
+    $('sort-direction').disabled=!!selected||primary==='default';
+  }
+  let collectionSort={primary:'release',secondary:'none',direction:'asc'};
+  const fixedSortView=()=>view==='playlist'||view==='favorites';
+  function enterFixedSort() {
+    if(!fixedSortView())collectionSort={primary:$('sort-primary').value,secondary:$('sort-secondary').value,direction:$('sort-direction').value};
+    $('sort-primary').value='default';
+  }
+  function leaveFixedSort() {
+    if(!fixedSortView())return;
+    $('sort-primary').value=collectionSort.primary;
+    $('sort-secondary').value=collectionSort.secondary;
+    $('sort-direction').value=collectionSort.direction;
+  }
   const normalize = s => String(s).normalize('NFKC').toLocaleLowerCase();
   const safePath = p => typeof p === 'string' && !p.startsWith('/') && !p.includes('\\') && !p.split('/').some(x => x === '..') && !/^[a-z]+:/i.test(p);
   const picture = t => url(t.cover);
@@ -50,13 +91,14 @@
   const get = id => tracks.find(t => t.id === id);
   const canPlay = t => !!t?.src;
   function playlistTracks(ids) {
-    return ids.map(id=>{const e=appleMusic.entries[id],t=get(e.trackId);return {...(t||{}),id:t?.id||'apple:'+id,appleId:id,title:e.title,artist:e.artist,album:e.album,duration:t?.duration||e.duration,src:t?.src||'',sourceStatus:e.sourceStatus,sourceUrl:e.sourceUrl};});
+    return ids.map(id=>{const e=appleMusic.entries[id],t=get(e.trackId);return {...(t||{}),id:t?.id||'apple:'+id,appleId:id,title:e.title,artist:e.artist,album:e.album,year:t?.year||e.year||0,duration:t?.duration||e.duration,src:t?.src||'',sourceStatus:e.sourceStatus,sourceUrl:e.sourceUrl};});
   }
   function playlistRows(list) {
     return list.map((t,i)=>canPlay(t)?trackRows([t]).replace('>01</button>', '>'+String(i+1).padStart(2,'0')+'</button>'):`<div class="track-row unavailable"><span class="track-no">${String(i+1).padStart(2,'0')}</span><div class="track-start"><strong>${esc(t.title)}</strong><small>${esc(t.artist)}</small></div><span class="track-album">${esc(t.album)}</span><span class="track-time">${time(t.duration)}</span><span class="source-label" title="音源尚未入库">${t.sourceUrl?`<a href="${esc(t.sourceUrl)}" target="_blank" rel="noopener noreferrer">${t.sourceStatus==='purchasable'?'待购入':'外部收听'} ↗</a>`:'待补音源'}</span></div>`).join('');
   }
   function showPlaylist(id) {
     activePlaylist=appleMusic?.playlists.find(p=>p.id===id)||null; if(!activePlaylist)return;
+    enterFixedSort();
     view='playlist';selected=null;$('search').value='';$('artist').value='';render();$('view-title').scrollIntoView({block:'start',behavior:'smooth'});
   }
   function trackRows(list, inQueue = false) {
@@ -68,7 +110,7 @@
     document.querySelectorAll('[data-view]').forEach(b => { b.classList.toggle('active', b.dataset.view === view); b.setAttribute('aria-current', b.dataset.view === view ? 'page' : 'false'); });
     const fixedView=view==='playlist'||view==='favorites';
     document.querySelectorAll('[data-playlist]').forEach(b=>b.classList.toggle('active',view==='playlist'&&b.dataset.playlist===activePlaylist?.id));
-    $('sort').disabled=fixedView;
+    updateSortControls();
     $('playlist-detail').hidden=!fixedView;
     if(fixedView) {
       $('albums').hidden=true;$('songs').hidden=false;$('album-detail').hidden=true;
@@ -76,8 +118,9 @@
       if(!appleMusic){$('playlist-detail').textContent=appleError?'Apple Music歌单加载失败，请刷新页面重试。':'正在读取Apple Music歌单…';$('songs').innerHTML='';$('result-count').textContent='';$('empty').hidden=true;return;}
       const ids=view==='favorites'?appleMusic.favorites:activePlaylist.entries;
       const all=playlistTracks(ids),q=normalize($('search').value.trim()),ar=$('artist').value;
-      const rows=all.filter(t=>(!ar||t.artist===ar)&&(!q||normalize(t.title+' '+t.artist+' '+t.album).includes(q)));
-      const playable=all.filter(canPlay);
+      const ordered=$('sort-primary').value==='default'?all:[...all].sort(compareItems);
+      const rows=ordered.filter(t=>(!ar||t.artist===ar)&&(!q||normalize(t.title+' '+t.artist+' '+t.album).includes(q)));
+      const playable=ordered.filter(canPlay);
       $('playlist-detail').innerHTML=`<p>来自Apple Music · ${all.length}首 · ${playable.length}首可播放 · ${all.length-playable.length}首待补音源</p><button id="play-playlist" class="primary" ${playable.length?'':'disabled'}>${icon('play')}顺序播放</button><small>更新于${esc(new Date(appleMusic.updatedAt).toLocaleDateString('zh-CN',{timeZone:'Asia/Shanghai'}))} · 保留原歌单曲目，播放时跳过未入库音源</small>`;
       $('play-playlist').onclick=()=>playAlbum({tracks:playable});
       $('songs').innerHTML=playlistRows(rows);$('songs')._tracks=rows.filter(canPlay);$('result-count').textContent=rows.length+'首歌曲';$('empty').hidden=rows.length>0;renderCurrent();return;
@@ -95,11 +138,11 @@
     if (view === 'albums' && !selected) {
       const allowed = new Set(list.map(t => t.id));
       const visible = albums.filter(a => a.tracks.some(t => allowed.has(t.id)));
-      visible.sort((a,b) => $('sort').value === 'title' ? a.title.localeCompare(b.title,'zh-CN') : (compareYear(a,b) || a.title.localeCompare(b.title,'zh-CN')));
+      visible.sort(compareItems);
       $('albums').innerHTML = visible.map(a => `<article class="album-card"><div class="art"><button class="album-cover-open" data-album="${esc(a.key)}" aria-label="查看${esc(a.title)}，${a.tracks.length}首"><img src="${picture(a.tracks[0])}" alt="${esc(a.title)}封面" loading="lazy" width="240" height="240"></button><button class="open-album" data-album-play="${esc(a.key)}" aria-label="顺序播放${esc(a.title)}">${icon('play')}</button></div><h3><button class="album-title-open" data-album="${esc(a.key)}">${esc(a.title)}</button></h3><p><span class="year">${a.year || '年份待核'}</span>${esc(a.artist)}</p><p>${a.tracks.length}首 · ${a.key.startsWith('live/') ? '现场录音' : a.key.startsWith('collections/') ? '精选合集' : '专辑 / 单曲'}</p></article>`).join('');
       $('result-count').textContent = visible.length + '张专辑'; shown = visible.length;
     } else {
-      const rows = selected ? list.filter(t => selected.tracks.some(s => s.id === t.id)) : [...list].sort((a,b) => $('sort').value === 'title' ? a.title.localeCompare(b.title,'zh-CN') : compareYear(a,b));
+      const rows = selected ? selected.tracks.filter(t=>list.some(s=>s.id===t.id)) : [...list].sort(compareItems);
       $('songs').innerHTML = trackRows(rows); $('songs')._tracks = rows;
       $('result-count').textContent = rows.length + '首歌曲'; shown = rows.length;
     }
@@ -115,7 +158,7 @@
     play(album.tracks[0],album.tracks);
   }
   function openAlbum(album) {
-    if(!album)return; view='albums'; selected=album; $('search').value=''; $('artist').value=''; render();
+    if(!album)return;leaveFixedSort();view='albums'; selected=album; $('search').value=''; $('artist').value=''; render();
     $('album-detail').scrollIntoView({block:'start',behavior:'smooth'});
     $('back-albums').focus({preventScroll:true});
   }
@@ -182,9 +225,14 @@
     if(heart) like(heart.dataset.like);
   });
   $('queue-list').addEventListener('click',e=> { const b=e.target.closest('[data-play]'),h=e.target.closest('[data-like]'); if(b)play(get(b.dataset.play)); if(h)like(h.dataset.like); });
-  document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{view=b.dataset.view;selected=null;activePlaylist=null;render();});
+  document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{
+    if(b.dataset.view==='favorites')enterFixedSort();else leaveFixedSort();
+    view=b.dataset.view;selected=null;activePlaylist=null;render();
+  });
   $('fixed-playlists').onclick=e=>{const b=e.target.closest('[data-playlist]');if(b)showPlaylist(b.dataset.playlist);};
-  $('search').oninput=render; $('artist').onchange=render; $('sort').onchange=render;
+  $('search').oninput=render; $('artist').onchange=render;
+  for(const id of ['sort-primary','sort-secondary','sort-direction'])$(id).onchange=()=>{updateSortControls();render();};
+  updateSortControls();
   document.addEventListener('keydown',e=> {
     if(e.key==='Escape'&&!$('queue-panel').hidden)toggleQueue(false);
     if(/INPUT|SELECT|TEXTAREA|BUTTON/.test(e.target.tagName)||e.target.isContentEditable)return;
@@ -249,7 +297,7 @@
     try{data=await request(ROOT+'tracks.json');}catch{try{data=await request('./data/tracks.json');cached=true;}catch{$('notice').textContent='音乐库加载失败，请检查网络后重试。';$('retry').hidden=false;return;}}
     tracks=data.filter(t=>t&&typeof t.id==='string'&&typeof t.title==='string'&&safePath(t.src)&&/\.mp3$/i.test(t.src)&&safePath(t.cover)).map(t=>({...t,year:Number(t.src.match(/\/(\d{4}) - /)?.[1])||0}));
     if(!tracks.length){$('notice').textContent='索引里暂时没有可播放的MP3。';$('retry').hidden=false;return;}
-    const grouped=new Map(); for(const t of tracks){const key=t.src.slice(0,t.src.lastIndexOf('/'));if(!grouped.has(key))grouped.set(key,{key,title:t.album,artist:key.split('/')[1],year:t.year,tracks:[]});grouped.get(key).tracks.push(t);}
+    const grouped=new Map(); for(const t of tracks){const key=t.src.slice(0,t.src.lastIndexOf('/'));if(!grouped.has(key))grouped.set(key,{key,title:t.album,artist:t.artist,year:t.year,tracks:[]});grouped.get(key).tracks.push(t);}
     albums=[...grouped.values()];albums.forEach(a=>a.tracks.sort((a,b)=>a.discNumber-b.discNumber||a.trackNumber-b.trackNumber));
     $('artist').innerHTML='<option value="">全部歌手</option>'+[...new Set(tracks.map(t=>t.artist))].sort((a,b)=>a.localeCompare(b,'zh-CN')).map(a=>`<option>${esc(a)}</option>`).join('');
     const feature=albums.find(a=>a.title==='1701')||albums[0];$('feature').hidden=false;$('feature-title').textContent=feature.title;$('feature-cover').src=picture(feature.tracks[0]);$('feature-cover').alt=feature.title+'专辑封面';$('feature-meta').textContent=feature.artist+' · '+(feature.year||'')+' · '+feature.tracks.length+'首';
