@@ -397,6 +397,13 @@ html[data-theme="light"] #full-player::backdrop { background:#f6f8fb; }
 html[data-theme="light"] #audio-details dd { color:#168260; }
 html[data-theme="light"] .icon:hover, html[data-theme="light"] .icon[aria-pressed=true], html[data-theme="light"] .icon.on { color:#168260; }
 
+.now-title-line { display:flex; align-items:baseline; min-width:0; white-space:nowrap; }
+.now-title-line #now-title { flex:0 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; }
+.now-title-line .player-status { display:inline; flex:0 0 auto; max-width:55%; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--muted); font-size:11px; text-align:left; }
+.now-title-line .player-status:empty { display:none; }
+
+#full-like-mobile[aria-pressed="true"] svg { fill:currentColor; }
+
 @media (max-width:700px) {
   .fixed-playlist-section { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; padding:0; margin-top:3px; }
   .mobile-playlist-label { display:none; }

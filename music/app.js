@@ -138,12 +138,22 @@
   const normalize = s => String(s).normalize('NFKC').toLocaleLowerCase();
   const safePath = p => typeof p === 'string' && !p.startsWith('/') && !p.includes('\\') && !p.split('/').some(x => x === '..') && !/^[a-z]+:/i.test(p);
   const picture = t => url(t.cover);
-  const status = text => { $('player-status').textContent = text; $('full-status').textContent = text; };
+  let playerStatusText = '';
+  const status = text => { playerStatusText = text; $('player-status').textContent = text ? '·' + text : ''; $('full-status').textContent = text; };
   function filtered() {
     const q = normalize($('search').value.trim()), artist = $('artist').value;
     return tracks.filter(t => (!artist || t.artist === artist) && (!q || normalize(t.title + ' ' + t.artist + ' ' + t.album).includes(q)) && (view !== 'favorites' || favorites.has(t.id)));
   }
   const get = id => tracks.find(t => t.id === id);
+  const isFavorite = id => !!id && favorites.has(id);
+  function syncFavoriteButtons() {
+    for (const button of document.querySelectorAll('[data-like],#now-like,#full-like,#full-like-mobile')) {
+      const id = button.dataset.like || current?.id;
+      const liked = isFavorite(id);
+      button.setAttribute('aria-pressed', String(liked));
+      button.setAttribute('aria-label', `Apple Music${liked ? '已喜欢' : '未喜欢'}${button.dataset.like ? '：' + (get(id)?.title || '') : ''}`);
+    }
+  }
   const canPlay = t => !!t?.src;
   function playlistTracks(ids) {
     return ids.map(id=>{const e=appleMusic.entries[id],t=get(e.trackId);return {...(t||{}),id:t?.id||'apple:'+id,appleId:id,title:e.title,artist:e.artist,album:e.album,year:t?.year||e.year||0,duration:t?.duration||e.duration,src:t?.src||'',sourceStatus:e.sourceStatus,sourceUrl:e.sourceUrl};});
@@ -157,7 +167,7 @@
     view='playlist';selected=null;$('search').value='';$('artist').value='';render();
   }
   function trackRows(list, inQueue = false) {
-    return list.map((t, i) => `<div class="track-row${current?.id === t.id ? ' current' : ''}" data-track="${esc(t.id)}"><button class="track-no" data-play="${esc(t.id)}" aria-label="播放${esc(t.title)}">${current?.id === t.id && !audio.paused ? '♫' : String(i + 1).padStart(2, '0')}</button><button class="track-start" data-play="${esc(t.id)}"><strong>${esc(t.title)}</strong><small>${esc(t.artist)}${inQueue ? ' · ' + esc(t.album) : ''}</small></button><span class="track-album">${esc(t.album)}</span><span class="track-time">${time(t.duration)}</span><button class="icon" disabled title="喜欢状态来自Apple Music" data-like="${esc(t.id)}" aria-label="Apple Music${favorites.has(t.id) ? '已喜欢' : '未喜欢'}：${esc(t.title)}" aria-pressed="${favorites.has(t.id)}">${icon('heart')}</button></div>`).join('');
+    return list.map((t, i) => `<div class="track-row${current?.id === t.id ? ' current' : ''}" data-track="${esc(t.id)}"><button class="track-no" data-play="${esc(t.id)}" aria-label="播放${esc(t.title)}">${current?.id === t.id && !audio.paused ? '♫' : String(i + 1).padStart(2, '0')}</button><button class="track-start" data-play="${esc(t.id)}"><strong>${esc(t.title)}</strong><small>${esc(t.artist)}${inQueue ? ' · ' + esc(t.album) : ''}</small></button><span class="track-album">${esc(t.album)}</span><span class="track-time">${time(t.duration)}</span><button class="icon" disabled title="喜欢状态来自Apple Music" data-like="${esc(t.id)}" aria-label="Apple Music${isFavorite(t.id) ? '已喜欢' : '未喜欢'}：${esc(t.title)}" aria-pressed="${isFavorite(t.id)}">${icon('heart')}</button></div>`).join('');
   }
   function render() {
     const list = filtered();
@@ -221,11 +231,7 @@
     updateFull();
     setIcon('play',audio.paused?'play':'pause'); $('play').setAttribute('aria-label', audio.paused ? '播放' : '暂停');
     $('now-like').disabled = true; $('now-like').title='喜欢状态来自Apple Music'; $('full-like').disabled=true; $('full-like').title='喜欢状态来自Apple Music'; $('full-like-mobile').disabled=true; $('full-like-mobile').title='喜欢状态来自Apple Music';
-    setIcon('now-like','heart');
-    $('now-like').setAttribute('aria-pressed', String(!!current && favorites.has(current.id)));
-    $('now-like').setAttribute('aria-label','Apple Music'+(current&&favorites.has(current.id)?'已喜欢':'未喜欢'));
-    $('full-like').setAttribute('aria-label','Apple Music'+(current&&favorites.has(current.id)?'已喜欢':'未喜欢'));
-    $('full-like-mobile').setAttribute('aria-label','Apple Music'+(current&&favorites.has(current.id)?'已喜欢':'未喜欢'));
+    syncFavoriteButtons();
     document.querySelectorAll('.track-row').forEach(el => el.classList.toggle('current', el.dataset.track === current?.id));
     if (!$('queue-panel').hidden || !$('full-queue').hidden) renderQueue();
   }
@@ -235,6 +241,7 @@
     current = t; $('now-cover').src = picture(t); $('now-title').textContent = t.title; $('now-artist').textContent = t.artist + ' · ' + t.album;
     $('duration').textContent = time(t.duration); $('elapsed').textContent = '0:00'; $('seek').value = 0; $('seek').disabled = true;
     if ('mediaSession' in navigator && 'MediaMetadata' in window) navigator.mediaSession.metadata = new MediaMetadata({title:t.title,artist:t.artist,album:t.album,artwork:[{src:picture(t)}]});
+    registerMediaActions();
     renderCurrent();
   }
   async function play(t, list = queue) {
@@ -288,6 +295,12 @@
   $('now-like').onclick = () => current && like(current.id);
   $('seek').oninput = () => { if (Number.isFinite(audio.duration)) audio.currentTime = Number($('seek').value)/100*audio.duration; };
   const mobileVolume = matchMedia('(max-width:700px)');
+  function placeLikeButton() {
+    if (mobileVolume.matches) document.querySelector('.now').append($('now-like'));
+    else $('next').after($('now-like'));
+  }
+  placeLikeButton();
+  mobileVolume.addEventListener('change',placeLikeButton);
   const savedVolume = read('volume',1);
   const desktopVolume = typeof savedVolume === 'number' && Number.isFinite(savedVolume) && savedVolume >= 0 && savedVolume <= 1 ? savedVolume : 1;
   $('volume').value = String(desktopVolume);
@@ -331,11 +344,23 @@
     if('mediaSession'in navigator&&navigator.mediaSession.setPositionState&&Number.isFinite(audio.duration)&&audio.duration>0){try{navigator.mediaSession.setPositionState({duration:audio.duration,playbackRate:audio.playbackRate,position:Math.min(audio.currentTime,audio.duration)});}catch{}}
   });
   ['play','pause'].forEach(event=>audio.addEventListener(event,()=>{renderCurrent();if('mediaSession'in navigator)navigator.mediaSession.playbackState=audio.paused?'paused':'playing';}));
-  audio.addEventListener('waiting',()=>{if(!audio.paused)status('正在缓冲…');});
-  audio.addEventListener('pause',()=>{if(['正在缓冲…','正在加载音频…'].includes($('player-status').textContent))status('');}); audio.addEventListener('playing',()=>status(''));
+  audio.addEventListener('waiting',()=>{if(!audio.paused)status('正在缓冲...');});
+  audio.addEventListener('pause',()=>{if(['正在缓冲...','正在加载音频…'].includes(playerStatusText))status('');}); audio.addEventListener('playing',()=>status(''));
   audio.addEventListener('error',()=>{status('音频暂时无法加载，请检查网络后点击播放重试。');renderCurrent();});
   audio.addEventListener('ended',()=>advance(1,true));
-  if('mediaSession'in navigator)for(const [name,handler] of Object.entries({play:()=>play(current || filtered()[0],queue.length ? queue : filtered()),pause:()=>audio.pause(),previoustrack:previousTrack,nexttrack:()=>advance(1),seekbackward:null,seekforward:null,seekto:e=>{if(Number.isFinite(audio.duration))audio.currentTime=Math.min(e.seekTime,audio.duration);}})){try{navigator.mediaSession.setActionHandler(name,handler);}catch{}}
+  function registerMediaActions() {
+    if (!('mediaSession' in navigator)) return;
+    const handlers = {
+      play: () => play(current || filtered()[0], queue.length ? queue : filtered()),
+      pause: () => audio.pause(),
+      previoustrack: () => advance(-1),
+      nexttrack: () => advance(1),
+      seekto: e => { if (Number.isFinite(audio.duration)) audio.currentTime = Math.min(e.seekTime, audio.duration); }
+    };
+    for (const [name, handler] of Object.entries(handlers)) {
+      try { navigator.mediaSession.setActionHandler(name, handler); } catch {}
+    }
+  }
   const full = $('full-player');
   function updateFull() {
     $('open-full').disabled = !current; $('quality').disabled = !current;
@@ -354,12 +379,11 @@
     const details = [['格式',format],['码率',bitrate],['采样率',rate],...(!lossy && p.bitDepth ? [['量化位深',depth]] : []),['声道',p.channels===2?'双声道':p.channels===1?'单声道':p.channels?String(p.channels):'未记录'],['文件大小',p.fileSize?(p.fileSize/1024/1024).toFixed(1)+'MiB':'未记录']];
     $('audio-details').innerHTML=details.map(([label,value])=>`<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join('');
     setIcon('full-play',audio.paused?'play':'pause'); $('full-play').setAttribute('aria-label',audio.paused?'全屏播放':'全屏暂停');
-    setIcon('full-like','heart'); $('full-like').setAttribute('aria-pressed',String(favorites.has(current.id)));
-    setIcon('full-like-mobile','heart'); $('full-like-mobile').setAttribute('aria-pressed',String(favorites.has(current.id)));
+    syncFavoriteButtons();
     updateModeControls();
     $('full-duration').textContent=time(Number.isFinite(audio.duration)?audio.duration:current.duration);
     $('full-seek').disabled=!Number.isFinite(audio.duration);
-    $('full-elapsed').textContent=time(audio.currentTime); $('full-status').textContent=$('player-status').textContent;
+    $('full-elapsed').textContent=time(audio.currentTime); $('full-status').textContent=playerStatusText;
   }
   function openFull() {
     if(!current)return; updateFull();
