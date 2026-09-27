@@ -18,7 +18,7 @@
   };
   const icon = name => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${shapes[name]}</svg>`;
   const setIcon = (id,name) => { $(id).innerHTML=icon(name); };
-  for(const [id,name] of Object.entries({play:'play',prev:'prev',next:'next',shuffle:'shuffle',repeat:'repeat','now-like':'heart','queue-toggle':'list','close-queue':'close','close-full':'down','full-play':'play','full-prev':'prev','full-next':'next','full-shuffle':'shuffle','full-like':'heart'}))setIcon(id,name);
+  for(const [id,name] of Object.entries({play:'play',prev:'prev',next:'next',repeat:'repeat','now-like':'heart','queue-toggle':'list','close-queue':'close','close-full':'down','full-play':'play','full-prev':'prev','full-next':'next','full-like':'heart'}))setIcon(id,name);
   $('feature-play').innerHTML=icon('play')+'播放专辑';
   $('feature-open').innerHTML='查看曲目'+icon('arrow');
 
@@ -33,7 +33,7 @@
   let audioProperties = {};
   const favorites = new Set();
   let appleMusic=null, activePlaylist=null, appleError=false;
-  let tracks = [], albums = [], view = 'albums', selected = null, current = null, queue = [], shuffled = false, repeat = 'off', playToken = 0, lastSaved = 0;
+  let tracks = [], albums = [], view = 'albums', selected = null, current = null, queue = [], repeat = 'all', playToken = 0, lastSaved = 0;
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const time = n => { n = Number.isFinite(n) ? Math.max(0, Math.floor(n)) : 0; return Math.floor(n / 60) + ':' + String(n % 60).padStart(2, '0'); };
   const url = path => ROOT + path.split('/').map(encodeURIComponent).join('/');
@@ -150,10 +150,7 @@
   }
   function playAlbum(album) {
     if(!album?.tracks.length)return;
-    shuffled=false; repeat='off';
-    $('shuffle').setAttribute('aria-pressed','false');
-    setIcon('repeat','repeat'); $('repeat').classList.remove('on');
-    $('repeat').setAttribute('aria-label','循环模式：顺序播放');
+    repeat='all'; updateModeControls();
     if(current?.id===album.tracks[0].id && audio.readyState>0)audio.currentTime=0;
     play(album.tracks[0],album.tracks);
   }
@@ -195,20 +192,30 @@
     if (!queue.length) return;
     if (ended && repeat === 'one') { audio.currentTime = 0; play(current); return; }
     let index = queue.findIndex(t => t.id === current?.id);
-    if (shuffled && direction > 0 && queue.length > 1) { const candidates = queue.filter(t => t.id !== current?.id); play(candidates[Math.floor(Math.random()*candidates.length)]); return; }
+    if (repeat === 'shuffle' && direction > 0 && queue.length > 1) { const candidates = queue.filter(t => t.id !== current?.id); play(candidates[Math.floor(Math.random()*candidates.length)]); return; }
     index += direction;
-    if (ended && index >= queue.length && repeat === 'off') { renderCurrent(); status('这一轮播放结束了。'); return; }
     play(queue[(index+queue.length)%queue.length]);
+  }
+  function previousTrack() { if (audio.currentTime > 3) audio.currentTime = 0; else advance(-1); }
+  const modeLabels = {all:'列表循环',shuffle:'随机播放',one:'单曲循环'};
+  function updateModeControls() {
+    const glyph = repeat === 'shuffle' ? 'shuffle' : repeat === 'one' ? 'one' : 'repeat';
+    for (const id of ['repeat','full-repeat']) {
+      setIcon(id,glyph);
+      $(id).classList.toggle('on',repeat!=='all');
+      $(id).setAttribute('aria-label','播放模式：'+modeLabels[repeat]);
+      $(id).setAttribute('title','播放模式：'+modeLabels[repeat]);
+      $(id).setAttribute('aria-pressed',String(repeat!=='all'));
+    }
   }
   $('play').onclick = () => {
     if (!audio.paused) { ++playToken; audio.pause(); return; }
     if (audio.error) { const src = current && url(current.src); if (src) { audio.src=src; audio.load(); } }
     play(current || filtered()[0], queue.length ? queue : filtered());
   };
-  $('prev').onclick = () => { if (audio.currentTime > 3) audio.currentTime = 0; else advance(-1); };
+  $('prev').onclick = previousTrack;
   $('next').onclick = () => advance(1);
-  $('shuffle').onclick = () => { shuffled=!shuffled; $('shuffle').setAttribute('aria-pressed',String(shuffled)); updateFull(); };
-  $('repeat').onclick = () => { repeat=({off:'all',all:'one',one:'off'})[repeat]; setIcon('repeat',repeat==='one'?'one':'repeat'); $('repeat').classList.toggle('on',repeat!=='off'); $('repeat').setAttribute('aria-label','循环模式：'+({off:'顺序播放',all:'列表循环',one:'单曲循环'})[repeat]); updateFull(); };
+  $('repeat').onclick = () => { repeat=({all:'shuffle',shuffle:'one',one:'all'})[repeat]; updateModeControls(); };
   $('now-like').onclick = () => current && like(current.id);
   $('seek').oninput = () => { if (Number.isFinite(audio.duration)) audio.currentTime = Number($('seek').value)/100*audio.duration; };
   audio.volume = .8;
@@ -250,7 +257,7 @@
   audio.addEventListener('pause',()=>{if(['正在缓冲…','正在加载音频…'].includes($('player-status').textContent))status('');}); audio.addEventListener('playing',()=>status(''));
   audio.addEventListener('error',()=>{status('音频暂时无法加载，请检查网络后点击播放重试。');renderCurrent();});
   audio.addEventListener('ended',()=>advance(1,true));
-  if('mediaSession'in navigator)for(const [name,handler] of Object.entries({play:()=>play(current || filtered()[0],queue.length ? queue : filtered()),pause:()=>audio.pause(),previoustrack:()=>advance(-1),nexttrack:()=>advance(1),seekto:e=>{if(Number.isFinite(audio.duration))audio.currentTime=Math.min(e.seekTime,audio.duration);}})){try{navigator.mediaSession.setActionHandler(name,handler);}catch{}}
+  if('mediaSession'in navigator)for(const [name,handler] of Object.entries({play:()=>play(current || filtered()[0],queue.length ? queue : filtered()),pause:()=>audio.pause(),previoustrack:previousTrack,nexttrack:()=>advance(1),seekbackward:null,seekforward:null,seekto:e=>{if(Number.isFinite(audio.duration))audio.currentTime=Math.min(e.seekTime,audio.duration);}})){try{navigator.mediaSession.setActionHandler(name,handler);}catch{}}
   const full = $('full-player');
   function updateFull() {
     $('open-full').disabled = !current; $('quality').disabled = !current;
@@ -269,9 +276,8 @@
     const details = [['格式',format],['码率',bitrate],['采样率',rate],...(!lossy && p.bitDepth ? [['量化位深',depth]] : []),['声道',p.channels===2?'双声道':p.channels===1?'单声道':p.channels?String(p.channels):'未记录'],['文件大小',p.fileSize?(p.fileSize/1024/1024).toFixed(1)+'MiB':'未记录']];
     $('audio-details').innerHTML=details.map(([label,value])=>`<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join('');
     setIcon('full-play',audio.paused?'play':'pause'); $('full-play').setAttribute('aria-label',audio.paused?'全屏播放':'全屏暂停');
-    $('full-shuffle').setAttribute('aria-pressed',String(shuffled));
     setIcon('full-like','heart'); $('full-like').setAttribute('aria-pressed',String(favorites.has(current.id)));
-    $('full-repeat').innerHTML=icon(repeat==='one'?'one':'repeat')+({off:'顺序播放',all:'列表循环',one:'单曲循环'})[repeat];
+    updateModeControls();
     $('full-duration').textContent=time(Number.isFinite(audio.duration)?audio.duration:current.duration);
     $('full-seek').disabled=!Number.isFinite(audio.duration);
     $('full-elapsed').textContent=time(audio.currentTime); $('full-status').textContent=$('player-status').textContent;
@@ -285,7 +291,7 @@
   function closeFull() { if(full.open)full.close(); }
   full.addEventListener('close',()=>{document.body.classList.remove('full-open');if(document.fullscreenElement===full)document.exitFullscreen().catch(()=>{});$('open-full').focus();});
   $('open-full').onclick=openFull; $('quality').onclick=openFull; $('close-full').onclick=closeFull;
-  for(const [button,target] of [['full-play','play'],['full-prev','prev'],['full-next','next'],['full-shuffle','shuffle'],['full-like','now-like'],['full-repeat','repeat']])$(button).onclick=()=>$(target).click();
+  for(const [button,target] of [['full-play','play'],['full-prev','prev'],['full-next','next'],['full-like','now-like'],['full-repeat','repeat']])$(button).onclick=()=>$(target).click();
   $('full-seek').oninput=()=>{if(Number.isFinite(audio.duration))audio.currentTime=Number($('full-seek').value)/100*audio.duration;};
 
   async function request(source) {

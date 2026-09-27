@@ -7464,5 +7464,977 @@
       "bitRate": 95216,
       "fileSize": 3016547
     }
+  },
+  "apple-8852605c8b646ccc": {
+    "src": "artists/陈奕迅/2009 - H3M (Remastered 2019)/01-06 - 七百年后.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 262.4,
+    "fileSize": 10587000,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 262.432,
+      "bitRate": 95112,
+      "fileSize": 3169651
+    }
+  },
+  "apple-f5a848c1a38da4aa": {
+    "src": "artists/陈奕迅/2015 - 准备中/01-02 - 无条件.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 229.695,
+    "fileSize": 9311476,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 229.715,
+      "bitRate": 97176,
+      "fileSize": 2834025
+    }
+  },
+  "apple-633f5e8a554f9f94": {
+    "src": "artists/杨千嬅/2000 - Play It Loud Kiss Me Soft/01-02 - 少女的祈祷.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 211.043,
+    "fileSize": 8569034,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 211.069,
+      "bitRate": 96480,
+      "fileSize": 2585726
+    }
+  },
+  "apple-8fb69498960263df": {
+    "src": "artists/杨千嬅/2001 - 千嬅盛放/01-02 - 野孩子.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 221.753,
+    "fileSize": 9028008,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 221.774,
+      "bitRate": 95992,
+      "fileSize": 2703306
+    }
+  },
+  "apple-2587c67542be41e5": {
+    "src": "artists/李荣浩/2014 - 李荣浩/01-04 - 不搭.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 287.869,
+    "fileSize": 11697339,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 287.881,
+      "bitRate": 95400,
+      "fileSize": 3487271
+    }
+  },
+  "apple-73fc82f49f539126": {
+    "src": "artists/李荣浩/2015 - 有理想/01-07 - 不将就 (电影《何以笙箫默》片尾曲).mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 313.051,
+    "fileSize": 12627143,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 313.075,
+      "bitRate": 95952,
+      "fileSize": 3813885
+    }
+  },
+  "apple-cadb15471e9c532f": {
+    "src": "artists/陈奕迅/2009 - H3M (Remastered 2019)/01-04 - 今天只做一件事.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 229.93,
+    "fileSize": 9286898,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 229.947,
+      "bitRate": 95592,
+      "fileSize": 2791476
+    }
+  },
+  "apple-bc62ae6dd5b00237": {
+    "src": "artists/陈奕迅/2009 - H3M (Remastered 2019)/01-08 - 太阳照常升起.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 230.243,
+    "fileSize": 9299447,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 230.272,
+      "bitRate": 95360,
+      "fileSize": 2788621
+    }
+  },
+  "apple-abc8924e6426b9f5": {
+    "src": "artists/陈奕迅/2005 - U 87/01-03 - 夕阳无限好.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 244.297,
+    "fileSize": 10106494,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 244.32,
+      "bitRate": 95824,
+      "fileSize": 2972972
+    }
+  },
+  "apple-5d232f920f31a925": {
+    "src": "artists/陈奕迅/2003 - Live for Today/01-03 - 十面埋伏.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 232.176,
+    "fileSize": 9479465,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 232.2,
+      "bitRate": 96144,
+      "fileSize": 2834668
+    }
+  },
+  "apple-8a0ff255b404afb0": {
+    "src": "artists/薛之谦/2018 - 怪咖/01-09 - 那是你离开了北京的生活.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 268.539,
+    "fileSize": 10927189,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 268.49,
+      "bitRate": 104082,
+      "fileSize": 3548965
+    }
+  },
+  "apple-f0a98cb9d0e408e5": {
+    "src": "artists/薛之谦/2019 - 尘/01-07 - 陪你去流浪.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 274.469,
+    "fileSize": 11200154,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 274.44,
+      "bitRate": 103738,
+      "fileSize": 3615818
+    }
+  },
+  "apple-83bcf2bc832c4308": {
+    "src": "artists/薛之谦/2018 - 怪咖/01-10 - 违背的青春.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 336.901,
+    "fileSize": 13664412,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 48000,
+      "channels": 2,
+      "duration": 336.87,
+      "bitRate": 107836,
+      "fileSize": 4615298
+    }
+  },
+  "apple-d76f61c43c683471": {
+    "src": "artists/刘惜君 & 薛之谦/2019 - 尘/01-10 - 聊表心意.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 317.544,
+    "fileSize": 12924938,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 317.51,
+      "bitRate": 116466,
+      "fileSize": 4687822
+    }
+  },
+  "apple-7f4c77930bc5579f": {
+    "src": "artists/陈奕迅/1996 - 时代曲 (华星40 复刻系列)/01-10 - 当心中有恋爱感觉.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 295.105,
+    "fileSize": 11881124,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 295.126,
+      "bitRate": 95664,
+      "fileSize": 3584722
+    }
+  },
+  "apple-8e1aa582dc27c3aa": {
+    "src": "artists/陈奕迅/2001 - Shall We Dance？ Shall We Talk!/01-03 - Shall We Talk.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 227.971,
+    "fileSize": 9219647,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 227.997,
+      "bitRate": 95912,
+      "fileSize": 2776893
+    }
+  },
+  "apple-07d2747227a9aa6c": {
+    "src": "artists/陈奕迅/2001 - Shall We Dance？ Shall We Talk!/01-06 - 单车.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 211.304,
+    "fileSize": 8552314,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 211.325,
+      "bitRate": 94544,
+      "fileSize": 2537774
+    }
+  },
+  "apple-4f490116f03031e3": {
+    "src": "artists/许嵩/2018 - 寻宝游戏/01-04 - 九月清晨.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 236.121,
+    "fileSize": 9712294,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 236.147,
+      "bitRate": 96480,
+      "fileSize": 2892789
+    }
+  },
+  "apple-567b4543af00e6f1": {
+    "src": "artists/鹿先森乐队/2016 - 所有的酒, 都不如你/01-08 - 春风十里.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 375.98,
+    "fileSize": 15194454,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 376.001,
+      "bitRate": 96696,
+      "fileSize": 4615219
+    }
+  },
+  "apple-c0a5a3ade10e4c68": {
+    "src": "artists/贰佰/2017 - 嘿,抬头!/01-09 - 的青春.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 239.543,
+    "fileSize": 9763962,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 239.56,
+      "bitRate": 96208,
+      "fileSize": 2926550
+    }
+  },
+  "apple-805c6f238218e8fd": {
+    "src": "artists/李荣浩/2021 - 纵横四海/01-05 - 对等关系 (feat. 张惠妹).mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 327.393,
+    "fileSize": 13248627,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 327.35,
+      "bitRate": 173093,
+      "fileSize": 7150212
+    }
+  },
+  "apple-bf6bc240301d0c39": {
+    "src": "artists/李荣浩/2017 - 嗯/01-08 - 戒烟.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 293.956,
+    "fileSize": 11858825,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 293.92,
+      "bitRate": 102256,
+      "fileSize": 3835836
+    }
+  },
+  "apple-3b8dceba97146887": {
+    "src": "artists/李荣浩/2017 - 嗯/01-05 - 我看着你的时候.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 294.4,
+    "fileSize": 11876617,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 294.36,
+      "bitRate": 186755,
+      "fileSize": 6932728
+    }
+  },
+  "apple-31f361d2b6ec0d4b": {
+    "src": "artists/李荣浩/2018 - 耳朵/01-08 - 成长之重量 (电影 ＂动物世界＂ 态度版片尾曲).mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 337.685,
+    "fileSize": 13600519,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 337.64,
+      "bitRate": 107325,
+      "fileSize": 4620479
+    }
+  },
+  "apple-bfd4da1790bb8b54": {
+    "src": "artists/d4vd/2022 - Here With Me/01-01 - Here With Me.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 242.547,
+    "fileSize": 9832563,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 242.556,
+      "bitRate": 95880,
+      "fileSize": 2953152
+    }
+  },
+  "apple-a1d17e7098209094": {
+    "src": "artists/林俊杰/2019 - 将故事写成我们/01-01 - 将故事写成我们.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 335.647,
+    "fileSize": 13668422,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 335.62,
+      "bitRate": 83844,
+      "fileSize": 3608450
+    }
+  },
+  "apple-bdde58c0783d0081": {
+    "src": "artists/林俊杰/2019 - Wonderland/01-01 - Wonderland.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 241.763,
+    "fileSize": 9834076,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 241.72,
+      "bitRate": 116057,
+      "fileSize": 3555321
+    }
+  },
+  "apple-e9f83e70b9d88800": {
+    "src": "artists/林俊杰/2020 - 无滤镜 (feat. Hiroshi Fujiwara)/01-01 - 无滤镜 (feat. Hiroshi Fujiwara).mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 214.674,
+    "fileSize": 8756456,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 214.65,
+      "bitRate": 49264,
+      "fileSize": 1365590
+    }
+  },
+  "apple-2383b033b4267950": {
+    "src": "artists/林俊杰/2015 - 和自己对话/01-17 - 你, 有没有过 (电影《破风》主题曲).mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 240.196,
+    "fileSize": 9790651,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 48000,
+      "channels": 2,
+      "duration": 240.11,
+      "bitRate": 128087,
+      "fileSize": 3897153
+    }
+  },
+  "apple-50ded7abfdd26a22": {
+    "src": "artists/王嘉尔 & 林俊杰/2020 - 过/01-01 - 过.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 203.912,
+    "fileSize": 8338474,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 203.87,
+      "bitRate": 186518,
+      "fileSize": 4795439
+    }
+  },
+  "apple-db9b7347ec035d11": {
+    "src": "artists/鲍家街43号/1997 - 摇滚北京 3/01-01 - 晚安,北京.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 387.291,
+    "fileSize": 15686407,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 387.309,
+      "bitRate": 95632,
+      "fileSize": 4702349
+    }
+  },
+  "apple-e4df09c4e3f7525d": {
+    "src": "artists/李荣浩/2016 - 嗯/01-10 - 不说 (电影《从你的全世界路过》路过版主题曲).mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 326.609,
+    "fileSize": 13166298,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 326.57,
+      "bitRate": 113850,
+      "fileSize": 4714532
+    }
+  },
+  "apple-7f83b5456dac3edc": {
+    "src": "artists/陈奕迅/2005 - U 87/01-02 - 阿牛.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 202.083,
+    "fileSize": 8416245,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 202.106,
+      "bitRate": 96320,
+      "fileSize": 2471936
+    }
+  },
+  "apple-078da74e18c33a98": {
+    "src": "artists/杨千嬅/2003 - 千嬅盛放/01-14 - 飞女正传.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 247.484,
+    "fileSize": 10058266,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 247.501,
+      "bitRate": 96096,
+      "fileSize": 3019885
+    }
+  },
+  "apple-9adccfe98b26b890": {
+    "src": "artists/陈奕迅/2005 - U 87/01-06 - 葡萄成熟时.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 277.081,
+    "fileSize": 11419153,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 277.107,
+      "bitRate": 95912,
+      "fileSize": 3374737
+    }
+  },
+  "apple-b29418699b5f32de": {
+    "src": "artists/林保怡, 陈豪 & 黄德斌/2010 - 年少无知(剧集《天与地》片尾曲)/01-01 - 年少无知(剧集《天与地》片尾曲).mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 296.15,
+    "fileSize": 11970998,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 296.101,
+      "bitRate": 0,
+      "fileSize": 5274524
+    }
+  },
+  "apple-e0194713c8e89847": {
+    "src": "artists/陈奕迅/2011 - ？/01-08 - 内疚.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 240.327,
+    "fileSize": 9654313,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 240.35,
+      "bitRate": 96144,
+      "fileSize": 2934226
+    }
+  },
+  "apple-48d080cc0e5d18ca": {
+    "src": "artists/陈升/1994 - 魔鬼的情诗/01-01 - 不再让你孤单.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 334.211,
+    "fileSize": 13569196,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 334.182,
+      "bitRate": 0,
+      "fileSize": 5943610
+    }
+  },
+  "apple-6e02b84c7a911691": {
+    "src": "artists/Beyond/1997 - 请将手放开/01-10 - 我的知己在街头 (Instrumental Version).mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 42.162,
+    "fileSize": 1938340,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 42.121,
+      "bitRate": 0,
+      "fileSize": 963032
+    }
+  },
+  "apple-3c72faef88dd08c6": {
+    "src": "artists/水仙斗活佛/2016 - 结婚记/01-01 - 结婚记.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 410.932,
+    "fileSize": 16553351,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 410.9,
+      "bitRate": 0,
+      "fileSize": 18391977
+    }
+  },
+  "apple-d33effcb6c52d2d0": {
+    "src": "artists/谢天笑/2004 - 谢天笑 X.T.X/01-07 - 向阳花.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 323.318,
+    "fileSize": 13185975,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 323.291,
+      "bitRate": 0,
+      "fileSize": 7685078
+    }
+  },
+  "apple-1460dedf8af8d8a7": {
+    "src": "artists/Beyond/1997 - 请将手放开/01-13 - 旧历 (Instrumental Version).mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 279.118,
+    "fileSize": 11426077,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 279.081,
+      "bitRate": 0,
+      "fileSize": 5731947
+    }
+  },
+  "apple-66234cf032fc7308": {
+    "src": "artists/陈奕迅/2009 - 上五楼的快活/01-08 - 心的距离.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 321.829,
+    "fileSize": 12980018,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 321.852,
+      "bitRate": 95272,
+      "fileSize": 3893476
+    }
+  },
+  "apple-1442d110473f475d": {
+    "src": "artists/罗大佑 & 蒋志光/1990 - 蒋志光与他的朋友/01-06 - 皇后大道东.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 253.936,
+    "fileSize": 10422560,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 253.887,
+      "bitRate": 0,
+      "fileSize": 5713362
+    }
+  },
+  "apple-fabc0b99c84edfa5": {
+    "src": "artists/陈奕迅/2010 - 陈奕迅2010 Duo演唱会/01-06 - 约定 (Live).mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 336.3,
+    "fileSize": 13504266,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 336.318,
+      "bitRate": 95896,
+      "fileSize": 4094654
+    }
+  },
+  "apple-c9abae49fe68b42c": {
+    "src": "artists/陈奕迅/2010 - 陈奕迅2010 Duo演唱会/01-07 - 寂寞夜晚 (Live).mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 128.366,
+    "fileSize": 5178564,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 128.383,
+      "bitRate": 95840,
+      "fileSize": 1563165
+    }
+  },
+  "apple-e033ccb94ee176f1": {
+    "src": "artists/陈奕迅/2001 - The Easy Ride/01-11 - 不知所谓.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 201.874,
+    "fileSize": 8210909,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 201.898,
+      "bitRate": 96256,
+      "fileSize": 2467818
+    }
+  },
+  "apple-9239743cad5e18f8": {
+    "src": "artists/陈奕迅/1999 - 幸福/01-03 - 时光倒流二十年.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 206.393,
+    "fileSize": 8475415,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 206.425,
+      "bitRate": 96096,
+      "fileSize": 2519030
+    }
+  },
+  "apple-e758eab0767620be": {
+    "src": "artists/陈奕迅/1999 - 婚礼的祝福/01-06 - 婚礼的祝福.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 261.956,
+    "fileSize": 10895210,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 261.968,
+      "bitRate": 96504,
+      "fileSize": 3209735
+    }
+  },
+  "apple-df603b0b731a7c1f": {
+    "src": "artists/陈奕迅/1997 - 与我常在/01-04 - 生命有几好.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 254.041,
+    "fileSize": 10416560,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 254.05,
+      "bitRate": 95768,
+      "fileSize": 3089409
+    }
+  },
+  "apple-b380c41421e9568f": {
+    "src": "artists/陈奕迅/2001 - 反正是我 (国)/01-09 - 全世界失眠.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 250.697,
+    "fileSize": 10180568,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 250.706,
+      "bitRate": 95976,
+      "fileSize": 3055332
+    }
+  },
+  "apple-9533f1d7f0504348": {
+    "src": "artists/陈奕迅/2001 - The Easy Ride/01-04 - 大开眼戒.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 250.984,
+    "fileSize": 10177279,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 251.008,
+      "bitRate": 95768,
+      "fileSize": 3052512
+    }
+  },
+  "apple-78ba326e6c643b46": {
+    "src": "artists/罗大佑/2018 - 大事发声.录音棚现场： 罗大佑 专场 (超级版)/01-07 - 之乎者也 (feat. 李志) [Live].mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 235.468,
+    "fileSize": 9615396,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 235.474,
+      "bitRate": 0,
+      "fileSize": 3810034
+    }
+  },
+  "apple-b544238dd80d2bde": {
+    "src": "artists/陈奕迅/2010 - Time Flies/01-03 - 陀飞轮.mp3",
+    "codec": "MP3",
+    "sampleRate": 44100,
+    "bitDepth": null,
+    "channels": 2,
+    "duration": 278.178,
+    "fileSize": 11248159,
+    "bitRate": 320000,
+    "sourceAudioProperties": {
+      "codec": "mp4a.40.2",
+      "sampleRate": 44100,
+      "channels": 2,
+      "duration": 278.198,
+      "bitRate": 95208,
+      "fileSize": 3363353
+    }
   }
 }
