@@ -267,3 +267,7 @@ button[data-like][aria-pressed="true"] svg, #now-like[aria-pressed="true"] svg, 
   .filters select { min-width: 0; max-width: min(43vw,170px); }
   #sort-direction { min-width: 76px; }
 }
+
+/* Sidebar navigation uses one consistent vector icon size. */
+.sidebar .nav-item { font-size: 13px; }
+.sidebar .nav-item > svg { width: 20px; height: 20px; flex: 0 0 20px; }
