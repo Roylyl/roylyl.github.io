@@ -291,6 +291,7 @@
   }
   function render() {
     closeTrackMenu();
+    document.body.classList.toggle('album-detail-open',view==='albums' && !!selected);
     const list = filtered();
     const showCollectionIntro = view === 'albums' && !selected && !$('artist').value;
     $('intro').hidden = !showCollectionIntro;
