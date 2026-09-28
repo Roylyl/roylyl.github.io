@@ -97,6 +97,8 @@ def main():
     for track in tracks:
         destination = share_dir / f'{track["id"]}.html'
         destination.write_text(page(track, Path(track["cover"]).with_suffix(".jpg")))
+    import runpy
+    runpy.run_path(str(MUSIC_SITE / "scripts/build-catalog.py"))["build"]()
     print(f"已生成{len(tracks)}个歌曲分享页和{len({track['cover'] for track in tracks})}张封面")
 
 

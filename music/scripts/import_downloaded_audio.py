@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Import a user-authorized complete recording and update both catalogues."""
-import argparse,json,re,subprocess,urllib.request
+import argparse,json,re,subprocess,urllib.request,runpy
 from pathlib import Path
 from io import BytesIO
 from datetime import date
@@ -71,5 +71,6 @@ def main():
     mismatch=abs(before.length-e['duration'])
     e.update(trackId=tid,sourceStatus='available',sourceUrl=args.source_url,album=album_title,sourceNote=f"完整音频已入库；源文件{sourceprop['codec']}约{round(sourceprop['bitRate']/1000)}kbps，实测{before.length:.3f}秒，与Apple时长差{mismatch:.3f}秒；输出MP3 320kbps，不代表音质提升。")
     write(SITE/'data/apple-music.json',data);write(repo/'playlists.json',data)
+    runpy.run_path(str(SITE/'scripts/build-catalog.py'))['build']()
     print(json.dumps({'path':rel,'properties':prop,'sourceProperties':sourceprop},ensure_ascii=False))
 if __name__=='__main__':main()
