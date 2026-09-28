@@ -28,5 +28,24 @@ main{width:min(100%,460px);text-align:center}img{display:block;width:min(100%,36
 h1{font-size:clamp(24px,6vw,36px);line-height:1.3;margin:0 0 10px}p{color:#aab7c4;margin:8px 0}a{display:inline-block;margin-top:24px;padding:13px 24px;border-radius:28px;background:#8ef0c8;color:#10221a;text-decoration:none;font-weight:650}
 </style>
 </head>
-<body><main><img src="https://roylyl.github.io/music/share-covers/live/%E6%9D%8E%E5%BF%97/2019%20-%20%E6%B4%97%E5%BF%83%E9%9D%A9%E9%9D%A2%EF%BC%88%E6%AD%8C%E8%BF%B7%E7%AB%9926%E8%BD%A8%E7%89%88%EF%BC%89/cover.jpg" alt="洗心革面（歌迷站26轨版）专辑封面" width="600" height="600"><h1>一个夜晚 - 李志</h1><p>洗心革面（歌迷站26轨版）</p><p>来自Roylyl的私人音乐仓库。</p><a href="../?track=lizhi-washing-2019-fan-26-d01-t12&amp;full=1&amp;autoplay=1">打开Roylyl Music</a></main></body>
+<body><main><img src="../placeholder.svg" data-cover-url="../share-covers/live/%E6%9D%8E%E5%BF%97/2019%20-%20%E6%B4%97%E5%BF%83%E9%9D%A9%E9%9D%A2%EF%BC%88%E6%AD%8C%E8%BF%B7%E7%AB%9926%E8%BD%A8%E7%89%88%EF%BC%89/cover.jpg" alt="洗心革面（歌迷站26轨版）专辑封面" width="600" height="600"><h1>一个夜晚 - 李志</h1><p>洗心革面（歌迷站26轨版）</p><p>来自Roylyl的私人音乐仓库。</p><a href="../?track=lizhi-washing-2019-fan-26-d01-t12&amp;full=1&amp;autoplay=1">打开Roylyl Music</a></main>
+<script>
+(() => {
+  const img = document.querySelector('main img');
+  const source = new URL(img.dataset.coverUrl, location.href).href;
+  (async () => {
+    if (!('caches' in window)) { img.src = source; return; }
+    try {
+      const cache = await caches.open('roylyl-music-covers-v1');
+      let response = await cache.match(source);
+      if (!response) {
+        response = await fetch(source);
+        if (!response.ok) throw new Error('Cover HTTP ' + response.status);
+        try { await cache.put(source, response.clone()); } catch {}
+      }
+      img.src = URL.createObjectURL(await response.blob());
+    } catch { img.src = source; }
+  })();
+})();
+</script></body>
 </html>

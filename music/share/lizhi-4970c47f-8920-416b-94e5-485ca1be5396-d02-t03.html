@@ -28,5 +28,24 @@ main{width:min(100%,460px);text-align:center}img{display:block;width:min(100%,36
 h1{font-size:clamp(24px,6vw,36px);line-height:1.3;margin:0 0 10px}p{color:#aab7c4;margin:8px 0}a{display:inline-block;margin-top:24px;padding:13px 24px;border-radius:28px;background:#8ef0c8;color:#10221a;text-decoration:none;font-weight:650}
 </style>
 </head>
-<body><main><img src="https://roylyl.github.io/music/share-covers/live/%E6%9D%8E%E5%BF%97/2010%20-%20%E4%BA%8C%E9%9B%B6%E9%9B%B6%E4%B9%9D%E5%B9%B4%E5%8D%81%E6%9C%88%E5%8D%81%E5%85%AD%E6%97%A5%E4%BA%8B%E4%BB%B6/cover.jpg" alt="二零零九年十月十六日事件专辑封面" width="600" height="600"><h1>结婚 ボーカル：老狼・万晓利・李志 - 老狼 / 万晓利 / 李志</h1><p>二零零九年十月十六日事件</p><p>来自Roylyl的私人音乐仓库。</p><a href="../?track=lizhi-4970c47f-8920-416b-94e5-485ca1be5396-d02-t03&amp;full=1&amp;autoplay=1">打开Roylyl Music</a></main></body>
+<body><main><img src="../placeholder.svg" data-cover-url="../share-covers/live/%E6%9D%8E%E5%BF%97/2010%20-%20%E4%BA%8C%E9%9B%B6%E9%9B%B6%E4%B9%9D%E5%B9%B4%E5%8D%81%E6%9C%88%E5%8D%81%E5%85%AD%E6%97%A5%E4%BA%8B%E4%BB%B6/cover.jpg" alt="二零零九年十月十六日事件专辑封面" width="600" height="600"><h1>结婚 ボーカル：老狼・万晓利・李志 - 老狼 / 万晓利 / 李志</h1><p>二零零九年十月十六日事件</p><p>来自Roylyl的私人音乐仓库。</p><a href="../?track=lizhi-4970c47f-8920-416b-94e5-485ca1be5396-d02-t03&amp;full=1&amp;autoplay=1">打开Roylyl Music</a></main>
+<script>
+(() => {
+  const img = document.querySelector('main img');
+  const source = new URL(img.dataset.coverUrl, location.href).href;
+  (async () => {
+    if (!('caches' in window)) { img.src = source; return; }
+    try {
+      const cache = await caches.open('roylyl-music-covers-v1');
+      let response = await cache.match(source);
+      if (!response) {
+        response = await fetch(source);
+        if (!response.ok) throw new Error('Cover HTTP ' + response.status);
+        try { await cache.put(source, response.clone()); } catch {}
+      }
+      img.src = URL.createObjectURL(await response.blob());
+    } catch { img.src = source; }
+  })();
+})();
+</script></body>
 </html>

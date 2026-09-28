@@ -20,6 +20,7 @@ def page(track, image_path):
     artist = html.escape(track["artist"], quote=True)
     album = html.escape(track["album"], quote=True)
     image = PUBLIC_ROOT + "share-covers/" + quote(image_path.as_posix(), safe="/")
+    relative_image = "../share-covers/" + quote(image_path.as_posix(), safe="/")
     canonical = PUBLIC_ROOT + "share/" + song_id + ".html"
     listen = "../?track=" + song_id + "&amp;full=1&amp;autoplay=1"
     return f"""<!doctype html>
@@ -52,7 +53,26 @@ main{{width:min(100%,460px);text-align:center}}img{{display:block;width:min(100%
 h1{{font-size:clamp(24px,6vw,36px);line-height:1.3;margin:0 0 10px}}p{{color:#aab7c4;margin:8px 0}}a{{display:inline-block;margin-top:24px;padding:13px 24px;border-radius:28px;background:#8ef0c8;color:#10221a;text-decoration:none;font-weight:650}}
 </style>
 </head>
-<body><main><img src="{image}" alt="{album}专辑封面" width="600" height="600"><h1>{title}</h1><p>{album}</p><p>{DESCRIPTION}</p><a href="{listen}">打开Roylyl Music</a></main></body>
+<body><main><img src="../placeholder.svg" data-cover-url="{relative_image}" alt="{album}专辑封面" width="600" height="600"><h1>{title}</h1><p>{album}</p><p>{DESCRIPTION}</p><a href="{listen}">打开Roylyl Music</a></main>
+<script>
+(() => {{
+  const img = document.querySelector('main img');
+  const source = new URL(img.dataset.coverUrl, location.href).href;
+  (async () => {{
+    if (!('caches' in window)) {{ img.src = source; return; }}
+    try {{
+      const cache = await caches.open('roylyl-music-covers-v1');
+      let response = await cache.match(source);
+      if (!response) {{
+        response = await fetch(source);
+        if (!response.ok) throw new Error('Cover HTTP ' + response.status);
+        try {{ await cache.put(source, response.clone()); }} catch {{}}
+      }}
+      img.src = URL.createObjectURL(await response.blob());
+    }} catch {{ img.src = source; }}
+  }})();
+}})();
+</script></body>
 </html>
 """
 

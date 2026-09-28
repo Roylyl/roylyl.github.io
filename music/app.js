@@ -22,31 +22,37 @@
   const audio = $('audio');
   const AUDIO_CACHE = 'roylyl-music-audio-v1';
   const COVER_CACHE = 'roylyl-music-covers-v1';
-  const cacheStatus = $('cache-status');
-  let cacheGeneration = 0, cacheDownload = Promise.resolve(), localAudioUrl = null, persistenceRequested = false;
+  const audioCacheStatus = $('audio-cache-status'), coverCacheStatus = $('cover-cache-status');
+  let audioCacheGeneration = 0, coverCacheGeneration = 0, cacheDownload = Promise.resolve(), localAudioUrl = null, persistenceRequested = false;
   async function updateCacheStatus() {
-    if (!('caches' in window)) { cacheStatus.textContent = '此浏览器不支持本地音乐缓存。'; $('clear-cache').disabled = true; return; }
+    if (!('caches' in window)) {
+      audioCacheStatus.textContent = coverCacheStatus.textContent = '此浏览器不支持本地缓存。';
+      $('clear-audio-cache').disabled = $('clear-cover-cache').disabled = true;
+      return;
+    }
     try {
       const [audioCache, coverCache] = await Promise.all([caches.open(AUDIO_CACHE), caches.open(COVER_CACHE)]);
       const [audioKeys, coverKeys] = await Promise.all([audioCache.keys(), coverCache.keys()]);
       const persistent = await navigator.storage?.persisted?.();
-      cacheStatus.textContent = `已缓存${audioKeys.length}首歌曲、${coverKeys.length}张封面${persistent ? ' · 已启用持久存储' : ' · 受浏览器存储空间限制'}`;
-    } catch { cacheStatus.textContent = '无法读取音乐缓存。'; }
+      const storage = persistent ? ' · 已启用持久存储' : ' · 受浏览器存储空间限制';
+      audioCacheStatus.textContent = `已缓存${audioKeys.length}首歌曲${storage}`;
+      coverCacheStatus.textContent = `已缓存${coverKeys.length}张专辑封面${storage}`;
+    } catch { audioCacheStatus.textContent = coverCacheStatus.textContent = '无法读取本地缓存。'; }
   }
   async function cacheAudio(source) {
     if (!('caches' in window)) return false;
-    const generation = cacheGeneration;
+    const generation = audioCacheGeneration;
     cacheDownload = cacheDownload.catch(()=>{}).then(async () => {
       const cache = await caches.open(AUDIO_CACHE);
       if (await cache.match(source)) return true;
       const response = await fetch(source);
       if (!response.ok || !response.body || response.status !== 200) return false;
-      if (generation !== cacheGeneration) return false;
+      if (generation !== audioCacheGeneration) return false;
       await cache.put(source, response);
-      if (generation !== cacheGeneration) { await caches.delete(AUDIO_CACHE); return false; }
+      if (generation !== audioCacheGeneration) { await caches.delete(AUDIO_CACHE); return false; }
       updateCacheStatus();
       return true;
-    }).catch(() => { cacheStatus.textContent = '缓存未完成，播放仍可继续。'; return false; });
+    }).catch(() => { audioCacheStatus.textContent = '缓存未完成，播放仍可继续。'; return false; });
     return cacheDownload;
   }
   async function cachedAudioUrl(source) {
@@ -55,13 +61,16 @@
     catch { return null; }
   }
   document.querySelectorAll('[data-open-settings]').forEach(button=>button.addEventListener('click',updateCacheStatus));
-  $('clear-cache').onclick = async () => {
-    cacheGeneration++;
-    $('clear-cache').disabled = true;
-    cacheStatus.textContent = '正在清理…';
-    try { await Promise.all([caches.delete(AUDIO_CACHE),caches.delete(COVER_CACHE)]); cacheStatus.textContent = '音乐和封面缓存已清理'; }
-    catch { cacheStatus.textContent = '清理失败，请重试。'; }
-    $('clear-cache').disabled = false;
+  for (const [buttonId,cacheName,statusElement,invalidate,done] of [
+    ['clear-audio-cache',AUDIO_CACHE,audioCacheStatus,()=>audioCacheGeneration++,'音乐缓存已清理'],
+    ['clear-cover-cache',COVER_CACHE,coverCacheStatus,()=>{coverCacheGeneration++;coverUrls.clear();},'专辑封面缓存已清理']
+  ]) $(buttonId).onclick = async () => {
+    invalidate();
+    $(buttonId).disabled = true;
+    statusElement.textContent = '正在清理…';
+    try { await caches.delete(cacheName); statusElement.textContent = done; }
+    catch { statusElement.textContent = '清理失败，请重试。'; }
+    $(buttonId).disabled = false;
   };
   const shapes = {
     play:'<path d="m9 5 11 7-11 7Z" fill="currentColor" stroke="none"/>',
@@ -142,12 +151,13 @@
   }
   const normalize = s => String(s).normalize('NFKC').toLocaleLowerCase();
   const safePath = p => typeof p === 'string' && !p.startsWith('/') && !p.includes('\\') && !p.split('/').some(x => x === '..') && !/^[a-z]+:/i.test(p);
-  const picture = t => url(t.cover);
+  const coverSource = path => new URL('./share-covers/' + path.replace(/\.[^/.]+$/, '.jpg').split('/').map(encodeURIComponent).join('/'), location.href).href;
+  const picture = t => coverSource(t.cover);
   const coverUrls = new Map(), coverRequests = new Map();
   async function cachedCover(path) {
     if (coverUrls.has(path)) return coverUrls.get(path);
     if (coverRequests.has(path)) return coverRequests.get(path);
-    const source = url(path), generation = cacheGeneration;
+    const source = coverSource(path), generation = coverCacheGeneration;
     const request = (async () => {
       try {
         const cache = 'caches' in window ? await caches.open(COVER_CACHE) : null;
@@ -155,10 +165,10 @@
         if (!response) {
           response = await fetch(source);
           if (!response.ok) throw Error('Cover HTTP ' + response.status);
-          if (cache && generation === cacheGeneration) {
+          if (cache && generation === coverCacheGeneration) {
             try {
               await cache.put(source,response.clone());
-              if (generation !== cacheGeneration) await cache.delete(source);
+              if (generation !== coverCacheGeneration) await cache.delete(source);
             } catch {}
           }
         }

@@ -28,5 +28,24 @@ main{width:min(100%,460px);text-align:center}img{display:block;width:min(100%,36
 h1{font-size:clamp(24px,6vw,36px);line-height:1.3;margin:0 0 10px}p{color:#aab7c4;margin:8px 0}a{display:inline-block;margin-top:24px;padding:13px 24px;border-radius:28px;background:#8ef0c8;color:#10221a;text-decoration:none;font-weight:650}
 </style>
 </head>
-<body><main><img src="https://roylyl.github.io/music/share-covers/artists/Beyond/2003%20-%20Live%20Must%20Go%20On%20Series%20%EF%BC%8F%20Beyond%20%E8%B6%85%E8%B6%8A%20Beyond%20Live%2003%20-%20Since%201983%20%28Live%29/cover.jpg" alt="Live Must Go On Series : Beyond 超越 Beyond Live 03 - Since 1983 (Live)专辑封面" width="600" height="600"><h1>抗战二十年 (Live) - Beyond</h1><p>Live Must Go On Series : Beyond 超越 Beyond Live 03 - Since 1983 (Live)</p><p>来自Roylyl的私人音乐仓库。</p><a href="../?track=apple-9b833b04e867c178&amp;full=1&amp;autoplay=1">打开Roylyl Music</a></main></body>
+<body><main><img src="../placeholder.svg" data-cover-url="../share-covers/artists/Beyond/2003%20-%20Live%20Must%20Go%20On%20Series%20%EF%BC%8F%20Beyond%20%E8%B6%85%E8%B6%8A%20Beyond%20Live%2003%20-%20Since%201983%20%28Live%29/cover.jpg" alt="Live Must Go On Series : Beyond 超越 Beyond Live 03 - Since 1983 (Live)专辑封面" width="600" height="600"><h1>抗战二十年 (Live) - Beyond</h1><p>Live Must Go On Series : Beyond 超越 Beyond Live 03 - Since 1983 (Live)</p><p>来自Roylyl的私人音乐仓库。</p><a href="../?track=apple-9b833b04e867c178&amp;full=1&amp;autoplay=1">打开Roylyl Music</a></main>
+<script>
+(() => {
+  const img = document.querySelector('main img');
+  const source = new URL(img.dataset.coverUrl, location.href).href;
+  (async () => {
+    if (!('caches' in window)) { img.src = source; return; }
+    try {
+      const cache = await caches.open('roylyl-music-covers-v1');
+      let response = await cache.match(source);
+      if (!response) {
+        response = await fetch(source);
+        if (!response.ok) throw new Error('Cover HTTP ' + response.status);
+        try { await cache.put(source, response.clone()); } catch {}
+      }
+      img.src = URL.createObjectURL(await response.blob());
+    } catch { img.src = source; }
+  })();
+})();
+</script></body>
 </html>
