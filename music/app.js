@@ -527,10 +527,15 @@
     $('feature-play').onclick=()=>playAlbum(feature); $('feature-full').onclick=()=>openAlbum(feature);$('feature-open').onclick=()=>openAlbum(feature);
     $('total').textContent=tracks.length;$('source-state').textContent=cached?'本地索引 · 音频需联网':'音乐库已连接';$('notice').hidden=!cached;$('notice').textContent=cached?'正在使用随页面保存的曲目索引，音频仍从音乐仓库播放。':'';
     if(appleMusic)applyAppleMusic();
-    const sharedId = new URLSearchParams(location.search).get('track');
+    const shareParams = new URLSearchParams(location.search);
+    const sharedId = shareParams.get('track');
     if(!current && sharedId) {
       const shared = get(sharedId), album = albums.find(a=>a.tracks.some(t=>t.id===sharedId));
-      if(shared && album) { queue=album.tracks; selected=album; setCurrent(shared); }
+      if(shared && album) {
+        queue=album.tracks; selected=album; setCurrent(shared);
+        if(shareParams.get('full')==='1') openFull();
+        if(shareParams.get('autoplay')==='1') play(shared,album.tracks);
+      }
     }
     if(!current){const last=read('last',{}),t=get(last?.id);if(t){queue=albums.find(a=>a.tracks.some(x=>x.id===t.id)).tracks;setCurrent(t);const restore=()=>{if(current?.id===t.id&&Number.isFinite(audio.duration)&&last.time>0)audio.currentTime=Math.min(last.time,audio.duration-1);};audio.addEventListener('loadedmetadata',restore,{once:true});}}
     render();

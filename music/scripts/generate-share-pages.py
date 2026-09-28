@@ -21,7 +21,7 @@ def page(track, image_path):
     album = html.escape(track["album"], quote=True)
     image = PUBLIC_ROOT + "share-covers/" + quote(image_path.as_posix(), safe="/")
     canonical = PUBLIC_ROOT + "share/" + song_id + ".html"
-    listen = "../?track=" + song_id
+    listen = "../?track=" + song_id + "&amp;full=1&amp;autoplay=1"
     return f"""<!doctype html>
 <html lang="zh-CN">
 <head>
@@ -48,7 +48,7 @@ def page(track, image_path):
 <style>
 :root{{color-scheme:dark;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;background:#080d13;color:#f5f7fb}}
 *{{box-sizing:border-box}}body{{margin:0;min-height:100dvh;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 50% 0,#173039,#080d13 65%)}}
-main{{width:min(100%,460px);text-align:center}}img{{display:block;width:min(100%,360px);aspect-ratio:1;object-fit:cover;margin:0 auto 30px;border-radius:18px;box-shadow:0 24px 70px #0008}}
+main{{width:min(100%,460px);text-align:center}}img{{display:block;width:min(100%,360px);height:min(360px,calc(100vw - 48px));aspect-ratio:1;object-fit:cover;margin:0 auto 30px;border-radius:18px;box-shadow:0 24px 70px #0008}}
 h1{{font-size:clamp(24px,6vw,36px);line-height:1.3;margin:0 0 10px}}p{{color:#aab7c4;margin:8px 0}}a{{display:inline-block;margin-top:24px;padding:13px 24px;border-radius:28px;background:#8ef0c8;color:#10221a;text-decoration:none;font-weight:650}}
 </style>
 </head>
