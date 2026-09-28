@@ -401,8 +401,7 @@ html[data-theme="light"] #full-player::backdrop { background:#f6f8fb; }
 .full-title-row { display:flex; align-items:baseline; flex-wrap:wrap; gap:6px 10px; min-width:0; }
 .full-title-row h2 { margin:0; flex:0 1 auto; min-width:0; }
 #full-status { flex:0 1 auto; min-width:0; min-height:0; margin:0; color:var(--muted); font-size:12px; line-height:1.2; text-align:left; white-space:nowrap; overflow-wrap:anywhere; }
-#full-status:empty { display:inline-flex; visibility:hidden; }
-#full-status:empty::before { content:'· 正在缓冲...'; }
+#full-status:empty { display:none; }
 #full-player.dialog-fallback-open { display:block; }
 #full-status.is-message { white-space:normal; color:#e3c997; }
 .quality-badges { display:inline-flex; flex-wrap:wrap; gap:5px; align-items:center; }
@@ -460,11 +459,9 @@ html[data-theme="light"] .icon:hover, html[data-theme="light"] .icon[aria-presse
 .now-title-line { display:flex; align-items:baseline; min-width:0; white-space:nowrap; }
 .now-title-line #now-title { flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; }
 .now-title-line .player-status { display:inline; flex:0 0 auto; max-width:55%; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--muted); font-size:11px; text-align:left; }
-.now-title-line .player-status.is-buffering { max-width:none; overflow:visible; text-overflow:clip; }
 .now-title-line .player-status:empty { display:none; }
 .now-title-line .player-status.is-message { position:absolute; left:16px; bottom:calc(100% + 8px); display:block; width:max-content; max-width:min(480px,calc(100vw - 32px)); margin:0; padding:10px 13px; border:1px solid var(--line); border-radius:10px; background:var(--panel); color:var(--text); box-shadow:0 10px 30px #0005; white-space:normal; overflow:visible; overflow-wrap:anywhere; text-overflow:clip; line-height:1.5; z-index:1; }
 #full-player #full-status { white-space:normal; overflow-wrap:anywhere; line-height:1.5; }
-#full-player #full-status.is-buffering { white-space:nowrap; }
 @media (max-width:480px) {
   .intro { display:block; }
   .intro .stats { display:flex; flex-direction:row; align-items:baseline; gap:8px; margin-top:16px; padding:0; border:0; }
@@ -472,6 +469,38 @@ html[data-theme="light"] .icon:hover, html[data-theme="light"] .icon[aria-presse
 }
 
 #full-like-mobile[aria-pressed="true"] svg { fill:currentColor; }
+
+/* Keep the transport in a fixed footer while cover, details, or lyrics change above it. */
+#full-player .full-content { flex:1 1 auto; min-height:0; }
+#full-player .full-playback { flex:0 0 auto; width:min(100%,1760px); margin:0 auto; }
+#full-player .full-playback .full-timeline { width:100%; }
+#full-player .full-playback .full-controls { width:100%; }
+@media (max-width:700px) {
+  #full-player .full-shell { display:flex; height:100dvh; }
+  #full-player .full-content { flex:1 1 auto; min-height:0; }
+  #full-player .full-shell[data-mobile-view="lyrics"] .full-playback .full-timeline,
+  #full-player .full-shell[data-mobile-view="lyrics"] .full-playback .full-controls { width:100%; margin-left:0; }
+  #full-player .full-shell[data-mobile-view="lyrics"] .full-playback .full-timeline { margin-top:8px; }
+  #full-player .full-shell[data-mobile-view="lyrics"] .full-playback .full-controls { margin-top:5px; margin-bottom:2px; }
+}
+
+/* Buffering is shown by an open rotating ring on the play/pause control. */
+.play { position:relative; }
+.play.is-loading::after {
+  content:"";
+  position:absolute;
+  inset:-5px;
+  border:2px solid transparent;
+  border-top-color:var(--mint);
+  border-right-color:var(--mint);
+  border-radius:50%;
+  animation:play-loading-ring .9s linear infinite;
+  pointer-events:none;
+}
+@keyframes play-loading-ring { to { transform:rotate(360deg); } }
+@media (prefers-reduced-motion:reduce) {
+  .play.is-loading::after { animation-duration:2.4s; }
+}
 
 .track-row:not(.unavailable) { grid-template-columns:36px minmax(0,1.1fr) minmax(0,1fr) 52px 36px 36px; }
 .track-row .track-more { width:36px; min-width:36px; height:36px; min-height:36px; padding:7px; }

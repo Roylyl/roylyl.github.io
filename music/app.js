@@ -233,13 +233,20 @@
   }
   let playerStatusText = '';
   const BUFFERING_STATUS = '正在缓冲...';
+  function updateLoadingIndicator() {
+    const loading = playerStatusText === BUFFERING_STATUS || !!pendingTrackId;
+    for (const id of ['play','full-play']) {
+      $(id).classList.toggle('is-loading', loading);
+      $(id).setAttribute('aria-busy', String(loading));
+    }
+  }
   const status = text => {
     playerStatusText = text;
-    $('player-status').textContent = text ? ' · ' + text : '';
-    $('player-status').classList.toggle('is-buffering', text === BUFFERING_STATUS);
+    const message = text === BUFFERING_STATUS ? '' : text;
+    $('player-status').textContent = message ? ' · ' + message : '';
     $('player-status').classList.toggle('is-message', !!text && text !== BUFFERING_STATUS);
-    $('full-status').textContent = text ? '· ' + text : '';
-    $('full-status').classList.toggle('is-buffering', text === BUFFERING_STATUS);
+    $('full-status').textContent = message ? '· ' + message : '';
+    updateLoadingIndicator();
   };
   const lyricCache = new Map();
   let lyricRequest = 0, lyricTrackId = '', lyricLines = [], lyricActiveIndex = -1;
@@ -489,6 +496,7 @@
     updateFull();
     $('play').disabled=!current&&!($('songs')._tracks ?? filtered()).some(canPlay);
     setIcon('play',audio.paused&&!pendingTrackId?'play':'pause'); $('play').setAttribute('aria-label', audio.paused&&!pendingTrackId ? '播放' : '暂停');
+    updateLoadingIndicator();
     $('now-like').disabled = true; $('now-like').title='喜欢状态来自Apple Music'; $('full-like').disabled=true; $('full-like').title='喜欢状态来自Apple Music'; $('full-like-mobile').disabled=true; $('full-like-mobile').title='喜欢状态来自Apple Music';
     syncFavoriteButtons();
     document.querySelectorAll('.track-row').forEach(el => el.classList.toggle('current', el.dataset.track === current?.id && !audio.paused && !pendingTrackId));
@@ -753,11 +761,12 @@
     const details=[['格式',format],['码率',p.bitRate?bitrate:'未记录'],['采样率',p.sampleRate?rate:'未记录'],...(!lossy&&p.bitDepth?[['量化位深',depth]]:[]),['声道',p.channels===2?'双声道':p.channels===1?'单声道':p.channels?String(p.channels):'未记录'],['文件大小',p.fileSize?(p.fileSize/1024/1024).toFixed(1)+'MiB':'未记录']];
     $('audio-details').innerHTML=details.map(([label,value])=>`<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join('');
     setIcon('full-play',audio.paused&&!pendingTrackId?'play':'pause'); $('full-play').setAttribute('aria-label',audio.paused&&!pendingTrackId?'全屏播放':'全屏暂停');
+    updateLoadingIndicator();
     syncFavoriteButtons();
     updateModeControls();
     $('full-duration').textContent=time(Number.isFinite(audio.duration)?audio.duration:current.duration);
     $('full-seek').disabled=!Number.isFinite(audio.duration);
-    $('full-elapsed').textContent=time(audio.currentTime); $('full-status').textContent=playerStatusText ? '· '+playerStatusText : '';
+    $('full-elapsed').textContent=time(audio.currentTime); $('full-status').textContent=playerStatusText&&playerStatusText!==BUFFERING_STATUS ? '· '+playerStatusText : '';
     loadLyrics(current);
   }
   function openFull() {
