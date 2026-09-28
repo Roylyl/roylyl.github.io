@@ -2,11 +2,11 @@
   const videos = [
     {
       bvid: 'BV1WJ596FE2u',
-      titles: { 'zh-CN': '忧书 Cover 黄贯中', 'zh-TW': '憂書 Cover 黃貫中', en: 'You Shu · Paul Wong cover' }
+      titles: { 'zh-CN': '忧书Cover黄贯中', 'zh-TW': '憂書Cover黃貫中', en: 'You Shu · Paul Wong cover' }
     },
     {
       bvid: 'BV1GpL46TE9L',
-      titles: { 'zh-CN': '《梦幻丽莎发廊》Cover 五条人', 'zh-TW': '《夢幻麗莎髮廊》Cover 五條人', en: 'Menghuan Lisha Falang · Wu Tiao Ren cover' }
+      titles: { 'zh-CN': '《梦幻丽莎发廊》Cover五条人', 'zh-TW': '《夢幻麗莎髮廊》Cover五條人', en: 'Menghuan Lisha Falang · Wu Tiao Ren cover' }
     }
   ];
   const normalizeCountry = (value) => String(value || '').trim().toUpperCase();

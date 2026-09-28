@@ -103,6 +103,8 @@ button[data-like][aria-pressed="true"] svg, #now-like[aria-pressed="true"] svg, 
 .primary svg, .secondary svg, .back svg { width: 17px; height: 17px; }
 .open-album { display: flex; align-items: center; justify-content: center; }
 #album-detail { scroll-margin-top: 24px; }
+#back-albums { scroll-margin-top: 100px; margin-bottom: 22px; }
+#view-title { scroll-margin-top: 100px; }
 #full-player .full-shell { max-width: none; min-height: 100%; min-height: 100dvh; display: flex; flex-direction: column; padding: 28px clamp(24px,4.5vw,100px); }
 .full-header { flex-shrink: 0; }
 .full-header .icon { width: 46px; height: 46px; background: #ffffff08; border: 1px solid #ffffff0b; }
@@ -230,7 +232,7 @@ button[data-like][aria-pressed="true"] svg, #now-like[aria-pressed="true"] svg, 
   #full-player .full-content { width: 100%; flex: 1; justify-content: center; gap: clamp(8px,2.4dvh,20px); }
   #full-player .full-content > img { width: min(100%,32dvh); max-height: 32dvh; }
   #full-player .full-info { flex: 0 1 auto; }
-  #full-player .full-info h2 { font-size: clamp(20px,5vw,30px); line-height: 1.15; max-height: 2.3em; overflow: hidden; }
+  #full-player .full-info h2 { font-size: clamp(20px,5vw,30px); line-height: 1.15; max-height: 3.45em; overflow: hidden; }
   #full-player #full-artist { margin-top: 6px; }
   #full-player #full-album { margin-bottom: 8px; }
   #full-player #audio-details { padding: 8px 0; gap: 6px 10px; }
@@ -399,9 +401,18 @@ html[data-theme="light"] #audio-details dd { color:#168260; }
 html[data-theme="light"] .icon:hover, html[data-theme="light"] .icon[aria-pressed=true], html[data-theme="light"] .icon.on { color:#168260; }
 
 .now-title-line { display:flex; align-items:baseline; min-width:0; white-space:nowrap; }
-.now-title-line #now-title { flex:0 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; }
+.now-title-line #now-title { flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; }
 .now-title-line .player-status { display:inline; flex:0 0 auto; max-width:55%; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--muted); font-size:11px; text-align:left; }
+.now-title-line .player-status.is-buffering { max-width:none; overflow:visible; text-overflow:clip; }
 .now-title-line .player-status:empty { display:none; }
+.now-title-line .player-status.is-message { position:absolute; left:16px; bottom:calc(100% + 8px); display:block; width:max-content; max-width:min(480px,calc(100vw - 32px)); margin:0; padding:10px 13px; border:1px solid var(--line); border-radius:10px; background:var(--panel); color:var(--text); box-shadow:0 10px 30px #0005; white-space:normal; overflow:visible; overflow-wrap:anywhere; text-overflow:clip; line-height:1.5; z-index:1; }
+#full-player #full-status { white-space:normal; overflow-wrap:anywhere; line-height:1.5; }
+#full-player #full-status.is-buffering { white-space:nowrap; }
+@media (max-width:480px) {
+  .intro { display:block; }
+  .intro .stats { display:flex; flex-direction:row; align-items:baseline; gap:8px; margin-top:16px; padding:0; border:0; }
+  .intro .stats strong { font-size:25px; letter-spacing:-1px; }
+}
 
 #full-like-mobile[aria-pressed="true"] svg { fill:currentColor; }
 
@@ -441,3 +452,23 @@ html[data-theme="light"] .icon:hover, html[data-theme="light"] .icon[aria-presse
   .filters select, #sort-direction { width:100%; max-width:none; min-width:0; }
   .filters > span { grid-column:1 / -1; grid-row:3; justify-self:end; }
 }
+
+/* Artwork shares the title cell so action columns keep their reserved space. */
+.track-start { display:flex; align-items:center; gap:12px; }
+.track-cover { display:block; width:44px; height:44px; flex:0 0 44px; object-fit:cover; border-radius:7px; background:var(--panel); }
+.track-copy { display:block; min-width:0; flex:1; }
+@media (max-width:700px) {
+  .track-start { gap:8px; }
+  .track-cover { width:36px; height:36px; flex-basis:36px; border-radius:6px; }
+}
+.queue-panel .track-start, .full-queue .track-start { gap:8px; }
+.queue-panel .track-cover, .full-queue .track-cover { width:36px; height:36px; flex-basis:36px; }
+
+.text-link { padding:0; border:0; background:none; color:inherit; font:inherit; text-align:left; }
+.text-link:hover { color:var(--blue); text-decoration:underline; text-underline-offset:3px; }
+.track-art-play { display:block; flex:none; padding:0; background:none; border-radius:7px; }
+.track-title-play { display:block; max-width:100%; min-width:0; padding:0; background:none; text-align:left; color:inherit; }
+.track-title-play strong { max-width:100%; }
+.track-copy small { line-height:1.7; }
+.track-copy .text-link { display:inline; }
+button.track-album { min-width:0; }
