@@ -79,6 +79,12 @@ AUDIT_OUTPUT=/tmp/roylyl-music-qa node music/tests/browser.cjs
 
 `playback-browser.cjs`沿用上面的临时Chrome调试端口，默认本地端口8049。该脚本仅在测试浏览器里将MP3网络响应替换为180秒WAV测试音频，使用真实页面和原生audio元素检查LIFO插队、按钮与行播放隔离、队列显示、暂停拖动、刷新恢复、诊断持久化、全屏返回/前进及1440/700/402/375/320宽度排布。它不验证远程MP3可用性或蓝牙设备事件。
 
+`navigation-performance-browser.cjs`沿用端口8049和9231，在402px手机视口、4倍CPU降速下测量五个导航按钮的响应。检查歌曲按需显示、完整播放数据、列表中部和底部、快速切换、搜索、键盘连续访问、返回滚动位置，以及触摸点按和滑动的区分。它不播放音频；这些耗时属于Chrome模拟测试，不代表iPhone真机耗时。设置`NAV_PERF_ROUNDS=0`可只跑行为检查。
+
+```sh
+node music/tests/navigation-performance-browser.cjs
+```
+
 ```sh
 node music/tests/playback-browser.cjs
 ```

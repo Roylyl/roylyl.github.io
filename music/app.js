@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const APP_VERSION='20260929-pwa-32', SHELL_VERSION='roylyl-music-shell-20260929-34';
+  const APP_VERSION='20260929-pwa-34', SHELL_VERSION='roylyl-music-shell-20260929-36';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const themeMedia=window.matchMedia('(prefers-color-scheme: dark)');
@@ -166,7 +166,8 @@
   const time = n => { n = Number.isFinite(n) ? Math.max(0, Math.floor(n)) : 0; return Math.floor(n / 60) + ':' + String(n % 60).padStart(2, '0'); };
   const url = path => ROOT + path.split('/').map(encodeURIComponent).join('/');
   const audioSource = track => url(track.src)+'?v='+encodeURIComponent(track.audioRevision||'initial');
-  const compareText = (a,b) => String(a ?? '').localeCompare(String(b ?? ''),'zh-CN',{numeric:true});
+  const textCollator = new Intl.Collator('zh-CN',{numeric:true});
+  const compareText = (a,b) => textCollator.compare(String(a ?? ''),String(b ?? ''));
   function compareField(a,b,field,direction) {
     if (field === 'release') {
       const ay = Number(a.year)||0, by = Number(b.year)||0;
@@ -530,8 +531,8 @@
   function playlistTracks(ids) {
     return ids.map(id=>{const e=appleMusic.entries[id],t=get(e.trackId);return {...(t||{}),id:t?.id||'apple:'+id,appleId:id,title:e.title,artist:e.artist,album:e.album,year:t?.year||e.year||0,duration:t?.duration||e.duration,src:t?.src||'',sourceStatus:e.sourceStatus,sourceUrl:e.sourceUrl};});
   }
-  function playlistRows(list) {
-    return list.map((t,i)=>canPlay(t)?trackRows([t],false,i):`<div class="track-row unavailable"><span class="track-no">${String(i+1).padStart(2,'0')}</span><div class="track-start">${trackCover(t)}<span class="track-copy"><strong>${esc(t.title)}</strong><small>${artistLinks(t.artist)}</small></span></div><span class="track-album">${esc(t.album)}</span><span class="track-time">${time(t.duration)}</span><span class="source-label" title="音源尚未入库">${t.sourceUrl?`<a href="${esc(t.sourceUrl)}" target="_blank" rel="noopener noreferrer">${t.sourceStatus==='purchasable'?'待购入':'外部收听'} ↗</a>`:'待补音源'}</span></div>`).join('');
+  function playlistRows(list, offset=0) {
+    return list.map((t,i)=>canPlay(t)?trackRows([t],false,i+offset):`<div class="track-row unavailable"><span class="track-no">${String(i+1+offset).padStart(2,'0')}</span><div class="track-start">${trackCover(t)}<span class="track-copy"><strong>${esc(t.title)}</strong><small>${artistLinks(t.artist)}</small></span></div><span class="track-album">${esc(t.album)}</span><span class="track-time">${time(t.duration)}</span><span class="source-label" title="音源尚未入库">${t.sourceUrl?`<a href="${esc(t.sourceUrl)}" target="_blank" rel="noopener noreferrer">${t.sourceStatus==='purchasable'?'待购入':'外部收听'} ↗</a>`:'待补音源'}</span></div>`).join('');
   }
   const navigationKey='roylyl-music-navigation';
   let navigationDepth=history.state?.[navigationKey]?.depth||0, navigationReady=false;
@@ -587,8 +588,55 @@
   function trackRows(list, inQueue = false, offset = 0) {
     return list.map((t, i) => {const repeated=inQueue&&!t._queueCurrent,isPlaying=current?.id===t.id&&!audio.paused&&!pendingTrackId&&!repeated;return `<div class="track-row${isPlaying ? ' current' : ''}" data-track="${esc(t.id)}"${repeated?' data-queued-repeat="true"':''}${t._queueInserted?' data-queue-inserted="true"':''}><button class="track-no" data-number="${String(i + 1 + offset).padStart(2, '0')}" data-play="${esc(t.id)}" aria-label="播放${esc(t.title)}">${isPlaying ? '♫' : String(i + 1 + offset).padStart(2, '0')}</button><div class="track-start"><button class="track-art-play" data-play="${esc(t.id)}" aria-label="播放${esc(t.title)}">${trackCover(t)}</button><div class="track-copy"><button class="track-title-play" data-play="${esc(t.id)}"><strong>${esc(t.title)}</strong></button><small>${artistLinks(t.artist)}${inQueue ? ' · ' + albumLink(t) : ''}<span class="track-inline-time"> · ${time(t.duration)}</span></small></div></div>${albumLink(t,'track-album')}<span class="track-time">${time(t.duration)}</span><button class="icon track-next" type="button" data-next="${esc(t.id)}" title="下一首播放" aria-label="下一首播放：${esc(t.title)}">${icon('playNext')}</button><button class="icon" disabled title="喜欢状态来自Apple Music" data-like="${esc(t.id)}" aria-label="Apple Music${isFavorite(t.id) ? '已喜欢' : '未喜欢'}：${esc(t.title)}" aria-pressed="${isFavorite(t.id)}">${icon('heart')}</button><button class="icon track-more" type="button" data-more="${esc(t.id)}" aria-label="${esc(t.title)}的更多选项" aria-haspopup="menu" aria-expanded="false">${icon('more')}</button></div>`;}).join('');
   }
+  let songChunksObserver=null;
+  // Keep the complete playback list in _tracks; create only nearby visual rows.
+  function renderSongList(rows, playlist=false) {
+    const root=$('songs'), chunkSize=16;
+    songChunksObserver?.disconnect();
+    root._tracks=playlist?rows.filter(canPlay):rows;
+    const markup=(items,offset)=>playlist?playlistRows(items,offset):trackRows(items,false,offset);
+    if(!('IntersectionObserver' in window)||rows.length<=chunkSize){
+      root.innerHTML=markup(rows,0);hydrateCovers(root);return;
+    }
+    root.replaceChildren();
+    const chunks=[];
+    const mount=chunk=>{
+      if(chunk._mounted||chunk.parentElement!==root)return;
+      chunk._mounted=true;
+      chunk.innerHTML=markup(rows.slice(chunk._offset,chunk._offset+chunkSize),chunk._offset);
+      chunk.style.minHeight='';
+      songChunksObserver?.unobserve(chunk);
+      hydrateCovers(chunk);
+    };
+    const observer=new IntersectionObserver(entries=>{
+      if(songChunksObserver!==observer)return;
+      for(const entry of entries)if(entry.isIntersecting)mount(entry.target);
+    },{rootMargin:'600px 0px'});
+    songChunksObserver=observer;
+    for(let offset=0;offset<rows.length;offset+=chunkSize){
+      const chunk=document.createElement('div');chunk.className='song-chunk';chunk._offset=offset;
+      root.append(chunk);chunks.push(chunk);
+    }
+    mount(chunks[0]);
+    // Measure the current responsive row once so placeholders preserve scroll position.
+    const rowHeight=chunks[0].firstElementChild.getBoundingClientRect().height;
+    for(const chunk of chunks.slice(1)){
+      chunk.style.minHeight=Math.min(chunkSize,rows.length-chunk._offset)*rowHeight+'px';
+      songChunksObserver.observe(chunk);
+    }
+    // Keyboard users can continue into the next chunk without needing to scroll first.
+    root._songFocusHandler=event=>{
+      const chunk=event.target.closest('.song-chunk');
+      if(chunk?.nextElementSibling)mount(chunk.nextElementSibling);
+    };
+    root.addEventListener('focusin',root._songFocusHandler);
+  }
   function render() {
     closeTrackMenu();
+    songChunksObserver?.disconnect();songChunksObserver=null;
+    if($('songs')._songFocusHandler)$('songs').removeEventListener('focusin',$('songs')._songFocusHandler);
+    $('songs')._songFocusHandler=null;
+    if(view==='albums'&&!selected)$('songs').replaceChildren();
     document.body.classList.toggle('album-detail-open',view==='albums' && !!selected);
     const list = filtered();
     $('songs')._tracks=null;
@@ -624,7 +672,7 @@
       $('playlist-detail').innerHTML=`<p>歌单来自Apple Music与本地曲库 · ${all.length}首</p><div class="playlist-play-actions"><button id="play-playlist" class="primary" ${playable.length?'':'disabled'}>${icon('play')}顺序播放</button><button id="shuffle-playlist" class="secondary" ${playable.length?'':'disabled'}>${icon('shuffle')}随机播放</button></div><small>更新于${esc(new Date(appleMusic.updatedAt).toLocaleDateString('zh-CN',{timeZone:'Asia/Shanghai'}))}</small>`;
       $('play-playlist').onclick=()=>playAlbum({tracks:playable});
       $('shuffle-playlist').onclick=()=>playAlbum({tracks:playable},true);
-      $('songs').innerHTML=playlistRows(rows);hydrateCovers($('songs'));$('songs')._tracks=rows.filter(canPlay);$('result-count').textContent=rows.length+'首歌曲';$('empty').hidden=rows.length>0;renderCurrent();return;
+      renderSongList(rows,true);$('result-count').textContent=rows.length+'首歌曲';$('empty').hidden=rows.length>0;renderCurrent();return;
     }
     $('view-title').textContent = selected ? selected.title : view==='albums' && artistContext ? artistContext : ({albums:'专辑收藏',songs:'全部歌曲',favorites:'我的喜欢'})[view];
     $('albums').hidden = view !== 'albums' || !!selected;
@@ -642,13 +690,13 @@
       const allowed = new Set(list.map(t => t.id));
       const visible = albums.filter(a => a.tracks.some(t => allowed.has(t.id)));
       visible.sort(compareItems);
-      $('albums').innerHTML = visible.map(a => `<article class="album-card"><div class="art"><button class="album-cover-open" data-album="${esc(a.key)}" aria-label="查看${esc(a.title)}，${a.tracks.length}首"><img src="./placeholder.svg" data-cover-path="${esc(a.tracks[0].cover)}" alt="${esc(a.title)}封面" loading="lazy" width="240" height="240"></button><button class="open-album" data-album-play="${esc(a.key)}" aria-label="顺序播放${esc(a.title)}">${icon('play')}</button></div><h3><button class="album-title-open" data-album="${esc(a.key)}">${esc(a.title)}</button></h3><p><span class="year">${a.year || '年份待核'}</span>${artistLinks(a.artist,true)}</p><p>${a.tracks.length}首 · ${a.key.startsWith('live/') ? '现场录音' : a.key.startsWith('collections/') ? '精选合集' : '专辑 / 单曲'}</p></article>`).join('');
+      setMarkup('albums',visible.map(a => `<article class="album-card"><div class="art"><button class="album-cover-open" data-album="${esc(a.key)}" aria-label="查看${esc(a.title)}，${a.tracks.length}首"><img src="./placeholder.svg" data-cover-path="${esc(a.tracks[0].cover)}" alt="${esc(a.title)}封面" loading="lazy" width="240" height="240"></button><button class="open-album" data-album-play="${esc(a.key)}" aria-label="顺序播放${esc(a.title)}">${icon('play')}</button></div><h3><button class="album-title-open" data-album="${esc(a.key)}">${esc(a.title)}</button></h3><p><span class="year">${a.year || '年份待核'}</span>${artistLinks(a.artist,true)}</p><p>${a.tracks.length}首 · ${a.key.startsWith('live/') ? '现场录音' : a.key.startsWith('collections/') ? '精选合集' : '专辑 / 单曲'}</p></article>`).join(''));
       hydrateCovers($('albums'));
       $('result-count').textContent = visible.length + '张专辑'; shown = visible.length;
     } else {
       const matchingIds=new Set(list.map(t=>t.id));
       const rows = selected ? selected.tracks.filter(t=>matchingIds.has(t.id)) : [...list].sort(compareItems);
-      $('songs').innerHTML = trackRows(rows); hydrateCovers($('songs')); $('songs')._tracks = rows;
+      renderSongList(rows);
       $('result-count').textContent = rows.length + '首歌曲'; shown = rows.length;
     }
     $('empty').hidden = shown > 0; renderCurrent();
@@ -1167,7 +1215,7 @@
   document.addEventListener('pointerdown',e=>{
     clearRowPress();rowGesture=null;
     if(e.pointerType!=='touch'&&e.pointerType!=='pen')return;
-    const row=e.target.closest('.track-row[data-track]');
+    const row=e.target.closest('.track-row[data-track],.nav-item');
     if(!row)return;
     rowGesture={row,id:e.pointerId,x:e.clientX,y:e.clientY,moved:e.isPrimary===false,at:performance.now()};
     if(!rowGesture.moved&&!e.target.closest('a,input,select,[data-next],[data-more],[data-like],[data-track-album],[data-artist-link]'))row.classList.add('is-pressed');
@@ -1186,7 +1234,7 @@
   document.addEventListener('click',e=>{
     if(!rowGesture||e.detail===0)return;
     const gesture=rowGesture;rowGesture=null;
-    if(gesture.moved&&performance.now()-gesture.at<1500&&e.target.closest('.track-row')===gesture.row){e.preventDefault();e.stopImmediatePropagation();}
+    if(gesture.moved&&performance.now()-gesture.at<1500&&e.target.closest('.track-row,.nav-item')===gesture.row){e.preventDefault();e.stopImmediatePropagation();}
   },true);
   moreMenu.addEventListener('keydown',event=>{
     const items=[...moreMenu.querySelectorAll('button:not(:disabled)')].filter(button=>!button.closest('[hidden]')),index=items.indexOf(document.activeElement);
