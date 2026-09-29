@@ -682,6 +682,8 @@ html[data-theme="light"] .track-row.current .track-title-play { color:#168260; }
 }
 #full-player .full-lyrics:focus-visible { outline:2px solid var(--blue); outline-offset:-2px; }
 #full-player .lyric-line { margin:14px 0; font-size:clamp(18px,1.4vw,24px); line-height:1.55; overflow-wrap:anywhere; }
+#full-player .lyric-credits { margin:0 auto 32px; color:var(--muted); font-size:clamp(13px,1vw,16px); line-height:1.65; overflow-wrap:anywhere; }
+#full-player .lyric-credits p { margin:3px 0; }
 #full-player .lyrics-placeholder { font-size:14px; }
 #full-player .lyrics-unsynced { display:block; margin:16px 0; }
 #full-player .full-playback { flex:0 0 auto; }
@@ -713,5 +715,6 @@ html[data-theme="light"] .track-row.current .track-title-play { color:#168260; }
   }
   #full-player .full-shell[data-mobile-view="lyrics"] .full-lyrics.is-empty { display:flex; padding:8px; }
   #full-player .full-shell[data-mobile-view="lyrics"] .lyric-line { margin:12px 0; font-size:clamp(18px,4.8vw,23px); }
+  #full-player .full-shell[data-mobile-view="lyrics"] .lyric-credits { margin-bottom:24px; font-size:13px; }
   #full-player .full-playback .full-controls { width:100%; }
 }

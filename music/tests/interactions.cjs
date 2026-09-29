@@ -135,3 +135,16 @@ function player(){
   assert(menuClosed&&queueClosed&&focused);
   console.log('通过：更多菜单按最终内容定位，全屏原生退出清理菜单与队列并归还焦点。');
 }
+{
+  const text='测试歌曲 - 测试乐队\n演唱：主唱\n词：词作者\n吉他：吉他手\n贝斯：贝斯手\n[00:01.00]第一句\n[00:03.00]第二句';
+  const ctx={text,track:{title:'测试歌曲',artist:'测试乐队'}};
+  vm.createContext(ctx);
+  const creditPattern=source.split('\n').find(line=>line.includes('const lyricCreditLine ='));
+  const start=source.indexOf('      const parsed = [], credits = [];');
+  const end=source.indexOf('      parsed.sort(',start);
+  const result=vm.runInContext(`${creditPattern}\n${source.slice(start,end)}\nJSON.stringify({credits,parsed})`,ctx);
+  const {credits,parsed}=JSON.parse(result);
+  assert.deepEqual(credits,['演唱：主唱','词：词作者','吉他：吉他手','贝斯：贝斯手']);
+  assert.deepEqual(parsed.map(line=>line.text),['第一句','第二句']);
+  console.log('通过：创作者和乐手位于歌词正文前，时间轴正文保持独立。');
+}

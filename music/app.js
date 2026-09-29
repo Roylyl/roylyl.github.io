@@ -254,9 +254,9 @@
   const lyricCache = new Map();
   const lyricMissing = new Set();
   let lyricCacheGeneration = 0, lyricPreloadController = null;
-  let lyricRequest = 0, lyricTrackId = '', lyricLines = [], lyricActiveIndex = -1, lyricHasTimed = false;
+  let lyricRequest = 0, lyricTrackId = '', lyricLines = [], lyricCredits = [], lyricActiveIndex = -1, lyricHasTimed = false;
   let lyricManualUntil = 0, lyricResumeTimer = null;
-  const lyricCreditLine = /^(?:词|曲|词曲|编曲|制作|配唱制作|监制|演唱|和声|演奏|吉他|木吉他|电吉他|贝斯|鼓|打击乐|键盘|钢琴|风琴|合成器|口琴|小提琴|中提琴|大提琴|弦乐|弦乐编写|长笛|萨克斯|小号|长号|指挥|录音|混音|母带)\s*[:：]/;
+  const lyricCreditLine = /^(?:词|曲|词曲|编曲|制作|配唱制作|监制|演唱|和声|演奏|吉他|木吉他|电吉他|低音吉他|贝斯|鼓|打击乐|键盘|钢琴|风琴|合成器|口琴|小提琴|中提琴|大提琴|弦乐|弦乐编写|长笛|萨克斯|小号|长号|指挥|编程|童声合唱|录音|录音助理|录音棚|录音环境|混音|母带)\s*[:：]/;
   function renderLyrics(lines, active = -1) {
     const box = $('full-lyrics');
     box.classList.toggle('is-empty', !lines.length);
@@ -265,7 +265,8 @@
       lyricActiveIndex = -1;
       return;
     }
-    box.innerHTML = lines.map((line, index) => `<p class="lyric-line${index === active ? ' is-active' : ''}" data-line="${index}">${esc(line.text)}</p>`).join('');
+    const credits = lyricCredits.length ? `<div class="lyric-credits" aria-label="创作者和乐手">${lyricCredits.map(line => `<p>${esc(line)}</p>`).join('')}</div>` : '';
+    box.innerHTML = credits + lines.map((line, index) => `<p class="lyric-line${index === active ? ' is-active' : ''}" data-line="${index}">${esc(line.text)}</p>`).join('');
     if (!lyricHasTimed) box.insertAdjacentHTML('beforeend','<span class="lyrics-unsynced">无时间轴</span>');
     box.scrollTop = 0;
     lyricActiveIndex = active;
@@ -347,18 +348,19 @@
     if (lyricTrackId === track.id) return;
     lyricPreloadController?.abort(); lyricPreloadController = null;
     clearTimeout(lyricResumeTimer); lyricManualUntil = 0;
-    lyricTrackId = track.id; lyricLines = []; lyricActiveIndex = -1; lyricHasTimed = false;
+    lyricTrackId = track.id; lyricLines = []; lyricCredits = []; lyricActiveIndex = -1; lyricHasTimed = false;
     const request = ++lyricRequest;
     renderLyrics([]);
     if (!track.src) return;
     try {
       const text = await lyricText(track);
       if (request !== lyricRequest || current?.id !== track.id) return;
-      const parsed = [];
+      const parsed = [], credits = [];
       for (const sourceLine of text.replace(/^\uFEFF/,'').split(/\r?\n/)) {
         const line = sourceLine.trim();
         if (!line || /^\[(?:ti|ar|al|length|by|re|ve|offset|id):/i.test(line)) continue;
-        if (line === `${track.title} - ${track.artist}` || lyricCreditLine.test(line)) continue;
+        if (line === `${track.title} - ${track.artist}`) continue;
+        if (lyricCreditLine.test(line)) { credits.push(line); continue; }
         const matches = [...line.matchAll(/\[(\d{1,2}):(\d{2})(?:\.(\d{1,3}))?\]/g)];
         const lyric = line.replace(/(?:\[\d{1,2}:\d{2}(?:\.\d{1,3})?\])+/, '').trim();
         if (!lyric || /^https?:\/\//i.test(lyric) || lyricCreditLine.test(lyric)) continue;
@@ -366,7 +368,7 @@
         else if (!/^\[[^\]]+:/.test(lyric)) parsed.push({time:null,text:lyric});
       }
       parsed.sort((a,b)=>(a.time ?? Infinity)-(b.time ?? Infinity));
-      lyricLines = parsed; lyricHasTimed = parsed.some(line => line.time != null);
+      lyricLines = parsed; lyricCredits = credits; lyricHasTimed = parsed.some(line => line.time != null);
       renderLyrics(parsed);
       updateLyricPosition();
       preloadNextLyrics(track);
@@ -427,7 +429,7 @@
       const id = button.dataset.like || current?.id;
       const liked = isFavorite(id);
       button.setAttribute('aria-pressed', String(liked));
-      button.setAttribute('aria-label', `Apple Music${liked ? '已喜欢' : '未喜欢'}${button.dataset.like ? '：' + (get(id)?.title || '') : ''}`);
+      button.setAttribute('aria-label', `${liked ? '已喜欢' : '未喜欢'}${button.dataset.like ? '：' + (get(id)?.title || '') : ''}`);
     }
   }
   const canPlay = t => !!t?.src;
@@ -516,7 +518,7 @@
       const ordered=$('sort-primary').value==='default'?all:[...all].sort(compareItems);
       const rows=ordered.filter(t=>matchesArtist(t,ar)&&(!q||normalize(t.title+' '+t.artist+' '+t.album).includes(q)));
       const playable=rows.filter(canPlay);
-      $('playlist-detail').innerHTML=`<p>歌单导入自Apple Music · ${all.length}首</p><button id="play-playlist" class="primary" ${playable.length?'':'disabled'}>${icon('play')}顺序播放</button><small>更新于${esc(new Date(appleMusic.updatedAt).toLocaleDateString('zh-CN',{timeZone:'Asia/Shanghai'}))}</small>`;
+      $('playlist-detail').innerHTML=`<p>歌单来自Apple Music与本地曲库 · ${all.length}首</p><button id="play-playlist" class="primary" ${playable.length?'':'disabled'}>${icon('play')}顺序播放</button><small>更新于${esc(new Date(appleMusic.updatedAt).toLocaleDateString('zh-CN',{timeZone:'Asia/Shanghai'}))}</small>`;
       $('play-playlist').onclick=()=>playAlbum({tracks:playable});
       $('songs').innerHTML=playlistRows(rows);hydrateCovers($('songs'));$('songs')._tracks=rows.filter(canPlay);$('result-count').textContent=rows.length+'首歌曲';$('empty').hidden=rows.length>0;renderCurrent();return;
     }
