@@ -1,28 +1,34 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
 const source=fs.readFileSync(path.join(__dirname,'../app.js'),'utf8');
-const segment=source.slice(source.indexOf('  function savedPlaybackPosition()'),source.indexOf('  function previousTrack()'));
+require('../playback-feedback.js');
+const segment=source.slice(source.indexOf('  function resetShuffle('),source.indexOf('  function previousTrack()'));
 const listener=name=>source.split('\n').find(line=>line.startsWith(name));
 const plain=value=>JSON.parse(JSON.stringify(value));
 const settle=()=>new Promise(resolve=>setImmediate(resolve));
 function harness(storage=new Map()){
   const tracks=['a','b','c','d'].map(id=>({id,src:id+'.mp3',title:id,duration:240}));
-  const nodes=new Map(),events={},audioEvents={},calls={play:0,source:0};
+  const nodes=new Map(),events={},audioEvents={},calls={play:0,source:0},timers=new Map();let timerId=0;
+  const schedule=(fn,delay)=>{timers.set(++timerId,{fn,delay});return timerId;},cancel=id=>timers.delete(id);
+  const body={append(node){node.parentElement=this;}};
+  const math=Object.create(Math);math.random=()=>0.99999;
   const audio={paused:true,currentTime:0,duration:NaN,readyState:0,error:null,ended:false,_src:'',
     get src(){return this._src;},set src(value){this._src=value;this.currentTime=0;this.duration=NaN;this.readyState=0;this.error=null;this.ended=false;calls.source++;},
     getAttribute(){return this._src;},removeAttribute(){this.src='';},load(){},pause(){this.paused=true;},
     async play(){calls.play++;this.paused=false;},addEventListener(name,fn){audioEvents[name]=fn;}};
-  const ctx={insertionAnchor:null,checkSleepTimer:()=>false,setTimeout:()=>0,audio,tracks,albums:[{tracks}],current:null,queue:[],repeat:'all',nextUp:[],playbackHistory:[],historyCursor:-1,
+  const ctx={Math:math,shuffleOrder:[],shuffleCursor:-1,historyAnchors:[],queueUndo:null,queueUndoTimer:null,retryTicket:null,lastFailureToken:-1,retryWaiting:false,
+    RoylylPlaybackFeedback,playbackRetries:RoylylPlaybackFeedback.createRetryController({setTimeout:schedule,clearTimeout:cancel,isOnline:()=>true}),
+    isFullOpen:()=>false,insertionAnchor:null,checkSleepTimer:()=>false,setTimeout:schedule,clearTimeout:cancel,audio,tracks,albums:[{tracks}],current:null,queue:[],repeat:'all',nextUp:[],playbackHistory:[],historyCursor:-1,
     loadedTrackId:null,pendingTrackId:null,playbackBlocked:false,pausedPosition:null,pendingResumePosition:null,
     playbackRequestedAt:0,playToken:0,persistenceRequested:true,failedAudioSources:new Set(),preparedAudio:new Map(),localAudioUrl:null,fallbackCachedId:null,
     playerStatusText:'',BUFFERING_STATUS:'buffering',navigator:{onLine:true,mediaSession:{}},performance:{now:()=>100},
-    document:{hidden:false,addEventListener(name,fn){events[name]=fn;}},URL:{revokeObjectURL(){}},
+    document:{body,hidden:false,addEventListener(name,fn){events[name]=fn;}},URL:{revokeObjectURL(){}},
     get:id=>tracks.find(t=>t.id===id),canPlay:t=>!!t?.src,audioSource:t=>'https://example.test/'+t.src+'?v=1',
     read:(key,fallback)=>storage.has(key)?plain(storage.get(key)):fallback,save:(key,value)=>storage.set(key,plain(value)),
     setCurrent:t=>ctx.current=t,status:value=>ctx.playerStatusText=value,tracePlayback(){},renderCurrent(){},renderQueue(){},
     cancelPreload(){},releasePrepared(){ctx.preparedAudio.clear();},cachedAudioUrl:async()=>null,audioBudget:()=>0,
     preloadNextLyrics(){},preloadNext(){},updateLyricPosition(){},loadLyrics(){},updateFull(){},updateModeControls(){},registerMediaActions(){},reportShellVersion(){},
-    time:String,$:id=>{if(!nodes.has(id))nodes.set(id,{});return nodes.get(id);}
+    time:String,$:id=>{if(!nodes.has(id))nodes.set(id,{hidden:true,style:{setProperty(){}},setAttribute(){}});return nodes.get(id);}
   };
   vm.createContext(ctx);vm.runInContext(segment,ctx);
   vm.runInContext(source.slice(source.indexOf('  function playAlbum('),source.indexOf('  function openAlbum(')),ctx);
@@ -33,8 +39,10 @@ function harness(storage=new Map()){
     ctx.current=ctx.get(id);ctx.queue=[...tracks];ctx.loadedTrackId=id;ctx.playbackHistory=[id];ctx.historyCursor=0;
     audio.src=ctx.audioSource(ctx.current);metadata();audio.currentTime=time;
   };
-  return {ctx,audio,storage,calls,events,metadata,loaded};
+  return {ctx,audio,storage,calls,events,metadata,loaded,timers,flushTimer(delay){for(const [id,job] of [...timers])if(job.delay===delay){timers.delete(id);job.fn();}}};
 }
+module.exports={harness,plain,settle};
+if(require.main===module){
 (async()=>{
   let h=harness();h.loaded('b',87.25);h.ctx.repeat='shuffle';h.ctx.nextUp=['d','c'];
   h.ctx.playbackHistory=['a','c','b'];h.ctx.historyCursor=2;h.ctx.savePlaybackSession();
@@ -114,4 +122,6 @@ function harness(storage=new Map()){
   vm.runInContext(source.slice(source.indexOf('  const playbackLog='),source.indexOf("  $('copy-playback-diagnostics')")),context);
   context.tracePlayback('new-page');assert.equal(stored.length,120);assert.equal(stored.at(-1).event,'new-page');assert(!stored.some(e=>e.event==='expired'));assert(stored.some(e=>e.event==='old-139'));
   console.log('通过：诊断跨刷新续存，仅保留24小时内最多120条事件。');
+}
+
 }

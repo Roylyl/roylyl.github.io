@@ -1,0 +1,14 @@
+const assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs');
+const source=fs.readFileSync(require('node:path').join(__dirname,'../app.js'),'utf8');
+const events={},classes=new Set(),row={classList:{add:x=>classes.add(x),remove:x=>classes.delete(x)}},target={closest:s=>s.startsWith('.track-row')?row:null};
+const ctx={document:{addEventListener:(name,fn)=>events[name]=fn},window:{addEventListener:(name,fn)=>events[name]=fn},performance:{now:()=>100},Math};vm.createContext(ctx);
+vm.runInContext(source.slice(source.indexOf('  let rowGesture='),source.indexOf("  moreMenu.addEventListener('keydown'")),ctx);
+const event=(overrides={})=>({pointerType:'touch',pointerId:1,isPrimary:true,clientX:10,clientY:10,target,...overrides});
+let blocked=false;const click=detail=>{blocked=false;events.click({target,detail,preventDefault(){blocked=true;},stopImmediatePropagation(){}});};
+events.pointerdown(event());assert(classes.has('is-pressed'));events.pointerup(event());assert(!classes.has('is-pressed'));click(1);assert(!blocked);
+events.pointerdown(event());events.pointermove(event({clientY:25}));assert(!classes.has('is-pressed'));events.pointerup(event({clientY:25}));click(1);assert(blocked);
+events.pointerdown(event());events.pointercancel(event());assert(!classes.has('is-pressed'));click(1);assert(blocked);
+events.pointerdown(event());events.scroll();assert(!classes.has('is-pressed'));click(1);assert(blocked);
+events.pointerdown(event());events.pointermove(event({clientX:12}));events.pointerup(event({clientX:12}));click(1);assert(!blocked);
+events.pointerdown(event());events.pointercancel(event());click(0);assert(!blocked);
+console.log('通过：按下立即反馈、轻微抖动可点击、滑动/滚动/取消立即撤销并拦截误点、键盘点击正常。');

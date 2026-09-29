@@ -1,11 +1,13 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const source=fs.readFileSync(require('node:path').join(__dirname,'../app.js'),'utf8');
+require('../playback-feedback.js');
 const defer=()=>{let resolve;const promise=new Promise(r=>resolve=r);return {promise,resolve};};
 function player(){
   const requests=[],audio={paused:true,src:'',error:null,currentTime:0,pause(){this.paused=true;},play(){this.paused=false;return Promise.resolve();},load(){},getAttribute(){return this.src;},removeAttribute(){this.src='';}};
-  const ctx={insertionAnchor:null,checkSleepTimer:()=>false,nextUp:[],pendingResumePosition:null,updateLyricPosition(){},read:(key,fallback)=>fallback,albums:[],tracePlayback(){},performance:{now:()=>100},playbackRequestedAt:0,failedAudioSources:new Set(),playbackBlocked:false,pausedPosition:null,audio,requests,preparedAudio:new Map(),prepareToken:0,audioCacheGeneration:0,releasePrepared(){ctx.prepareToken++;ctx.preparedAudio.clear();},navigator:{},window:{},URL:{revokeObjectURL(){}},current:null,queue:[],repeat:'all',playToken:0,persistenceRequested:false,loadedTrackId:null,pendingTrackId:null,playbackHistory:[],historyCursor:-1,localAudioUrl:null,BUFFERING_STATUS:'正在缓冲...',canPlay:t=>!!t?.src,audioSource:t=>t.src,cancelPreload(){},status(){},renderCurrent(){},save(){},cacheAudio(){},audioBudget:()=>0,preloadAllowed:()=>true,cachedAudioUrl(){const request=defer();requests.push(request);return request.promise;},setCurrent(t){ctx.current=t;},get(id){return ctx.queue.find(t=>t.id===id);}};
-  vm.createContext(ctx);vm.runInContext(source.slice(source.indexOf('  function preloadNext()'),source.indexOf('  const playbackLog='))+source.slice(source.indexOf('  function savedPlaybackPosition()'),source.indexOf('  const modeLabels')),ctx);return ctx;
+  const nodes=new Map();
+  const ctx={shuffleOrder:[],shuffleCursor:-1,historyAnchors:[],queueUndo:null,queueUndoTimer:null,retryTicket:null,lastFailureToken:-1,retryWaiting:false,RoylylPlaybackFeedback,playbackRetries:RoylylPlaybackFeedback.createRetryController(),setTimeout,clearTimeout,isFullOpen:()=>false,document:{body:{append(node){node.parentElement=this;}}},$:id=>{if(!nodes.has(id))nodes.set(id,{hidden:true,style:{setProperty(){}}});return nodes.get(id);},insertionAnchor:null,checkSleepTimer:()=>false,nextUp:[],pendingResumePosition:null,updateLyricPosition(){},read:(key,fallback)=>fallback,albums:[],tracePlayback(){},performance:{now:()=>100},playbackRequestedAt:0,failedAudioSources:new Set(),playbackBlocked:false,pausedPosition:null,audio,requests,preparedAudio:new Map(),prepareToken:0,audioCacheGeneration:0,releasePrepared(){ctx.prepareToken++;ctx.preparedAudio.clear();},navigator:{},window:{},URL:{revokeObjectURL(){}},current:null,queue:[],repeat:'all',playToken:0,persistenceRequested:false,loadedTrackId:null,pendingTrackId:null,playbackHistory:[],historyCursor:-1,localAudioUrl:null,BUFFERING_STATUS:'正在缓冲...',canPlay:t=>!!t?.src,audioSource:t=>t.src,cancelPreload(){},status(){},renderCurrent(){},save(){},cacheAudio(){},audioBudget:()=>0,preloadAllowed:()=>true,cachedAudioUrl(){const request=defer();requests.push(request);return request.promise;},setCurrent(t){ctx.current=t;},get(id){return ctx.queue.find(t=>t.id===id);}};
+  vm.createContext(ctx);vm.runInContext(source.slice(source.indexOf('  function preloadNext()'),source.indexOf('  const playbackLog='))+source.slice(source.indexOf('  function resetShuffle('),source.indexOf('  const modeLabels')),ctx);return ctx;
 }
 (async()=>{
   const a={id:'a',src:'a.mp3'},b={id:'b',src:'b.mp3'},c={id:'c',src:'c.mp3'};
@@ -94,7 +96,7 @@ function player(){
   const node={_tracks:[{id:'a',src:'a.mp3'}]},track=node._tracks[0];
   const ctx={document:{addEventListener(name,fn){if(name==='click')click=fn;if(name==='dblclick')doubleClick=fn;}},matchMedia:()=>({matches:true}),$:()=>node,get:()=>track,queue:[track],play(){played++;},openTrackMenu(){menuOpened++;},moreMenu:{hidden:true}};
   vm.createContext(ctx);
-  const start=source.indexOf("  document.addEventListener('click',e=>{"),end=source.indexOf("  moreMenu.addEventListener('keydown'",start);
+  const start=source.indexOf("  document.addEventListener('click',e=>{"),end=source.indexOf("  let rowGesture=",start);
   vm.runInContext(source.slice(start,end),ctx);
   const row={dataset:{track:'a'},closest:()=>null};
   click({target:{closest(selector){return selector==='.track-row[data-track]'?row:null;}}});assert.equal(played,1);
@@ -148,8 +150,8 @@ function player(){
   const nodes=new Map(),node=id=>{if(!nodes.has(id))nodes.set(id,{dataset:{},innerHTML:'',focus(){}});return nodes.get(id);};
   const menu={hidden:true,style:{},get offsetWidth(){return node('menu-artists').innerHTML?220:152;},offsetHeight:180};
   const button={dataset:{more:'a'},setAttribute(){},closest(){return null;},getBoundingClientRect(){return {right:380,top:600,bottom:640};}};
-  const ctx={icon:()=>'<svg aria-hidden="true"></svg>',$:node,moreMenu:menu,moreButton:null,moreTrackId:null,closeTrackMenu(){},document:{body:{append(){}}},get:()=>({albumKey:'a',artist:'合作歌手'}),artistNames:s=>[s],esc:s=>s,innerWidth:400,innerHeight:700};
-  vm.createContext(ctx);vm.runInContext(source.slice(source.indexOf('  function openTrackMenu('),source.indexOf('  async function shareTrack(')),ctx);ctx.openTrackMenu(button);
+  const ctx={nextUp:[],showTrackCacheStatus(){},icon:()=>'<svg aria-hidden="true"></svg>',$:node,moreMenu:menu,moreButton:null,moreTrackId:null,closeTrackMenu(){},document:{body:{append(){}}},get:()=>({albumKey:'a',artist:'合作歌手'}),artistNames:s=>[s],esc:s=>s,innerWidth:400,innerHeight:700};
+  vm.createContext(ctx);vm.runInContext(source.slice(source.indexOf('  function artistMenu('),source.indexOf('  async function showTrackCacheStatus('))+source.slice(source.indexOf('  function positionTrackMenu('),source.indexOf('  async function shareTrack(')),ctx);ctx.openTrackMenu(button);
   assert.equal(menu.style.left,'160px');assert.equal(menu.style.top,'412px');
   let closeHandler,closeRequests=0,dialogOpen=false;
   const closeContext={full:{addEventListener:(_,fn)=>closeHandler=fn},isFullOpen:()=>dialogOpen,closeFull:()=>closeRequests++,document:{body:{classList:{contains:()=>true}}}};

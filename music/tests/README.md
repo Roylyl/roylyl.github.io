@@ -6,6 +6,8 @@
 node music/tests/interactions.cjs
 node music/tests/media-session.cjs
 node music/tests/playback-session.cjs
+node music/tests/queue-shuffle.cjs
+node music/tests/playback-feedback.cjs
 node music/tests/navigation.cjs
 node music/tests/lyrics.cjs
 node music/tests/lyric-loading.cjs
@@ -86,3 +88,15 @@ node music/tests/playback-browser.cjs
 ### 定时关闭
 
 `node music/tests/sleep-timer.cjs`验证预设与自定义时间、修改定时、按绝对截止时间计时，以及后台回调延迟后的到期暂停。手机全屏“更多”提供分享和定时设置；取消定时不会暂停音乐。真实iPhone锁屏长时间运行仍需真机验证，浏览器挂起可能延迟定时回调。
+
+### 随机顺序、插队撤销和缓冲恢复
+
+- `queue-shuffle.cjs`：整轮无重复、跨轮边界、真实历史及重复歌曲、插队后返回随机顺序、会话恢复、取消/清空/撤销边界、有限重试与暂停取消。
+- `playback-feedback.cjs`：不连续缓冲区间、边界和异常TimeRanges；每次请求最多一次自动重试、离线/用户授权错误、暂停和切歌取消。
+- `player-refinements-browser.cjs`：沿用临时Chrome调试端口，在真实页面和audio元素上验证队列操作、六种宽度、菜单跳转、缓存状态和HTTP503恢复。使用180秒WAV响应与本地Cache API测试数据，不验证远程MP3或真机蓝牙行为。`--recovery-only`只检查加载恢复。
+
+```sh
+node music/tests/player-refinements-browser.cjs
+```
+
+脚本读取`MUSIC_URL`、`CDP_URL`和`AUDIT_OUTPUT`，默认分别为`http://127.0.0.1:8049/music/`、`http://127.0.0.1:9231`和`/tmp/roylyl-refinements-results`。只在专用测试浏览器配置中运行，会写入该浏览器的播放会话。
