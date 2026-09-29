@@ -955,7 +955,7 @@ html[data-theme="light"] #sleep-current,html[data-theme="light"] #sleep-countdow
 }
 
 /* Non-blocking feedback sits above the transport in either player surface. */
-.queue-undo, .playback-recovery {
+.queue-undo, .playback-recovery, .favorite-notice {
   position:fixed; z-index:30; left:50%; bottom:calc(var(--player-height) + 12px);
   transform:translateX(-50%); display:flex; align-items:center; justify-content:space-between;
   gap:8px 12px; width:max-content; max-width:calc(100vw - 24px); padding:8px 12px;
@@ -1015,3 +1015,7 @@ body:has(.playback-recovery:not([hidden])) :is(.player-status, #full-status) { v
 @media(max-width:374px) {
   .brand { font-size:16px; }
 }
+
+/* Restricted favorites still accept a tap to explain the permission. */
+.icon.favorite-locked { opacity:.4; }
+.favorite-notice { bottom:calc(20px + env(safe-area-inset-bottom)); z-index:31; pointer-events:none; text-align:center; }

@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const APP_VERSION='20260929-pwa-34', SHELL_VERSION='roylyl-music-shell-20260929-36';
+  const APP_VERSION='20260929-pwa-35', SHELL_VERSION='roylyl-music-shell-20260929-37';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const themeMedia=window.matchMedia('(prefers-color-scheme: dark)');
@@ -518,6 +518,8 @@
     try { await navigator.clipboard.writeText(link); notify('分享链接已复制'); }
     catch { window.prompt('复制歌曲分享链接',link); }
   }
+  const FAVORITE_NOTICE='你不能点击，这个按钮仅限Roylyl操作';
+  let favoriteNoticeTimer=null;
   const isFavorite = id => !!id && favorites.has(id);
   function syncFavoriteButtons() {
     for (const button of document.querySelectorAll('#now-like,#full-like,#full-like-mobile')) {
@@ -586,7 +588,7 @@
     return `<img class="track-cover" src="./placeholder.svg"${t.cover ? ` data-cover-path="${esc(t.cover)}"` : ''} alt="" width="44" height="44" loading="lazy">`;
   }
   function trackRows(list, inQueue = false, offset = 0) {
-    return list.map((t, i) => {const repeated=inQueue&&!t._queueCurrent,isPlaying=current?.id===t.id&&!audio.paused&&!pendingTrackId&&!repeated;return `<div class="track-row${isPlaying ? ' current' : ''}" data-track="${esc(t.id)}"${repeated?' data-queued-repeat="true"':''}${t._queueInserted?' data-queue-inserted="true"':''}><button class="track-no" data-number="${String(i + 1 + offset).padStart(2, '0')}" data-play="${esc(t.id)}" aria-label="播放${esc(t.title)}">${isPlaying ? '♫' : String(i + 1 + offset).padStart(2, '0')}</button><div class="track-start"><button class="track-art-play" data-play="${esc(t.id)}" aria-label="播放${esc(t.title)}">${trackCover(t)}</button><div class="track-copy"><button class="track-title-play" data-play="${esc(t.id)}"><strong>${esc(t.title)}</strong></button><small>${artistLinks(t.artist)}${inQueue ? ' · ' + albumLink(t) : ''}<span class="track-inline-time"> · ${time(t.duration)}</span></small></div></div>${albumLink(t,'track-album')}<span class="track-time">${time(t.duration)}</span><button class="icon track-next" type="button" data-next="${esc(t.id)}" title="下一首播放" aria-label="下一首播放：${esc(t.title)}">${icon('playNext')}</button><button class="icon" disabled title="喜欢状态来自Apple Music" data-like="${esc(t.id)}" aria-label="Apple Music${isFavorite(t.id) ? '已喜欢' : '未喜欢'}：${esc(t.title)}" aria-pressed="${isFavorite(t.id)}">${icon('heart')}</button><button class="icon track-more" type="button" data-more="${esc(t.id)}" aria-label="${esc(t.title)}的更多选项" aria-haspopup="menu" aria-expanded="false">${icon('more')}</button></div>`;}).join('');
+    return list.map((t, i) => {const repeated=inQueue&&!t._queueCurrent,isPlaying=current?.id===t.id&&!audio.paused&&!pendingTrackId&&!repeated;return `<div class="track-row${isPlaying ? ' current' : ''}" data-track="${esc(t.id)}"${repeated?' data-queued-repeat="true"':''}${t._queueInserted?' data-queue-inserted="true"':''}><button class="track-no" data-number="${String(i + 1 + offset).padStart(2, '0')}" data-play="${esc(t.id)}" aria-label="播放${esc(t.title)}">${isPlaying ? '♫' : String(i + 1 + offset).padStart(2, '0')}</button><div class="track-start"><button class="track-art-play" data-play="${esc(t.id)}" aria-label="播放${esc(t.title)}">${trackCover(t)}</button><div class="track-copy"><button class="track-title-play" data-play="${esc(t.id)}"><strong>${esc(t.title)}</strong></button><small>${artistLinks(t.artist)}${inQueue ? ' · ' + albumLink(t) : ''}<span class="track-inline-time"> · ${time(t.duration)}</span></small></div></div>${albumLink(t,'track-album')}<span class="track-time">${time(t.duration)}</span><button class="icon track-next" type="button" data-next="${esc(t.id)}" title="下一首播放" aria-label="下一首播放：${esc(t.title)}">${icon('playNext')}</button><button class="icon favorite-locked" title="${FAVORITE_NOTICE}" data-like="${esc(t.id)}" aria-label="Apple Music${isFavorite(t.id) ? '已喜欢' : '未喜欢'}：${esc(t.title)}" aria-pressed="${isFavorite(t.id)}">${icon('heart')}</button><button class="icon track-more" type="button" data-more="${esc(t.id)}" aria-label="${esc(t.title)}的更多选项" aria-haspopup="menu" aria-expanded="false">${icon('more')}</button></div>`;}).join('');
   }
   let songChunksObserver=null;
   // Keep the complete playback list in _tracks; create only nearby visual rows.
@@ -721,7 +723,7 @@
     const control=playbackControl();
     setIcon('play',control.icon); $('play').setAttribute('aria-label',control.label);
     updateLoadingIndicator();
-    $('now-like').disabled = true; $('now-like').title='喜欢状态来自Apple Music'; $('full-like').disabled=true; $('full-like').title='喜欢状态来自Apple Music'; $('full-like-mobile').disabled=true; $('full-like-mobile').title='喜欢状态来自Apple Music';
+    for(const id of ['now-like','full-like','full-like-mobile']){const button=$(id);button.disabled=false;button.title=FAVORITE_NOTICE;button.classList.add('favorite-locked');}
     syncFavoriteButtons();
     document.querySelectorAll('.track-row').forEach(el => el.classList.toggle('current', el.dataset.track === current?.id && el.dataset.queuedRepeat!=='true' && !audio.paused && !pendingTrackId));
     if (!$('queue-panel').hidden || !$('full-queue').hidden) renderQueue();
@@ -773,7 +775,12 @@
     list._queueFrame=requestAnimationFrame(()=>{list._queueFrame=null;renderQueueWindow(list);});
   },{passive:true});
   window.addEventListener('resize',()=>{for(const id of ['queue-list','full-queue-list']){const list=$(id);if(!list.parentElement.hidden)renderQueueWindow(list);}});
-  function like() { status('喜欢状态来自Apple Music，请在Apple Music中更新后重新导入。'); }
+  function like() {
+    clearTimeout(favoriteNoticeTimer);
+    placePlaybackFeedback();
+    const notice=$('favorite-notice');notice.textContent=FAVORITE_NOTICE;notice.hidden=false;
+    favoriteNoticeTimer=setTimeout(()=>{notice.hidden=true;favoriteNoticeTimer=null;},2500);
+  }
   function setCurrent(t) {
     current = t; bindCover($('now-cover'),t.cover,true); $('now-title').textContent = t.title; $('now-artist').textContent = t.artist + ' · ' + t.album;
     sendAudioConfig();
@@ -839,7 +846,7 @@
   }
   function placePlaybackFeedback() {
     const host=isFullOpen()?$('full-player'):document.body;
-    for(const id of ['queue-undo','playback-recovery'])if($(id).parentElement!==host)host.append($(id));
+    for(const id of ['queue-undo','playback-recovery','favorite-notice'])if($(id).parentElement!==host)host.append($(id));
   }
   function rememberQueueUndo(before,message) {
     clearQueueUndo();queueUndo={before,after:[...nextUp]};
@@ -1146,7 +1153,7 @@
   $('skip-playback').onclick=()=>advance(1);
   $('cancel-insertion').onclick=()=>{const id=$('cancel-insertion').dataset.cancelInsertion;closeTrackMenu();cancelInsertion(id);};
   for(const id of ['clear-insertions','full-clear-insertions'])$(id).onclick=()=>{closeTrackMenu();closeFullMore();clearInsertions();};
-  $('now-like').onclick = () => current && like(current.id);
+  $('now-like').onclick = () => like();
   $('seek').oninput = () => { paintSeekProgress();seekPlayback(Number($('seek').value)/100*audio.duration); };
   const mobileVolume = matchMedia('(max-width:700px)');
   function placeLikeButton() {
