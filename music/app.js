@@ -139,6 +139,7 @@
   const preparedAudio=new Map();
   let prepareToken=0;
   function releasePrepared(){prepareToken++;for(const blob of preparedAudio.values())URL.revokeObjectURL(blob);preparedAudio.clear();}
+  let playbackBlocked=false, pausedPosition=null;
   let loadedTrackId=null, pendingTrackId=null, playbackHistory=[], historyCursor=-1, queueSignature='';
   let tracks = [], albums = [], view = 'albums', selected = null, current = null, queue = [], repeat = 'all', playToken = 0, lastSaved = 0;
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -600,9 +601,11 @@
     $('back-albums').focus({preventScroll:true});
   }
   function renderCurrent() {
+    syncPlaybackState();
     updateFull();
     $('play').disabled=!current&&!($('songs')._tracks ?? filtered()).some(canPlay);
-    setIcon('play',audio.paused&&!pendingTrackId?'play':'pause'); $('play').setAttribute('aria-label', audio.paused&&!pendingTrackId ? '播放' : '暂停');
+    const control=playbackControl();
+    setIcon('play',control.icon); $('play').setAttribute('aria-label',control.label);
     updateLoadingIndicator();
     $('now-like').disabled = true; $('now-like').title='喜欢状态来自Apple Music'; $('full-like').disabled=true; $('full-like').title='喜欢状态来自Apple Music'; $('full-like-mobile').disabled=true; $('full-like-mobile').title='喜欢状态来自Apple Music';
     syncFavoriteButtons();
@@ -637,28 +640,55 @@
       });
     }
   }
+  function playbackControl() {
+    if(playbackBlocked||audio.error||audio.ended)return {icon:'play',label:'播放',system:current?'paused':'none'};
+    if(pendingTrackId)return {icon:'pause',label:'取消加载',system:audio.paused?'paused':'playing'};
+    return {icon:audio.paused?'play':'pause',label:audio.paused?'播放':'暂停',system:current?(audio.paused?'paused':'playing'):'none'};
+  }
+  function syncPlaybackState() {
+    if('mediaSession' in navigator)navigator.mediaSession.playbackState=playbackControl().system;
+  }
   function pausePlayback() {
+    playbackBlocked=true;
+    rememberPausedPosition();
     ++playToken;pendingTrackId=null;audio.pause();status('');renderCurrent();
-    if('mediaSession' in navigator)navigator.mediaSession.playbackState='paused';
+    syncPlaybackState();
   }
   function resumePlayback() {
     // A system play action is explicit intent, not a play/pause toggle. Do not
     // let an interrupted or unresolved play promise block this new attempt.
     if(current)return play(current,queue,true,true);
   }
+  function rememberPausedPosition() {
+    if(current&&loadedTrackId===current.id&&Number.isFinite(audio.currentTime)) {
+      pausedPosition={id:current.id,time:audio.currentTime};
+      save('last',pausedPosition);
+    }
+  }
+  function handleAudioStart() {
+    if(!playbackBlocked)return true;
+    // A late browser restart must not undo an interruption or explicit pause.
+    audio.pause();
+    if(pausedPosition?.id===current?.id&&loadedTrackId===current?.id)audio.currentTime=pausedPosition.time;
+    pendingTrackId=null;status('');renderCurrent();
+    syncPlaybackState();
+    return false;
+  }
   function handleAudioPause() {
     if(!audio.paused)return; // Ignore a queued pause after playback has resumed.
     // Internal source replacement may be awaiting cache lookup; it is not an
     // interruption of the currently loaded recording.
     if(current&&loadedTrackId===current.id&&audio.getAttribute('src')) {
+      if(!audio.ended){playbackBlocked=true;rememberPausedPosition();}
       ++playToken;pendingTrackId=null;
       if(playerStatusText===BUFFERING_STATUS)status('');
     }
     renderCurrent();
-    if('mediaSession' in navigator)navigator.mediaSession.playbackState='paused';
+    syncPlaybackState();
   }
   async function play(t, list = queue, fromHistory = false, immediate = false) {
     if (!canPlay(t)) return;
+    playbackBlocked=false;
     if (!persistenceRequested && navigator.storage?.persist) { persistenceRequested = true; navigator.storage.persist().then(updateCacheStatus).catch(()=>{}); }
     const token=++playToken;
     try { if(navigator.audioSession)navigator.audioSession.type='playback'; } catch {}
@@ -694,6 +724,7 @@
     }
   }
   function advance(direction, ended = false) {
+    if(ended&&playbackBlocked)return;
     if(!queue.length)return;
     if(ended&&repeat==='one'){audio.currentTime=0;play(current,queue,true,true);return;}
     if(repeat==='shuffle'){
@@ -840,13 +871,14 @@
     if(current&&Date.now()-lastSaved>5000){save('last',{id:current.id,time:audio.currentTime});lastSaved=Date.now();}
     if('mediaSession'in navigator&&navigator.mediaSession.setPositionState&&Number.isFinite(audio.duration)&&audio.duration>0){try{navigator.mediaSession.setPositionState({duration:audio.duration,playbackRate:audio.playbackRate,position:Math.min(audio.currentTime,audio.duration)});}catch{}}
   });
-  ['play','pause'].forEach(event=>audio.addEventListener(event,()=>{renderCurrent();if('mediaSession'in navigator)navigator.mediaSession.playbackState=audio.paused?'paused':'playing';registerMediaActions();}));
+  audio.addEventListener('play',()=>{if(!handleAudioStart())return;renderCurrent();registerMediaActions();});
   audio.addEventListener('waiting',()=>{if(!audio.paused)status(BUFFERING_STATUS);});
   audio.addEventListener('pause',handleAudioPause);
   audio.addEventListener('playing',()=>{
+    if(!handleAudioStart())return;
     if(audio.paused)return;
     pendingTrackId=null;status('');renderCurrent();
-    if('mediaSession' in navigator)navigator.mediaSession.playbackState='playing';
+    syncPlaybackState();
   });
   // AudioSession is optional. Never auto-resume on 'active': that could fight
   // another app or undo the user's pause. The next system play acts directly.
@@ -877,7 +909,7 @@
       try { navigator.mediaSession.setActionHandler(name, handler); } catch {}
     }
   }
-  document.addEventListener('visibilitychange',()=>{if(current)registerMediaActions();if(!document.hidden&&current){loadLyrics(current);updateLyricPosition(true);}});
+  document.addEventListener('visibilitychange',()=>{if(current){registerMediaActions();if(navigator.audioSession?.state==='interrupted')pausePlayback();else if(playbackBlocked)handleAudioStart();else if(audio.paused)handleAudioPause();}if(!document.hidden&&current){loadLyrics(current);updateLyricPosition(true);}});
   const full = $('full-player');
   function isFullOpen() { return Boolean(full.open || full.classList.contains('dialog-fallback-open')); }
   function updateFull() {
@@ -899,7 +931,8 @@
     $('quality-badges').title=$('quality').title;
     const details=[['格式',format],['码率',p.bitRate?bitrate:'未记录'],['采样率',p.sampleRate?rate:'未记录'],...(!lossy&&p.bitDepth?[['量化位深',depth]]:[]),['声道',p.channels===2?'双声道':p.channels===1?'单声道':p.channels?String(p.channels):'未记录'],['文件大小',p.fileSize?formatBytes(p.fileSize):'未记录']];
     $('audio-details').innerHTML=details.map(([label,value])=>`<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join('');
-    setIcon('full-play',audio.paused&&!pendingTrackId?'play':'pause'); $('full-play').setAttribute('aria-label',audio.paused&&!pendingTrackId?'全屏播放':'全屏暂停');
+    const control=playbackControl();
+    setIcon('full-play',control.icon); $('full-play').setAttribute('aria-label',control.label);
     updateLoadingIndicator();
     syncFavoriteButtons();
     updateModeControls();
@@ -954,7 +987,7 @@
     $('retry').hidden=true; $('notice').hidden=false; $('notice').textContent='正在载入音乐收藏…';let data;
     const catalogController=new AbortController(),catalogTimer=setTimeout(()=>catalogController.abort(),15000);
     try {
-      const response=await fetch('./data/catalog.json?v=20260929-pwa-7',{cache:'no-cache',signal:catalogController.signal});
+      const response=await fetch('./data/catalog.json?v=20260929-pwa-9',{cache:'no-cache',signal:catalogController.signal});
       if(!response.ok)throw Error('目录加载失败');
       const catalog=await response.json();
       if(!catalog.version || !Array.isArray(catalog.tracks) || !catalog.appleMusic?.entries || !Array.isArray(catalog.appleMusic.playlists) || !Array.isArray(catalog.appleMusic.favorites))throw Error('目录格式不正确');

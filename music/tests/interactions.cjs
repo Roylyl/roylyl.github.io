@@ -4,7 +4,7 @@ const source=fs.readFileSync(require('node:path').join(__dirname,'../app.js'),'u
 const defer=()=>{let resolve;const promise=new Promise(r=>resolve=r);return {promise,resolve};};
 function player(){
   const requests=[],audio={paused:true,src:'',error:null,currentTime:0,pause(){this.paused=true;},play(){this.paused=false;return Promise.resolve();},load(){},getAttribute(){return this.src;},removeAttribute(){this.src='';}};
-  const ctx={audio,requests,preparedAudio:new Map(),prepareToken:0,audioCacheGeneration:0,releasePrepared(){ctx.prepareToken++;ctx.preparedAudio.clear();},navigator:{},window:{},URL:{revokeObjectURL(){}},current:null,queue:[],repeat:'all',playToken:0,persistenceRequested:false,loadedTrackId:null,pendingTrackId:null,playbackHistory:[],historyCursor:-1,localAudioUrl:null,BUFFERING_STATUS:'正在缓冲...',canPlay:t=>!!t?.src,audioSource:t=>t.src,cancelPreload(){},status(){},renderCurrent(){},save(){},cacheAudio(){},audioBudget:()=>0,preloadAllowed:()=>true,cachedAudioUrl(){const request=defer();requests.push(request);return request.promise;},setCurrent(t){ctx.current=t;},get(id){return ctx.queue.find(t=>t.id===id);}};
+  const ctx={playbackBlocked:false,pausedPosition:null,audio,requests,preparedAudio:new Map(),prepareToken:0,audioCacheGeneration:0,releasePrepared(){ctx.prepareToken++;ctx.preparedAudio.clear();},navigator:{},window:{},URL:{revokeObjectURL(){}},current:null,queue:[],repeat:'all',playToken:0,persistenceRequested:false,loadedTrackId:null,pendingTrackId:null,playbackHistory:[],historyCursor:-1,localAudioUrl:null,BUFFERING_STATUS:'正在缓冲...',canPlay:t=>!!t?.src,audioSource:t=>t.src,cancelPreload(){},status(){},renderCurrent(){},save(){},cacheAudio(){},audioBudget:()=>0,preloadAllowed:()=>true,cachedAudioUrl(){const request=defer();requests.push(request);return request.promise;},setCurrent(t){ctx.current=t;},get(id){return ctx.queue.find(t=>t.id===id);}};
   vm.createContext(ctx);vm.runInContext(source.slice(source.indexOf('  function preloadNext()'),source.indexOf('  const modeLabels')),ctx);return ctx;
 }
 (async()=>{
@@ -15,6 +15,7 @@ function player(){
   p=player();first=p.play(a,[a,b,c]);p.requests[0].resolve(null);await first;second=p.play(c);p.requests[1].resolve(null);await second;p.repeat='shuffle';p.previousTrack();assert.equal(p.current.id,'a');assert.equal(p.audio.src,a.src);await new Promise(r=>setImmediate(r));p.advance(1);assert.equal(p.current.id,'c');assert.equal(p.audio.src,c.src);await new Promise(r=>setImmediate(r));
   p.repeat='all';p.audio.currentTime=42;p.previousTrack();assert.equal(p.current.id,'b');assert.equal(p.audio.src,b.src);await new Promise(r=>setImmediate(r));
   assert.equal(p.requests.length,2,'自动切歌不能等待异步缓存查询');
+  p.pausePlayback();const pausedId=p.current.id;p.advance(1,true);assert.equal(p.current.id,pausedId,'暂停后迟到ended不能自动切歌');
   p=player();first=p.play(a,[a,b]);p.requests[0].resolve(null);await first;p.preparedAudio.set(b.src,'blob:ready-next');p.advance(1,true);assert.equal(p.audio.src,'blob:ready-next');assert.equal(p.audio.paused,false);assert.equal(p.requests.length,1);
   console.log('通过：播完后同一任务内启动下一首，优先使用提前准备的缓存。');
   console.log('通过：连续切歌、同曲连点、加载中暂停、随机历史前进后退、超过3秒上一首。');
