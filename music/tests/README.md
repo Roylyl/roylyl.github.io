@@ -5,6 +5,8 @@
 ```sh
 node music/tests/interactions.cjs
 node music/tests/media-session.cjs
+node music/tests/playback-session.cjs
+node music/tests/navigation.cjs
 node music/tests/lyrics.cjs
 node music/tests/lyric-loading.cjs
 node music/tests/worker.cjs
@@ -15,6 +17,8 @@ python3 music/tests/catalog.py
 覆盖连续切歌、同曲连点、加载中暂停、随机播放历史、上一首、筛选后播放、返回时恢复筛选和滚动位置、手机整行播放与更多菜单隔离，以及音频缓存的请求复用和Range响应。测试使用模拟音频与存储，不代表iPhone真机验收。
 
 - `media-session.cjs`：系统播放直接恢复、残留加载标记、旧请求迟到、主动暂停、保留位置与历史、AudioSession中断和兼容降级、耳机引发的pause事件、暂停点保存、迟到播放拦截、自然结束与内部换源区分；模拟事件不代替真机音频抢占检查。
+- `playback-session.cjs`：恢复队列/插队/模式/历史/位置但不自动播放、失败换源恢复、暂停拖动后返回、LIFO插队、重复添加、三种模式优先插队与当前曲再播。
+- `navigation.cjs`：全屏独立历史层、返回/前进、显式关闭、分享链接初始化、原生迟到关闭事件、全屏歌手/专辑导航竞态。
 - `lyrics.cjs`：正负offset、多时间戳、同时间组、三位分钟、不同小数精度、创作者信息和混合文本。
 - `lyric-loading.cjs`：缓存不可用、强制重试、TTL、404、超时、快速切歌、清理期间的旧请求、手动滚动和拖动进度。
 - `worker.cjs`：真实字节切片、Range/HEAD/416、完整下载去重、预算和配额失败、取消、重启后清理仍保留设置、旧网页壳兼容。
@@ -66,4 +70,19 @@ AUDIT_OUTPUT=/tmp/roylyl-music-qa node music/tests/browser.cjs
 
 单曲缓存恢复：播放失败后的显式重试使用独立请求绕过旧缓存，仅删除当前音源缓存和索引；其他歌曲保留。覆盖旧完整下载迟到后不得重新写入、保留Range及HTTP缓存绕过。此项为模拟回归，尚未在出现故障的iPhone缓存中实测。
 
-主屏幕网页锁屏恢复：根据pause事件生成时间区分旧事件与新暂停；旧pause不得撤销较新的播放请求。设置页可复制当前页面最近60条本地播放事件，包含版本、standalone状态、系统回调、AudioSession状态及play承诺结果；不自动上传。Safari主屏幕后台唤醒仍须真机验证。
+主屏幕网页锁屏恢复：根据pause事件生成时间区分旧事件与新暂停；旧pause不得撤销较新的播放请求。设置页可复制最近24小时最多120条本地播放事件，刷新后保留，包含版本、standalone状态、系统回调、AudioSession状态及play承诺结果；不自动上传。Safari主屏幕后台唤醒仍须真机验证。
+
+
+## 本轮定向浏览器验收
+
+`playback-browser.cjs`沿用上面的临时Chrome调试端口，默认本地端口8049。该脚本仅在测试浏览器里将MP3网络响应替换为180秒WAV测试音频，使用真实页面和原生audio元素检查LIFO插队、按钮与行播放隔离、队列显示、暂停拖动、刷新恢复、诊断持久化、全屏返回/前进及1440/700/402/375/320宽度排布。它不验证远程MP3可用性或蓝牙设备事件。
+
+```sh
+node music/tests/playback-browser.cjs
+```
+
+结果和截图默认写入`/tmp/roylyl-player-next-results`，支持`AUDIT_OUTPUT`、`MUSIC_URL`和`CDP_URL`覆盖。测试关闭该临时配置的预加载和音频缓存；不要连接日常浏览器配置。
+
+### 定时关闭
+
+`node music/tests/sleep-timer.cjs`验证预设与自定义时间、修改定时、按绝对截止时间计时，以及后台回调延迟后的到期暂停。手机全屏“更多”提供分享和定时设置；取消定时不会暂停音乐。真实iPhone锁屏长时间运行仍需真机验证，浏览器挂起可能延迟定时回调。

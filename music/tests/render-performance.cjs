@@ -1,0 +1,10 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const source=fs.readFileSync(require('node:path').join(__dirname,'../app.js'),'utf8');
+let writes=0;const node={set innerHTML(value){writes++;this.html=value;}};
+const ctx={$:()=>node,icon:name=>'<svg>'+name+'</svg>'};vm.createContext(ctx);
+vm.runInContext(source.slice(source.indexOf('  const setIcon ='),source.indexOf('  for(const [id,name]')),ctx);
+vm.runInContext("setIcon('play','play');setIcon('play','play');",ctx);assert.equal(writes,1);
+vm.runInContext("setIcon('play','pause');",ctx);assert.equal(writes,2);
+ctx.setMarkup('details','same');ctx.setMarkup('details','same');assert.equal(writes,3);
+ctx.setMarkup('details','changed');assert.equal(writes,4);
+console.log('通过：相同图标和参数内容保留DOM，内容变化时才更新。');

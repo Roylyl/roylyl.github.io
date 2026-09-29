@@ -3,10 +3,10 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('nod
 const source=fs.readFileSync(require('node:path').join(__dirname,'../app.js'),'utf8');
 function harness(){
   const handlers={},sessionEvents={},requests=[];
-  const track={id:'one',src:'one.mp3'},audio={paused:true,src:'one.mp3',currentTime:83.25,error:null,
+  const track={id:'one',src:'one.mp3'},audio={paused:true,src:'one.mp3',currentTime:83.25,error:null,duration:300,readyState:4,
     getAttribute(){return this.src;},pause(){this.paused=true;},load(){throw Error('unexpected reload');},
     play(){this.paused=false;return new Promise((resolve,reject)=>requests.push({resolve,reject}));}};
-  const ctx={tracePlayback(){},performance:{now:()=>100},playbackRequestedAt:0,failedAudioSources:new Set(),playbackBlocked:false,pausedPosition:null,audio,current:track,queue:[track],loadedTrackId:track.id,pendingTrackId:track.id,playToken:0,
+  const ctx={insertionAnchor:null,checkSleepTimer:()=>false,window:{addEventListener(){}},nextUp:[],pendingResumePosition:null,repeat:'all',updateLyricPosition(){},read:(key,fallback)=>fallback,albums:[],get:id=>id===track.id?track:null,tracePlayback(){},performance:{now:()=>100},playbackRequestedAt:0,failedAudioSources:new Set(),playbackBlocked:false,pausedPosition:null,audio,current:track,queue:[track],loadedTrackId:track.id,pendingTrackId:track.id,playToken:0,
     playbackHistory:[track.id],historyCursor:0,persistenceRequested:true,playerStatusText:'buffering',BUFFERING_STATUS:'buffering',
     preparedAudio:new Map(),localAudioUrl:null,navigator:{onLine:true,mediaSession:{setActionHandler:(name,fn)=>handlers[name]=fn},
       audioSession:{state:'active',addEventListener:(name,fn)=>sessionEvents[name]=fn}},
@@ -15,7 +15,7 @@ function harness(){
     cachedAudioUrl(){throw Error('system action must not await a cache read');},
     $(){throw Error('system action must not simulate a DOM click');}};
   vm.createContext(ctx);
-  vm.runInContext(source.slice(source.indexOf('  function playbackControl()'),source.indexOf('  function advance(')),ctx);
+  vm.runInContext(source.slice(source.indexOf('  function savedPlaybackPosition()'),source.indexOf('  function advance(')),ctx);
   vm.runInContext(source.slice(source.indexOf('  function registerMediaActions()'),source.indexOf("  document.addEventListener('visibilitychange'")),ctx);
   vm.runInContext(source.slice(source.indexOf("  navigator.audioSession?.addEventListener('statechange'"),source.indexOf("  audio.addEventListener('error'")),ctx);
   ctx.registerMediaActions();return {ctx,audio,handlers,requests,sessionEvents};

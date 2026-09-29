@@ -1,10 +1,11 @@
 'use strict';
-const AUDIO='roylyl-music-audio-v2',META='roylyl-music-audio-meta-v1',SHELL='roylyl-music-shell-20260929-14';
-const FILES=['/music/','/music/index.html','/music/music.css?v=20260929-pwa-12','/music/app.js?v=20260929-pwa-12','/music/lyric-parser.js?v=20260929-pwa-12','/music/image-loading.css?v=20260927-1','/music/image-loading.js?v=20260927-1','/music/region-notice.css?v=20260928-1','/music/region-notice.js?v=20260928-1','/music/data/catalog.json?v=20260929-pwa-12','/music/favicon.svg','/music/placeholder.svg','/music/manifest.webmanifest','/music/icons/icon-192.png','/music/icons/icon-512.png','/music/icons/apple-touch-icon.png'];
-const metaKey='/music/__audio_index__',configKey='/music/__audio_config__';
-let generation=0,budget=-1,preloadEnabled=true,writeQueue=Promise.resolve(),configRevision=0,configRead,optionalEpoch=0,lastKeptSource='';
+const AUDIO='roylyl-music-audio-v2',META='roylyl-music-audio-meta-v1',SHELL='roylyl-music-shell-20260929-27';
+const FILES=['/music/','/music/index.html','/music/music.css?v=20260929-pwa-25','/music/app.js?v=20260929-pwa-25','/music/lyric-parser.js?v=20260929-pwa-25','/music/image-loading.css?v=20260927-1','/music/image-loading.js?v=20260927-1','/music/region-notice.css?v=20260928-1','/music/region-notice.js?v=20260928-1','/music/data/catalog.json?v=20260929-pwa-25','/music/favicon.svg','/music/placeholder.svg','/music/manifest.webmanifest','/music/icons/icon-192.png','/music/icons/icon-512.png','/music/icons/apple-touch-icon.png'];
+const metaKey='/music/__audio_index__',configKey='/music/__audio_config__',freshKey='/music/__audio_recovery__';
+let generation=0,budget=-1,preloadEnabled=true,writeQueue=Promise.resolve(),configRevision=0,configRead,freshRead,optionalEpoch=0,lastKeptSource='';
 const inflight=new Map(),playingRequests=new Map(),protectedSources=new Map();
-const sourceEpoch=new Map(),recoveryRequests=new Map();
+const sourceEpoch=new Map(),recoveryRequests=new Map(),freshSources=new Set(),shellClients=new Map();
+const shellPattern=/^roylyl-music-shell-(\d{8})-(\d+)$/;
 const serial=task=>{const p=writeQueue.then(task,task);writeQueue=p.catch(()=>{});return p;};
 const protectedSource=source=>[...protectedSources.values()].includes(source);
 const validBudget=value=>Number.isSafeInteger(value)&&value>=-1;
@@ -12,7 +13,38 @@ const exceedsBudget=bytes=>budget!==-1&&bytes>budget;
 const validSize=response=>{const value=response?.headers.get('Content-Length');return /^\d+$/.test(value||'')&&Number.isSafeInteger(Number(value))?Number(value):0;};
 const fullResponse=response=>response?.status===200&&!response.headers.has('Content-Range')&&validSize(response)>0;
 const audioSource=source=>{try{const u=new URL(source);return u.origin==='https://raw.githubusercontent.com'&&u.pathname.startsWith('/Roylyl/Music/main/')&&u.pathname.endsWith('.mp3');}catch{return false;}};
+const musicClient=client=>{try{return new URL(client.url).pathname.startsWith('/music/');}catch{return false;}};
+async function cleanShells(){
+  await serial(async()=>{
+    const clients=(await self.clients.matchAll({type:'window',includeUncontrolled:true})).filter(musicClient),live=new Set(clients.map(client=>client.id));
+    for(const id of shellClients.keys())if(!live.has(id))shellClients.delete(id);
+    const unknown=clients.filter(client=>!shellClients.has(client.id));
+    if(unknown.length){
+      // Replies arrive as separate message events. Do not wait for them here:
+      // legacy pages may never reply and must keep their possible assets.
+      for(const client of unknown)try{client.postMessage({type:'REPORT_SHELL'});}catch{}
+      return;
+    }
+    const keep=new Set([SHELL,...shellClients.values()]),current=shellPattern.exec(SHELL);
+    for(const name of await caches.keys()){
+      const version=shellPattern.exec(name);
+      // A newer installed shell may belong to the waiting worker.
+      if(version&&!keep.has(name)&&(version[1]<current[1]||(version[1]===current[1]&&Number(version[2])<Number(current[2]))))await caches.delete(name);
+    }
+  });
+}
+async function ensureFreshSources(){
+  if(!freshRead)freshRead=(async()=>{
+    try{
+      const saved=await (await caches.open(META)).match(freshKey),sources=await saved?.json();
+      if(Array.isArray(sources))for(const source of sources)if(typeof source==='string'&&audioSource(source))freshSources.add(source);
+    }catch{/* Storage failures must not prevent network playback. */}
+  })();
+  await freshRead;
+}
+async function saveFreshSources(){await (await caches.open(META)).put(freshKey,new Response(JSON.stringify([...freshSources]),{headers:{'Content-Type':'application/json'}}));}
 async function ensureConfig(){
+  await ensureFreshSources();
   if(configRevision>0)return;
   if(!configRead){const revision=configRevision;configRead=(async()=>{
     try{const saved=await (await caches.open(META)).match(configKey),config=await saved?.json();
@@ -66,17 +98,17 @@ self.addEventListener('install',event=>event.waitUntil((async()=>{
   else for(const c of await self.clients.matchAll())c.postMessage({type:'UPDATE_READY'});
 })()));
 self.addEventListener('activate',event=>event.waitUntil((async()=>{
-  // Existing tabs may still need their exact script/catalog release. Only
-  // remove prior shells when no already-open music page can reference them.
-  const clients=await self.clients.matchAll({type:'window',includeUncontrolled:true});
-  const hasMusicPage=clients.some(client=>{try{return new URL(client.url).pathname.startsWith('/music/');}catch{return false;}});
-  if(!hasMusicPage)for(const name of await caches.keys())if(/^roylyl-music-shell-\d{8}-\d+$/.test(name)&&name!==SHELL)await caches.delete(name);
+  await cleanShells();
   await self.clients.claim();
 })()));
 self.addEventListener('message',event=>{
   const data=event.data||{},port=event.ports?.[0];
   const run=task=>event.waitUntil(task.catch(()=>port?.postMessage({ok:false})));
   if(data.type==='ACTIVATE_UPDATE')event.waitUntil(self.skipWaiting());
+  if(data.type==='SHELL_CLIENT'&&event.source?.id&&typeof data.shell==='string'&&shellPattern.test(data.shell)){
+    shellClients.set(event.source.id,data.shell);
+    run(cleanShells().then(()=>port?.postMessage({ok:true})));
+  }
   if(data.type==='AUDIO_CONFIG'){
     configRevision++;budget=validBudget(data.budget)?data.budget:-1;
     preloadEnabled=data.preload!==false;if(!budget||!preloadEnabled){optionalEpoch++;lastKeptSource='';}protectedSources.set(event.source?.id||'current',data.current||'');
@@ -100,9 +132,9 @@ self.addEventListener('message',event=>{
     generation++;optionalEpoch++;lastKeptSource='';for(const [key,job] of inflight)if(job.optional)cancelJob(key,job);
     run((async()=>{
       // Clearing can be the first event after the Worker wakes. Restore saved
-      // preferences before deleting their cache; never replace them with defaults.
+      // preferences, and preserve config/recovery records while removing audio.
       await ensureConfig();
-      await serial(async()=>{await caches.delete(AUDIO);await caches.delete(META);await saveConfig();port?.postMessage({ok:true});});
+      await serial(async()=>{await caches.delete(AUDIO);await (await caches.open(META)).delete(metaKey);await saveConfig();port?.postMessage({ok:true});});
     })());
   }
   if(data.type==='CANCEL_PRELOAD'){optionalEpoch++;lastKeptSource=data.keep||'';for(const [key,job] of inflight)if(job.optional&&key!==data.keep)cancelJob(key,job);}
@@ -159,11 +191,11 @@ async function storeFull(source,response,version,signal,epoch=sourceEpoch.get(so
     });
   }catch{return false;}
 }
-function startFull(source,request,optional,preload=false,providedResponse,requestGeneration=generation){
+function startFull(source,request,optional,preload=false,providedResponse,requestGeneration=generation,requestEpoch=sourceEpoch.get(source)||0){
   let job=inflight.get(source);
   if(job){if(!optional)job.optional=false;return job;}
-  const controller=new AbortController(),version=requestGeneration,epoch=sourceEpoch.get(source)||0;
-  const response=providedResponse?Promise.resolve(providedResponse):fetch(request,{signal:controller.signal});
+  const controller=new AbortController(),version=requestGeneration,epoch=requestEpoch;
+  const response=providedResponse?Promise.resolve(providedResponse):fetch(request,{signal:controller.signal,...(freshSources.has(source)?{cache:'no-store'}:{})});
   job={controller,optional,preload,response,stored:null};
   job.stored=response.then(value=>storeFull(source,value.clone(),version,controller.signal,epoch)).catch(()=>false).then(ok=>{if(!ok&&job.optional)controller.abort();return ok;}).finally(()=>{if(inflight.get(source)===job)inflight.delete(source);});
   inflight.set(source,job);return job;
@@ -176,10 +208,17 @@ async function audioFetch(event){
     recovery.searchParams.delete('recovery');const original=recovery.href;
     let repair=recoveryRequests.get(original);
     if(repair?.attempt!==attempt){
+      // no-store does not replace the browser's old HTTP entry. Keep bypassing
+      // it even after a fresh application cache entry is stored and evicted.
+      freshSources.add(original);
       sourceEpoch.set(original,(sourceEpoch.get(original)||0)+1);
       const job=inflight.get(original);if(job?.optional)cancelJob(original,job);
       else inflight.delete(original); // Do not interrupt another tab's playback.
+      playingRequests.delete(original);
       repair={attempt,done:serial(async()=>{
+        // Persist the bypass before deleting the bad entry or requesting audio,
+        // so worker suspension cannot make the original HTTP cache usable again.
+        try{await saveFreshSources();}catch{/* The in-memory bypass still applies; remove known bad audio even when metadata storage is full. */}
         const cache=await caches.open(AUDIO),index=await readIndex();
         await cache.delete(original);delete index[original];await saveIndex(index);
       }).catch(()=>{})};recoveryRequests.set(original,repair);
@@ -189,16 +228,16 @@ async function audioFetch(event){
     return fetch(event.request,{cache:'no-store'});
   }
   const hit=await cachedFull(source);if(hit)return cachedRange(hit,range,method);
-  if(method==='HEAD')return fetch(event.request);
+  if(method==='HEAD')return fetch(event.request,freshSources.has(source)?{cache:'no-store'}:{});
   const playback=event.request.destination==='audio';
   if(playback)protectedSources.set(event.clientId||'current',source);
   if(range){
     // Network ranges stay intact. An ignored Range (200) can feed the optional
     // full cache, but a genuine 206 can never enter that cache.
-    const version=generation,promise=fetch(event.request);playingRequests.set(source,promise);
+    const version=generation,epoch=sourceEpoch.get(source)||0,promise=fetch(event.request,freshSources.has(source)?{cache:'no-store'}:{});playingRequests.set(source,promise);
     try{
       const response=await promise;
-      if(fullResponse(response)&&budget)event.waitUntil(startFull(source,event.request,!playback,false,response.clone(),version).stored);
+      if(fullResponse(response)&&budget&&epoch===(sourceEpoch.get(source)||0))event.waitUntil(startFull(source,event.request,!playback,false,response.clone(),version,epoch).stored);
       return response;
     }finally{if(playingRequests.get(source)===promise)playingRequests.delete(source);}
   }

@@ -51,13 +51,44 @@ function harness(){
   h.advance(86400001);h.setNetwork(async()=>{throw new TypeError('offline');});await h.api.loadLyrics(h.ctx.current);
   assert.equal(h.api.getState(),'ready');assert(h.node('full-lyrics').innerHTML.includes('已补全'));
 
+  for(const failure of ['server','timeout','body-timeout']){
+    h=harness();await h.api.loadLyrics(h.ctx.current);h.advance(86400001);
+    const cachedAt=[...h.entries.values()][0].headers.get('X-Roylyl-Cached-At');
+    h.setNetwork((address,{signal})=>{
+      if(failure==='server')return new Response('',{status:503});
+      const stalled=()=>new Promise((resolve,reject)=>signal.addEventListener('abort',()=>reject(Error('aborted'))));
+      return failure==='body-timeout'?{ok:true,status:200,text:stalled}:stalled();
+    });
+    const refresh=h.api.loadLyrics(h.ctx.current);await settle();
+    if(failure!=='server')h.expire(10000);
+    await refresh;
+    assert.equal(h.api.getState(),'ready',failure+' must retain expired successful lyrics');
+    assert(h.node('full-lyrics').innerHTML.includes('正文'));
+    assert.equal([...h.entries.values()][0].headers.get('X-Roylyl-Cached-At'),cachedAt,'fallback must not renew the cache TTL');
+    h.setNetwork(async()=>new Response('[00:01]更新成功'));await h.api.loadLyrics(h.ctx.current);
+    assert.equal(h.calls.length,3,'stale fallback must allow the next request to refresh');
+    assert(h.node('full-lyrics').innerHTML.includes('更新成功'));
+  }
+  for(const failure of ['server','timeout']){
+    h=harness();await h.api.loadLyrics(h.ctx.current);h.advance(86400001);
+    h.setNetwork((address,{signal})=>failure==='server'?new Response('',{status:503}):new Promise((resolve,reject)=>signal.addEventListener('abort',()=>reject(Error('aborted')))));
+    const refresh=h.api.loadLyrics(h.ctx.current,{force:true});await settle();
+    if(failure==='timeout')h.expire(10000);
+    await refresh;assert.equal(h.api.getState(),'error','forced '+failure+' must not restore cached lyrics');
+    assert(!h.node('full-lyrics').innerHTML.includes('正文'));
+  }
+  h=harness();await h.api.loadLyrics(h.ctx.current);h.advance(86400001);
+  h.setNetwork(async()=>new Response('',{status:404}));await h.api.loadLyrics(h.ctx.current);
+  assert.equal(h.api.getState(),'not-found','an explicit 404 must replace expired successful lyrics');
+  assert.equal([...h.entries.values()][0].status,404);
+
   h=harness();h.advance(2*86400000);
   h.entries.set('https://example.test/a.lrc?lyricRevision=v1',new Response('[00:01]缓存',{headers:{'X-Roylyl-Cached-At':String(h.now()-86400000+1000)}}));
   await h.api.loadLyrics(h.ctx.current);assert.equal(h.calls.length,0);
   h.advance(2000);await h.api.loadLyrics(h.ctx.current);assert.equal(h.calls.length,1,'reading a cached lyric cannot extend its revalidation TTL');
   h=harness();h.setNetwork((address,{signal})=>new Promise((resolve,reject)=>signal.addEventListener('abort',()=>reject(Error('aborted')))));
   const timed=h.api.loadLyrics(h.ctx.current);await settle();h.expire(10000);await timed;assert.equal(h.api.getState(),'error');
-  console.log('通过：缓存不可用/配额失败不影响歌词、同曲重试、强制HTTP刷新、404过期及离线旧缓存。');
+  console.log('通过：缓存不可用/配额失败不影响歌词、同曲重试、强制HTTP刷新、404过期及离线/5xx/超时旧缓存。');
   h=harness();let pending=deferred();h.setNetwork(()=>pending.promise);const old=h.api.loadLyrics(h.ctx.current);await settle();
   assert.equal(h.api.getState(),'loading');assert(h.node('full-lyrics').innerHTML.includes('正在加载歌词'));
   h.ctx.current=track('b');h.setNetwork(async()=>new Response('[00:01]新曲'));await h.api.loadLyrics(h.ctx.current);
@@ -68,6 +99,18 @@ function harness(){
   pending.resolve(new Response('[00:01]清理前'));await beforeClear;await settle();
   assert(h.node('full-lyrics').innerHTML.includes('清理后'));assert.equal(h.entries.size,1);
   assert((await [...h.entries.values()][0].clone().text()).includes('清理后'));
+  for(const action of ['switch','clear','force']){
+    h=harness();await h.api.loadLyrics(h.ctx.current);h.advance(86400001);
+    h.setNetwork((address,{signal})=>new Promise((resolve,reject)=>signal.addEventListener('abort',()=>reject(Error('aborted')))));
+    const staleRefresh=h.api.loadLyrics(h.ctx.current);await settle();
+    h.setNetwork(async()=>new Response('[00:01]操作后'));
+    if(action==='switch'){h.ctx.current=track('b');await h.api.loadLyrics(h.ctx.current);}
+    else if(action==='clear'){await h.node('clear-lyric-cache').onclick();await settle();}
+    else await h.api.loadLyrics(h.ctx.current,{force:true});
+    await staleRefresh;
+    assert(h.node('full-lyrics').innerHTML.includes('操作后'),action+' must not restore aborted stale lyrics');
+    assert(!h.node('full-lyrics').innerHTML.includes('正文'));
+  }
   console.log('通过：快速切歌和清理缓存期间旧请求不能覆盖正文或重新污染缓存。');
   h=harness();await h.api.loadLyrics(h.ctx.current);const box=h.node('full-lyrics');box.scrolls=[];
   box.events.wheel();h.api.updateLyricPosition(true);assert.equal(box.scrolls.length,0);

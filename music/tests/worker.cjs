@@ -2,21 +2,22 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const workerSource=fs.readFileSync(require('node:path').join(__dirname,'../audio-worker.js'),'utf8');
 const ORIGIN='https://roylyl.github.io',AUDIO='roylyl-music-audio-v2',META='roylyl-music-audio-meta-v1';
+const SHELL=/SHELL='([^']+)'/.exec(workerSource)[1];
 const source=name=>`https://raw.githubusercontent.com/Roylyl/Music/main/${name}.mp3?v=2`;
 const bytes='012345678901234567890123456789';
 const full=body=>new Response(body??bytes,{headers:{'Content-Length':'30','Content-Type':'audio/mpeg'}});
 const tick=()=>new Promise(resolve=>setImmediate(resolve));
-function harness({stores=new Map(),network=async()=>full(),failAudioPut=()=>false}={}){
-  const handlers={},calls=[],notifications=[];
+function harness({stores=new Map(),network=async()=>full(),failAudioPut=()=>false,failRecoveryPut=()=>false,clients=[{id:'tab-a',url:ORIGIN+'/music/'}]}={}){
+  const handlers={},calls=[],notifications=[],clientMessages=[];
   const key=value=>new URL(typeof value==='string'?value:value.url,ORIGIN).href;
   function cacheFor(name){if(!stores.has(name))stores.set(name,new Map());const entries=stores.get(name);return {
     async match(request){return entries.get(key(request))?.clone();},
-    async put(request,response){if(name===AUDIO&&failAudioPut())throw new DOMException('Full','QuotaExceededError');const body=await response.arrayBuffer();entries.set(key(request),new Response(body,{status:response.status,headers:response.headers}));},
+    async put(request,response){if(name===AUDIO&&failAudioPut()||name===META&&key(request)===key('/music/__audio_recovery__')&&failRecoveryPut())throw new DOMException('Full','QuotaExceededError');const body=await response.arrayBuffer();entries.set(key(request),new Response(body,{status:response.status,headers:response.headers}));},
     async delete(request){return entries.delete(key(request));},
     async keys(){return [...entries.keys()].map(url=>new Request(url));},
     async addAll(files){for(const file of files)await this.put(file,file.split('?')[0].endsWith('catalog.json')?Response.json({tracks:[{id:'test'}]}):new Response(file));}
   };}
-  const sandbox={self:{location:{origin:ORIGIN},registration:{active:true},addEventListener:(name,fn)=>handlers[name]=fn,clients:{async claim(){},async matchAll(){return[{id:'tab-a',url:ORIGIN+'/music/',postMessage:value=>notifications.push(value)}];}},async skipWaiting(){}},caches:{open:async name=>cacheFor(name),keys:async()=>[...stores.keys()],delete:async name=>stores.delete(name)},fetch:(request,options={})=>{calls.push({request,options});return network(request,options);},URL,Request,Response,Headers,AbortController,console};
+  const sandbox={self:{location:{origin:ORIGIN},registration:{active:true},addEventListener:(name,fn)=>handlers[name]=fn,clients:{async claim(){},async matchAll(){return clients.map(client=>({...client,postMessage:value=>{notifications.push(value);clientMessages.push({id:client.id,data:value});}}));}},async skipWaiting(){}},caches:{open:async name=>cacheFor(name),keys:async()=>[...stores.keys()],delete:async name=>stores.delete(name)},fetch:(request,options={})=>{calls.push({request,options});return network(request,options);},URL,Request,Response,Headers,AbortController,console};
   vm.createContext(sandbox);vm.runInContext(workerSource,sandbox);
   function dispatch(kind,event){const waits=[];handlers[kind]({...event,waitUntil:promise=>waits.push(promise)});return async()=>{for(let i=0;i<waits.length;i++)await waits[i];};}
   function message(data,id='tab-a'){
@@ -33,7 +34,7 @@ function harness({stores=new Map(),network=async()=>full(),failAudioPut=()=>fals
   const config=async(budget,current='',preload=true,id)=>{await message({type:'AUDIO_CONFIG',budget,current,preload},id).done();};
   const save=async name=>{const job=message({type:'CACHE_AUDIO',source:source(name),preload:false});await job.done();return job.result;};
   const stats=async()=>{const job=message({type:'AUDIO_STATS'});await job.done();return job.result;};
-  return {stores,calls,notifications,cacheFor,request,message,config,save,stats,dispatch};
+  return {stores,calls,notifications,clientMessages,cacheFor,request,message,config,save,stats,dispatch,setClients:value=>{clients=value;}};
 }
 (async()=>{
   {
@@ -47,6 +48,49 @@ function harness({stores=new Map(),network=async()=>full(),failAudioPut=()=>fals
     console.log('通过：单曲重试清理对应缓存和索引，保留其他歌曲，网络绕过HTTP缓存且保留Range。');
   }
   {
+    const stale='x'.repeat(30),h=harness({network:async(request,options)=>request.headers.has('Range')?new Response(bytes.slice(0,2),{status:206,headers:{'Content-Length':'2','Content-Range':'bytes 0-1/30'}}):full(options.cache==='no-store'?bytes:stale)});
+    await h.config(100);await h.save('recovered');
+    await h.request(source('recovered')+'&recovery=fresh',{range:'bytes=0-1'}).response;
+    assert.equal((await h.save('recovered')).ok,true);
+    assert.equal(h.calls.at(-1).request.url,source('recovered'));
+    assert.equal(h.calls.at(-1).options.cache,'no-store','恢复后原URL的完整下载必须绕过旧HTTP缓存');
+    assert.equal(await (await h.cacheFor(AUDIO).match(source('recovered'))).text(),bytes);
+    await h.message({type:'CLEAR_AUDIO'}).done();await h.save('recovered');
+    assert.equal(await (await h.cacheFor(AUDIO).match(source('recovered'))).text(),bytes,'清理后仍不能重新读入浏览器的旧HTTP条目');
+    console.log('通过：单曲恢复后的完整缓存绕过原URL旧HTTP缓存并写入新内容。');
+  }
+  {
+    const freshKey='/music/__audio_recovery__',stale='x'.repeat(30);let h;
+    const network=async(request,options)=>{
+      if(new URL(request.url).searchParams.has('recovery')){
+        assert.deepEqual(await (await h.cacheFor(META).match(freshKey)).json(),[source('restart-recovery')],'发出恢复请求前必须持久化原URL刷新标记');
+        return new Response(bytes.slice(0,2),{status:206,headers:{'Content-Length':'2','Content-Range':'bytes 0-1/30'}});
+      }
+      return full(options.cache==='no-store'?bytes:stale);
+    };
+    h=harness({network});await h.config(100);await h.save('restart-recovery');
+    await h.request(source('restart-recovery')+'&recovery=persist',{range:'bytes=0-1'}).response;
+    const restarted=harness({stores:h.stores,network});await restarted.config(100);
+    assert.equal((await restarted.save('restart-recovery')).ok,true);
+    assert.equal(restarted.calls.at(-1).options.cache,'no-store','worker重启且先收到配置后，CACHE_AUDIO仍须恢复原URL刷新标记');
+    assert.equal(await (await restarted.cacheFor(AUDIO).match(source('restart-recovery'))).text(),bytes);
+    await restarted.save('unaffected');assert.equal(restarted.calls.at(-1).options.cache,undefined,'未恢复过的音源保留原有HTTP缓存逻辑');
+    const cleared=harness({stores:restarted.stores,network});await cleared.message({type:'CLEAR_AUDIO'}).done();
+    assert.deepEqual(await (await cleared.cacheFor(META).match(freshKey)).json(),[source('restart-recovery')],'重启后清理音频也必须保留恢复标记');
+    console.log('通过：恢复标记先于网络请求持久化，worker重启后主动缓存继续绕过旧HTTP缓存，清理音频保留标记。');
+  }
+  {
+    let failedWrites=0;const h=harness({failRecoveryPut:()=>{failedWrites++;return true;},network:async(_,options)=>full(options.cache==='no-store'?bytes:'x'.repeat(30))});
+    await h.config(100);await h.save('quota-recovery');
+    const response=await h.request(source('quota-recovery')+'&recovery=quota',{range:'bytes=0-1'}).response;
+    assert.equal(failedWrites,1,'恢复标记写入必须命中模拟的QuotaExceededError');
+    assert.equal(response.status,200);assert.equal(await response.text(),bytes,'标记写入失败后恢复网络播放仍成功');
+    assert.equal(await h.cacheFor(AUDIO).match(source('quota-recovery')),undefined,'标记写入失败不能阻止删除已知坏音频');
+    assert.equal((await h.stats()).count,0,'对应坏音频索引也必须清除');
+    assert.equal((await h.save('quota-recovery')).ok,true);assert.equal(h.calls.at(-1).options.cache,'no-store','持久化失败后内存恢复标记仍然有效');
+    console.log('通过：恢复标记写入遇到配额错误时仍清除坏音频和索引，恢复网络播放且保留内存绕过标记。');
+  }
+  {
     let controller,first=true;
     const h=harness({network:async()=>{if(!first)return full();first=false;return full(new ReadableStream({start(c){controller=c;}}));}});
     await h.config(100);
@@ -55,6 +99,13 @@ function harness({stores=new Map(),network=async()=>full(),failAudioPut=()=>fals
     controller.enqueue(new TextEncoder().encode(bytes));controller.close();await old.done();
     assert.equal(await h.cacheFor(AUDIO).match(source('late')),undefined,'旧完整下载不能在单曲清理后重新写入');
     console.log('通过：重试时尚未完成的旧下载不会重新污染缓存。');
+  }
+  {
+    let resolveOld;const h=harness({network:async(request)=>new URL(request.url).searchParams.has('recovery')?full():new Promise(resolve=>resolveOld=resolve)});
+    const old=h.request(source('late-range'),{range:'bytes=0-1'});await tick();await tick();
+    await h.request(source('late-range')+'&recovery=fresh',{range:'bytes=0-1'}).response;
+    resolveOld(full());await old.response;await old.done();
+    assert.equal(await h.cacheFor(AUDIO).match(source('late-range')),undefined,'恢复前发起、恢复后才返回响应头的旧Range不能重新写入');
   }
   {
     let controller,signal;const h=harness({network:async(_,options)=>{signal=options.signal;return full(new ReadableStream({start(c){controller=c;c.enqueue(new TextEncoder().encode(bytes.slice(0,10)));}}));}});
@@ -171,6 +222,36 @@ function harness({stores=new Map(),network=async()=>full(),failAudioPut=()=>fals
     const legacy=h.request(ORIGIN+'/music/data/catalog.json');assert.equal(await (await legacy.response).text(),'legacy catalog');
     assert(h.stores.has('roylyl-music-shell-20260929-4'),'有旧页面时保留其网页壳和同版目录');
     assert(h.stores.has('unrelated-app-cache'));assert(await h.cacheFor(AUDIO).match(source('a')),'激活网页更新不能清理音频');
+  }
+  {
+    const old='roylyl-music-shell-20260929-4',unused='roylyl-music-shell-20260929-3',waiting='roylyl-music-shell-20991231-1';
+    const h=harness({clients:[{id:'tab-a',url:ORIGIN+'/music/'},{id:'tab-b',url:ORIGIN+'/music/?track=old'}]});
+    for(const shell of [SHELL,old,unused,waiting,'unrelated-app-cache'])await h.cacheFor(shell).put('/music/app.js?v='+shell,new Response(shell));
+    await h.message({type:'SHELL_CLIENT',shell:SHELL}).done();
+    assert(h.stores.has(unused),'另一个未知版本的旧页面仍打开时保守保留旧shell');
+    await h.message({type:'SHELL_CLIENT',shell:old},'tab-b').done();
+    assert(h.stores.has(old),'保留仍存活旧页面上报的shell');assert(!h.stores.has(unused),'全部页面版本已知时清理无人使用的旧shell');
+    assert.equal(await (await h.request(ORIGIN+'/music/app.js?v='+old).response).text(),old);
+    assert(h.stores.has(waiting),'不能删掉等待激活的新worker安装的shell');assert(h.stores.has('unrelated-app-cache'));
+    h.setClients([{id:'tab-a',url:ORIGIN+'/music/'},{id:'other-page',url:ORIGIN+'/portfolio/'}]);
+    await h.message({type:'SHELL_CLIENT',shell:SHELL}).done();
+    assert(!h.stores.has(old),'旧页面关闭后再次上报应清理其shell');assert(h.stores.has(SHELL));
+    const restarted=harness({stores:h.stores});await restarted.cacheFor(old).put('/music/app.js?v=old',new Response('old'));
+    await restarted.dispatch('activate',{})();assert(restarted.stores.has(old),'worker重启后尚未报告的页面仍受到保护');
+    await restarted.message({type:'SHELL_CLIENT',shell:SHELL}).done();assert(!restarted.stores.has(old),'当前页面重新上报后继续清理旧shell');
+    console.log('通过：按存活页面保留对应旧shell，未知旧页面保守保护，关闭后清理且不误删等待激活的新shell。');
+  }
+  {
+    const old='roylyl-music-shell-20260929-4',clients=[{id:'tab-a',url:ORIGIN+'/music/'},{id:'tab-b',url:ORIGIN+'/music/'},{id:'outside',url:ORIGIN+'/'}],h=harness({clients});
+    await h.cacheFor(old).put('/music/app.js?v=old',new Response('old'));
+    await h.message({type:'SHELL_CLIENT',shell:SHELL}).done();
+    assert.deepEqual(h.clientMessages.map(({id,data})=>[id,data.type]),[['tab-b','REPORT_SHELL']],'只向尚未报告的存活音乐页面询问版本');
+    assert(h.stores.has(old),'未知页面回复前保留旧shell');
+    await tick();assert.equal(h.clientMessages.length,1,'旧页面不回复时不能自动循环询问');
+    await h.message({type:'SHELL_CLIENT',shell:SHELL},'tab-b').done();
+    assert(!h.stores.has(old),'收到另一个窗口的异步回复后清理无人使用的旧shell');
+    assert.equal(h.clientMessages.length,1,'所有页面已报告后不能继续询问');
+    console.log('通过：仅向未报告的存活音乐页面询问shell版本，不等待旧页面回复且握手完成后继续清理。');
   }
   console.log('通过：完整下载生命周期去重、播放保护、Range共用200、清理代际、真实字节校验、配额失败索引、多标签保护、配置重启、默认无限缓存和预加载开启、显式关闭、十进制4GB/8GB、GET/HEAD范围边界、206隔离和PWA导航范围。');
 })().catch(error=>{console.error(error);process.exitCode=1;});
