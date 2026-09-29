@@ -927,3 +927,8 @@ html[data-theme="light"] #sleep-current,html[data-theme="light"] #sleep-countdow
   .queue-panel .track-row:not(.unavailable), .full-queue .track-row:not(.unavailable) { grid-template-columns:minmax(0,1fr) repeat(3,32px); padding-inline:3px; }
   .queue-panel .track-row > .icon, .full-queue .track-row > .icon { width:32px; min-width:32px; padding:5px; }
 }
+
+.playlist-play-actions { display:flex; align-items:center; gap:10px; }
+.playlist-play-actions > button { display:inline-flex; align-items:center; justify-content:center; gap:8px; white-space:nowrap; min-height:44px; }
+.playlist-play-actions svg { width:18px; height:18px; flex:none; }
+@media(max-width:380px) { .playlist-play-actions { gap:8px; } .playlist-play-actions > button { flex:1; padding-inline:10px; } }

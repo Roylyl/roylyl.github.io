@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const APP_VERSION='20260929-pwa-25', SHELL_VERSION='roylyl-music-shell-20260929-27';
+  const APP_VERSION='20260929-pwa-26', SHELL_VERSION='roylyl-music-shell-20260929-28';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const themeMedia=window.matchMedia('(prefers-color-scheme: dark)');
@@ -590,8 +590,9 @@
       const ordered=$('sort-primary').value==='default'?all:[...all].sort(compareItems);
       const rows=ordered.filter(t=>matchesArtist(t,ar)&&(!q||normalize(t.title+' '+t.artist+' '+t.album).includes(q)));
       const playable=rows.filter(canPlay);
-      $('playlist-detail').innerHTML=`<p>歌单来自Apple Music与本地曲库 · ${all.length}首</p><button id="play-playlist" class="primary" ${playable.length?'':'disabled'}>${icon('play')}顺序播放</button><small>更新于${esc(new Date(appleMusic.updatedAt).toLocaleDateString('zh-CN',{timeZone:'Asia/Shanghai'}))}</small>`;
+      $('playlist-detail').innerHTML=`<p>歌单来自Apple Music与本地曲库 · ${all.length}首</p><div class="playlist-play-actions"><button id="play-playlist" class="primary" ${playable.length?'':'disabled'}>${icon('play')}顺序播放</button><button id="shuffle-playlist" class="secondary" ${playable.length?'':'disabled'}>${icon('shuffle')}随机播放</button></div><small>更新于${esc(new Date(appleMusic.updatedAt).toLocaleDateString('zh-CN',{timeZone:'Asia/Shanghai'}))}</small>`;
       $('play-playlist').onclick=()=>playAlbum({tracks:playable});
+      $('shuffle-playlist').onclick=()=>playAlbum({tracks:playable},true);
       $('songs').innerHTML=playlistRows(rows);hydrateCovers($('songs'));$('songs')._tracks=rows.filter(canPlay);$('result-count').textContent=rows.length+'首歌曲';$('empty').hidden=rows.length>0;renderCurrent();return;
     }
     $('view-title').textContent = selected ? selected.title : view==='albums' && artistContext ? artistContext : ({albums:'专辑收藏',songs:'全部歌曲',favorites:'我的喜欢'})[view];
@@ -621,11 +622,13 @@
     }
     $('empty').hidden = shown > 0; renderCurrent();
   }
-  function playAlbum(album) {
+  function playAlbum(album,shuffle=false) {
     if(!album?.tracks.length)return;
-    repeat='all'; updateModeControls();
-    if(current?.id===album.tracks[0].id){pendingResumePosition={id:current.id,time:0};pausedPosition=null;if(audio.readyState>0)audio.currentTime=0;}
-    play(album.tracks[0],album.tracks);
+    repeat=shuffle?'shuffle':'all';updateModeControls();
+    const first=album.tracks[shuffle?Math.floor(Math.random()*album.tracks.length):0];
+    playbackHistory=[];historyCursor=-1;
+    if(current?.id===first.id){pendingResumePosition={id:current.id,time:0};pausedPosition=null;if(audio.readyState>0)audio.currentTime=0;}
+    play(first,[...album.tracks]);
   }
   function openAlbum(album) {
     if(!album || selected?.key===album.key)return;beginNavigation();leaveFixedSort();view='albums'; artistContext=null;selected=album; $('search').value=''; $('artist').value=''; render();finishNavigation();

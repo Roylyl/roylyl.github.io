@@ -97,6 +97,12 @@ function harness(storage=new Map()){
   h.ctx.advance(1,true);await settle();assert.equal(h.ctx.current.id,'c');
   assert.deepEqual(plain(h.ctx.queue.map(t=>t.id)),['a','b','c','d']);
   console.log('通过：A→插队B→原B→C，原B从头播放，刷新保留插队返回位置。');
+  h=harness();h.loaded('a',42);h.ctx.playAlbum({tracks:[h.ctx.get('c'),h.ctx.get('d')]},true);await settle();
+  assert.equal(h.ctx.repeat,'shuffle');assert(['c','d'].includes(h.ctx.current.id));
+  assert.deepEqual(plain(h.ctx.queue.map(t=>t.id)),['c','d']);
+  h.ctx.playAlbum({tracks:[h.ctx.get('c'),h.ctx.get('d')]});await settle();
+  assert.equal(h.ctx.repeat,'all');assert.equal(h.ctx.current.id,'c');
+  console.log('通过：随机播放只选当前结果，顺序播放恢复列表模式。');
   console.log('通过：下一首按最近添加优先，重复添加去重，覆盖列表/随机/单曲模式，并支持当前曲重复下一次。');
 })().catch(error=>{console.error(error);process.exitCode=1;});
 // Diagnostic retention survives refresh without growing local storage forever.
