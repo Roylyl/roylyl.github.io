@@ -954,46 +954,40 @@ html[data-theme="light"] #sleep-current,html[data-theme="light"] #sleep-countdow
  .track-row.is-pressed { transition:none; transform:none; background:rgba(142,240,200,.12); }
 }
 
-/* Non-blocking feedback sits above the transport in either player surface. */
-.queue-undo, .playback-recovery, .favorite-notice {
-  position:fixed; z-index:30; left:50%; bottom:calc(var(--player-height) + 12px);
-  transform:translateX(-50%); display:flex; align-items:center; justify-content:space-between;
-  gap:8px 12px; width:max-content; max-width:calc(100vw - 24px); padding:8px 12px;
-  border:1px solid var(--line); border-radius:14px; background:var(--panel);
-  color:var(--text); box-shadow:0 12px 40px #0005; font-size:12px; line-height:1.5;
+/* All transient messages and recovery actions share a bottom stack. */
+.feedback-stack {
+  position:fixed; z-index:40; left:50%; bottom:calc(var(--player-height,160px) + 12px);
+  transform:translateX(-50%); width:min(520px,calc(100vw - 32px));
+  display:flex; flex-direction:column; gap:10px; pointer-events:none;
+  max-height:calc(100dvh - var(--player-height,160px) - 32px); overflow-y:auto;
 }
-.queue-undo > span, .playback-recovery > span { min-width:0; overflow-wrap:anywhere; }
-.queue-undo button, .playback-recovery button {
-  display:inline-flex; align-items:center; justify-content:center; flex:none;
-  min-height:var(--control-size); padding:8px 12px; border-radius:var(--control-radius);
-  background:var(--control-hover); color:var(--blue); white-space:nowrap;
+#full-player .feedback-stack {
+  bottom:calc(var(--full-feedback-offset,164px) + 12px);
+  max-height:calc(100dvh - var(--full-feedback-offset,164px) - 32px);
 }
-.queue-undo button:active, .playback-recovery button:active { background:var(--control-active); }
-#full-player .queue-undo, #full-player .playback-recovery {
-  bottom:calc(140px + env(safe-area-inset-bottom));
+#feedback-stack > :is(.player-status,.full-share-status,.queue-undo,.playback-recovery,.favorite-notice) {
+  position:static; inset:auto; transform:none; margin:0; width:100%; max-width:none;
+  display:flex; align-items:center; flex-wrap:wrap; gap:8px 12px; padding:14px 16px;
+  border:1px solid var(--blue); border-radius:14px; background:var(--panel); color:var(--text);
+  box-shadow:0 8px 32px #0006; font-size:14px; font-weight:550; line-height:1.6;
+  text-align:left; white-space:normal; overflow-wrap:anywhere; pointer-events:auto;
 }
+#feedback-stack > :empty { display:none; }
+#feedback-stack > :is(.queue-undo,.playback-recovery) > span { flex:1 1 180px; min-width:0; }
+.feedback-stack button {
+  display:inline-flex; align-items:center; justify-content:center; flex:none; min-height:44px;
+  padding:8px 14px; border-radius:10px; background:var(--control-hover); color:var(--blue); white-space:nowrap;
+}
+.feedback-stack button:active { background:var(--control-active); }
+#full-status { display:none!important; }
+.feedback-stack:has(#playback-recovery:not([hidden])) > #player-status { display:none; }
 .menu-cache-status:empty { display:none; }
-/* Recovery actions replace the plain status toast while they are visible. */
-body:has(.playback-recovery:not([hidden])) :is(.player-status, #full-status) { visibility:hidden; }
 .menu-cache-status {
   margin:6px 4px 0; padding:10px 8px 5px; border-top:1px solid var(--line);
   color:var(--muted); font-size:11px; line-height:1.5;
 }
 .artist-choices { margin:2px 8px 6px 22px; padding-left:10px; border-left:1px solid var(--line); }
 .artist-choices button { min-width:0; }
-@media(max-width:380px) {
-  .playback-recovery { flex-wrap:wrap; justify-content:flex-end; }
-  .playback-recovery > span { flex:1 0 100%; }
-}
-@media(max-height:650px) and (orientation:landscape) {
-  #full-player .queue-undo, #full-player .playback-recovery { bottom:112px; }
-}
-/* An undo action remains visible above a playback error, in either DOM order. */
-:is(body,#full-player):has(> .playback-recovery:not([hidden])) > .queue-undo:not([hidden]) { margin-bottom:70px; }
-@media(max-width:380px) {
-  :is(body,#full-player):has(> .playback-recovery:not([hidden])) > .queue-undo:not([hidden]) { margin-bottom:96px; }
-}
-
 /* Mobile density: smaller visual emphasis, with existing touch targets intact. */
 @media(max-width:700px) {
   :root { --control-icon:20px; -webkit-text-size-adjust:100%; text-size-adjust:100%; }
@@ -1018,4 +1012,3 @@ body:has(.playback-recovery:not([hidden])) :is(.player-status, #full-status) { v
 
 /* Restricted favorites still accept a tap to explain the permission. */
 .icon.favorite-locked { opacity:.4; }
-.favorite-notice { bottom:calc(20px + env(safe-area-inset-bottom)); z-index:31; pointer-events:none; text-align:center; }

@@ -28,7 +28,7 @@ function harness(storage=new Map()){
     setCurrent:t=>ctx.current=t,status:value=>ctx.playerStatusText=value,tracePlayback(){},renderCurrent(){},renderQueue(){},
     cancelPreload(){},releasePrepared(){ctx.preparedAudio.clear();},cachedAudioUrl:async()=>null,audioBudget:()=>0,
     preloadNextLyrics(){},preloadNext(){},updateLyricPosition(){},loadLyrics(){},updateFull(){},updateModeControls(){},registerMediaActions(){},reportShellVersion(){},
-    time:String,$:id=>{if(!nodes.has(id))nodes.set(id,{hidden:true,style:{setProperty(){}},setAttribute(){}});return nodes.get(id);}
+    time:String,$:id=>{if(!nodes.has(id))nodes.set(id,{hidden:true,append(node){node.parentElement=this;},style:{setProperty(){}},setAttribute(){}});return nodes.get(id);}
   };
   vm.createContext(ctx);vm.runInContext(segment,ctx);
   vm.runInContext(source.slice(source.indexOf('  function playAlbum('),source.indexOf('  function openAlbum(')),ctx);

@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const APP_VERSION='20260929-pwa-35', SHELL_VERSION='roylyl-music-shell-20260929-37';
+  const APP_VERSION='20260929-pwa-36', SHELL_VERSION='roylyl-music-shell-20260929-38';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const themeMedia=window.matchMedia('(prefers-color-scheme: dark)');
@@ -141,9 +141,12 @@
 
   if ('ResizeObserver' in window) {
     new ResizeObserver(entries => {
-      const height = Math.ceil(entries[0].target.getBoundingClientRect().height);
-      document.documentElement.style.setProperty('--player-height', height + 'px');
+      const height=Math.ceil(entries[0].target.getBoundingClientRect().height);
+      document.documentElement.style.setProperty('--player-height',height+'px');
     }).observe(document.querySelector('.player'));
+    const fullTransportObserver=new ResizeObserver(()=>positionPlaybackFeedback());
+    fullTransportObserver.observe(document.querySelector('.full-transport'));
+    window.addEventListener('resize',positionPlaybackFeedback,{passive:true});
   }
   const read = (key, fallback) => { try { return JSON.parse(localStorage.getItem('roy-music:' + key)) ?? fallback; } catch { return fallback; } };
   const save = (key, value) => { try { localStorage.setItem('roy-music:' + key, JSON.stringify(value)); } catch {} };
@@ -272,7 +275,7 @@
     for(const img of observedCovers)if(!img.isConnected){coverObserver?.unobserve(img);observedCovers.delete(img);}
     root.querySelectorAll('img[data-cover-path]').forEach(img=>bindCover(img,img.dataset.coverPath));
   }
-  let playerStatusText = '';
+  let playerStatusText = '', statusNoticeTimer=null;
   const BUFFERING_STATUS = '正在缓冲...';
   function updateLoadingIndicator() {
     const loading = playerStatusText === BUFFERING_STATUS || !!pendingTrackId;
@@ -284,7 +287,11 @@
   const status = text => {
     playerStatusText = text;
     updateLoadingIndicator();
-    $('player-status').textContent = text && text!==BUFFERING_STATUS ? ' · ' + text : '';
+    clearTimeout(statusNoticeTimer);
+    placePlaybackFeedback();
+    $('player-status').textContent = text && text!==BUFFERING_STATUS ? text : '';
+    $('player-status').hidden=!text||text===BUFFERING_STATUS;
+    if(text&&text!==BUFFERING_STATUS)statusNoticeTimer=setTimeout(()=>{$('player-status').hidden=true;},4000);
     $('player-status').classList.toggle('is-buffering', text === BUFFERING_STATUS);
     $('player-status').classList.toggle('is-message', !!text && text !== BUFFERING_STATUS);
     $('full-status').textContent = text && text!==BUFFERING_STATUS ? text : '';
@@ -844,9 +851,17 @@
   function clearQueueUndo() {
     clearTimeout(queueUndoTimer);queueUndoTimer=null;queueUndo=null;$('queue-undo').hidden=true;
   }
+  function positionPlaybackFeedback() {
+    if(!isFullOpen())return;
+    const top=document.querySelector('.full-transport').getBoundingClientRect().top;
+    document.documentElement.style.setProperty('--full-feedback-offset',Math.ceil(innerHeight-top)+'px');
+  }
   function placePlaybackFeedback() {
     const host=isFullOpen()?$('full-player'):document.body;
-    for(const id of ['queue-undo','playback-recovery','favorite-notice'])if($(id).parentElement!==host)host.append($(id));
+    const stack=$('feedback-stack');
+    if(stack.parentElement!==host)host.append(stack);
+    positionPlaybackFeedback();
+    for(const id of ['player-status','full-share-status','queue-undo','playback-recovery','favorite-notice'])if($(id).parentElement!==stack)stack.append($(id));
   }
   function rememberQueueUndo(before,message) {
     clearQueueUndo();queueUndo={before,after:[...nextUp]};
@@ -1465,7 +1480,7 @@
   $('full-share-action').onclick=async()=>{
     closeFullMore();
     if(!current)return;
-    const button=$('full-share-action'),notice=$('full-share-status');
+    const button=$('full-share-action'),notice=$('full-share-status');placePlaybackFeedback();
     button.disabled=true;notice.hidden=true;clearTimeout(shareNoticeTimer);
     try{await shareTrack(current,message=>{notice.textContent=message;notice.hidden=false;shareNoticeTimer=setTimeout(()=>{notice.hidden=true;},4000);});}
     finally{button.disabled=false;}
