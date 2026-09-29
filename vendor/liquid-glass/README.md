@@ -16,7 +16,7 @@ Build: vanilla-entry.ts with esbuild 0.25.12, format esm, target safari16, bundl
 
 ## Portfolio adapter
 
-`nav-glass-webgl.js` supplies the same convex capsule map as the SVG renderer, with zero blur and a 24 MiB section cache. It selects visual body backgrounds and direct main children, including introductory headers and hero wrappers. The scene `paintBackground` hook receives a small synchronous particle crop supplied after the existing WebGL particle draw. No `preserveDrawingBuffer` or full-screen framebuffer copy is enabled. Route hiding, document hiding and page exit release the capture canvases and GPU surface.
+`nav-glass-webgl.js` supplies the same convex capsule map as the SVG renderer, with zero blur and a section cache of approximately 25.2MB. It selects visual body backgrounds and direct main children, including introductory headers and hero wrappers. The scene `paintBackground` hook receives a small synchronous particle crop supplied after the existing WebGL particle draw. No `preserveDrawingBuffer` or full-screen framebuffer copy is enabled. Route hiding, document hiding and page exit release the capture canvases and GPU surface.
 
 This directory contains only the deployed ESM bundle and required license notices; no package installation or build cache is shipped.
 

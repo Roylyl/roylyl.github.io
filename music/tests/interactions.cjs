@@ -4,7 +4,7 @@ const source=fs.readFileSync(require('node:path').join(__dirname,'../app.js'),'u
 const defer=()=>{let resolve;const promise=new Promise(r=>resolve=r);return {promise,resolve};};
 function player(){
   const requests=[],audio={paused:true,src:'',error:null,currentTime:0,pause(){this.paused=true;},play(){this.paused=false;return Promise.resolve();},load(){},getAttribute(){return this.src;},removeAttribute(){this.src='';}};
-  const ctx={audio,requests,preparedAudio:new Map(),prepareToken:0,audioCacheGeneration:0,releasePrepared(){ctx.prepareToken++;ctx.preparedAudio.clear();},navigator:{},window:{},URL:{revokeObjectURL(){}},current:null,queue:[],repeat:'all',playToken:0,persistenceRequested:false,loadedTrackId:null,pendingTrackId:null,playbackHistory:[],historyCursor:-1,localAudioUrl:null,BUFFERING_STATUS:'正在缓冲...',canPlay:t=>!!t?.src,audioSource:t=>t.src,cancelPreload(){},status(){},renderCurrent(){},save(){},cacheAudio(){},cachedAudioUrl(){const request=defer();requests.push(request);return request.promise;},setCurrent(t){ctx.current=t;},get(id){return ctx.queue.find(t=>t.id===id);}};
+  const ctx={audio,requests,preparedAudio:new Map(),prepareToken:0,audioCacheGeneration:0,releasePrepared(){ctx.prepareToken++;ctx.preparedAudio.clear();},navigator:{},window:{},URL:{revokeObjectURL(){}},current:null,queue:[],repeat:'all',playToken:0,persistenceRequested:false,loadedTrackId:null,pendingTrackId:null,playbackHistory:[],historyCursor:-1,localAudioUrl:null,BUFFERING_STATUS:'正在缓冲...',canPlay:t=>!!t?.src,audioSource:t=>t.src,cancelPreload(){},status(){},renderCurrent(){},save(){},cacheAudio(){},audioBudget:()=>0,preloadAllowed:()=>true,cachedAudioUrl(){const request=defer();requests.push(request);return request.promise;},setCurrent(t){ctx.current=t;},get(id){return ctx.queue.find(t=>t.id===id);}};
   vm.createContext(ctx);vm.runInContext(source.slice(source.indexOf('  function preloadNext()'),source.indexOf('  const modeLabels')),ctx);return ctx;
 }
 (async()=>{
@@ -18,17 +18,38 @@ function player(){
   p=player();first=p.play(a,[a,b]);p.requests[0].resolve(null);await first;p.preparedAudio.set(b.src,'blob:ready-next');p.advance(1,true);assert.equal(p.audio.src,'blob:ready-next');assert.equal(p.audio.paused,false);assert.equal(p.requests.length,1);
   console.log('通过：播完后同一任务内启动下一首，优先使用提前准备的缓存。');
   console.log('通过：连续切歌、同曲连点、加载中暂停、随机历史前进后退、超过3秒上一首。');
-  const handlers={},entries=new Map();let network=0;
-  const cache={async match(k){return entries.get(k)?.clone();},async put(k,res){entries.set(k,new Response(await res.arrayBuffer(),{headers:res.headers}));}};
-  const worker={self:{addEventListener:(name,fn)=>handlers[name]=fn,clients:{claim(){},async matchAll(){return[];}},skipWaiting(){}},caches:{async open(){return cache;},async delete(){entries.clear();return true;}},fetch:async()=>{network++;return new Response('0123456789',{headers:{'Content-Type':'audio/mpeg'}});},URL,Response,AbortController,console};
+  const handlers={},stores=new Map();let network=0,ignoreRange=false;
+  const cacheFor=name=>{if(!stores.has(name))stores.set(name,new Map());const entries=stores.get(name);return {
+    async match(key){return entries.get(typeof key==='string'?key:key.url)?.clone();},
+    async put(key,res){entries.set(typeof key==='string'?key:key.url,new Response(await res.arrayBuffer(),{status:res.status,headers:res.headers}));},
+    async delete(key){return entries.delete(typeof key==='string'?key:key.url);},
+    async keys(){return [...entries.keys()].map(url=>new Request(url));}
+  };};
+  const worker={self:{location:{origin:'https://roylyl.github.io'},addEventListener:(name,fn)=>handlers[name]=fn,clients:{claim(){},async matchAll(){return[];}},skipWaiting(){}},caches:{open:async name=>cacheFor(name),delete:async name=>stores.delete(name),keys:async()=>[...stores.keys()]},fetch:async request=>{network++;const range=request.headers?.get('Range');if(range&&!ignoreRange)return new Response('2345',{status:206,headers:{'Content-Type':'audio/mpeg','Content-Length':'4','Content-Range':'bytes 2-5/30'}});return new Response('012345678901234567890123456789',{headers:{'Content-Type':'audio/mpeg','Content-Length':'30'}});},URL,Request,Response,Headers,AbortController,console};
   vm.createContext(worker);vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../audio-worker.js'),'utf8'),worker);
   const url='https://raw.githubusercontent.com/Roylyl/Music/main/a.mp3?v=2';
-  function request(range){let response,done;handlers.fetch({request:new Request(url,{headers:range?{Range:range}:{}}),clientId:'test',waitUntil(p){done=p;},respondWith(p){response=p;}});return {get response(){return response;},get done(){return done;}};}
-  const one=request(),two=request();assert.equal(await (await one.response).text(),'0123456789');assert.equal(await (await two.response).text(),'0123456789');await Promise.all([one.done,two.done]);assert.equal(network,1);
-  const range=request('bytes=2-5'),response=await range.response;assert.equal(response.status,206);assert.equal(await response.text(),'2345');assert.equal(network,1);
-  const invalid=request('bytes=20-');assert.equal((await invalid.response).status,416);
-  let cleared;handlers.message({data:{type:'CLEAR_AUDIO'},ports:[{postMessage(){cleared=true;}}],waitUntil(p){cleared=p;}});await cleared;assert.equal(entries.size,0);
-  console.log('通过：并发音频请求只下载一次、缓存命中、拖动进度Range响应、无效范围、清理缓存。');
+  function request(range,method='GET',target=url){let response;const waits=[];handlers.fetch({request:new Request(target,{method,headers:range?{Range:range}:{}}),clientId:'test',waitUntil(p){waits.push(p);},respondWith(p){response=p;}});return {get response(){return response;},async done(){await Promise.all(waits);}};}
+  const one=request(),two=request();assert.equal(await (await one.response).text(),'012345678901234567890123456789');assert.equal(await (await two.response).text(),'012345678901234567890123456789');await one.done();await two.done();assert.equal(network,1);
+  for(const [range,expected] of [['bytes=2-5','2345'],['bytes=10-','01234567890123456789'],['bytes=-10','0123456789'],['bytes=10-19','0123456789'],['bytes=30-','']]){
+    const result=await request(range).response;assert.equal(result.status,expected?206:416);if(expected)assert.equal(await result.text(),expected);
+  }
+  const invalid=await request('bytes=0-1,4-5').response;assert.equal(invalid.status,200,'多段请求明确降级为完整响应');
+  const head=await request(null,'HEAD').response;assert.equal(head.status,200);assert.equal(head.headers.get('Content-Length'),'30');assert.equal(await head.text(),'');
+  assert.equal(network,1,'缓存命中不访问网络');
+  let cleared;handlers.message({data:{type:'CLEAR_AUDIO'},ports:[{postMessage(){}}],waitUntil(p){cleared=p;}});await cleared;assert.equal(stores.has('roylyl-music-audio-v2'),false);
+  const cold=await request('bytes=2-5').response;assert.equal(cold.status,206);assert.equal(cold.headers.get('Content-Range'),'bytes 2-5/30');assert.equal(await cold.text(),'2345');assert.equal(network,2,'冷缓存Range需透传上游');
+  ignoreRange=true;const ignored=await request('bytes=10-19').response;assert.equal(ignored.status,200,'上游忽略Range时必须保留200');assert.equal(ignored.headers.get('Content-Range'),null);
+  ignoreRange=false;
+  const config=async current=>{let done;handlers.message({data:{type:'AUDIO_CONFIG',budget:40,preload:true,current},ports:[{postMessage(){}}],waitUntil(p){done=p;}});await done;};
+  await config(url);
+  const currentFull=request();await (await currentFull.response).text();await currentFull.done();
+  const secondUrl='https://raw.githubusercontent.com/Roylyl/Music/main/b.mp3?v=2';
+  const secondFull=request(null,'GET',secondUrl);await (await secondFull.response).text();await secondFull.done();
+  assert.equal((await cacheFor('roylyl-music-audio-v2').keys()).length,1,'受保护歌曲占用预算时应跳过新缓存');
+  await config(secondUrl);const secondRetry=request(null,'GET',secondUrl);await (await secondRetry.response).text();await secondRetry.done();
+  assert.equal((await cacheFor('roylyl-music-audio-v2').keys()).length,1,'预算满时应按LRU替换');
+  assert(await cacheFor('roylyl-music-audio-v2').match(secondUrl));
+  console.log('通过：完整缓存并发复用、范围切片、416、多段降级、HEAD、清理、冷Range透传及预算保护。');
 })().catch(error=>{console.error(error);process.exitCode=1;});
 // Exercise the actual render branch: the playlist button must use visible results.
 {
@@ -137,14 +158,8 @@ function player(){
 }
 {
   const text='测试歌曲 - 测试乐队\n演唱：主唱\n词：词作者\n吉他：吉他手\n贝斯：贝斯手\n[00:01.00]第一句\n[00:03.00]第二句';
-  const ctx={text,track:{title:'测试歌曲',artist:'测试乐队'}};
-  vm.createContext(ctx);
-  const creditPattern=source.split('\n').find(line=>line.includes('const lyricCreditLine ='));
-  const start=source.indexOf('      const parsed = [], credits = [];');
-  const end=source.indexOf('      parsed.sort(',start);
-  const result=vm.runInContext(`${creditPattern}\n${source.slice(start,end)}\nJSON.stringify({credits,parsed})`,ctx);
-  const {credits,parsed}=JSON.parse(result);
+  const {metadata:credits,groups}=require('../lyric-parser.js').parseLrc(text,'测试歌曲','测试乐队');
   assert.deepEqual(credits,['演唱：主唱','词：词作者','吉他：吉他手','贝斯：贝斯手']);
-  assert.deepEqual(parsed.map(line=>line.text),['第一句','第二句']);
+  assert.deepEqual(groups.flatMap(group=>group.lines),['第一句','第二句']);
   console.log('通过：创作者和乐手位于歌词正文前，时间轴正文保持独立。');
 }

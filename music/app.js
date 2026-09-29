@@ -24,6 +24,17 @@
   const COVER_CACHE = 'roylyl-music-covers-v1';
   const LYRIC_CACHE = 'roylyl-music-lyrics-v1';
   const audioCacheStatus = $('audio-cache-status'), coverCacheStatus = $('cover-cache-status'), lyricCacheStatus = $('lyric-cache-status');
+  const legacyBudgets={268435456:256000000,536870912:512000000,1073741824:1000000000,2147483648:2000000000};
+  const validBudgets=[-1,0,256000000,512000000,1000000000,2000000000,4000000000,8000000000];
+  let sessionPreload=true,sessionBudget=-1;
+  const audioBudget=()=>{try{const raw=localStorage.getItem('roylyl-music-audio-budget');const n=raw===null?-1:Number(raw),value=legacyBudgets[n]??n;return validBudgets.includes(value)?value:-1;}catch{return sessionBudget;}};
+  const preloadAllowed=()=>{try{return localStorage.getItem('roylyl-music-preload')!=='false';}catch{return sessionPreload;}};
+  $('audio-budget').value=String(audioBudget());$('preload-next').checked=preloadAllowed();
+  const formatBytes=bytes=>bytes>=1e9?(bytes/1e9).toFixed(1)+'GB':bytes>0?(bytes/1e6).toFixed(1)+'MB':'0MB';
+  function workerMessage(data,timeout=3000){const worker=navigator.serviceWorker?.controller;if(!worker)return Promise.resolve(null);return new Promise(resolve=>{const channel=new MessageChannel();const finish=value=>{clearTimeout(timer);channel.port1.close();resolve(value);};const timer=setTimeout(()=>finish(null),timeout);channel.port1.onmessage=e=>finish(e.data);try{worker.postMessage(data,[channel.port2]);}catch{finish(null);}});}
+  function sendAudioConfig(){return workerMessage({type:'AUDIO_CONFIG',budget:audioBudget(),preload:preloadAllowed(),current:current?audioSource(current):''});}
+  $('audio-budget').onchange=async()=>{sessionBudget=Number($('audio-budget').value);try{localStorage.setItem('roylyl-music-audio-budget',String(sessionBudget));}catch{}if(!audioBudget())cancelPreload();await sendAudioConfig();updateCacheStatus();};
+  $('preload-next').onchange=()=>{sessionPreload=$('preload-next').checked;try{localStorage.setItem('roylyl-music-preload',String(sessionPreload));}catch{}if(!preloadAllowed()){cancelPreload();releasePrepared();}sendAudioConfig();};
   let audioCacheGeneration = 0, coverCacheGeneration = 0, preloadController = null, localAudioUrl = null, persistenceRequested = false;
   async function updateCacheStatus() {
     if (!('caches' in window)) {
@@ -32,10 +43,13 @@
       return;
     }
     try {
-      const [audioCache, coverCache, lyricsCache] = await Promise.all([caches.open(AUDIO_CACHE), caches.open(COVER_CACHE), caches.open(LYRIC_CACHE)]);
-      const [audioKeys, coverKeys, lyricKeys] = await Promise.all([audioCache.keys(), coverCache.keys(), lyricsCache.keys()]);
-      audioCacheStatus.textContent = `已缓存${audioKeys.length}首歌曲`;
+      const [audioCache, coverCache] = await Promise.all([caches.open(AUDIO_CACHE), caches.open(COVER_CACHE)]);
+      const [audioKeys, coverKeys] = await Promise.all([audioCache.keys(), coverCache.keys()]);
+      const stats=await workerMessage({type:'AUDIO_STATS'});
+      const fallbackBytes=stats?stats.bytes:(await Promise.all(audioKeys.map(key=>audioCache.match(key)))).reduce((sum,hit)=>sum+Number(hit?.headers.get('Content-Length')||0),0);
+      audioCacheStatus.textContent = `已缓存${stats?.count??audioKeys.length}首 · ${formatBytes(fallbackBytes)}`;
       coverCacheStatus.textContent = `已缓存${coverKeys.length}张专辑封面`;
+      const lyricKeys=await (await caches.open(LYRIC_CACHE)).keys();
       lyricCacheStatus.textContent = `已缓存${lyricKeys.length}份歌词`;
     } catch { audioCacheStatus.textContent = coverCacheStatus.textContent = lyricCacheStatus.textContent = '无法读取本地缓存。'; }
   }
@@ -44,48 +58,46 @@
     navigator.serviceWorker?.controller?.postMessage({type:'CANCEL_PRELOAD',keep});
   }
   async function cacheAudio(source) {
-    if (!('caches' in window)) return false;
-    cancelPreload(source);
-    const controller=new AbortController(), generation=audioCacheGeneration;
-    preloadController=controller;
-    try {
-      const cache=await caches.open(AUDIO_CACHE);
-      if(await cache.match(source))return true;
-      const response=await fetch(source,{signal:controller.signal});
-      if(!response.ok)return false;
-      if(navigator.serviceWorker?.controller){await response.arrayBuffer();return generation===audioCacheGeneration;}
-      await cache.put(source,response);
-      if(generation!==audioCacheGeneration){await cache.delete(source);return false;}
-      updateCacheStatus();return true;
-    } catch { return false; }
-    finally {if(preloadController===controller)preloadController=null;}
+    if(!navigator.serviceWorker?.controller || !audioBudget())return false;
+    const generation=audioCacheGeneration,preload=source!==audioSource(current||{src:''});
+    if(preload&&!preloadAllowed())return false;
+    const result=await workerMessage({type:'CACHE_AUDIO',source,preload},120000);
+    return generation===audioCacheGeneration && result?.ok===true;
   }
   if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
-    navigator.serviceWorker.register('./audio-worker.js',{scope:'./'}).catch(()=>{});
+    navigator.serviceWorker.register('./audio-worker.js',{scope:'./'}).then(registration=>{
+      if(registration.waiting)$('apply-update').hidden=false;
+      registration.addEventListener('updatefound',()=>{registration.installing?.addEventListener('statechange',()=>{if(registration.waiting)$('apply-update').hidden=false;});});
+      navigator.serviceWorker.ready.then(sendAudioConfig);
+    }).catch(()=>{});
+    navigator.serviceWorker.addEventListener('controllerchange',()=>{sendAudioConfig();if(sessionStorage.getItem('roylyl-music-update')){sessionStorage.removeItem('roylyl-music-update');location.reload();}});
     navigator.serviceWorker.addEventListener('message',event=>{
       if(event.data?.type==='AUDIO_CACHED'){
         updateCacheStatus();
         if(current && event.data.source===audioSource(current))preloadNext();
       }
+      if(event.data?.type==='UPDATE_READY')$('apply-update').hidden=false;
     });
   }
+  $('apply-update').onclick=async()=>{const registration=await navigator.serviceWorker.getRegistration('./');if(!registration?.waiting)return;sessionStorage.setItem('roylyl-music-update','1');registration.waiting.postMessage({type:'ACTIVATE_UPDATE'});};
+  if(matchMedia('(display-mode: standalone)').matches||navigator.standalone)$('install-help').hidden=true;
   async function cachedAudioUrl(source) {
     if (!('caches' in window)) return null;
-    try { const response = await (await caches.open(AUDIO_CACHE)).match(source); return response ? URL.createObjectURL(await response.blob()) : null; }
+    try { const response = await (await caches.open(AUDIO_CACHE)).match(source); return response?.status===200 && !response.headers.has('Content-Range') ? URL.createObjectURL(await response.blob()) : null; }
     catch { return null; }
   }
   document.querySelectorAll('[data-open-settings]').forEach(button=>button.addEventListener('click',updateCacheStatus));
   for (const [buttonId,cacheName,statusElement,invalidate,done] of [
     ['clear-audio-cache',AUDIO_CACHE,audioCacheStatus,()=>{audioCacheGeneration++;cancelPreload();releasePrepared();},'音乐缓存已清理'],
     ['clear-cover-cache',COVER_CACHE,coverCacheStatus,()=>{coverCacheGeneration++;document.querySelectorAll('img[data-cover-bound]').forEach(img=>{img.src=coverSource(img.dataset.coverBound);delete img.dataset.coverBound;});for(const blob of coverUrls.values())URL.revokeObjectURL(blob);coverUrls.clear();coverRequests.clear();},'专辑封面缓存已清理'],
-    ['clear-lyric-cache',LYRIC_CACHE,lyricCacheStatus,()=>{lyricCacheGeneration++;lyricPreloadController?.abort();lyricPreloadController=null;lyricCache.clear();lyricMissing.clear();},'歌词缓存已清理']
   ]) $(buttonId).onclick = async () => {
     invalidate();
     $(buttonId).disabled = true;
     statusElement.textContent = '正在清理…';
     try {
       if(cacheName===AUDIO_CACHE && navigator.serviceWorker?.controller){
-        await new Promise((resolve,reject)=>{const channel=new MessageChannel();const timer=setTimeout(()=>reject(Error('清理超时')),5000);channel.port1.onmessage=()=>{clearTimeout(timer);channel.port1.close();resolve();};navigator.serviceWorker.controller.postMessage({type:'CLEAR_AUDIO'},[channel.port2]);});
+        const result=await workerMessage({type:'CLEAR_AUDIO'},5000);
+        if(result?.ok!==true)throw Error('清理失败');
       } else await caches.delete(cacheName);
       if(cacheName===AUDIO_CACHE)await caches.delete('roylyl-music-audio-v1');
       statusElement.textContent = done;
@@ -245,136 +257,164 @@
   }
   const status = text => {
     playerStatusText = text;
-    const message = text === BUFFERING_STATUS ? '' : text;
-    $('player-status').textContent = message ? ' · ' + message : '';
-    $('player-status').classList.toggle('is-message', !!text && text !== BUFFERING_STATUS);
-    $('full-status').textContent = message ? '· ' + message : '';
     updateLoadingIndicator();
+    $('player-status').textContent = text && text!==BUFFERING_STATUS ? ' · ' + text : '';
+    $('player-status').classList.toggle('is-buffering', text === BUFFERING_STATUS);
+    $('player-status').classList.toggle('is-message', !!text && text !== BUFFERING_STATUS);
+    $('full-status').textContent = text && text!==BUFFERING_STATUS ? text : '';
+    $('full-status').classList.toggle('is-buffering', text === BUFFERING_STATUS);
+    $('full-status').classList.toggle('is-message', !!text && text !== BUFFERING_STATUS);
   };
-  const lyricCache = new Map();
-  const lyricMissing = new Set();
-  let lyricCacheGeneration = 0, lyricPreloadController = null;
-  let lyricRequest = 0, lyricTrackId = '', lyricLines = [], lyricCredits = [], lyricActiveIndex = -1, lyricHasTimed = false;
-  let lyricManualUntil = 0, lyricResumeTimer = null;
-  const lyricCreditLine = /^(?:词|曲|词曲|编曲|制作|配唱制作|监制|演唱|和声|演奏|吉他|木吉他|电吉他|低音吉他|贝斯|鼓|打击乐|键盘|钢琴|风琴|合成器|口琴|小提琴|中提琴|大提琴|弦乐|弦乐编写|长笛|萨克斯|小号|长号|指挥|编程|童声合唱|录音|录音助理|录音棚|录音环境|混音|母带)\s*[:：]/;
-  function renderLyrics(lines, active = -1) {
-    const box = $('full-lyrics');
-    box.classList.toggle('is-empty', !lines.length);
-    if (!lines.length) {
-      box.innerHTML = '<p class="lyrics-placeholder">暂无可用歌词</p>';
-      lyricActiveIndex = -1;
-      return;
+  let lyricRequest = 0, lyricGeneration = 0, lyricController = null;
+  let lyricTrackId = '', lyricKey = '', lyricState = 'idle', lyricGroups = [], lyricMetadata = [], lyricActiveIndex = -1, lyricLoadedAt = 0;
+  const lyricWrites=new Set();
+  let lyricManualUntil = 0, lyricFollowTimer = null;
+  const lyricTtl = 24 * 60 * 60 * 1000, lyricMissingTtl = 60000;
+  const lyricResource = track => {
+    const path = track.src.replace(/\.[^./?]+(?:\?.*)?$/i,'.lrc');
+    const revision = track.lyricRevision || 'unversioned';
+    const address=url(path) + (track.lyricRevision ? '?lyricRevision=' + encodeURIComponent(revision) : '');
+    return {key:address,url:address};
+  };
+  async function openLyricCache() {
+    try { return 'caches' in window ? await caches.open(LYRIC_CACHE) : null; } catch { return null; }
+  }
+  async function cachedLyric(cache,address) {
+    try { return await cache?.match(address); } catch { return null; }
+  }
+  function lyricCacheAge(response) {
+    const stored=Number(response?.headers.get('X-Roylyl-Cached-At')||0);
+    return stored>0 ? Math.max(0,Date.now()-stored) : Infinity;
+  }
+  async function storeLyric(cache,resource,body,responseStatus,controller,generation) {
+    if(!cache || controller.signal.aborted || generation!==lyricGeneration)return;
+    const write=(async()=>{
+      try { await cache.put(resource.url,new Response(body,{status:responseStatus,headers:{'Content-Type':'text/plain; charset=utf-8','X-Roylyl-Cached-At':String(Date.now())}})); }
+      catch { /* Storage restrictions and quota failures must not hide a fetched lyric. */ }
+    })();
+    lyricWrites.add(write);try{await write;}finally{lyricWrites.delete(write);}
+  }
+  function lyricMessage(message,retry=false) {
+    $('full-lyrics').innerHTML = `<p class="lyrics-placeholder">${message}</p>${retry ? '<button type="button" class="secondary lyrics-retry">重试</button>' : ''}`;
+    if(retry)$('full-lyrics').querySelector('button').onclick=()=>current&&loadLyrics(current,{force:true});
+  }
+  function renderLyrics() {
+    if(!lyricGroups.length&&!lyricMetadata.length){lyricMessage('暂无歌词');return;}
+    const box=$('full-lyrics');
+    box.innerHTML=lyricMetadata.map(line=>`<p class="lyric-credit">${esc(line)}</p>`).join('')+lyricGroups.map((group,index)=>`<div class="lyric-group${index===lyricActiveIndex?' is-active':''}" data-group="${index}">${group.lines.map(line=>`<p class="lyric-line">${esc(line)}</p>`).join('')}</div>`).join('');
+    if(!lyricGroups.some(g=>g.time!==null))box.insertAdjacentHTML('beforeend','<span class="lyrics-unsynced">无时间轴</span>');
+    scrollActiveLyric(false);
+  }
+  function scrollActiveLyric(smooth=true){
+    if(Date.now()<lyricManualUntil || lyricActiveIndex<0)return;
+    const box=$('full-lyrics'),target=box.querySelector(`[data-group="${lyricActiveIndex}"]`);
+    if(!target || !box.clientHeight)return;
+    const reduceMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    box.scrollTo({top:box.scrollTop+target.getBoundingClientRect().top-box.getBoundingClientRect().top-box.clientHeight*.4,behavior:smooth&&!reduceMotion?'smooth':'instant'});
+  }
+  function pauseLyricFollow(){
+    lyricManualUntil=Date.now()+8000;
+    clearTimeout(lyricFollowTimer);
+    lyricFollowTimer=setTimeout(()=>{lyricManualUntil=0;scrollActiveLyric(true);},8000);
+  }
+  for(const event of ['wheel','touchstart','touchmove','touchend','pointerdown'])$('full-lyrics').addEventListener(event,pauseLyricFollow,{passive:true});
+  $('full-lyrics').addEventListener('keydown',event=>{if(/^(Arrow|Page|Home|End)/.test(event.key))pauseLyricFollow();});
+  function updateLyricPosition(force=false) {
+    if(!lyricGroups.some(group=>group.time!==null))return;
+    const active=RoylylLyrics.currentLyricGroup(lyricGroups,audio.currentTime);
+    if(active===lyricActiveIndex&&!force)return;
+    $('full-lyrics').querySelector('.lyric-group.is-active')?.classList.remove('is-active');
+    lyricActiveIndex=active;
+    $('full-lyrics').querySelector(`[data-group="${active}"]`)?.classList.add('is-active');
+    scrollActiveLyric(!force);
+  }
+  audio.addEventListener('seeked',()=>updateLyricPosition(true));
+  async function loadLyrics(track,{force=false}={}) {
+    if(!track?.src)return;
+    const resource=lyricResource(track);
+    const stateTtl=lyricState==='not-found'?lyricMissingTtl:lyricTtl;
+    if(!force && lyricKey===resource.key && (lyricState==='loading'||((lyricState==='ready'||lyricState==='not-found')&&Date.now()-lyricLoadedAt<stateTtl)))return;
+    lyricController?.abort();lyricPreloadController?.abort();
+    if(force)lyricGeneration++;
+    const controller=new AbortController(),request=++lyricRequest,generation=lyricGeneration;
+    if(lyricTrackId!==track.id){
+      clearTimeout(lyricFollowTimer);lyricManualUntil=0;$('full-lyrics').scrollTo({top:0,behavior:'instant'});
     }
-    const credits = lyricCredits.length ? `<div class="lyric-credits" aria-label="创作者和乐手">${lyricCredits.map(line => `<p>${esc(line)}</p>`).join('')}</div>` : '';
-    box.innerHTML = credits + lines.map((line, index) => `<p class="lyric-line${index === active ? ' is-active' : ''}" data-line="${index}">${esc(line.text)}</p>`).join('');
-    if (!lyricHasTimed) box.insertAdjacentHTML('beforeend','<span class="lyrics-unsynced">无时间轴</span>');
-    box.scrollTop = 0;
-    lyricActiveIndex = active;
-  }
-  function scrollActiveLyric(smooth = true) {
-    const box = $('full-lyrics');
-    if (lyricActiveIndex < 0 || !box.clientHeight || Date.now() < lyricManualUntil) return;
-    const line = box.querySelector(`.lyric-line[data-line="${lyricActiveIndex}"]`);
-    if (!line) return;
-    const top = box.scrollTop + line.getBoundingClientRect().top - box.getBoundingClientRect().top - box.clientHeight * .43 + line.clientHeight / 2;
-    box.scrollTo({top: Math.max(0, top), behavior: smooth && !matchMedia('(prefers-reduced-motion: reduce)').matches ? 'smooth' : 'auto'});
-  }
-  function holdLyricScroll() {
-    lyricManualUntil = Date.now() + 7000;
-    clearTimeout(lyricResumeTimer);
-    lyricResumeTimer = setTimeout(() => scrollActiveLyric(), 7100);
-  }
-  const lyricBox = $('full-lyrics');
-  for (const eventName of ['wheel', 'touchstart', 'pointerdown']) lyricBox.addEventListener(eventName, holdLyricScroll, {passive:true});
-  lyricBox.addEventListener('keydown', event => { if (['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' '].includes(event.key)) holdLyricScroll(); });
-  function updateLyricPosition() {
-    if (!lyricHasTimed) return;
-    let active = -1;
-    for (let i = 0; i < lyricLines.length; i++) {
-      if (lyricLines[i].time != null && lyricLines[i].time <= audio.currentTime) active = i;
-      else if (lyricLines[i].time != null && lyricLines[i].time > audio.currentTime) break;
-    }
-    if (active === lyricActiveIndex) return;
-    lyricBox.querySelector(`.lyric-line[data-line="${lyricActiveIndex}"]`)?.classList.remove('is-active');
-    lyricBox.querySelector(`.lyric-line[data-line="${active}"]`)?.classList.add('is-active');
-    lyricActiveIndex = active;
-    scrollActiveLyric();
-  }
-  async function lyricText(track, signal) {
-    if (lyricMissing.has(track.id)) throw new Error('no lyric');
-    if (lyricCache.has(track.id)) return lyricCache.get(track.id);
-    const generation = lyricCacheGeneration;
-    const lyricPath = track.src.replace(/\.mp3(?:\?.*)?$/i, '.lrc');
-    const source = url(lyricPath);
-    let cache = null;
-    if ('caches' in window) {
-      try {
-        cache = await caches.open(LYRIC_CACHE);
-        const hit = await cache.match(source);
-        if (hit) {
-          const text = await hit.text();
-          if (generation === lyricCacheGeneration) lyricCache.set(track.id, text);
-          return text;
+    lyricController=controller;lyricTrackId=track.id;lyricKey=resource.key;lyricState='loading';lyricGroups=[];lyricMetadata=[];lyricActiveIndex=-1;
+    lyricMessage('正在加载歌词…');
+    const timer=setTimeout(()=>controller.abort('timeout'),10000);
+    try{
+      // Settle already-started prefetch writes so they cannot overwrite fresher text.
+      await Promise.allSettled([...lyricWrites]);
+      const cache=await openLyricCache();
+      const cached=force?null:await cachedLyric(cache,resource.url);
+      const age=lyricCacheAge(cached),cacheTtl=cached?.status===404?lyricMissingTtl:lyricTtl;
+      let response,fromCache=false;
+      if(cached && age<cacheTtl){response=cached;fromCache=true;}
+      else {
+        try{
+          response=await fetch(resource.url,{signal:controller.signal,cache:force?'reload':'no-cache'});
+        }catch(error){
+          if(controller.signal.aborted)throw error;
+          if(cached?.ok){response=cached;fromCache=true;}else throw error;
         }
-      } catch { cache = null; }
-    }
-    const response = await fetch(source, {signal});
-    if (!response.ok) {
-      if (response.status === 404) lyricMissing.add(track.id);
-      throw new Error('no lyric');
-    }
-    const text = await response.text();
-    if (generation === lyricCacheGeneration && !signal?.aborted) {
-      lyricCache.set(track.id, text);
-      if (cache) {
-        try { await cache.put(source, new Response(text, {headers:{'Content-Type':'text/plain; charset=utf-8'}})); if ($('settings-dialog').open) updateCacheStatus(); }
-        catch { /* Memory copy remains usable when browser storage is full. */ }
       }
-    }
-    return text;
+      if(controller.signal.aborted){if(controller.signal.reason==='timeout')throw Error('timeout');return;}
+      if(request!==lyricRequest||generation!==lyricGeneration||current?.id!==track.id)return;
+      if(response.status===404){
+        lyricState='not-found';lyricLoadedAt=fromCache?Date.now()-age:Date.now();lyricMessage('暂无歌词');
+        if(!fromCache)await storeLyric(cache,resource,'',404,controller,generation);
+        return;
+      }
+      if(!response.ok)throw Error('HTTP '+response.status);
+      const text=await response.text();
+      if(controller.signal.aborted){if(controller.signal.reason==='timeout')throw Error('timeout');return;}
+      if(request!==lyricRequest||generation!==lyricGeneration||current?.id!==track.id)return;
+      if(/^\s*(?:<!doctype\s+html|<html[\s>])/i.test(text))throw Error('Expected LRC, received HTML');
+      const parsed=RoylylLyrics.parseLrc(text,track.title,track.artist);
+      lyricGroups=parsed.groups;lyricMetadata=parsed.metadata;
+      lyricLoadedAt=fromCache?Date.now()-age:Date.now();
+      lyricState=parsed.diagnostic==='empty'?'not-found':'ready';
+      if(lyricState==='ready'){renderLyrics();updateLyricPosition(true);}else lyricMessage('暂无歌词');
+      if(!fromCache)await storeLyric(cache,resource,text,parsed.diagnostic==='empty'?404:200,controller,generation);
+    }catch(error){
+      if(controller.signal.aborted && controller.signal.reason!=='timeout')return;
+      if(request===lyricRequest&&generation===lyricGeneration&&current?.id===track.id){lyricState='error';lyricMessage('歌词加载失败',true);}
+    }finally{clearTimeout(timer);if(lyricController===controller)lyricController=null;}
   }
-  function preloadNextLyrics(track) {
+  $('clear-lyric-cache').onclick=async()=>{
+    lyricGeneration++;lyricPreloadController?.abort();lyricRequest++;lyricController?.abort();lyricController=null;lyricKey='';lyricState='idle';lyricGroups=[];lyricMetadata=[];lyricActiveIndex=-1;
+    $('clear-lyric-cache').disabled=true;$('lyric-cache-status').textContent='正在清理…';
+    try{await Promise.allSettled([...lyricWrites]);if('caches' in window)await caches.delete(LYRIC_CACHE);$('lyric-cache-status').textContent='歌词缓存已清理';}
+    catch{$('lyric-cache-status').textContent='清理失败，请重试。';}
+    $('clear-lyric-cache').disabled=false;
+    if(current)loadLyrics(current,{force:true});
+  };
+  let lyricPreloadController = null;
+  async function preloadNextLyrics(track) {
     lyricPreloadController?.abort();
     lyricPreloadController = null;
-    if (repeat !== 'all' || current?.id !== track.id) return;
-    const index = queue.findIndex(item => item.id === track.id);
-    const next = index >= 0 && queue.length > 1 ? queue[(index + 1) % queue.length] : null;
-    if (!next?.src || next.id === track.id || lyricCache.has(next.id) || lyricMissing.has(next.id)) return;
-    const controller = new AbortController();
-    lyricPreloadController = controller;
-    lyricText(next, controller.signal).catch(() => {}).finally(() => { if (lyricPreloadController === controller) lyricPreloadController = null; });
-  }
-  async function loadLyrics(track) {
-    if (lyricTrackId === track.id) return;
-    lyricPreloadController?.abort(); lyricPreloadController = null;
-    clearTimeout(lyricResumeTimer); lyricManualUntil = 0;
-    lyricTrackId = track.id; lyricLines = []; lyricCredits = []; lyricActiveIndex = -1; lyricHasTimed = false;
-    const request = ++lyricRequest;
-    renderLyrics([]);
-    if (!track.src) return;
+    if(repeat !== 'all' || current?.id !== track.id || !('caches' in window))return;
+    const index=queue.findIndex(item=>item.id===track.id);
+    const next=index>=0 && queue.length>1 ? queue[(index+1)%queue.length] : null;
+    if(!next?.src || next.id===track.id)return;
+    const controller=new AbortController(),generation=lyricGeneration,resource=lyricResource(next);
+    lyricPreloadController=controller;
+    const timer=setTimeout(()=>controller.abort(),10000);
     try {
-      const text = await lyricText(track);
-      if (request !== lyricRequest || current?.id !== track.id) return;
-      const parsed = [], credits = [];
-      for (const sourceLine of text.replace(/^\uFEFF/,'').split(/\r?\n/)) {
-        const line = sourceLine.trim();
-        if (!line || /^\[(?:ti|ar|al|length|by|re|ve|offset|id):/i.test(line)) continue;
-        if (line === `${track.title} - ${track.artist}`) continue;
-        if (lyricCreditLine.test(line)) { credits.push(line); continue; }
-        const matches = [...line.matchAll(/\[(\d{1,2}):(\d{2})(?:\.(\d{1,3}))?\]/g)];
-        const lyric = line.replace(/(?:\[\d{1,2}:\d{2}(?:\.\d{1,3})?\])+/, '').trim();
-        if (!lyric || /^https?:\/\//i.test(lyric) || lyricCreditLine.test(lyric)) continue;
-        if (matches.length) for (const match of matches) parsed.push({time:Number(match[1])*60+Number(match[2])+Number(('0.'+(match[3]||'0')).slice(0,5)),text:lyric});
-        else if (!/^\[[^\]]+:/.test(lyric)) parsed.push({time:null,text:lyric});
-      }
-      parsed.sort((a,b)=>(a.time ?? Infinity)-(b.time ?? Infinity));
-      lyricLines = parsed; lyricCredits = credits; lyricHasTimed = parsed.some(line => line.time != null);
-      renderLyrics(parsed);
-      updateLyricPosition();
-      preloadNextLyrics(track);
-    } catch {
-      if (request === lyricRequest && current?.id === track.id) { renderLyrics([]); preloadNextLyrics(track); }
-    }
+      const cache=await openLyricCache();
+      if(!cache)return;
+      const hit=await cachedLyric(cache,resource.url);
+      if(hit && lyricCacheAge(hit)<(hit.status===404?lyricMissingTtl:lyricTtl))return;
+      const response=await fetch(resource.url,{signal:controller.signal,cache:'no-cache'});
+      if(response.status===404){await storeLyric(cache,resource,'',404,controller,generation);return;}
+      if(!response.ok)return;
+      const text=await response.text();
+      if(/^\s*(?:<!doctype\s+html|<html[\s>])/i.test(text))return;
+      const parsed=RoylylLyrics.parseLrc(text,next.title,next.artist);
+      await storeLyric(cache,resource,text,parsed.diagnostic==='empty'?404:200,controller,generation);
+    }catch { /* Optional prefetch never changes current playback or lyric state. */ }
+    finally {clearTimeout(timer);if(lyricPreloadController===controller)lyricPreloadController=null;}
   }
   const artistNames = value => String(value || '').split(/\s+(?:&|／|\/)\s+|[、;；]/).filter(Boolean);
   const matchesArtist = (track, artist) => !artist || track.albumArtist === artist || artistNames(track.artist).includes(artist);
@@ -412,7 +452,7 @@
     moreMenu.style.top=`${rect.bottom+menuHeight+8>innerHeight?Math.max(12,rect.top-menuHeight-8):rect.bottom+8}px`;
     $('share-track').focus({preventScroll:true});
   }
-  async function shareTrack(t) {
+  async function shareTrack(t,notify=message=>status(message)) {
     if (!t) return;
     const link = `https://roylyl.github.io/music/share/${encodeURIComponent(t.id)}.html`;
     const data = {title:`${t.title} - ${t.artist}`,text:'来自Roylyl的私人音乐仓库。',url:link};
@@ -420,7 +460,7 @@
       try { await navigator.share(data); return; }
       catch (error) { if (error.name === 'AbortError') return; }
     }
-    try { await navigator.clipboard.writeText(link); status('分享链接已复制'); }
+    try { await navigator.clipboard.writeText(link); notify('分享链接已复制'); }
     catch { window.prompt('复制歌曲分享链接',link); }
   }
   const isFavorite = id => !!id && favorites.has(id);
@@ -574,13 +614,14 @@
   function like() { status('喜欢状态来自Apple Music，请在Apple Music中更新后重新导入。'); }
   function setCurrent(t) {
     current = t; bindCover($('now-cover'),t.cover,true); $('now-title').textContent = t.title; $('now-artist').textContent = t.artist + ' · ' + t.album;
+    sendAudioConfig();
     $('duration').textContent = time(t.duration); $('elapsed').textContent = '0:00'; $('seek').value = 0; $('seek').disabled = true;
     if ('mediaSession' in navigator && 'MediaMetadata' in window) navigator.mediaSession.metadata = new MediaMetadata({title:t.title,artist:t.artist,album:t.album,artwork:[{src:picture(t)}]});
     registerMediaActions();
     renderCurrent();
   }
   function preloadNext() {
-    if(!current || pendingTrackId || repeat!=='all' || audio.paused)return;
+    if(!preloadAllowed()||!audioBudget()||!current || pendingTrackId || repeat!=='all' || audio.paused)return;
     const index=queue.findIndex(t=>t.id===current.id), next=queue.length>1?queue[(index+1)%queue.length]:null;
     if(next && next.id!==current.id){
       const source=audioSource(next),owner=current.id;
@@ -626,11 +667,12 @@
       await audio.play();
       if(token!==playToken)return;
       pendingTrackId=null;status('');save('last',{id:t.id,time:audio.currentTime});renderCurrent();
-      if('caches' in window)caches.open(AUDIO_CACHE).then(cache=>cache.match(source)).then(hit=>{if(hit&&token===playToken)preloadNext();}).catch(()=>{});
+      if(typeof preloadNextLyrics==='function')preloadNextLyrics(t);
+      if(audioBudget())cacheAudio(source).then(ok=>{if(ok&&token===playToken)preloadNext();});
     } catch(error) {
       if(token!==playToken)return;
       pendingTrackId=null;
-      status(error.name==='NotAllowedError'?'请再次点击播放，允许浏览器开始播放。':error.name==='AbortError'?'':'音频暂时无法加载，请检查网络后点击播放重试。');renderCurrent();
+      status(error.name==='NotAllowedError'?'请再次点击播放，允许浏览器开始播放。':error.name==='AbortError'?'':!navigator.onLine?'当前离线，这首歌曲尚未完整缓存。':'音频暂时无法加载，请检查网络后点击播放重试。');renderCurrent();
     }
   }
   function advance(direction, ended = false) {
@@ -666,7 +708,7 @@
   $('next').onclick = () => advance(1);
   $('repeat').onclick = () => { repeat=({all:'shuffle',shuffle:'one',one:'all'})[repeat];cancelPreload();updateModeControls();if(current){preloadNextLyrics(current);cachedAudioUrl(audioSource(current)).then(blob=>{if(blob){URL.revokeObjectURL(blob);preloadNext();}});} };
   $('now-like').onclick = () => current && like(current.id);
-  $('seek').oninput = () => { if (Number.isFinite(audio.duration)) audio.currentTime = Number($('seek').value)/100*audio.duration; };
+  $('seek').oninput = () => { if (Number.isFinite(audio.duration)) audio.currentTime = Number($('seek').value)/100*audio.duration; updateLyricPosition(true); };
   const mobileVolume = matchMedia('(max-width:700px)');
   function placeLikeButton() {
     if (mobileVolume.matches) document.querySelector('.now').append($('now-like'));
@@ -776,13 +818,14 @@
   audio.addEventListener('timeupdate',()=>{
     $('elapsed').textContent=time(audio.currentTime); $('full-elapsed').textContent=time(audio.currentTime); $('full-seek').value=Number.isFinite(audio.duration)&&audio.duration>0?audio.currentTime/audio.duration*100:0; if(Number.isFinite(audio.duration)&&audio.duration>0)$('seek').value=audio.currentTime/audio.duration*100;
     updateLyricPosition();
+    for(const id of ['seek','full-seek']){$(id).setAttribute('aria-valuetext',time(audio.currentTime)+' / '+time(Number.isFinite(audio.duration)?audio.duration:current?.duration));}
     if(current&&Date.now()-lastSaved>5000){save('last',{id:current.id,time:audio.currentTime});lastSaved=Date.now();}
     if('mediaSession'in navigator&&navigator.mediaSession.setPositionState&&Number.isFinite(audio.duration)&&audio.duration>0){try{navigator.mediaSession.setPositionState({duration:audio.duration,playbackRate:audio.playbackRate,position:Math.min(audio.currentTime,audio.duration)});}catch{}}
   });
   ['play','pause'].forEach(event=>audio.addEventListener(event,()=>{renderCurrent();if('mediaSession'in navigator)navigator.mediaSession.playbackState=audio.paused?'paused':'playing';registerMediaActions();}));
   audio.addEventListener('waiting',()=>{if(!audio.paused)status(BUFFERING_STATUS);});
   audio.addEventListener('pause',()=>{if(playerStatusText===BUFFERING_STATUS)status('');}); audio.addEventListener('playing',()=>status(''));
-  audio.addEventListener('error',()=>{if(!audio.getAttribute('src'))return;pendingTrackId=null;status('音频暂时无法加载，请检查网络后点击播放重试。');renderCurrent();});
+  audio.addEventListener('error',()=>{if(!audio.getAttribute('src'))return;pendingTrackId=null;status(!navigator.onLine?'当前离线，这首歌曲尚未完整缓存。':'音频暂时无法加载，请检查网络后点击播放重试。');renderCurrent();});
   audio.addEventListener('progress',()=>{
     if(navigator.serviceWorker?.controller || !current || !Number.isFinite(audio.duration))return;
     for(let i=0;i<audio.buffered.length;i++)if(audio.buffered.start(i)===0 && audio.buffered.end(i)>=audio.duration-.1){
@@ -806,7 +849,7 @@
       try { navigator.mediaSession.setActionHandler(name, handler); } catch {}
     }
   }
-  document.addEventListener('visibilitychange',()=>{if(current)registerMediaActions();});
+  document.addEventListener('visibilitychange',()=>{if(current)registerMediaActions();if(!document.hidden&&current){loadLyrics(current);updateLyricPosition(true);}});
   const full = $('full-player');
   function isFullOpen() { return Boolean(full.open || full.classList.contains('dialog-fallback-open')); }
   function updateFull() {
@@ -826,7 +869,7 @@
     const badges=[format,p.bitRate?bitrate:'',p.sampleRate?rate:''].filter(Boolean);
     $('quality-badges').innerHTML=badges.map(value=>`<span class="quality-badge">${esc(value)}</span>`).join('');
     $('quality-badges').title=$('quality').title;
-    const details=[['格式',format],['码率',p.bitRate?bitrate:'未记录'],['采样率',p.sampleRate?rate:'未记录'],...(!lossy&&p.bitDepth?[['量化位深',depth]]:[]),['声道',p.channels===2?'双声道':p.channels===1?'单声道':p.channels?String(p.channels):'未记录'],['文件大小',p.fileSize?(p.fileSize/1024/1024).toFixed(1)+'MiB':'未记录']];
+    const details=[['格式',format],['码率',p.bitRate?bitrate:'未记录'],['采样率',p.sampleRate?rate:'未记录'],...(!lossy&&p.bitDepth?[['量化位深',depth]]:[]),['声道',p.channels===2?'双声道':p.channels===1?'单声道':p.channels?String(p.channels):'未记录'],['文件大小',p.fileSize?formatBytes(p.fileSize):'未记录']];
     $('audio-details').innerHTML=details.map(([label,value])=>`<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join('');
     setIcon('full-play',audio.paused&&!pendingTrackId?'play':'pause'); $('full-play').setAttribute('aria-label',audio.paused&&!pendingTrackId?'全屏播放':'全屏暂停');
     updateLoadingIndicator();
@@ -834,7 +877,7 @@
     updateModeControls();
     $('full-duration').textContent=time(Number.isFinite(audio.duration)?audio.duration:current.duration);
     $('full-seek').disabled=!Number.isFinite(audio.duration);
-    $('full-elapsed').textContent=time(audio.currentTime); $('full-status').textContent=playerStatusText&&playerStatusText!==BUFFERING_STATUS ? '· '+playerStatusText : '';
+    $('full-elapsed').textContent=time(audio.currentTime); $('full-status').textContent=playerStatusText && playerStatusText!==BUFFERING_STATUS ? playerStatusText : '';
     loadLyrics(current);
   }
   function openFull() {
@@ -861,21 +904,29 @@
     $('full-lyrics-tab').classList.toggle('is-active',view==='lyrics');
     $('full-cover-tab').setAttribute('aria-selected',String(view==='cover'));
     $('full-lyrics-tab').setAttribute('aria-selected',String(view==='lyrics'));
-    if(view==='lyrics') requestAnimationFrame(() => scrollActiveLyric(false));
+    if(view==='lyrics')updateLyricPosition(true);
   }
   $('full-cover-tab').onclick=()=>setFullView('cover');
   $('full-lyrics-tab').onclick=()=>setFullView('lyrics');
+  let shareNoticeTimer;
+  $('full-share').onclick=async()=>{
+    if(!current)return;
+    const button=$('full-share'),notice=$('full-share-status');
+    button.disabled=true;notice.hidden=true;clearTimeout(shareNoticeTimer);
+    try{await shareTrack(current,message=>{notice.textContent=message;notice.hidden=false;shareNoticeTimer=setTimeout(()=>{notice.hidden=true;},4000);});}
+    finally{button.disabled=false;}
+  };
   $('full-queue-close').onclick=()=>toggleFullQueue(false);
   full.addEventListener('close',()=>{closeTrackMenu();toggleFullQueue(false);document.body.classList.remove('full-open');if(document.fullscreenElement===full)document.exitFullscreen().catch(()=>{});$('open-full').focus();});
   $('open-full').onclick=openFull; $('quality').onclick=openFull; $('close-full').onclick=closeFull;
   for(const [button,target] of [['full-play','play'],['full-prev','prev'],['full-next','next'],['full-like','now-like'],['full-like-mobile','now-like'],['full-repeat','repeat']])$(button).onclick=()=>$(target).click();
-  $('full-seek').oninput=()=>{if(Number.isFinite(audio.duration))audio.currentTime=Number($('full-seek').value)/100*audio.duration;};
+  $('full-seek').oninput=()=>{if(Number.isFinite(audio.duration))audio.currentTime=Number($('full-seek').value)/100*audio.duration;updateLyricPosition(true);};
 
   async function load() {
     $('retry').hidden=true; $('notice').hidden=false; $('notice').textContent='正在载入音乐收藏…';let data;
     const catalogController=new AbortController(),catalogTimer=setTimeout(()=>catalogController.abort(),15000);
     try {
-      const response=await fetch('./data/catalog.json',{cache:'no-cache',signal:catalogController.signal});
+      const response=await fetch('./data/catalog.json?v=20260929-pwa-6',{cache:'no-cache',signal:catalogController.signal});
       if(!response.ok)throw Error('目录加载失败');
       const catalog=await response.json();
       if(!catalog.version || !Array.isArray(catalog.tracks) || !catalog.appleMusic?.entries || !Array.isArray(catalog.appleMusic.playlists) || !Array.isArray(catalog.appleMusic.favorites))throw Error('目录格式不正确');
