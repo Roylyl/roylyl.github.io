@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const APP_VERSION='20260929-pwa-26', SHELL_VERSION='roylyl-music-shell-20260929-28';
+  const APP_VERSION='20260929-pwa-27', SHELL_VERSION='roylyl-music-shell-20260929-29';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const themeMedia=window.matchMedia('(prefers-color-scheme: dark)');
