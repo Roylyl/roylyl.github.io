@@ -32,3 +32,9 @@ assert.equal(parseLrc('[00:99.00]错误时间仍保留文本').diagnostic,'plain
 assert.equal(parseLrc('[au:作者]\n[tool:工具]\n[00:01]正文').groups.length,1);
 assert.equal(parseLrc('[offset:0]\n[1000:00.001]长录音').groups[0].time,60000.001);
 console.log('通过：标准LRC偏移方向、负时间不合并、普通方括号正文、元数据标签及异常时间降级。');
+
+result=parseLrc('音乐总监：甲\n管弦乐编写：乙\n管弦乐：丙乐团\nProgram工程操作：丁\nProgram制作：戊\nProgram录音：某录音棚\n混音/母带工作室：某工作室\n[00:12.345]测试正文');
+assert.equal(result.metadata.length,7);
+assert.equal(result.groups.length,1);
+assert.equal(result.groups[0].time,12.345);
+console.log('通过：新增职务在署名区展示，不占用歌词时间轴。');

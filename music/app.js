@@ -987,7 +987,7 @@
     $('retry').hidden=true; $('notice').hidden=false; $('notice').textContent='正在载入音乐收藏…';let data;
     const catalogController=new AbortController(),catalogTimer=setTimeout(()=>catalogController.abort(),15000);
     try {
-      const response=await fetch('./data/catalog.json?v=20260929-pwa-9',{cache:'no-cache',signal:catalogController.signal});
+      const response=await fetch('./data/catalog.json?v=20260929-pwa-10',{cache:'no-cache',signal:catalogController.signal});
       if(!response.ok)throw Error('目录加载失败');
       const catalog=await response.json();
       if(!catalog.version || !Array.isArray(catalog.tracks) || !catalog.appleMusic?.entries || !Array.isArray(catalog.appleMusic.playlists) || !Array.isArray(catalog.appleMusic.favorites))throw Error('目录格式不正确');

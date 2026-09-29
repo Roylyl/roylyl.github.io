@@ -19,7 +19,7 @@
       const body = line.replace(tag, '').trim();
       if (!body || body === `${title} - ${artist}`) continue;
       if (matches.length && rows.length===0 && Number(matches[0][1])*60+Number(matches[0][2])<=3 && body.startsWith(title) && body.endsWith(' - '+artist)) continue;
-      if (/^(?:词|曲|词曲|编曲|制作|配唱制作|监制|演唱|和声|演奏|吉他|木吉他|电吉他|低音吉他|贝斯|鼓|打击乐|键盘|钢琴|风琴|合成器|口琴|小提琴|中提琴|大提琴|弦乐|弦乐编写|长笛|萨克斯|小号|长号|指挥|编程|童声合唱|录音|录音助理|录音棚|录音环境|混音|母带|乐器\d*|词 Lyricist|曲 Composer)\s*[:：]/i.test(body)) {
+      if (/^(?:词|曲|词曲|编曲|制作|配唱制作|监制|演唱|和声|演奏|吉他|木吉他|电吉他|低音吉他|贝斯|鼓|打击乐|键盘|钢琴|风琴|合成器|口琴|小提琴|中提琴|大提琴|弦乐|弦乐编写|长笛|萨克斯|小号|长号|指挥|编程|童声合唱|录音|录音助理|录音棚|录音环境|混音|母带|乐器\d*|词 Lyricist|曲 Composer|管弦乐编写|音乐总监|管弦乐|Program工程操作|Program制作|Program录音|混音\/母带工作室)\s*[:：]/i.test(body)) {
         if (!metadata.includes(body)) metadata.push(body);
         continue;
       }
