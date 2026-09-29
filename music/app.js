@@ -639,11 +639,29 @@
   }
   function pausePlayback() {
     ++playToken;pendingTrackId=null;audio.pause();status('');renderCurrent();
+    if('mediaSession' in navigator)navigator.mediaSession.playbackState='paused';
+  }
+  function resumePlayback() {
+    // A system play action is explicit intent, not a play/pause toggle. Do not
+    // let an interrupted or unresolved play promise block this new attempt.
+    if(current)return play(current,queue,true,true);
+  }
+  function handleAudioPause() {
+    if(!audio.paused)return; // Ignore a queued pause after playback has resumed.
+    // Internal source replacement may be awaiting cache lookup; it is not an
+    // interruption of the currently loaded recording.
+    if(current&&loadedTrackId===current.id&&audio.getAttribute('src')) {
+      ++playToken;pendingTrackId=null;
+      if(playerStatusText===BUFFERING_STATUS)status('');
+    }
+    renderCurrent();
+    if('mediaSession' in navigator)navigator.mediaSession.playbackState='paused';
   }
   async function play(t, list = queue, fromHistory = false, immediate = false) {
     if (!canPlay(t)) return;
     if (!persistenceRequested && navigator.storage?.persist) { persistenceRequested = true; navigator.storage.persist().then(updateCacheStatus).catch(()=>{}); }
     const token=++playToken;
+    try { if(navigator.audioSession)navigator.audioSession.type='playback'; } catch {}
     if(list?.length)queue=list.filter(canPlay);
     if(!queue.some(x=>x.id===t.id))queue=[t];
     if(current?.id===t.id && typeof preloadNextLyrics === 'function')preloadNextLyrics(t);
@@ -824,7 +842,17 @@
   });
   ['play','pause'].forEach(event=>audio.addEventListener(event,()=>{renderCurrent();if('mediaSession'in navigator)navigator.mediaSession.playbackState=audio.paused?'paused':'playing';registerMediaActions();}));
   audio.addEventListener('waiting',()=>{if(!audio.paused)status(BUFFERING_STATUS);});
-  audio.addEventListener('pause',()=>{if(playerStatusText===BUFFERING_STATUS)status('');}); audio.addEventListener('playing',()=>status(''));
+  audio.addEventListener('pause',handleAudioPause);
+  audio.addEventListener('playing',()=>{
+    if(audio.paused)return;
+    pendingTrackId=null;status('');renderCurrent();
+    if('mediaSession' in navigator)navigator.mediaSession.playbackState='playing';
+  });
+  // AudioSession is optional. Never auto-resume on 'active': that could fight
+  // another app or undo the user's pause. The next system play acts directly.
+  navigator.audioSession?.addEventListener('statechange',()=>{
+    if(navigator.audioSession.state==='interrupted')pausePlayback();
+  });
   audio.addEventListener('error',()=>{if(!audio.getAttribute('src'))return;pendingTrackId=null;status(!navigator.onLine?'当前离线，这首歌曲尚未完整缓存。':'音频暂时无法加载，请检查网络后点击播放重试。');renderCurrent();});
   audio.addEventListener('progress',()=>{
     if(navigator.serviceWorker?.controller || !current || !Number.isFinite(audio.duration))return;
@@ -839,7 +867,7 @@
     if (!('mediaSession' in navigator)) return;
     const handlers = {
       seekbackward: null, seekforward: null,
-      play: () => {if(audio.paused&&!pendingTrackId)$('play').click();},
+      play: resumePlayback,
       pause: pausePlayback,
       previoustrack: () => advance(-1),
       nexttrack: () => advance(1),
@@ -926,7 +954,7 @@
     $('retry').hidden=true; $('notice').hidden=false; $('notice').textContent='正在载入音乐收藏…';let data;
     const catalogController=new AbortController(),catalogTimer=setTimeout(()=>catalogController.abort(),15000);
     try {
-      const response=await fetch('./data/catalog.json?v=20260929-pwa-6',{cache:'no-cache',signal:catalogController.signal});
+      const response=await fetch('./data/catalog.json?v=20260929-pwa-7',{cache:'no-cache',signal:catalogController.signal});
       if(!response.ok)throw Error('目录加载失败');
       const catalog=await response.json();
       if(!catalog.version || !Array.isArray(catalog.tracks) || !catalog.appleMusic?.entries || !Array.isArray(catalog.appleMusic.playlists) || !Array.isArray(catalog.appleMusic.favorites))throw Error('目录格式不正确');

@@ -4,6 +4,7 @@
 
 ```sh
 node music/tests/interactions.cjs
+node music/tests/media-session.cjs
 node music/tests/lyrics.cjs
 node music/tests/lyric-loading.cjs
 node music/tests/worker.cjs
@@ -13,6 +14,7 @@ python3 music/tests/catalog.py
 
 覆盖连续切歌、同曲连点、加载中暂停、随机播放历史、上一首、筛选后播放、返回时恢复筛选和滚动位置、手机整行播放与更多菜单隔离，以及音频缓存的请求复用和Range响应。测试使用模拟音频与存储，不代表iPhone真机验收。
 
+- `media-session.cjs`：系统播放直接恢复、残留加载标记、旧请求迟到、主动暂停、保留位置与历史、AudioSession中断和兼容降级；模拟事件不代替真机音频抢占检查。
 - `lyrics.cjs`：正负offset、多时间戳、同时间组、三位分钟、不同小数精度、创作者信息和混合文本。
 - `lyric-loading.cjs`：缓存不可用、强制重试、TTL、404、超时、快速切歌、清理期间的旧请求、手动滚动和拖动进度。
 - `worker.cjs`：真实字节切片、Range/HEAD/416、完整下载去重、预算和配额失败、取消、重启后清理仍保留设置、旧网页壳兼容。
