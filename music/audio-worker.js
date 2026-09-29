@@ -1,9 +1,10 @@
 'use strict';
-const AUDIO='roylyl-music-audio-v2',META='roylyl-music-audio-meta-v1',SHELL='roylyl-music-shell-20260929-12';
-const FILES=['/music/','/music/index.html','/music/music.css?v=20260929-pwa-10','/music/app.js?v=20260929-pwa-10','/music/lyric-parser.js?v=20260929-pwa-10','/music/image-loading.css?v=20260927-1','/music/image-loading.js?v=20260927-1','/music/region-notice.css?v=20260928-1','/music/region-notice.js?v=20260928-1','/music/data/catalog.json?v=20260929-pwa-10','/music/favicon.svg','/music/placeholder.svg','/music/manifest.webmanifest','/music/icons/icon-192.png','/music/icons/icon-512.png','/music/icons/apple-touch-icon.png'];
+const AUDIO='roylyl-music-audio-v2',META='roylyl-music-audio-meta-v1',SHELL='roylyl-music-shell-20260929-14';
+const FILES=['/music/','/music/index.html','/music/music.css?v=20260929-pwa-12','/music/app.js?v=20260929-pwa-12','/music/lyric-parser.js?v=20260929-pwa-12','/music/image-loading.css?v=20260927-1','/music/image-loading.js?v=20260927-1','/music/region-notice.css?v=20260928-1','/music/region-notice.js?v=20260928-1','/music/data/catalog.json?v=20260929-pwa-12','/music/favicon.svg','/music/placeholder.svg','/music/manifest.webmanifest','/music/icons/icon-192.png','/music/icons/icon-512.png','/music/icons/apple-touch-icon.png'];
 const metaKey='/music/__audio_index__',configKey='/music/__audio_config__';
 let generation=0,budget=-1,preloadEnabled=true,writeQueue=Promise.resolve(),configRevision=0,configRead,optionalEpoch=0,lastKeptSource='';
 const inflight=new Map(),playingRequests=new Map(),protectedSources=new Map();
+const sourceEpoch=new Map(),recoveryRequests=new Map();
 const serial=task=>{const p=writeQueue.then(task,task);writeQueue=p.catch(()=>{});return p;};
 const protectedSource=source=>[...protectedSources.values()].includes(source);
 const validBudget=value=>Number.isSafeInteger(value)&&value>=-1;
@@ -127,7 +128,7 @@ async function cachedRange(response,range,method='GET'){
   headers.set('Content-Range',`bytes ${start}-${end}/${size}`);headers.set('Content-Length',String(end-start+1));
   return new Response(method==='HEAD'?null:(await response.blob()).slice(start,end+1),{status:206,headers});
 }
-async function storeFull(source,response,version,signal){
+async function storeFull(source,response,version,signal,epoch=sourceEpoch.get(source)||0){
   const size=validSize(response);
   if(version!==generation||signal.aborted||!fullResponse(response)||exceedsBudget(size))return false;
   try{
@@ -136,7 +137,7 @@ async function storeFull(source,response,version,signal){
     const body=await response.blob();
     if(body.size!==size||version!==generation||signal.aborted)return false;
     return await serial(async()=>{
-      if(version!==generation||signal.aborted||exceedsBudget(size))return false;
+      if(version!==generation||signal.aborted||exceedsBudget(size)||epoch!==(sourceEpoch.get(source)||0))return false;
       const cache=await caches.open(AUDIO),index=await readIndex();
       if(index[source]&&await cache.match(source))return true;
       let used=indexBytes(index);
@@ -150,7 +151,7 @@ async function storeFull(source,response,version,signal){
       const headers=new Headers(response.headers);headers.set('Content-Length',String(body.size));headers.set('X-Roylyl-Audio-Complete','1');
       try{await cache.put(source,new Response(body,{status:200,headers}));}
       catch{return false;}
-      if(version!==generation||signal.aborted){await cache.delete(source);return false;}
+      if(version!==generation||signal.aborted||epoch!==(sourceEpoch.get(source)||0)){await cache.delete(source);return false;}
       index[source]={bytes:body.size,used:Date.now(),version:new URL(source).searchParams.get('v')||'',complete:true};
       try{await saveIndex(index);}catch{await cache.delete(source);return false;}
       for(const c of await self.clients.matchAll())c.postMessage({type:'AUDIO_CACHED',source});
@@ -161,15 +162,32 @@ async function storeFull(source,response,version,signal){
 function startFull(source,request,optional,preload=false,providedResponse,requestGeneration=generation){
   let job=inflight.get(source);
   if(job){if(!optional)job.optional=false;return job;}
-  const controller=new AbortController(),version=requestGeneration;
+  const controller=new AbortController(),version=requestGeneration,epoch=sourceEpoch.get(source)||0;
   const response=providedResponse?Promise.resolve(providedResponse):fetch(request,{signal:controller.signal});
   job={controller,optional,preload,response,stored:null};
-  job.stored=response.then(value=>storeFull(source,value.clone(),version,controller.signal)).catch(()=>false).then(ok=>{if(!ok&&job.optional)controller.abort();return ok;}).finally(()=>{if(inflight.get(source)===job)inflight.delete(source);});
+  job.stored=response.then(value=>storeFull(source,value.clone(),version,controller.signal,epoch)).catch(()=>false).then(ok=>{if(!ok&&job.optional)controller.abort();return ok;}).finally(()=>{if(inflight.get(source)===job)inflight.delete(source);});
   inflight.set(source,job);return job;
 }
 async function audioFetch(event){
   await ensureConfig();
   const source=event.request.url,range=event.request.headers.get('Range'),method=event.request.method;
+  const recovery=new URL(source),attempt=recovery.searchParams.get('recovery');
+  if(attempt){
+    recovery.searchParams.delete('recovery');const original=recovery.href;
+    let repair=recoveryRequests.get(original);
+    if(repair?.attempt!==attempt){
+      sourceEpoch.set(original,(sourceEpoch.get(original)||0)+1);
+      const job=inflight.get(original);if(job?.optional)cancelJob(original,job);
+      else inflight.delete(original); // Do not interrupt another tab's playback.
+      repair={attempt,done:serial(async()=>{
+        const cache=await caches.open(AUDIO),index=await readIndex();
+        await cache.delete(original);delete index[original];await saveIndex(index);
+      }).catch(()=>{})};recoveryRequests.set(original,repair);
+    }
+    await repair.done;
+    // Keep the unique URL and Range header; bypass both application and HTTP cache.
+    return fetch(event.request,{cache:'no-store'});
+  }
   const hit=await cachedFull(source);if(hit)return cachedRange(hit,range,method);
   if(method==='HEAD')return fetch(event.request);
   const playback=event.request.destination==='audio';

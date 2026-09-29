@@ -6,7 +6,7 @@ function harness(){
   const track={id:'one',src:'one.mp3'},audio={paused:true,src:'one.mp3',currentTime:83.25,error:null,
     getAttribute(){return this.src;},pause(){this.paused=true;},load(){throw Error('unexpected reload');},
     play(){this.paused=false;return new Promise((resolve,reject)=>requests.push({resolve,reject}));}};
-  const ctx={playbackBlocked:false,pausedPosition:null,audio,current:track,queue:[track],loadedTrackId:track.id,pendingTrackId:track.id,playToken:0,
+  const ctx={tracePlayback(){},performance:{now:()=>100},playbackRequestedAt:0,failedAudioSources:new Set(),playbackBlocked:false,pausedPosition:null,audio,current:track,queue:[track],loadedTrackId:track.id,pendingTrackId:track.id,playToken:0,
     playbackHistory:[track.id],historyCursor:0,persistenceRequested:true,playerStatusText:'buffering',BUFFERING_STATUS:'buffering',
     preparedAudio:new Map(),localAudioUrl:null,navigator:{onLine:true,mediaSession:{setActionHandler:(name,fn)=>handlers[name]=fn},
       audioSession:{state:'active',addEventListener:(name,fn)=>sessionEvents[name]=fn}},
@@ -57,6 +57,17 @@ function harness(){
   h.audio.error={code:2};h.ctx.syncPlaybackState();assert.equal(h.ctx.navigator.mediaSession.playbackState,'paused');assert.equal(h.ctx.playbackControl().icon,'play');
   h.audio.error=null;h.audio.paused=true;h.ctx.pendingTrackId='one';h.ctx.syncPlaybackState();assert.equal(h.ctx.navigator.mediaSession.playbackState,'paused');assert.equal(h.ctx.playbackControl().label,'取消加载');
   h.ctx.playbackBlocked=true;assert.equal(h.ctx.playbackControl().label,'播放');
+  h=harness();h.ctx.failedAudioSources.add('one.mp3');h.audio.error={code:3};h.audio.load=()=>{};
+  h.ctx.setCurrent=t=>h.ctx.current=t;
+  promise=h.handlers.play();assert.match(h.audio.src,/recovery=/);assert.equal(h.ctx.localAudioUrl,null);
+  h.requests[0].resolve();await promise;assert.equal(h.ctx.failedAudioSources.size,0);
+  h=harness();promise=h.handlers.play();h.audio.paused=true;const activeToken=h.ctx.playToken;
+  h.ctx.handleAudioPause({timeStamp:50});assert.equal(h.ctx.playToken,activeToken);assert.equal(h.ctx.pendingTrackId,'one','恢复前创建的pause不能撤销系统播放');
+  h.audio.paused=false;h.requests[0].resolve();await promise;
+  h=harness();promise=h.handlers.play();h.audio.paused=true;h.ctx.handleAudioPause({timeStamp:150});
+  assert.equal(h.ctx.playbackBlocked,true,'恢复后的新暂停必须生效');h.requests[0].resolve();await promise;
+  console.log('通过：迟到旧pause不会撤销新的系统播放，新暂停仍生效。');
+  console.log('通过：失败歌曲下一次播放绕过旧缓存，系统恢复不等待缓存清理。');
   console.log('通过：统一状态映射覆盖播放、错误、加载与中断。');
   console.log('通过：耳机暂停事件、暂停点保存、迟到自动恢复拦截、用户原处续播、自然结束与内部换源区分。');
   console.log('通过：系统直接恢复、残留pending、未完成请求中断、旧请求迟到、主动暂停、保留位置/历史、无AudioSession降级及中断后不自动抢播。');

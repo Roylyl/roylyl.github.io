@@ -139,7 +139,8 @@
   const preparedAudio=new Map();
   let prepareToken=0;
   function releasePrepared(){prepareToken++;for(const blob of preparedAudio.values())URL.revokeObjectURL(blob);preparedAudio.clear();}
-  let playbackBlocked=false, pausedPosition=null;
+  const failedAudioSources=new Set();
+  let playbackBlocked=false, pausedPosition=null, playbackRequestedAt=0;
   let loadedTrackId=null, pendingTrackId=null, playbackHistory=[], historyCursor=-1, queueSignature='';
   let tracks = [], albums = [], view = 'albums', selected = null, current = null, queue = [], repeat = 'all', playToken = 0, lastSaved = 0;
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -640,6 +641,16 @@
       });
     }
   }
+  const playbackLog=[];
+  function tracePlayback(event,detail='') {
+    playbackLog.push({at:new Date().toISOString(),event,detail,track:current?.id||null,position:audio.currentTime,paused:audio.paused,readyState:audio.readyState,networkState:audio.networkState,error:audio.error?.code||0,session:navigator.audioSession?.state||'unavailable',pending:pendingTrackId,blocked:playbackBlocked,hidden:document.hidden});
+    if(playbackLog.length>60)playbackLog.shift();
+  }
+  $('copy-playback-diagnostics').onclick=async()=>{
+    const text=JSON.stringify({version:'20260929-pwa-12',browser:navigator.userAgent,standalone:!!navigator.standalone||matchMedia('(display-mode: standalone)').matches,events:playbackLog},null,2);
+    try{await navigator.clipboard.writeText(text);$('playback-diagnostics-status').textContent='播放诊断已复制';}
+    catch{const box=$('playback-diagnostics-text');box.hidden=false;box.value=text;box.focus();box.select();$('playback-diagnostics-status').textContent='请复制下方诊断内容';}
+  };
   function playbackControl() {
     if(playbackBlocked||audio.error||audio.ended)return {icon:'play',label:'播放',system:current?'paused':'none'};
     if(pendingTrackId)return {icon:'pause',label:'取消加载',system:audio.paused?'paused':'playing'};
@@ -649,12 +660,14 @@
     if('mediaSession' in navigator)navigator.mediaSession.playbackState=playbackControl().system;
   }
   function pausePlayback() {
+    tracePlayback('pause-request');
     playbackBlocked=true;
     rememberPausedPosition();
     ++playToken;pendingTrackId=null;audio.pause();status('');renderCurrent();
     syncPlaybackState();
   }
   function resumePlayback() {
+    tracePlayback('system-play');
     // A system play action is explicit intent, not a play/pause toggle. Do not
     // let an interrupted or unresolved play promise block this new attempt.
     if(current)return play(current,queue,true,true);
@@ -674,7 +687,10 @@
     syncPlaybackState();
     return false;
   }
-  function handleAudioPause() {
+  function handleAudioPause(event) {
+    tracePlayback('audio-pause');
+    // A queued pause created before the newest play request cannot revoke it.
+    if(pendingTrackId && event?.timeStamp>0 && event.timeStamp<playbackRequestedAt){tracePlayback('stale-pause-ignored');return;}
     if(!audio.paused)return; // Ignore a queued pause after playback has resumed.
     // Internal source replacement may be awaiting cache lookup; it is not an
     // interruption of the currently loaded recording.
@@ -690,37 +706,43 @@
     if (!canPlay(t)) return;
     playbackBlocked=false;
     if (!persistenceRequested && navigator.storage?.persist) { persistenceRequested = true; navigator.storage.persist().then(updateCacheStatus).catch(()=>{}); }
-    const token=++playToken;
+    const token=++playToken;playbackRequestedAt=performance.now();
+    tracePlayback('play-request');
     try { if(navigator.audioSession)navigator.audioSession.type='playback'; } catch {}
     if(list?.length)queue=list.filter(canPlay);
     if(!queue.some(x=>x.id===t.id))queue=[t];
     if(current?.id===t.id && typeof preloadNextLyrics === 'function')preloadNextLyrics(t);
     if(!fromHistory && playbackHistory[historyCursor]!==t.id){playbackHistory=playbackHistory.slice(0,historyCursor+1);playbackHistory.push(t.id);historyCursor=playbackHistory.length-1;}
-    const source=audioSource(t);
+    const source=audioSource(t),recover=failedAudioSources.has(source)&&navigator.onLine!==false;
     cancelPreload(source);
-    if(loadedTrackId!==t.id || !audio.getAttribute('src') || audio.error){
+    if(recover&&!navigator.serviceWorker?.controller&&typeof caches!=='undefined')caches.open(AUDIO_CACHE).then(cache=>cache.delete(source)).catch(()=>{});
+    if(recover || loadedTrackId!==t.id || !audio.getAttribute('src') || audio.error){
       pendingTrackId=t.id;loadedTrackId=null;fallbackCachedId=null;
       if(!immediate){audio.pause();audio.removeAttribute('src');audio.load();}
       setCurrent(t);status(BUFFERING_STATUS);renderCurrent();
       // Background transitions must reach play() in the same ended/media-session task.
       let cached=preparedAudio.get(source)||null;preparedAudio.delete(source);releasePrepared();
-      if(!cached && !immediate && !navigator.serviceWorker?.controller)cached=await cachedAudioUrl(source);
+      if(recover&&cached){URL.revokeObjectURL(cached);cached=null;}
+      if(!recover && !cached && !immediate && !navigator.serviceWorker?.controller)cached=await cachedAudioUrl(source);
       if(token!==playToken){if(cached)URL.revokeObjectURL(cached);return;}
       const previousUrl=localAudioUrl;localAudioUrl=cached;
-      audio.src=cached||source;loadedTrackId=t.id;
+      audio.src=recover?source+'&recovery='+Date.now()+'-'+token:cached||source;loadedTrackId=t.id;
       if(previousUrl)URL.revokeObjectURL(previousUrl);
     }
     pendingTrackId=t.id;status(BUFFERING_STATUS);renderCurrent();
     try {
       await audio.play();
+      tracePlayback('play-resolved',token===playToken?'current':'superseded');
       if(token!==playToken)return;
-      pendingTrackId=null;status('');save('last',{id:t.id,time:audio.currentTime});renderCurrent();
+      failedAudioSources.delete(source);pendingTrackId=null;status('');save('last',{id:t.id,time:audio.currentTime});renderCurrent();
       if(typeof preloadNextLyrics==='function')preloadNextLyrics(t);
       if(audioBudget())cacheAudio(source).then(ok=>{if(ok&&token===playToken)preloadNext();});
     } catch(error) {
+      tracePlayback('play-rejected',error.name+': '+error.message);
       if(token!==playToken)return;
       pendingTrackId=null;
-      status(error.name==='NotAllowedError'?'请再次点击播放，允许浏览器开始播放。':error.name==='AbortError'?'':!navigator.onLine?'当前离线，这首歌曲尚未完整缓存。':'音频暂时无法加载，请检查网络后点击播放重试。');renderCurrent();
+      if(!['NotAllowedError','AbortError'].includes(error.name))failedAudioSources.add(source);
+      status(error.name==='NotAllowedError'?'请再次点击播放，允许浏览器开始播放。':error.name==='AbortError'?'':!navigator.onLine?'当前离线，这首歌曲尚未完整缓存。':'音频加载失败，点击播放将尝试重新读取音源。');renderCurrent();
     }
   }
   function advance(direction, ended = false) {
@@ -748,7 +770,6 @@
   }
   $('play').onclick = () => {
     if (!audio.paused || pendingTrackId) { pausePlayback(); return; }
-    if (audio.error) { const src = current && audioSource(current); if (src) { audio.src=src; audio.load(); } }
     const visible=$('songs')._tracks ?? filtered();
     const target=current || visible[0];
     if(target)play(target,current&&queue.length?queue:visible);
@@ -875,6 +896,7 @@
   audio.addEventListener('waiting',()=>{if(!audio.paused)status(BUFFERING_STATUS);});
   audio.addEventListener('pause',handleAudioPause);
   audio.addEventListener('playing',()=>{
+    tracePlayback('audio-playing');
     if(!handleAudioStart())return;
     if(audio.paused)return;
     pendingTrackId=null;status('');renderCurrent();
@@ -883,9 +905,10 @@
   // AudioSession is optional. Never auto-resume on 'active': that could fight
   // another app or undo the user's pause. The next system play acts directly.
   navigator.audioSession?.addEventListener('statechange',()=>{
+    tracePlayback('session-statechange');
     if(navigator.audioSession.state==='interrupted')pausePlayback();
   });
-  audio.addEventListener('error',()=>{if(!audio.getAttribute('src'))return;pendingTrackId=null;status(!navigator.onLine?'当前离线，这首歌曲尚未完整缓存。':'音频暂时无法加载，请检查网络后点击播放重试。');renderCurrent();});
+  audio.addEventListener('error',()=>{if(!audio.getAttribute('src'))return;if(current)failedAudioSources.add(audioSource(current));pendingTrackId=null;status(!navigator.onLine?'当前离线，这首歌曲尚未完整缓存。':'音频加载失败，点击播放将尝试重新读取音源。');renderCurrent();});
   audio.addEventListener('progress',()=>{
     if(navigator.serviceWorker?.controller || !current || !Number.isFinite(audio.duration))return;
     for(let i=0;i<audio.buffered.length;i++)if(audio.buffered.start(i)===0 && audio.buffered.end(i)>=audio.duration-.1){
@@ -900,7 +923,7 @@
     const handlers = {
       seekbackward: null, seekforward: null,
       play: resumePlayback,
-      pause: pausePlayback,
+      pause: () => {tracePlayback('system-pause');pausePlayback();},
       previoustrack: () => advance(-1),
       nexttrack: () => advance(1),
       seekto: e => { if (Number.isFinite(audio.duration)) audio.currentTime = Math.min(e.seekTime, audio.duration); }
@@ -987,7 +1010,7 @@
     $('retry').hidden=true; $('notice').hidden=false; $('notice').textContent='正在载入音乐收藏…';let data;
     const catalogController=new AbortController(),catalogTimer=setTimeout(()=>catalogController.abort(),15000);
     try {
-      const response=await fetch('./data/catalog.json?v=20260929-pwa-10',{cache:'no-cache',signal:catalogController.signal});
+      const response=await fetch('./data/catalog.json?v=20260929-pwa-12',{cache:'no-cache',signal:catalogController.signal});
       if(!response.ok)throw Error('目录加载失败');
       const catalog=await response.json();
       if(!catalog.version || !Array.isArray(catalog.tracks) || !catalog.appleMusic?.entries || !Array.isArray(catalog.appleMusic.playlists) || !Array.isArray(catalog.appleMusic.favorites))throw Error('目录格式不正确');

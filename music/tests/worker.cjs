@@ -37,6 +37,26 @@ function harness({stores=new Map(),network=async()=>full(),failAudioPut=()=>fals
 }
 (async()=>{
   {
+    const h=harness();await h.config(100);await h.save('broken');await h.save('healthy');
+    const req=h.request(source('broken')+'&recovery=one',{range:'bytes=0-1'});await req.response;
+    assert.equal(h.calls.at(-1).options.cache,'no-store');
+    assert.equal(h.calls.at(-1).request.headers.get('Range'),'bytes=0-1');
+    assert.equal(await h.cacheFor(AUDIO).match(source('broken')),undefined);
+    assert(await h.cacheFor(AUDIO).match(source('healthy')));
+    assert.equal((await h.stats()).count,1);
+    console.log('通过：单曲重试清理对应缓存和索引，保留其他歌曲，网络绕过HTTP缓存且保留Range。');
+  }
+  {
+    let controller,first=true;
+    const h=harness({network:async()=>{if(!first)return full();first=false;return full(new ReadableStream({start(c){controller=c;}}));}});
+    await h.config(100);
+    const old=h.request(source('late'));await old.response;await tick();
+    await h.request(source('late')+'&recovery=two',{range:'bytes=0-1'}).response;
+    controller.enqueue(new TextEncoder().encode(bytes));controller.close();await old.done();
+    assert.equal(await h.cacheFor(AUDIO).match(source('late')),undefined,'旧完整下载不能在单曲清理后重新写入');
+    console.log('通过：重试时尚未完成的旧下载不会重新污染缓存。');
+  }
+  {
     let controller,signal;const h=harness({network:async(_,options)=>{signal=options.signal;return full(new ReadableStream({start(c){controller=c;c.enqueue(new TextEncoder().encode(bytes.slice(0,10)));}}));}});
     await h.config(100,source('a'));
     const first=h.message({type:'CACHE_AUDIO',source:source('a')});await tick();await tick();

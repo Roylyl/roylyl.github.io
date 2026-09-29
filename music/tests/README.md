@@ -63,3 +63,7 @@ AUDIT_OUTPUT=/tmp/roylyl-music-qa node music/tests/browser.cjs
 通过HTTP/HTTPS打开页面；`file://`不能提供完整的跨文件读取和Service Worker功能。音频Service Worker透传冷缓存Range请求，完整响应另行缓存；关闭预加载后不会下载下一首。当前音源实测`bytes=10-19`返回206及正确的Content-Range。不支持Service Worker时仍可在线播放。
 
 真机检查：iPhone竖屏和横屏、锁屏上下曲、连续点歌后暂停、慢网切换、断网播放已缓存歌曲、系统返回、菜单触控区域、全屏与底栏遮挡。浏览器可能清理本地存储，持久化申请不代表操作系统保证永久保留。
+
+单曲缓存恢复：播放失败后的显式重试使用独立请求绕过旧缓存，仅删除当前音源缓存和索引；其他歌曲保留。覆盖旧完整下载迟到后不得重新写入、保留Range及HTTP缓存绕过。此项为模拟回归，尚未在出现故障的iPhone缓存中实测。
+
+主屏幕网页锁屏恢复：根据pause事件生成时间区分旧事件与新暂停；旧pause不得撤销较新的播放请求。设置页可复制当前页面最近60条本地播放事件，包含版本、standalone状态、系统回调、AudioSession状态及play承诺结果；不自动上传。Safari主屏幕后台唤醒仍须真机验证。
