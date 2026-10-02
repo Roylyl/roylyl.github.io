@@ -13,7 +13,7 @@
 [![Pages](https://img.shields.io/github/deployments/Roylyl/roylyl.github.io/github-pages?style=flat-square&label=GitHub%20Pages)](https://roylyl.github.io/)
 [![HTML](https://img.shields.io/badge/HTML5-native-e34f26?style=flat-square&logo=html5&logoColor=white)](index.html)
 
-[访问网站](https://roylyl.github.io/) · [页面与项目](#快速入口) · [本地预览](#本地预览) · [检查与验证](#验证) · [维护指南](#维护指南) · [联系](#联系)
+[访问网站](https://roylyl.github.io/) · [本地预览](#本地预览) · [页面与项目](#快速入口) · [检查与验证](#验证) · [维护指南](#维护指南) · [联系](#联系)
 
 </div>
 
@@ -23,6 +23,26 @@
 
 > 《晚渡》完全由Codex GPT-6 Astra模型操作MacBook上的FL Studio完成，仅用于Astra Computer Use能力测试，不是罗宇伦的个人音乐作品。
 
+## 本地预览
+
+先进入仓库根目录，再用Python3启动随仓库提供的预览服务器。它支持音频分段请求（HTTP Range），使原生播放器能够跳转到未缓冲的位置：
+
+macOS/Linux：
+
+```sh
+python3 scripts/preview.py 8000
+```
+
+Windows（已安装Python Launcher）：
+
+```powershell
+py -3 scripts/preview.py 8000
+```
+
+打开 [本地网站](http://127.0.0.1:8000/)，在终端按 `Ctrl+C` 停止。若端口已被占用，把命令和访问地址中的 `8000` 一起换成其他端口。
+
+使用HTTP服务预览，不要直接双击HTML。直接以本地文件方式打开时，同源判断、跨页面通信和第三方请求可能与正式网站不同。预览服务需以仓库根目录为入口，连续导航按站点根路径识别页面。
+
 ## 快速入口
 
 | 内容 | 入口 | 说明 |
@@ -30,14 +50,27 @@
 | 个人作品集 | [作品集详情](https://roylyl.github.io/) · [源码](https://github.com/Roylyl/roylyl.github.io/blob/main/index.html) | 个人介绍、能力、实习、项目、音乐与联系方式 |
 | 01 · 音享贴 · LENGHE SoundShare | [音享贴详情](https://roylyl.github.io/soundshare.html) · [源码](https://github.com/Roylyl/roylyl.github.io/blob/main/soundshare.html) | 个人独立完成PCB、嵌入式音频链路与多端控制的软硬件原型 |
 | 02 · 超声波定向扬声器 | [超声波详情](https://roylyl.github.io/ultrasonic.html) · [源码](https://github.com/Roylyl/roylyl.github.io/blob/main/ultrasonic.html) | ESP32驱动的定向音频第一代Demo |
-| 其他项目 | [其他项目详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/roylyl.github.io/blob/main/other-projects.html) | SoundTest、ASRtest、DeerWebTranslator、MacDuo、READMEWriter；晚渡单列实验区 |
-| DeerWebTranslator | [DeerWebTranslator详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/DeerWebTranslator) | 原位翻译、阅读状态与取消恢复 |
-| MacDuo | [MacDuo详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/MacDuo) | 基于MacBook-Duo的形态交互实验 |
+| 其他项目 | [其他项目详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/roylyl.github.io/blob/main/other-projects.html) | 音频测试、CarPlay接收、网页翻译、桌面交互与README工具，另附晚渡实验 |
+| SoundTest | [SoundTest详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/SoundTest) | iPhone/iPad声音模型测试，支持录音与批量WAV测试 |
+| ASRtest | [ASRtest详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/ASRtest) | 多模型本地语音识别，支持流式识别与文件转写 |
+| MacPlay | [MacPlay详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/MacPlay) | Mac上的CarPlay接收端，支持USB与共用Wi-Fi |
+| WinPlay | [WinPlay详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/WinPlay) | Windows无线CarPlay接收端，支持本机热点与局域网 |
+| DeerWebTranslator | [DeerWebTranslator详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/DeerWebTranslator) | 网页原位翻译、原文与双语切换 |
+| MacDuo | [MacDuo详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/MacDuo) | 基于MacBook-Duo的铰链驱动桌面视觉实验 |
+| READMEWriter | [READMEWriter详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/READMEWriter) | 面向Codex的README写作、视觉规范与离线校验技能 |
 | 晚渡 | [晚渡详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/Astra-Music) | Codex GPT-6 Astra操作MacBook上FL Studio的Computer Use测试，非个人作品 |
-| READMEWriter | [READMEWriter详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/READMEWriter) | 基于仓库事实的Codex README写作技能 |
 | 产品与创业理念 | [理念详情](https://roylyl.github.io/philosophy.html) · [源码](https://github.com/Roylyl/roylyl.github.io/blob/main/philosophy.html) | 产品判断、交互与学习、技术融合、使用验证、经营与研究、长期方向 |
 
-“详情”链接打开对应网站页面；DeerWebTranslator、MacDuo、晚渡与READMEWriter的“源码”链接进入各自项目仓库，其余“源码”链接打开本站对应页面的源文件。音享贴与超声波的链接为展示页源码，不代表硬件、固件或PCB工程已公开。
+“详情”链接打开对应网站页面；SoundTest、ASRtest、MacPlay、WinPlay、DeerWebTranslator、MacDuo、READMEWriter与晚渡的“源码”链接进入各自项目仓库，其余“源码”链接打开本站对应页面的源文件。音享贴与超声波的链接为展示页源码，不代表硬件、固件或PCB工程已公开。
+
+### MacPlay与WinPlay统计
+
+| 项目 | 发行附件累计下载量 | Star数 |
+| --- | --- | --- |
+| [MacPlay](https://github.com/Roylyl/MacPlay) | [![MacPlay发行附件累计下载量](https://img.shields.io/github/downloads/Roylyl/MacPlay/total?style=flat-square&label=downloads&color=2563eb&cacheSeconds=300)](https://github.com/Roylyl/MacPlay/releases) | [![MacPlay的GitHub Star数](https://img.shields.io/github/stars/Roylyl/MacPlay?style=flat-square&label=stars&color=2563eb&cacheSeconds=300)](https://github.com/Roylyl/MacPlay/stargazers) |
+| [WinPlay](https://github.com/Roylyl/WinPlay) | [![WinPlay发行附件累计下载量](https://img.shields.io/github/downloads/Roylyl/WinPlay/total?style=flat-square&label=downloads&color=2563eb&cacheSeconds=300)](https://github.com/Roylyl/WinPlay/releases) | [![WinPlay的GitHub Star数](https://img.shields.io/github/stars/Roylyl/WinPlay?style=flat-square&label=stars&color=2563eb&cacheSeconds=300)](https://github.com/Roylyl/WinPlay/stargazers) |
+
+其他项目页与本README使用相同的动态徽标。下载量统计GitHub发行附件的累计下载次数，Star数来自对应仓库；Shields按服务缓存自动刷新，无需在网页或文档中手动维护数值。点击下载量进入发行页，点击Star数进入Star列表。
 
 ## 页面组织
 
@@ -60,7 +93,7 @@
 | 7 | 联系 · `#contact` | 交流说明、邮箱、GitHub与简历下载入口。 |
 | 8 | 页脚 | 姓名与年份、网站署名及背景音乐版权说明。 |
 
-“工程工具与软件项目”入口位于 `#other-projects`，理念入口位于 `#philosophy`，二者都属于 `#projects`，不再单独占用首页顶部导航项。软件项目的完整介绍及《晚渡》试听在其他项目页，完整理念在理念页。
+“工程工具与软件项目”入口位于 `#other-projects`，理念入口位于 `#philosophy`，二者都属于 `#projects`，不再单独占用首页顶部导航项。软件项目的简短介绍及《晚渡》试听在其他项目页，具体使用与开发说明通过各项目仓库提供；完整理念在理念页。
 
 ### 四个二级页面
 
@@ -68,43 +101,23 @@
 | --- | --- | --- |
 | [音享贴](soundshare.html) | 项目介绍（`#intro`）→ 产品价值与完整使用流程（`#value`）→ PCB、板级验证、双路音频、控制应用及系统架构（`#prototype`）→ iOS、Android、小程序、Apple Watch、iPad界面（`#ui`）→ 影音共享、K歌与户外组网场景（`#scenes`）→ 后续验证方向与收尾入口。 | 顶部目录直达介绍、产品价值、原型状态、界面、场景；另有个人主页与超声波页面入口。 |
 | [超声波定向扬声器](ultrasonic.html) | 项目介绍（`#intro`）→ 目标、角色与阶段（`#overview`）→ 系统、嵌入式、硬件及推进过程（`#engineering`）→ 目标位置、邻近区域与移动路径等空间验证问题（`#spatial-questions`）→ 展板和团队样机照片（`#gallery`）。 | 顶部目录直达介绍、概览、工程、画面；空间验证内容位于工程与画面之间。另有个人主页与音享贴页面入口。 |
-| [工程工具与软件项目](other-projects.html) | 导言 → SoundTest（`#soundtest`）→ ASRtest（`#asrtest`）→ DeerWebTranslator（`#deer-web-translator`）→ MacDuo（`#macduo`）→ READMEWriter（`#readme-writer`）→ Experiments（`#experiments`）中的晚渡（`#wandu`）→ 返回主页。 | 音频工具展示技术说明，并提供小号GitHub文字源码入口；500条EfficientAT批测注明iPhone模拟器范围。其他软件保留源码链接，晚渡保留非个人作品声明、试听及测试产物。 |
+| [工程工具与软件项目](other-projects.html) | 导言 → SoundTest（`#soundtest`）→ ASRtest（`#asrtest`）→ MacPlay（`#macplay`）→ WinPlay（`#winplay`）→ DeerWebTranslator（`#deer-web-translator`）→ MacDuo（`#macduo`）→ READMEWriter（`#readme-writer`）→ Experiments（`#experiments`）中的晚渡（`#wandu`）→ 返回主页。 | 七个软件项目均使用简短介绍与“详情·源码”入口；MacPlay与WinPlay附动态下载量、Star徽标。顶部目录按正文顺序排列，晚渡位于实验区，保留非个人作品声明、原生试听及工程与MIDI入口。 |
 | [产品与创业理念](philosophy.html) | 页面导言 → 产品判断（`#product`）→ 交互与学习（`#interaction`）→ 技术融合（`#fusion`）→ 使用验证（`#validation`）→ 经营与研究（`#startup`）→ 长期方向（`#future`）→ 返回主页。 | 六个章节直接放在顶部目录，正文始终展开；技术融合章节链接音享贴，使用验证章节链接超声波。返回入口定位到首页 `#philosophy`。 |
 
 四页末尾均保留姓名、年份、主题信息与背景音乐版权说明。晚渡的标题和目录名称在简、繁中文下显示“晚渡”，英文下显示“WANDU”；其测试性质与非个人作品声明在正文中明确保留。
 
 ### 共用导航与访问方式
 
-- **当前位置反馈**：首页与四个二级页的顶部章节目录随滚动自动高光，使用淡蓝文字与柔和背景标识当前章节，同时通过 `aria-current="location"` 提供辅助技术语义；尚未进入章节时不误选，返回主页与跨页链接不参与高光；窄屏展开菜单沿用相同状态，不改变网址或增加历史记录。
-- **顶部布局**：首页与四个二级页共享整条液态玻璃导航。主体使用7% 白色表面、沿胶囊曲面的RGB折射与边缘高光，不对背景图像施加高斯模糊；桌面、平板、手机统一采用胶囊圆角。二级页左侧为项目品牌或返回入口，中间为目录，右侧为音乐与语言控制；桌面目录居中，窄屏收进顶部菜单，正文不重复设置目录按钮。
-- **首页进入详情**：通过同源内嵌页面连续导航，不显示中间加载页；正文就绪后即可滚动、点击目录和保存阅读位置，不等待非必要图片加载。页面本身迟迟未就绪时只显示底部提示与直接打开入口。保留首页背景音乐会话，并同步地址、标题、界面语言与阅读位置。进入详情时暂停首页粒子与演出视频；返回时恢复首页浏览环境，视频不自动播放。
-- **独立打开详情**：四页均支持直接访问；首次进入与刷新均从页面顶部开始。目录、正文按钮及返回顶部等当前页面内的跳转统一平滑滚动，不在地址栏添加 `#…`，也不为每次章节点击增加历史记录。背景音乐是否能恢复播放仍受浏览器策略限制；晚渡试听由用户主动开始，与背景音乐互斥。
-- **返回与历史记录**：品牌、返回链接及浏览器前进后退共同提供页面间移动；检查时同时覆盖首页进入、详情间跳转、返回首页与直接访问，不能只验证其中一条路径。
-- **位置与地址**：正文保留章节ID，供目录和返回入口定位使用；地址栏仅显示页面路径。旧链接中的 `#…` 会在打开时移除，页面从顶部开始。浏览器前进后退仍可恢复浏览位置，但刷新始终回到顶部。
+- 当前位置反馈：首页与四个二级页的顶部章节目录随滚动自动高光，使用淡蓝文字与柔和背景标识当前章节，同时通过 `aria-current="location"` 提供辅助技术语义；尚未进入章节时不误选，返回主页与跨页链接不参与高光；窄屏展开菜单沿用相同状态，不改变网址或增加历史记录。
+- 顶部布局：首页与四个二级页共享整条液态玻璃导航。桌面端使用7%白色表面、沿胶囊曲面的RGB折射与边缘高光；移动端使用原生高斯模糊，所有设备统一采用胶囊圆角。二级页左侧为项目品牌或返回入口，中间为目录，右侧为音乐与语言控制；桌面目录居中，窄屏收进顶部菜单，正文不重复设置目录按钮。其他项目页的八项目录在不超过1240px时收起，避免挤压控件。
+- 首页进入详情：通过同源内嵌页面连续导航，不显示中间加载页；正文就绪后即可滚动、点击目录和保存阅读位置，不等待非必要图片加载。页面本身迟迟未就绪时只显示底部提示与直接打开入口。保留首页背景音乐会话，并同步地址、标题、界面语言与阅读位置。进入详情时暂停首页粒子与演出视频；返回时恢复首页浏览环境，视频不自动播放。
+- 独立打开详情：四页均支持直接访问；首次进入与刷新均从页面顶部开始。目录、正文按钮及返回顶部等当前页面内的跳转统一平滑滚动，不在地址栏添加 `#…`，也不为每次章节点击增加历史记录。背景音乐是否能恢复播放仍受浏览器策略限制；晚渡试听由用户主动开始，与背景音乐互斥。
+- 返回与历史记录：品牌、返回链接及浏览器前进后退共同提供页面间移动；检查时同时覆盖首页进入、详情间跳转、返回首页与直接访问，不能只验证其中一条路径。
+- 位置与地址：正文保留章节ID，供目录和返回入口定位使用；地址栏仅显示页面路径。旧链接中的 `#…` 会在打开时移除，页面从顶部开始。浏览器前进后退仍可恢复浏览位置，但刷新始终回到顶部。
 
 ### 仓库内的独立站点
 
 [kuncode/](kuncode/)（KunCode）、[lululu/](lululu/)（加密鹿）、[weijiba/](weijiba/)（魏鸡百科）属于独立站点目录，不接入上述五页主站的连续导航、章节目录或内容层级。本README的页面结构与主站验证流程覆盖上述五页；独立站点按各自任务维护和验证。
-
-## 本地预览
-
-先进入仓库根目录，再用Python3启动随仓库提供的预览服务器。它支持音频分段请求（HTTP Range），使原生播放器能够跳转到未缓冲的位置：
-
-macOS/Linux：
-
-```sh
-python3 scripts/preview.py 8000
-```
-
-Windows（已安装Python Launcher）：
-
-```powershell
-py -3 scripts/preview.py 8000
-```
-
-打开 [本地网站](http://127.0.0.1:8000/)，在终端按 `Ctrl+C` 停止。若端口已被占用，把命令和访问地址中的 `8000` 一起换成其他端口。
-
-使用HTTP服务预览，不要直接双击HTML。直接以本地文件方式打开时，同源判断、跨页面通信和第三方请求可能与正式网站不同。预览服务需以仓库根目录为入口，连续导航按站点根路径识别页面。
 
 ## 验证
 
@@ -139,13 +152,13 @@ git diff --check
 
 发布前按实际浏览顺序检查：
 
-1. **首页与语言**：确认音享贴在超声波前，两个详情页编号与首页一致；“其他项目”和理念入口紧接硬件项目，顶部不再有“理念”按钮。切换简、繁、英，检查文字、日期、换行与简历下载。
-2. **项目导航**：首页 → 音享贴 → 超声波 → 后退两次 → 前进，检查地址、标题、语言、焦点和阅读位置；直接打开详情页并刷新，确认回到顶部且地址栏不含 `#…`。模拟图片加载延迟，确认目录跳转不重建详情页，后续加载完成不重置阅读位置。
-3. **粒子与布局**：在代表视口下检查横向溢出；在可用输入设备上检查交互：鼠标可以接管粒子，手指滚动不受干扰；减少动态效果、切后台和返回页面正常。
-4. **菜单与联系方式**：检查手机导航、语言菜单的键盘操作，以及二维码放大、Esc关闭、账号复制与反馈。
-5. **视频与音乐**：检查两段原生视频在中国大陆、其他地区和检测失败时的自动选源；进入详情页后首页视频停止、首页粒子暂停；返回后重新加载播放器，保持自动播放关闭。检查《晚渡》原生试听、暂停、进度与独立音频入口；试听与背景音乐互斥；分别检查独立打开和首页内嵌导航，离开《晚渡》所在页面后不继续播放，返回后不自动续播。
-6. **工程工具与软件项目**：检查五个工具的顺序、顶部目录与返回主页，确认SoundTest/ASRtest的小号GitHub文字链接指向各自仓库；《晚渡》位于独立实验区，中文显示“晚渡”、英文显示“WANDU”，试听与工程入口正常。
-7. **理念阅读**：从首页简短入口进入二级页，逐章检查顶部目录跳转、三语正文和项目链接；核对目录定位有效且地址栏不添加锚点，以及查看项目后返回理念页的阅读位置。检查桌面、平板和手机代表宽度下的标题、正文与按钮，不把静态检查视为实机验证。
+1. 首页与语言：确认音享贴在超声波前，两个详情页编号与首页一致；“其他项目”和理念入口紧接硬件项目，顶部不再有“理念”按钮。切换简、繁、英，检查文字、日期、换行与简历下载。
+2. 项目导航：首页 → 音享贴 → 超声波 → 后退两次 → 前进，检查地址、标题、语言、焦点和阅读位置；直接打开详情页并刷新，确认回到顶部且地址栏不含 `#…`。模拟图片加载延迟，确认目录跳转不重建详情页，后续加载完成不重置阅读位置。
+3. 粒子与布局：在代表视口下检查横向溢出；在可用输入设备上检查交互：鼠标可以接管粒子，手指滚动不受干扰；减少动态效果、切后台和返回页面正常。
+4. 菜单与联系方式：检查手机导航、语言菜单的键盘操作，以及二维码放大、Esc关闭、账号复制与反馈。
+5. 视频与音乐：检查两段原生视频在中国大陆、其他地区和检测失败时的自动选源；进入详情页后首页视频停止、首页粒子暂停；返回后重新加载播放器，保持自动播放关闭。检查《晚渡》原生试听、暂停、进度与独立音频入口；试听与背景音乐互斥；分别检查独立打开和首页内嵌导航，离开《晚渡》所在页面后不继续播放，返回后不自动续播。
+6. 工程工具与软件项目：检查五个工具的顺序、顶部目录与返回主页，确认SoundTest/ASRtest的小号GitHub文字链接指向各自仓库；《晚渡》位于独立实验区，中文显示“晚渡”、英文显示“WANDU”，试听与工程入口正常。
+7. 理念阅读：从首页简短入口进入二级页，逐章检查顶部目录跳转、三语正文和项目链接；核对目录定位有效且地址栏不添加锚点，以及查看项目后返回理念页的阅读位置。检查桌面、平板和手机代表宽度下的标题、正文与按钮，不把静态检查视为实机验证。
 
 ### 加载与切换专项检查
 
@@ -174,7 +187,7 @@ git diff --check
 ├── soundshare.html / .css / .js   # 项目 01：音享贴
 ├── ultrasonic.html / .css / .js   # 项目 02：超声波定向扬声器
 ├── philosophy.html / .css / .js   # 理念页及两个阅读页共用的基础样式、进度脚本
-├── other-projects.html / .css     # 软件项目与晚渡 Computer Use 测试二级页
+├── other-projects.html / .css     # 软件项目、动态GitHub徽标与晚渡实验二级页
 ├── soundshare-particles.js       # 首页与两个项目页共用的 WebGL2 粒子
 ├── site-preload.js               # 当前页优先、空闲预加载其他主站页面与展示资源
 ├── page-transitions.css          # 独立页面切换的原生视图过渡
@@ -209,11 +222,11 @@ git diff --check
 
 五页共用图片反馈与后台预加载机制，按以下顺序处理：
 
-1. **先展示当前正文**：详情页DOM就绪即可操作，不用等待所有图片；图片在自身原有尺寸内显示柔和光带与细环，不改变布局，也不覆盖视频播放器。
-2. **补齐当前页资源**：等待当前页加载事件与字体就绪，再逐张推动尚未完成的懒加载图片。图片成功后淡入，缓存中已就绪的图片直接展示；失败显示重试入口。照片、项目图、界面截图、图标与二维码使用同一机制。
-3. **确认图片请求已结束**：成功或失败都视为请求已结束；仍有图片等待时暂不启动其他页面的预加载。单张图片等待超时不会被当作加载成功，也不会因此强行进入其他页面队列。
-4. **空闲时预加载其他页面**：以低优先级、串行请求处理其余主站页面的普通与内嵌HTML，以及其中引用的同源CSS、JavaScript、图片、图片候选尺寸和字体。资源进入浏览器缓存；HTML只用于提取资源地址，不执行未访问页面的脚本。
-5. **随当前页面调整任务**：页面切换或进入后台时取消旧任务；页面重新可见后，按当前页面安排加载。已成功处理的资源在当前会话内去重，失败请求不阻止余下队列。
+1. 先展示当前正文：详情页DOM就绪即可操作，不用等待所有图片；图片在自身原有尺寸内显示柔和光带与细环，不改变布局，也不覆盖视频播放器。
+2. 补齐当前页资源：等待当前页加载事件与字体就绪，再逐张推动尚未完成的懒加载图片。图片成功后淡入，缓存中已就绪的图片直接展示；失败显示重试入口。照片、项目图、界面截图、图标与二维码使用同一机制。
+3. 确认图片请求已结束：成功或失败都视为请求已结束；仍有图片等待时暂不启动其他页面的预加载。单张图片等待超时不会被当作加载成功，也不会因此强行进入其他页面队列。
+4. 空闲时预加载其他页面：以低优先级、串行请求处理其余主站页面的普通与内嵌HTML，以及其中引用的同源CSS、JavaScript、图片、图片候选尺寸和字体。资源进入浏览器缓存；HTML只用于提取资源地址，不执行未访问页面的脚本。
+5. 随当前页面调整任务：页面切换或进入后台时取消旧任务；页面重新可见后，按当前页面安排加载。已成功处理的资源在当前会话内去重，失败请求不阻止余下队列。
 
 后台预加载不包含音视频、PDF、外部域名资源或三个独立站点，也不预启动YouTube、哔哩哔哩播放器。它使用浏览器HTTP缓存，没有离线资源包或永久缓存保证；实际复用受缓存策略与浏览器回收影响。视野外和后台暂停图片占位动画，减少动态效果模式使用静态占位。
 
@@ -221,23 +234,23 @@ git diff --check
 
 移动端（iPhone、iPad含桌面网站模式、Android手机和平板）统一使用原生 `blur(16px) saturate(1.45)`，不生成折射贴图，也不加载玻璃WebGL与截图引擎。按设备身份分流，不按窗口宽度；Windows触屏电脑与Mac保留液态玻璃。下述光学渲染说明仅适用于桌面端。
 
-- **连续导航**：首页承载内嵌详情，保留背景音乐会话，并同步地址、标题、语言、焦点与阅读位置。新详情正文就绪后淡入并轻微上移，随后移除旧详情；返回首页也使用短暂显现效果。切换期间旧详情不可交互，音视频停止。
-- **直接访问**：每个二级页可独立打开；支持原生跨文档视图过渡的浏览器使用淡入淡出，不支持时正常导航。系统启用减少动态效果时关闭页面过渡。
-- **滚动与历史**：当前页目录、正文定位按钮和返回顶部平滑滚动，地址栏不添加章节片段；章节点击不增加一条浏览历史。刷新始终回到顶部，跨页返回入口可定位相应内容，浏览器前进后退可恢复阅读位置。
-- **导航与浮动卡片光学**：五页顶部导航，以及首页“当前重点”“第二身份”两张浮动卡片，共享最近边界法线与凸超椭圆曲面，按Snell定律的单界面近似生成位移图。导航采用胶囊，浮动卡片在宽屏与照片重叠时保留原有圆角矩形；窄屏进入正文流后，改用与实习经历一致的普通文本卡片，关闭折射并释放对应WebGL资源。光学表面各自按实际尺寸和圆角生成光学图，不共用拉伸后的纹理。平直上下边不产生水平拉扯，中央平台保持中性，端帽沿圆弧法线折射。红、绿、蓝分别使用同一场的0.82/1/1.18倍，加宽的曲面边带增强折射与RGB色散；不再使用贯穿长条的渐变图或固定 −180等大位移。缩放、圆角和语言引起的尺寸变化会重新计算光学图；数值测试约束采样不翻折。所有光学表面保留相同的7% 白底、1.45倍饱和度和边缘高光，不对页面背景施加高斯模糊。文字投影、浮动卡片的浅色正文，以及导航按钮自身的局部底色提高亮背景上的可读性。
-- **浏览器渲染**：Chromium使用实时SVG背景滤镜，先用颜色矩阵校正PNG的128中性值，再完成三通道折射。Safari/Firefox按需加载本地WebGL模块，复用同一张光学图和色散比例；正文按块捕获；首页三块玻璃共用一个场景控制器和总计约25.2MB的缓存，各自只采样附近区域，并将玻璃表面及其前景文字排除，避免递归镜像，采样最高按2倍屏幕密度处理，每块仍限制为2 Mi像素。`blur: 0` 直接采样全分辨率纹理，不经过半分辨率模糊缓冲。粒子在绘制完成后通过一个共享回调同步复制各个可见玻璃附近的小块区域，不开启 `preserveDrawingBuffer`，也不复制整屏。切后台、被详情覆盖或页面退出时释放采样与GPU资源。
-- **Safari连续折射合成**：滑动与静止使用同一WebGL折射路径，不再在触摸、滚动或停止时切换为原生透明背景。场景每帧按当前视口重新裁切；先合成不透明背景，避免未位移原文从截图透明区域透出。7% 白色表面与边缘高光独立绘制在折射画面上方、导航内容下方。真实设备上的异步滚动合成与帧延迟仍需实测，不能由桌面浏览器检查推定。
-- **实现来源与边界**：光学模型参考 [Zettersten 的 liquid-glass 技能](https://github.com/Zettersten/skills/tree/main/skills/liquid-glass)中的曲面与Snell思路，以及 [shuding/liquid-glass](https://github.com/shuding/liquid-glass) 的SDF/SVG管线；法线、位移图和不翻折约束为本网站独立实现。WebGL与HTML捕获适配自 [simple-liquid-glass](https://github.com/lucaperullo/simple-liquid-glass) 的固定提交，必要的本地修改及第三方许可证见 [依赖说明](vendor/liquid-glass/README.md)。这是用于界面的光学近似，不是完整双界面光线追踪。Safari的DOM捕获并非原生背景采样，跨域播放器、受保护媒体和连续CSS动画不能保证逐像素一致；不捕获iframe，也不重新加载播放器。首次捕获或捕获失败时保留清晰透明表面，减少透明度偏好启用时使用实色表面。
-- **章节反馈与初始画布**：五页的悬停高光与当前章节蓝色Section Indicator分层显示，移动菜单沿用相同章节状态。五页在外部样式加载前设置深色画布，避免刷新时短暂闪白。
-- **文本卡片与三语**：除宽屏下的两张浮动光学卡片外，文本卡片采用首页的静态圆角玻璃表面，统一边框、阴影与间距，无鼠标跟随光泽或卡片悬浮抬升。主站支持简体中文、繁體中文（香港用语）和English。
-- **粒子输入**：按实际 `pointerType === 'mouse'` 事件跟随鼠标，支持鼠标与触屏并存；触摸操作保留正常滚动。缺少WebGL2或浮点颜色缓冲扩展时不启动粒子，系统启用减少动态效果时停止动画。
-- **键盘与回退**：语言菜单支持方向键、Home/End、Tab和Esc；手机菜单管理背景交互，二维码与地区提示使用原生弹窗。脚本不可用时正文仍可阅读。
+- 连续导航：首页承载内嵌详情，保留背景音乐会话，并同步地址、标题、语言、焦点与阅读位置。新详情正文就绪后淡入并轻微上移，随后移除旧详情；返回首页也使用短暂显现效果。切换期间旧详情不可交互，音视频停止。
+- 直接访问：每个二级页可独立打开；支持原生跨文档视图过渡的浏览器使用淡入淡出，不支持时正常导航。系统启用减少动态效果时关闭页面过渡。
+- 滚动与历史：当前页目录、正文定位按钮和返回顶部平滑滚动，地址栏不添加章节片段；章节点击不增加一条浏览历史。刷新始终回到顶部，跨页返回入口可定位相应内容，浏览器前进后退可恢复阅读位置。
+- 导航与浮动卡片光学：五页顶部导航，以及首页“当前重点”“第二身份”两张浮动卡片，共享最近边界法线与凸超椭圆曲面，按Snell定律的单界面近似生成位移图。导航采用胶囊，浮动卡片在宽屏与照片重叠时保留原有圆角矩形；窄屏进入正文流后，改用与实习经历一致的普通文本卡片，关闭折射并释放对应WebGL资源。光学表面各自按实际尺寸和圆角生成光学图，不共用拉伸后的纹理。平直上下边不产生水平拉扯，中央平台保持中性，端帽沿圆弧法线折射。红、绿、蓝分别使用同一场的0.82/1/1.18倍，加宽的曲面边带增强折射与RGB色散；不再使用贯穿长条的渐变图或固定 −180等大位移。缩放、圆角和语言引起的尺寸变化会重新计算光学图；数值测试约束采样不翻折。所有光学表面保留相同的7%白底、1.45倍饱和度和边缘高光，不对页面背景施加高斯模糊。文字投影、浮动卡片的浅色正文，以及导航按钮自身的局部底色提高亮背景上的可读性。
+- 浏览器渲染：Chromium使用实时SVG背景滤镜，先用颜色矩阵校正PNG的128中性值，再完成三通道折射。Safari/Firefox按需加载本地WebGL模块，复用同一张光学图和色散比例；正文按块捕获；首页三块玻璃共用一个场景控制器和总计约25.2MB的缓存，各自只采样附近区域，并将玻璃表面及其前景文字排除，避免递归镜像，采样最高按2倍屏幕密度处理，每块仍限制为2 Mi像素。`blur: 0` 直接采样全分辨率纹理，不经过半分辨率模糊缓冲。粒子在绘制完成后通过一个共享回调同步复制各个可见玻璃附近的小块区域，不开启 `preserveDrawingBuffer`，也不复制整屏。切后台、被详情覆盖或页面退出时释放采样与GPU资源。
+- Safari连续折射合成：滑动与静止使用同一WebGL折射路径，不再在触摸、滚动或停止时切换为原生透明背景。场景每帧按当前视口重新裁切；先合成不透明背景，避免未位移原文从截图透明区域透出。7%白色表面与边缘高光独立绘制在折射画面上方、导航内容下方。真实设备上的异步滚动合成与帧延迟仍需实测，不能由桌面浏览器检查推定。
+- 实现来源与边界：光学模型参考 [Zettersten 的 liquid-glass 技能](https://github.com/Zettersten/skills/tree/main/skills/liquid-glass)中的曲面与Snell思路，以及 [shuding/liquid-glass](https://github.com/shuding/liquid-glass) 的SDF/SVG管线；法线、位移图和不翻折约束为本网站独立实现。WebGL与HTML捕获适配自 [simple-liquid-glass](https://github.com/lucaperullo/simple-liquid-glass) 的固定提交，必要的本地修改及第三方许可证见 [依赖说明](vendor/liquid-glass/README.md)。这是用于界面的光学近似，不是完整双界面光线追踪。Safari的DOM捕获并非原生背景采样，跨域播放器、受保护媒体和连续CSS动画不能保证逐像素一致；不捕获iframe，也不重新加载播放器。首次捕获或捕获失败时保留清晰透明表面，减少透明度偏好启用时使用实色表面。
+- 章节反馈与初始画布：五页的悬停高光与当前章节蓝色Section Indicator分层显示，移动菜单沿用相同章节状态。五页在外部样式加载前设置深色画布，避免刷新时短暂闪白。
+- 文本卡片与三语：除宽屏下的两张浮动光学卡片外，文本卡片采用首页的静态圆角玻璃表面，统一边框、阴影与间距，无鼠标跟随光泽或卡片悬浮抬升。主站支持简体中文、繁體中文（香港用语）和English。
+- 粒子输入：按实际 `pointerType === 'mouse'` 事件跟随鼠标，支持鼠标与触屏并存；触摸操作保留正常滚动。缺少WebGL2或浮点颜色缓冲扩展时不启动粒子，系统启用减少动态效果时停止动画。
+- 键盘与回退：语言菜单支持方向键、Home/End、Tab和Esc；手机菜单管理背景交互，二维码与地区提示使用原生弹窗。脚本不可用时正文仍可阅读。
 
 ### 视频、背景音乐与试听
 
-- **两段演出视频**：按IP识别结果选源，中国大陆使用哔哩哔哩，其他地区及检测失败时使用YouTube。使用平台原生iframe，关闭自动播放，不添加自定义缩略图或手动平台选择。进入详情停止首页视频，返回后不自动播放。
-- **背景音乐**：首次访问默认静音、按需加载，由访客主动开启；首页连续导航保留会话，独立页面或刷新后恢复播放仍受浏览器策略限制。
-- **晚渡测试试听**：其他项目页使用原生 `audio` 与 `preload="metadata"`，预先读取时长信息，播放由访客主动开始。试听与背景音乐双向互斥，独立访问和内嵌导航均适用；离开页面停止，返回不自动续播。测试声明、工程与MIDI链接始终展开。
+- 两段演出视频：按IP识别结果选源，中国大陆使用哔哩哔哩，其他地区及检测失败时使用YouTube。使用平台原生iframe，关闭自动播放，不添加自定义缩略图或手动平台选择。进入详情停止首页视频，返回后不自动播放。
+- 背景音乐：首次访问默认静音、按需加载，由访客主动开启；首页连续导航保留会话，独立页面或刷新后恢复播放仍受浏览器策略限制。
+- 晚渡测试试听：其他项目页使用原生 `audio` 与 `preload="metadata"`，预先读取时长信息，播放由访客主动开始。试听与背景音乐双向互斥，独立访问和内嵌导航均适用；离开页面停止，返回不自动续播。测试声明、工程与MIDI链接始终展开。
 
 ### 本地状态与外部请求
 
@@ -252,6 +265,7 @@ git diff --check
 | 首页地区检测 | 依次请求 `api.country.is`、`ipapi.co`；仅在页面内共享结果，不持久化地区 |
 | 独立详情页访问提示 | 没有共享检测任务时使用 `ipwho.is`；内嵌详情页复用父页任务，不重复查询或弹窗 |
 | 视频播放 | 由YouTube或哔哩哔哩原生播放器处理 |
+| 项目统计徽标 | 从`img.shields.io`加载MacPlay与WinPlay的下载量、Star图片；点击进入对应GitHub发行页或Star列表 |
 | 晚渡试听 | 同源静态文件 `assets/wandu.m4a`，不增加外部播放器或CDN请求 |
 
 界面语言不参与视频选源。地区识别与视频的可用性取决于访客网络；表中的存储说明仅涵盖本站脚本，不包含第三方播放器自身的行为。
@@ -262,7 +276,7 @@ git diff --check
 
 ### 修改边界
 
-- 首页项目区保留硬件项目、其他项目入口和理念入口的连续结构；软件项目与《晚渡》全文集中在 `other-projects.html`，理念全文集中在 `philosophy.html`。
+- 首页项目区保留硬件项目、其他项目入口和理念入口的连续结构；软件项目简短介绍与《晚渡》试听集中在`other-projects.html`，理念全文集中在 `philosophy.html`。
 - 目录直接放在二级页顶部；设计说明与理念正文保持展开。修改共用导航时同时检查五页、三语与宽度断点，避免只修正单页。
 - 两段视频继续按IP自动选源，使用播放平台原生iframe；不添加手动选源或自定义缩略图。
 - 保留《晚渡》的Computer Use测试声明，项目列表与试听区域都不将其归为个人音乐作品。
@@ -275,7 +289,7 @@ git diff --check
 | --- | --- |
 | 主站文字 | 对应HTML与 [i18n.js](i18n.js)；同步三语映射并检查换行。 |
 | 项目顺序与入口 | [index.html](index.html) 的 `#projects` 和 [portfolio-additions.css](portfolio-additions.css)；保持卡片顺序、间距与详情页编号一致。 |
-| 其他项目与晚渡 | [other-projects.html](other-projects.html)、[other-projects.css](other-projects.css)；同步顶部目录、项目锚点、完整说明、测试归属和试听链接。 |
+| 其他项目与晚渡 | [other-projects.html](other-projects.html)、[other-projects.css](other-projects.css)；按SoundTest、ASRtest、MacPlay、WinPlay、DeerWebTranslator、MacDuo、READMEWriter与晚渡的顺序维护；同步顶部目录、章节ID、简短介绍、动态徽标、测试归属和试听链接。 |
 | 后台预加载与过渡 | [site-preload.js](site-preload.js)、[page-transitions.css](page-transitions.css)、[continuous-navigation.js](continuous-navigation.js)；验证当前图片未完成时不请求其他页面、切换可取消旧任务、无媒体预下载、过渡后旧框架被移除。 |
 | 图片加载与重试 | [image-loading.js](image-loading.js)、[image-loading.css](image-loading.css)；检查延迟、成功、缓存、失败重试、二维码弹窗、动态图片来源与减少动态效果，不能改变图片尺寸或覆盖视频。 |
 | 顶部导航与语言按钮 | [background-music.css](background-music.css)、[i18n.css](i18n.css)、各页导航HTML与 [nav-scroll.js](nav-scroll.js)；检查居中、控件重叠和手机菜单。 |
@@ -291,7 +305,7 @@ git diff --check
 
 ### 更新资源版本
 
-1. 修改CSS、JavaScript或固定文件名的素材后，更新**实际引用该资源的页面**中的 `?v=`。不必给无关资源一起改版本。例如粒子脚本由 `index.html`、`soundshare.html`、`ultrasonic.html` 引用，理念页没有加载它。
+1. 修改CSS、JavaScript或固定文件名的素材后，更新实际引用该资源的页面中的 `?v=`。不必给无关资源一起改版本。例如粒子脚本由 `index.html`、`soundshare.html`、`ultrasonic.html` 引用，理念页没有加载它。
 2. `philosophy.css` 与 `philosophy.js` 同时服务理念页和其他项目页；`background-music.css` 也负责共用导航。修改这些文件时检查全部实际引用页。
 3. 五页均引用图片加载、卡片、预加载和页面过渡的共用资源。修改这些资源时同步五页中相应的 `?v=`，确保直接访问与内嵌访问得到相同实现。
 4. 更新需要通过连续导航加载的详情页HTML时，保持 `continuous-navigation.js` 的 `siteNavigationVersion`、内嵌URL的 `nav-version` 与 `site-preload.js` 的备用版本号一致；同时更新五页中相关脚本的 `?v=`，使预加载地址与实际打开地址匹配。
@@ -315,9 +329,9 @@ git check-ignore -v tmp/example.png
 
 仓库可以直接使用分支发布，无需前端构建：
 
-1. 在GitHub仓库的 **Settings → Pages → Build and deployment** 中选择 **Deploy from a branch**。
-2. 以 `main` 分支的 **/(root)** 作为发布源并保存；这是本仓库当前文件布局适用的配置。
-3. 本地验证通过后，将修改提交并推送到配置的发布分支，在仓库 **Actions** 中确认Pages部署成功。
+1. 在GitHub仓库的Settings → Pages → Build and deployment中选择Deploy from a branch。
+2. 以 `main` 分支的 /(root) 作为发布源并保存；这是本仓库当前文件布局适用的配置。
+3. 本地验证通过后，将修改提交并推送到配置的发布分支，在仓库Actions中确认Pages部署成功。
 4. 打开 [线上网站](https://roylyl.github.io/)，复查页面直达、语言切换、简历下载、视频与移动端菜单。
 
 完整配置见 [GitHub Pages 官方文档](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)。本地修改不会自动更新线上网站。

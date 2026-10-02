@@ -2,25 +2,20 @@
 :root { --line-strong: rgba(255,255,255,.18); }
 
 
-.other-project { padding: 44px 0; border-bottom: 1px solid var(--line); scroll-margin-top: 108px; }
+.other-project { padding: 28px; border-bottom: 1px solid var(--line); scroll-margin-top: 108px; }
 .other-project h2 { margin: 12px 0 20px; font-size: clamp(28px, 5vw, 44px); line-height: 1.18; letter-spacing: -.04em; overflow-wrap: anywhere; }
 .project-tag { margin: 0; color: var(--muted); font: 600 11px/1.7 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .08em; }
-.project-facts { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
-.project-facts span { padding: 5px 10px; border: 1px solid var(--line); border-radius: 16px; color: var(--muted); font-size: 12px; }
 .project-copy > p { font-size: 16px; line-height: 1.85; }
 .project-copy .button { display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 10px 20px; border: 1px solid rgba(255,255,255,.25); border-radius: 24px; background: #1679d9; color: #fff; font-size: 14px; font-weight: 650; text-align: center; }
 .project-copy .button:hover { background: #2087e8; }
 @media (max-width: 480px) {
-  .other-project { padding-block: 32px; }
+  .other-project { padding: 22px; }
   .project-copy .button { width: 100%; }
 
 }
 
-.project-notes-title { margin: 0; padding: 20px 0 12px; color: var(--text); font-size: 18px; font-weight: 650; line-height: 1.55; }
-.project-notes-body > p:first-child { margin-top: 0; }
 
 .wandu-project .production-process { margin-top: 28px; }
-.wandu-project .production-facts { gap: 18px; }
 .wandu-project .audio-help { margin-top: 12px; font-size: 14px; }
 .wandu-project .audio-help a { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
 .wandu-project .production-links .secondary { background: rgba(255,255,255,.05); }
@@ -31,3 +26,39 @@
 /* Secondary source links stay quieter than project navigation buttons. */
 .tool-source-link { display:inline-block; padding:6px 0; color:var(--muted); font-size:13px; line-height:1.5; text-decoration:underline; text-underline-offset:4px; }
 .tool-source-link:hover, .tool-source-link:focus-visible { color:var(--text); }
+
+/* Live GitHub statistics are linked images, with room for loading feedback. */
+.project-badges { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 10px; }
+.project-badges a { display: inline-flex; align-items: center; min-height: 44px; position: relative; }
+.project-badges img { display: block; height: 20px; width: auto; max-width: 100%; }
+.tool-source-link { display: inline-flex; flex-wrap: wrap; gap: 0; align-items: center; min-height: 44px; }
+html[lang="en"] .tool-source-link { column-gap: 4px; }
+.other-projects-page .p-nav > nav { gap: 12px; font-size: 13px; }
+
+/* Eight directory entries use the existing menu before they crowd the controls. */
+@media (min-width: 861px) and (max-width: 1240px) {
+  .other-projects-page .p-nav { display: flex; overflow: visible; }
+  .other-projects-page .p-nav > .secondary-menu-toggle { display: inline-flex; margin-left: auto; }
+  .other-projects-page .p-nav > .music-toggle { margin-left: 0; margin-right: 0; }
+  .other-projects-page .p-nav > .lang-switcher { margin-left: 0; }
+  .other-projects-page .p-nav > nav { display: none; }
+  .other-projects-page .p-nav.nav-open > nav {
+    display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;
+    position: absolute; top: calc(100% + 10px); left: 0; right: 0; margin: 0; padding: 10px;
+    max-height: calc(100svh - 112px); overflow: auto; transform: none; justify-self: stretch; z-index: 130;
+    border: 1px solid rgba(255,255,255,.13); border-radius: 24px;
+    background: rgba(7,10,15,.96); box-shadow: 0 24px 68px rgba(0,0,0,.42);
+    -webkit-backdrop-filter: blur(28px) saturate(165%); backdrop-filter: blur(28px) saturate(165%);
+  }
+  .other-projects-page .p-nav.nav-open > nav a {
+    display: flex; align-items: center; justify-content: center; min-height: 46px; padding: 10px 12px;
+    border: 1px solid rgba(255,255,255,.09); border-radius: 15px;
+    color: #e5ebf2; background: rgba(255,255,255,.04); text-align: center; line-height: 1.25;
+  }
+  .other-projects-page .liquid-nav-hover { display: none; }
+  .other-projects-page.secondary-menu-active { overflow: hidden; }
+  .other-projects-page.secondary-menu-active::before {
+    content: ""; position: fixed; inset: 0; z-index: 80; background: rgba(2,4,7,.68);
+    -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);
+  }
+}

@@ -1318,6 +1318,123 @@
   ]
 ].forEach(([source, simplified, traditional]) => { cn[source] = simplified; tw[source] = traditional; en[source] = source; });
 
+
+  [
+  [
+    "移动端声音模型测试",
+    "行動端聲音模型測試",
+    "Mobile sound model testing"
+  ],
+  [
+    "在iPhone/iPad测试声音事件与环境场景模型，支持录音、批量WAV测试和事件时间线。",
+    "在iPhone/iPad測試聲音事件與環境場景模型，支援錄音、批次WAV測試和事件時間軸。",
+    "Test sound event and environmental scene models on iPhone/iPad, with recording, batch WAV testing and event timelines."
+  ],
+  [
+    "本地语音识别测试",
+    "本機語音識別測試",
+    "Local speech recognition testing"
+  ],
+  [
+    "在iPhone/iPad对比多种语音识别模型，支持流式识别、文件转写和批量WAV测试。",
+    "在iPhone/iPad對比多種語音識別模型，支援串流識別、檔案轉寫和批次WAV測試。",
+    "Compare speech recognition models on iPhone/iPad, with streaming recognition, file transcription and batch WAV testing."
+  ],
+  [
+    "Mac上的CarPlay接收端",
+    "Mac上的CarPlay接收端",
+    "CarPlay receiver for Mac"
+  ],
+  [
+    "通过USB或共用Wi-Fi接收iPhone的CarPlay画面，支持音频设备选择、分辨率设置与系统媒体控制。",
+    "透過USB或共用Wi-Fi接收iPhone的CarPlay畫面，支援音訊裝置選擇、解析度設定與系統媒體控制。",
+    "Receive iPhone CarPlay over USB or shared Wi-Fi, with audio device selection, resolution settings and system media controls."
+  ],
+  [
+    "Windows上的无线CarPlay接收端",
+    "Windows上的無線CarPlay接收端",
+    "Wireless CarPlay receiver for Windows"
+  ],
+  [
+    "通过本机热点或现有局域网连接iPhone，在独立窗口显示CarPlay，支持音频播放与系统媒体控制。",
+    "透過本機熱點或現有區域網路連接iPhone，在獨立視窗顯示CarPlay，支援音訊播放與系統媒體控制。",
+    "Connect an iPhone over a local hotspot or an existing LAN, with a dedicated CarPlay window, audio playback and system media controls."
+  ],
+  [
+    "网页原位翻译扩展",
+    "網頁原位翻譯擴充功能",
+    "In-page web translation"
+  ],
+  [
+    "在当前网页阅读译文，支持原文与双语切换及可配置的模型服务，设计参考KISS Translator与TWP。",
+    "在目前網頁閱讀譯文，支援原文與雙語切換及可設定的模型服務，設計參考KISS Translator與TWP。",
+    "Read translations in the original page, with original/bilingual views and configurable model services. Design references: KISS Translator and TWP."
+  ],
+  [
+    "铰链驱动的桌面视觉实验",
+    "鉸鏈驅動的桌面視覺實驗",
+    "Hinge-driven desktop visual experiment"
+  ],
+  [
+    "基于MacBook-Duo改进，用兼容MacBook的铰链角度控制桌面效果，支持菜单栏、快捷键与独立设置。",
+    "基於MacBook-Duo改進，用相容MacBook的鉸鏈角度控制桌面效果，支援選單列、快捷鍵與獨立設定。",
+    "Built on MacBook-Duo, using a compatible MacBook’s hinge angle to control desktop effects, with menu bar controls, shortcuts and separate settings."
+  ],
+  [
+    "README写作与检查技能",
+    "README寫作與檢查技能",
+    "README writing and validation skill"
+  ],
+  [
+    "面向Codex整理项目介绍、功能与使用步骤，提供视觉规范、证据记录与离线文档校验。",
+    "面向Codex整理項目介紹、功能與使用步驟，提供視覺規範、證據記錄與離線文件校驗。",
+    "A Codex skill for project overviews, features and getting started, with visual guidelines, evidence records and offline document validation."
+  ],
+  [
+    "音频测试、CarPlay接收、网页翻译、桌面交互与README工具，另附Astra电脑操作实验。",
+    "音頻測試、CarPlay接收、網頁翻譯、桌面互動與README工具，另附Astra電腦操作實驗。",
+    "Audio testing, CarPlay receivers, web translation, desktop interaction and README tools, plus an Astra Computer Use experiment."
+  ],
+  [
+    "详情·源码 ↗",
+    "詳情·原始碼 ↗",
+    "Details · Source ↗"
+  ],
+  [
+    "工具07 · Codex技能",
+    "工具07 · Codex技能",
+    "TOOL 07 · CODEX SKILL"
+  ],
+  [
+    "《晚渡》完全由Codex GPT-6 Astra模型操作MacBook上的FL Studio完成，是Astra Computer Use测试，并非个人作品。可试听音频、查看工程与MIDI。",
+    "《晚渡》完全由Codex GPT-6 Astra模型操作MacBook上的FL Studio完成，是Astra Computer Use測試，並非個人作品。可試聽音訊、查看工程與MIDI。",
+    "Wandu was made entirely by Codex GPT-6 Astra operating FL Studio on a MacBook. It is an Astra Computer Use test, not my personal work. Audio, project files and MIDI are available."
+  ],
+  [
+    "TOOL 03 · macOS",
+    "工具03 · macOS",
+    "TOOL 03 · macOS"
+  ],
+  [
+    "TOOL 04 · WINDOWS",
+    "工具04 · Windows",
+    "TOOL 04 · WINDOWS"
+  ],
+  [
+    "TOOL 05 · WEB EXTENSION",
+    "工具05 · 瀏覽器擴充功能",
+    "TOOL 05 · WEB EXTENSION"
+  ],
+  [
+    "TOOL 06 · macOS",
+    "工具06 · macOS",
+    "TOOL 06 · macOS"
+  ]
+].forEach(([source, traditional, english]) => { cn[source] = source; tw[source] = traditional; en[source] = english; });
+  [["TOOL 03 · macOS", "工具03 · macOS"], ["TOOL 04 · WINDOWS", "工具04 · Windows"], ["TOOL 05 · WEB EXTENSION", "工具05 · 浏览器扩展"], ["TOOL 06 · macOS", "工具06 · macOS"]].forEach(([source, simplified]) => { cn[source] = simplified; });
+
+  [["MacPlay发行附件累计下载量", "MacPlay發行附件累計下載量", "MacPlay total release asset downloads"], ["MacPlay的GitHub Star数", "MacPlay的GitHub Star數", "MacPlay GitHub stars"], ["WinPlay发行附件累计下载量", "WinPlay發行附件累計下載量", "WinPlay total release asset downloads"], ["WinPlay的GitHub Star数", "WinPlay的GitHub Star數", "WinPlay GitHub stars"]].forEach(([source, traditional, english]) => { cn[source] = source; tw[source] = traditional; en[source] = english; });
+
   const pageTitles = {
     'other-projects.html': { 'zh-CN': '工程工具与软件项目 · 罗宇伦Roy Luo', 'zh-TW': '工程工具與軟件項目 · 羅宇倫Roy Luo', en: 'Engineering Tools & Software · Roy Luo' },
     'index.html': { 'zh-CN': '罗宇伦Roy Luo', 'zh-TW': '羅宇倫Roy Luo', en: 'Roy Luo · Engineering Portfolio' },

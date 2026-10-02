@@ -77,7 +77,7 @@
       }
     });
     window.addEventListener('resize', () => {
-      if (window.innerWidth > 860) setDetailMenu(false);
+      if (getComputedStyle(detailToggle).display === 'none') setDetailMenu(false);
     });
     window.addEventListener('site-language-change', () => {
       detailToggle.setAttribute('aria-label', menuLabel(detailHeader.classList.contains('nav-open')));
