@@ -1,5 +1,5 @@
 (() => {
-  window.siteNavigationVersion = '20261003-2';
+  window.siteNavigationVersion = '20261003-3';
   const detailPages = new Set(['/ultrasonic.html', '/soundshare.html', '/philosophy.html', '/other-projects.html']);
   const isHomeUrl = (url) => ['/', '/index.html'].includes(url.pathname);
   const isDetailUrl = (url) => detailPages.has(url.pathname);
@@ -193,7 +193,7 @@
     const embedded = new URL(url);
     embedded.hash = '';
     embedded.searchParams.set('embedded', '1');
-    embedded.searchParams.set('nav-version', '20261003-2');
+    embedded.searchParams.set('nav-version', '20261003-3');
     frame.src = hrefOf(embedded);
     shell.append(frame);
     frame.focus({ preventScroll: true });

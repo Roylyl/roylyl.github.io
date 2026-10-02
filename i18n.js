@@ -1435,6 +1435,8 @@
 
   [["MacPlay发行附件累计下载量", "MacPlay發行附件累計下載量", "MacPlay total release asset downloads"], ["MacPlay的GitHub Star数", "MacPlay的GitHub Star數", "MacPlay GitHub stars"], ["WinPlay发行附件累计下载量", "WinPlay發行附件累計下載量", "WinPlay total release asset downloads"], ["WinPlay的GitHub Star数", "WinPlay的GitHub Star數", "WinPlay GitHub stars"]].forEach(([source, traditional, english]) => { cn[source] = source; tw[source] = traditional; en[source] = english; });
 
+  [["MacDuo发行附件累计下载量", "MacDuo發行附件累計下載量", "MacDuo total release asset downloads"], ["MacDuo的GitHub Star数", "MacDuo的GitHub Star數", "MacDuo GitHub stars"]].forEach(([source, traditional, english]) => { cn[source] = source; tw[source] = traditional; en[source] = english; });
+
   const pageTitles = {
     'other-projects.html': { 'zh-CN': '工程工具与软件项目 · 罗宇伦Roy Luo', 'zh-TW': '工程工具與軟件項目 · 羅宇倫Roy Luo', en: 'Engineering Tools & Software · Roy Luo' },
     'index.html': { 'zh-CN': '罗宇伦Roy Luo', 'zh-TW': '羅宇倫Roy Luo', en: 'Roy Luo · Engineering Portfolio' },
