@@ -1401,9 +1401,9 @@
     "Details · Source ↗"
   ],
   [
-    "工具07 · Codex技能",
-    "工具07 · Codex技能",
-    "TOOL 07 · CODEX SKILL"
+    "工具06 · Codex技能",
+    "工具06 · Codex技能",
+    "TOOL 06 · CODEX SKILL"
   ],
   [
     "《晚渡》完全由Codex GPT-6 Astra模型操作MacBook上的FL Studio完成，是Astra Computer Use测试，并非个人作品。可试听音频、查看工程与MIDI。",
@@ -1411,27 +1411,27 @@
     "Wandu was made entirely by Codex GPT-6 Astra operating FL Studio on a MacBook. It is an Astra Computer Use test, not my personal work. Audio, project files and MIDI are available."
   ],
   [
-    "TOOL 03 · macOS",
-    "工具03 · macOS",
-    "TOOL 03 · macOS"
+    "TOOL 04 · macOS",
+    "工具04 · macOS",
+    "TOOL 04 · macOS"
   ],
   [
-    "TOOL 04 · WINDOWS",
-    "工具04 · Windows",
-    "TOOL 04 · WINDOWS"
+    "TOOL 03 · WINDOWS",
+    "工具03 · Windows",
+    "TOOL 03 · WINDOWS"
   ],
   [
-    "TOOL 05 · WEB EXTENSION",
-    "工具05 · 瀏覽器擴充功能",
-    "TOOL 05 · WEB EXTENSION"
+    "TOOL 07 · WEB EXTENSION",
+    "工具07 · 瀏覽器擴充功能",
+    "TOOL 07 · WEB EXTENSION"
   ],
   [
-    "TOOL 06 · macOS",
-    "工具06 · macOS",
-    "TOOL 06 · macOS"
+    "TOOL 05 · macOS",
+    "工具05 · macOS",
+    "TOOL 05 · macOS"
   ]
 ].forEach(([source, traditional, english]) => { cn[source] = source; tw[source] = traditional; en[source] = english; });
-  [["TOOL 03 · macOS", "工具03 · macOS"], ["TOOL 04 · WINDOWS", "工具04 · Windows"], ["TOOL 05 · WEB EXTENSION", "工具05 · 浏览器扩展"], ["TOOL 06 · macOS", "工具06 · macOS"]].forEach(([source, simplified]) => { cn[source] = simplified; });
+  [["TOOL 04 · macOS", "工具04 · macOS"], ["TOOL 03 · WINDOWS", "工具03 · Windows"], ["TOOL 07 · WEB EXTENSION", "工具07 · 浏览器扩展"], ["TOOL 05 · macOS", "工具05 · macOS"]].forEach(([source, simplified]) => { cn[source] = simplified; });
 
   [["MacPlay发行附件累计下载量", "MacPlay發行附件累計下載量", "MacPlay total release asset downloads"], ["MacPlay的GitHub Star数", "MacPlay的GitHub Star數", "MacPlay GitHub stars"], ["WinPlay发行附件累计下载量", "WinPlay發行附件累計下載量", "WinPlay total release asset downloads"], ["WinPlay的GitHub Star数", "WinPlay的GitHub Star數", "WinPlay GitHub stars"]].forEach(([source, traditional, english]) => { cn[source] = source; tw[source] = traditional; en[source] = english; });
 

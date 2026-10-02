@@ -51,24 +51,24 @@ py -3 scripts/preview.py 8000
 | 01 · 音享贴 · LENGHE SoundShare | [音享贴详情](https://roylyl.github.io/soundshare.html) · [源码](https://github.com/Roylyl/roylyl.github.io/blob/main/soundshare.html) | 个人独立完成PCB、嵌入式音频链路与多端控制的软硬件原型 |
 | 02 · 超声波定向扬声器 | [超声波详情](https://roylyl.github.io/ultrasonic.html) · [源码](https://github.com/Roylyl/roylyl.github.io/blob/main/ultrasonic.html) | ESP32驱动的定向音频第一代Demo |
 | 其他项目 | [其他项目详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/roylyl.github.io/blob/main/other-projects.html) | 音频测试、CarPlay接收、网页翻译、桌面交互与README工具，另附晚渡实验 |
-| SoundTest | [SoundTest详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/SoundTest) | iPhone/iPad声音模型测试，支持录音与批量WAV测试 |
-| ASRtest | [ASRtest详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/ASRtest) | 多模型本地语音识别，支持流式识别与文件转写 |
-| MacPlay | [MacPlay详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/MacPlay) | Mac上的CarPlay接收端，支持USB与共用Wi-Fi |
-| WinPlay | [WinPlay详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/WinPlay) | Windows无线CarPlay接收端，支持本机热点与局域网 |
-| DeerWebTranslator | [DeerWebTranslator详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/DeerWebTranslator) | 网页原位翻译、原文与双语切换 |
-| MacDuo | [MacDuo详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/MacDuo) | 基于MacBook-Duo的铰链驱动桌面视觉实验 |
-| READMEWriter | [READMEWriter详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/READMEWriter) | 面向Codex的README写作、视觉规范与离线校验技能 |
+| 工具01 · SoundTest | [SoundTest详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/SoundTest) | iPhone/iPad声音模型测试，支持录音与批量WAV测试 |
+| 工具02 · ASRtest | [ASRtest详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/ASRtest) | 多模型本地语音识别，支持流式识别与文件转写 |
+| 工具03 · WinPlay | [WinPlay详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/WinPlay) | Windows无线CarPlay接收端，支持本机热点与局域网 |
+| 工具04 · MacPlay | [MacPlay详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/MacPlay) | Mac上的CarPlay接收端，支持USB与共用Wi-Fi |
+| 工具05 · MacDuo | [MacDuo详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/MacDuo) | 基于MacBook-Duo的铰链驱动桌面视觉实验 |
+| 工具06 · READMEWriter | [READMEWriter详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/READMEWriter) | 面向Codex的README写作、视觉规范与离线校验技能 |
+| 工具07 · DeerWebTranslator | [DeerWebTranslator详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/DeerWebTranslator) | 网页原位翻译、原文与双语切换 |
 | 晚渡 | [晚渡详情](https://roylyl.github.io/other-projects.html) · [源码](https://github.com/Roylyl/Astra-Music) | Codex GPT-6 Astra操作MacBook上FL Studio的Computer Use测试，非个人作品 |
 | 产品与创业理念 | [理念详情](https://roylyl.github.io/philosophy.html) · [源码](https://github.com/Roylyl/roylyl.github.io/blob/main/philosophy.html) | 产品判断、交互与学习、技术融合、使用验证、经营与研究、长期方向 |
 
-“详情”链接打开对应网站页面；SoundTest、ASRtest、MacPlay、WinPlay、DeerWebTranslator、MacDuo、READMEWriter与晚渡的“源码”链接进入各自项目仓库，其余“源码”链接打开本站对应页面的源文件。音享贴与超声波的链接为展示页源码，不代表硬件、固件或PCB工程已公开。
+“详情”链接打开对应网站页面；SoundTest、ASRtest、WinPlay、MacPlay、MacDuo、READMEWriter、DeerWebTranslator与晚渡的“源码”链接进入各自项目仓库，其余“源码”链接打开本站对应页面的源文件。音享贴与超声波的链接为展示页源码，不代表硬件、固件或PCB工程已公开。
 
-### MacPlay与WinPlay统计
+### WinPlay与MacPlay统计
 
 | 项目 | 发行附件累计下载量 | Star数 |
 | --- | --- | --- |
-| [MacPlay](https://github.com/Roylyl/MacPlay) | [![MacPlay发行附件累计下载量](https://img.shields.io/github/downloads/Roylyl/MacPlay/total?style=flat-square&label=downloads&color=2563eb&cacheSeconds=300)](https://github.com/Roylyl/MacPlay/releases) | [![MacPlay的GitHub Star数](https://img.shields.io/github/stars/Roylyl/MacPlay?style=flat-square&label=stars&color=2563eb&cacheSeconds=300)](https://github.com/Roylyl/MacPlay/stargazers) |
 | [WinPlay](https://github.com/Roylyl/WinPlay) | [![WinPlay发行附件累计下载量](https://img.shields.io/github/downloads/Roylyl/WinPlay/total?style=flat-square&label=downloads&color=2563eb&cacheSeconds=300)](https://github.com/Roylyl/WinPlay/releases) | [![WinPlay的GitHub Star数](https://img.shields.io/github/stars/Roylyl/WinPlay?style=flat-square&label=stars&color=2563eb&cacheSeconds=300)](https://github.com/Roylyl/WinPlay/stargazers) |
+| [MacPlay](https://github.com/Roylyl/MacPlay) | [![MacPlay发行附件累计下载量](https://img.shields.io/github/downloads/Roylyl/MacPlay/total?style=flat-square&label=downloads&color=2563eb&cacheSeconds=300)](https://github.com/Roylyl/MacPlay/releases) | [![MacPlay的GitHub Star数](https://img.shields.io/github/stars/Roylyl/MacPlay?style=flat-square&label=stars&color=2563eb&cacheSeconds=300)](https://github.com/Roylyl/MacPlay/stargazers) |
 
 其他项目页与本README使用相同的动态徽标。下载量统计GitHub发行附件的累计下载次数，Star数来自对应仓库；Shields按服务缓存自动刷新，无需在网页或文档中手动维护数值。点击下载量进入发行页，点击Star数进入Star列表。
 
@@ -101,7 +101,7 @@ py -3 scripts/preview.py 8000
 | --- | --- | --- |
 | [音享贴](soundshare.html) | 项目介绍（`#intro`）→ 产品价值与完整使用流程（`#value`）→ PCB、板级验证、双路音频、控制应用及系统架构（`#prototype`）→ iOS、Android、小程序、Apple Watch、iPad界面（`#ui`）→ 影音共享、K歌与户外组网场景（`#scenes`）→ 后续验证方向与收尾入口。 | 顶部目录直达介绍、产品价值、原型状态、界面、场景；另有个人主页与超声波页面入口。 |
 | [超声波定向扬声器](ultrasonic.html) | 项目介绍（`#intro`）→ 目标、角色与阶段（`#overview`）→ 系统、嵌入式、硬件及推进过程（`#engineering`）→ 目标位置、邻近区域与移动路径等空间验证问题（`#spatial-questions`）→ 展板和团队样机照片（`#gallery`）。 | 顶部目录直达介绍、概览、工程、画面；空间验证内容位于工程与画面之间。另有个人主页与音享贴页面入口。 |
-| [工程工具与软件项目](other-projects.html) | 导言 → SoundTest（`#soundtest`）→ ASRtest（`#asrtest`）→ MacPlay（`#macplay`）→ WinPlay（`#winplay`）→ DeerWebTranslator（`#deer-web-translator`）→ MacDuo（`#macduo`）→ READMEWriter（`#readme-writer`）→ Experiments（`#experiments`）中的晚渡（`#wandu`）→ 返回主页。 | 七个软件项目均使用简短介绍与“详情·源码”入口；MacPlay与WinPlay附动态下载量、Star徽标。顶部目录按正文顺序排列，晚渡位于实验区，保留非个人作品声明、原生试听及工程与MIDI入口。 |
+| [工程工具与软件项目](other-projects.html) | 导言 → SoundTest（`#soundtest`）→ ASRtest（`#asrtest`）→ MacPlay（`#macplay`）→ WinPlay（`#winplay`）→ DeerWebTranslator（`#deer-web-translator`）→ MacDuo（`#macduo`）→ READMEWriter（`#readme-writer`）→ Experiments（`#experiments`）中的晚渡（`#wandu`）→ 返回主页。 | 七个软件项目均使用简短介绍与“详情·源码”入口；WinPlay与MacPlay附动态下载量、Star徽标。顶部目录按正文顺序排列，晚渡位于实验区，保留非个人作品声明、原生试听及工程与MIDI入口。 |
 | [产品与创业理念](philosophy.html) | 页面导言 → 产品判断（`#product`）→ 交互与学习（`#interaction`）→ 技术融合（`#fusion`）→ 使用验证（`#validation`）→ 经营与研究（`#startup`）→ 长期方向（`#future`）→ 返回主页。 | 六个章节直接放在顶部目录，正文始终展开；技术融合章节链接音享贴，使用验证章节链接超声波。返回入口定位到首页 `#philosophy`。 |
 
 四页末尾均保留姓名、年份、主题信息与背景音乐版权说明。晚渡的标题和目录名称在简、繁中文下显示“晚渡”，英文下显示“WANDU”；其测试性质与非个人作品声明在正文中明确保留。
@@ -157,7 +157,7 @@ git diff --check
 3. 粒子与布局：在代表视口下检查横向溢出；在可用输入设备上检查交互：鼠标可以接管粒子，手指滚动不受干扰；减少动态效果、切后台和返回页面正常。
 4. 菜单与联系方式：检查手机导航、语言菜单的键盘操作，以及二维码放大、Esc关闭、账号复制与反馈。
 5. 视频与音乐：检查两段原生视频在中国大陆、其他地区和检测失败时的自动选源；进入详情页后首页视频停止、首页粒子暂停；返回后重新加载播放器，保持自动播放关闭。检查《晚渡》原生试听、暂停、进度与独立音频入口；试听与背景音乐互斥；分别检查独立打开和首页内嵌导航，离开《晚渡》所在页面后不继续播放，返回后不自动续播。
-6. 工程工具与软件项目：检查五个工具的顺序、顶部目录与返回主页，确认SoundTest/ASRtest的小号GitHub文字链接指向各自仓库；《晚渡》位于独立实验区，中文显示“晚渡”、英文显示“WANDU”，试听与工程入口正常。
+6. 工程工具与软件项目：按正文顺序检查七个工具的编号、顶部目录与返回主页，确认“详情·源码”链接指向各自仓库，WinPlay/MacPlay的动态徽标分别进入对应发行页与Star列表；《晚渡》位于独立实验区，中文显示“晚渡”、英文显示“WANDU”，试听与工程入口正常。
 7. 理念阅读：从首页简短入口进入二级页，逐章检查顶部目录跳转、三语正文和项目链接；核对目录定位有效且地址栏不添加锚点，以及查看项目后返回理念页的阅读位置。检查桌面、平板和手机代表宽度下的标题、正文与按钮，不把静态检查视为实机验证。
 
 ### 加载与切换专项检查
@@ -289,7 +289,7 @@ git diff --check
 | --- | --- |
 | 主站文字 | 对应HTML与 [i18n.js](i18n.js)；同步三语映射并检查换行。 |
 | 项目顺序与入口 | [index.html](index.html) 的 `#projects` 和 [portfolio-additions.css](portfolio-additions.css)；保持卡片顺序、间距与详情页编号一致。 |
-| 其他项目与晚渡 | [other-projects.html](other-projects.html)、[other-projects.css](other-projects.css)；按SoundTest、ASRtest、MacPlay、WinPlay、DeerWebTranslator、MacDuo、READMEWriter与晚渡的顺序维护；同步顶部目录、章节ID、简短介绍、动态徽标、测试归属和试听链接。 |
+| 其他项目与晚渡 | [other-projects.html](other-projects.html)、[other-projects.css](other-projects.css)；按SoundTest、ASRtest、WinPlay、MacPlay、MacDuo、READMEWriter、DeerWebTranslator与晚渡的顺序维护；同步顶部目录、章节ID、简短介绍、动态徽标、测试归属和试听链接。 |
 | 后台预加载与过渡 | [site-preload.js](site-preload.js)、[page-transitions.css](page-transitions.css)、[continuous-navigation.js](continuous-navigation.js)；验证当前图片未完成时不请求其他页面、切换可取消旧任务、无媒体预下载、过渡后旧框架被移除。 |
 | 图片加载与重试 | [image-loading.js](image-loading.js)、[image-loading.css](image-loading.css)；检查延迟、成功、缓存、失败重试、二维码弹窗、动态图片来源与减少动态效果，不能改变图片尺寸或覆盖视频。 |
 | 顶部导航与语言按钮 | [background-music.css](background-music.css)、[i18n.css](i18n.css)、各页导航HTML与 [nav-scroll.js](nav-scroll.js)；检查居中、控件重叠和手机菜单。 |
