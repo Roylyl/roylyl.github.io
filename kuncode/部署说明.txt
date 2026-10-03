@@ -1,31 +1,17 @@
-KunCode 下载官网部署包
+KunCode官网部署说明
 
-目录名：
-kuncode
+官网地址：https://roylyl.github.io/kuncode/
+产品仓库：https://github.com/Roylyl/KunCode
 
-部署到 roylyl.github.io 仓库后，推荐结构：
+本目录已位于roylyl.github.io仓库根目录。使用GitHub Desktop提交官网修改，再Push origin，沿用现有GitHub Pages配置即可。
 
-roylyl.github.io/
-└── kuncode/
-    ├── index.html
-    ├── style.css
-    └── script.js
+发布新版本时：
+1. 先确认KunCode的GitHub Release标签及三个实际附件名称。
+2. 在index.html中分别更新kuncode-release与kuncode-version。例如发行标签V2.0.0，对应产品版本2.0.0。
+3. 更新windows、mac-arm64、mac-x64三个asset元信息。文件名的{version}使用产品版本，不使用带V的标签。
+4. 同步HTML默认下载链接、文件名、版本、大小、页面标题、分享说明和新增功能。
+5. 更新style.css或script.js时同步页面中的?v=缓存版本。
 
-GitHub Desktop 操作：
-1. 将整个 kuncode 文件夹复制到本地 roylyl.github.io 仓库根目录。
-2. GitHub Desktop 中 Commit to main。
-3. Push origin。
-4. 保持 GitHub Pages 设置为 main / (root)。
+页面使用本地水豚素材，不依赖框架。困困AI区域展示对话与思考练习，围绕引导思考、解决问题、拒绝AI依赖介绍产品理念。浏览器只识别系统，Mac用户自行在“关于本机”确认M系列或Intel处理器。
 
-访问地址：
-https://roylyl.github.io/kuncode/
-
-发布新版本：
-1. 在 index.html 顶部修改 kuncode-release 的 content。
-2. 如果安装包命名规则不变，无需修改其他版本文字或链接。
-3. 如果文件名变化，修改相邻的 kuncode-windows-asset 或 kuncode-macos-asset。
-
-说明：
-- 网站会根据浏览器系统自动突出推荐 Windows 或 macOS 下载。
-- 页面使用本目录中的 apple-touch-icon.png 作为水豚图标，不依赖远程图片。
-- 页面不依赖框架，可以直接部署到 GitHub Pages。
+从仓库根目录执行python3 -m http.server 8000，访问http://localhost:8000/kuncode/预览。详细维护说明见本目录README.md。

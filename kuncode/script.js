@@ -1,69 +1,92 @@
 (() => {
-  if ("scrollRestoration" in history) {
-    history.scrollRestoration = "manual";
-  }
-  window.addEventListener("pageshow", () => {
-    window.scrollTo(0, 0);
-  });
-
   const RELEASE_BASE = "https://github.com/Roylyl/KunCode/releases";
   const meta = name => document.querySelector(`meta[name="${name}"]`)?.content || "";
-  const version = meta("kuncode-release");
-  const assetName = platform => meta(`kuncode-${platform}-asset`).replaceAll("{version}", version);
-  const releaseUrl = `${RELEASE_BASE}/tag/${version}`;
-  const downloadUrl = platform => `${RELEASE_BASE}/download/${version}/${assetName(platform)}`;
-  const WINDOWS_URL = downloadUrl("windows");
-  const MAC_URL = downloadUrl("macos");
+  // The release tag includes V; the installer filenames use the product version.
+  const tag = meta("kuncode-release");
+  const version = meta("kuncode-version");
+  const releaseUrl = tag ? `${RELEASE_BASE}/tag/${encodeURIComponent(tag)}` : RELEASE_BASE;
+  const downloadLinks = new Map();
+
+  document.querySelectorAll("[data-release-version]").forEach(element => {
+    if (version) element.textContent = version;
+  });
+  document.querySelectorAll("[data-release-link]").forEach(link => {
+    link.href = releaseUrl;
+  });
+  document.querySelectorAll("[data-download]").forEach(link => {
+    const platform = link.dataset.download;
+    const template = meta(`kuncode-${platform}-asset`);
+    if (!tag || !version || !template) return;
+    const filename = template.replaceAll("{version}", version);
+    link.href = `${RELEASE_BASE}/download/${encodeURIComponent(tag)}/${encodeURIComponent(filename)}`;
+    downloadLinks.set(platform, link.href);
+    const label = document.querySelector(`[data-filename="${platform}"]`);
+    if (label) label.textContent = filename;
+  });
 
   const primary = document.getElementById("primaryDownload");
-  const primaryHint = document.getElementById("primaryHint");
-  const primaryText = document.getElementById("primaryText");
-  const windowsCard = document.querySelector('[data-platform="windows"]');
-  const macCard = document.querySelector('[data-platform="mac"]');
-  const windowsBadge = document.getElementById("windowsBadge");
-  const macBadge = document.getElementById("macBadge");
-
-  document.querySelectorAll("[data-release-version]").forEach(el => { el.textContent = version; });
-  document.querySelector('[data-download="windows"]').href = WINDOWS_URL;
-  document.querySelector('[data-download="mac"]').href = MAC_URL;
-  document.querySelector('[data-filename="windows"]').textContent = assetName("windows");
-  document.querySelector('[data-filename="mac"]').textContent = assetName("macos");
-  const releaseLink = document.querySelector("[data-release-link]");
-  releaseLink.href = releaseUrl;
-  releaseLink.textContent = `查看 ${version} Release ↗`;
-
-  const ua = navigator.userAgent || "";
+  const hint = document.getElementById("primaryHint");
+  const text = document.getElementById("primaryText");
   const platform = navigator.userAgentData?.platform || navigator.platform || "";
-  const isMac = /Mac/i.test(platform) || /Macintosh|Mac OS X/i.test(ua);
-  const isWindows = /Win/i.test(platform) || /Windows/i.test(ua);
+  const ua = navigator.userAgent || "";
+  const isMobile = Boolean(navigator.userAgentData?.mobile) || /iPhone|iPad|iPod|Android/i.test(ua) || (/Mac/i.test(platform) && navigator.maxTouchPoints > 1);
+  const isMac = !isMobile && (/Mac/i.test(platform) || /Macintosh|Mac OS X/i.test(ua));
+  const isWindows = !isMobile && (/Win/i.test(platform) || /Windows/i.test(ua));
 
-  if (isMac) {
-    primary.href = "#download";
-    primaryHint.textContent = "检测到 macOS";
-    primaryText.textContent = "选择 macOS 安装包";
-    macCard.classList.add("detected");
-    macBadge.textContent = "请确认 M 系列芯片";
-  } else if (isWindows) {
-    primary.href = WINDOWS_URL;
-    primaryHint.textContent = "检测到 Windows";
-    primaryText.textContent = "下载 Windows x64";
-    windowsCard.classList.add("detected");
-    windowsBadge.textContent = "推荐";
-  } else {
-    primary.href = "#download";
-    primaryHint.textContent = "选择你的平台";
-    primaryText.textContent = "下载 KunCode";
+  if (primary && hint && text) {
+    if (isMac) {
+      // Browsers do not reliably distinguish Apple Silicon from Intel Macs.
+      primary.href = "#download";
+      hint.textContent = "检测到macOS，请确认处理器";
+      text.textContent = "选择Mac安装包";
+      document.querySelectorAll('[data-platform^="mac-"]').forEach(card => {
+        card.classList.add("detected");
+      });
+    } else if (isWindows && downloadLinks.has("windows")) {
+      primary.href = downloadLinks.get("windows");
+      hint.textContent = "适用于Windows10及以上 · x64";
+      text.textContent = `下载KunCode${version}`;
+      const card = document.querySelector('[data-platform="windows"]');
+      card?.classList.add("detected");
+      const badge = card?.querySelector("[data-platform-badge]");
+      if (badge) badge.textContent = "Windows x64";
+    } else {
+      hint.textContent = "Windows与macOS安装版";
+      text.textContent = `获取KunCode${version}`;
+    }
   }
 
-  document.querySelectorAll('a[href^="#"]').forEach(link => {
-    link.addEventListener("click", event => {
-      const target = link.getAttribute("href");
-      if (!target || target === "#") return;
-      const el = document.querySelector(target);
-      if (!el) return;
-      event.preventDefault();
-      const behavior = matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
-      el.scrollIntoView({ behavior, block: "start" });
+  // Static conversation examples displayed by the website.
+  const scenes = {
+    npm: {
+      question: "npm安装失败，应该先看哪里？",
+      answer: "先看第一条真正的错误\n网络、权限和依赖冲突分别排\n只看最后一行安装失败还不够",
+      reflection: "第一条错误支持哪一种判断？你准备怎样验证？"
+    },
+    paper: {
+      question: "论文题目太大，选题范围收不住。",
+      answer: "把对象缩到一个场景\n先问手里的材料撑不撑得住",
+      reflection: "现有材料能回答哪个具体问题？你会怎样缩小研究范围？"
+    },
+    team: {
+      question: "小组任务全压给我，最后都要我收尾。",
+      answer: "这分工失衡了\n把原分工和剩余工作摆出来\n谁接哪块现在说清",
+      reflection: "哪些事实能说明分工失衡？下一次沟通要明确什么？"
+    }
+  };
+  const question = document.getElementById("demoQuestion");
+  const answer = document.getElementById("demoAnswer");
+  const reflection = document.getElementById("demoReflection");
+  document.querySelectorAll("[data-scene]").forEach(button => {
+    button.addEventListener("click", () => {
+      const scene = scenes[button.dataset.scene];
+      if (!scene || !question || !answer) return;
+      document.querySelectorAll("[data-scene]").forEach(control => {
+        control.setAttribute("aria-pressed", String(control === button));
+      });
+      question.textContent = scene.question;
+      answer.textContent = scene.answer;
+      if (reflection) reflection.textContent = scene.reflection;
     });
   });
 })();
