@@ -297,7 +297,7 @@ git diff --check
 | 导航与浮动卡片玻璃 | [nav-liquid-glass.css](nav-liquid-glass.css)、[nav-liquid-glass.js](nav-liquid-glass.js)；检查五页的整栏材质、首页两张浮动卡片的独立圆角折射、共享快照及前景排除、背景文字对齐、跨端胶囊圆角、Safari WebGL分块捕获与透明回退、悬停高光、当前章节标记、移动菜单及内嵌详情；覆盖滚动、缩放和横竖屏尺寸变化。 |
 | 试听与背景音乐 | [background-music.js](background-music.js)；先运行音频回归测试，再验证独立打开与内嵌详情页的双向互斥及离页停止。 |
 | 产品与创业理念 | 首页 `#philosophy` 的短入口，以及 [philosophy.html](philosophy.html) 的完整正文；同步目录、章节ID和三语映射，区分当前判断、已有成果与后续问题。 |
-| 简历PDF | 覆盖 `assets/罗宇伦_简历.pdf`、`assets/羅宇倫_履歷.pdf`、`assets/Roy Luo_Resume.pdf` 三份三语文件；`i18n.js` 的 `resumeAssets` 根据界面语言选择对应页序，HTML初始入口使用简中路径。无需修改日期参数。 |
+| 简历PDF | 覆盖 `assets/罗宇伦_简历.pdf`、`assets/羅宇倫_履歷.pdf`、`assets/Roy Luo_Resume.pdf` 三份三语文件；`i18n.js` 的 `resumeAssets` 根据界面语言选择对应页序，HTML初始入口使用简中路径。替换PDF后同步更新三语下载地址的`?v=`与五页引用的`i18n.js`版本，避免继续使用旧缓存。 |
 | 粒子交互 | [soundshare-particles.js](soundshare-particles.js)；先运行输入回归测试，再检查首页与两个项目页的真实渲染、尺寸和交互。 |
 | 视频选源 | [regional-video.js](regional-video.js) 与首页原生iframe；维持IP自动选源、原生嵌入和关闭自动播放。 |
 | 联系方式 | [index.html](index.html)、[script.js](script.js)、[social-controls.css](social-controls.css) 与原二维码图片；检查复制、放大和平台入口。 |
@@ -349,7 +349,7 @@ git check-ignore -v tmp/example.png
 | 繁體中文（香港用语） | [羅宇倫_履歷.pdf](assets/羅宇倫_履歷.pdf) |
 | English | [Roy Luo_Resume.pdf](assets/Roy%20Luo_Resume.pdf) |
 
-这三个文件分别以简体、繁体、英文开篇。后续更新以表中的文件名为准。文件路径不会主动清除浏览器或CDN缓存，发布后如仍看到旧内容，可重新加载并检查下载内容。
+这三个文件分别以简体、繁体、英文开篇。后续更新保留表中的文件名，并同步首页两个下载入口与`resumeAssets`中的版本参数；当前下载版本为`20261007-1`。发布后访客通过新的下载地址获取更新文件。
 
 ## 联系
 

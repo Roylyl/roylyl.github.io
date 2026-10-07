@@ -1452,9 +1452,9 @@
   };
 
   const resumeAssets = {
-    'zh-CN': 'assets/罗宇伦_简历.pdf',
-    'zh-TW': 'assets/羅宇倫_履歷.pdf',
-    en: 'assets/Roy Luo_Resume.pdf'
+    'zh-CN': 'assets/罗宇伦_简历.pdf?v=20261007-1',
+    'zh-TW': 'assets/羅宇倫_履歷.pdf?v=20261007-1',
+    en: 'assets/Roy Luo_Resume.pdf?v=20261007-1'
   };
 
   const originalText = new WeakMap();
