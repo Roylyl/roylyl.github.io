@@ -72,7 +72,21 @@ if(require.main===module){
   h=harness();h.loaded('a',120);h.audio.readyState=0;h.audio.error={code:3};h.ctx.playAlbum(h.ctx.albums[0]);await settle();h.metadata();assert.equal(h.audio.currentTime,0,'无metadata的失败首曲点击播放专辑仍应从头开始');
   console.log('通过：错误重试换源保留进度，切歌不会应用上一首进度。');
 
+  // Webpage resume must preserve the base queue and insertion anchor.
+  h=harness();h.loaded('d',40);h.ctx.queue=h.ctx.queue.slice(0,3);h.ctx.insertionAnchor='a';
+  h.ctx.pausePlayback();await h.ctx.togglePlayback();
+  assert.deepEqual(plain(h.ctx.queue.map(t=>t.id)),['a','b','c']);
+  assert.equal(h.ctx.insertionAnchor,'a');
+  h.ctx.advance(1,true);await settle();assert.equal(h.ctx.current.id,'b');
+
   h=harness();h.loaded('a',40);h.audio.paused=false;h.ctx.pausePlayback();h.ctx.seekPlayback(93.5);
+  let systemPosition;
+  h.ctx.navigator.mediaSession.setPositionState=value=>systemPosition=value.position;
+  h.ctx.seekPlayback(93.5);assert.equal(systemPosition,93.5,'paused seeking must update system position immediately');
+  h.audio.paused=false;h.audio.readyState=4;h.ctx.playbackBlocked=false;h.audio.seeking=true;
+  assert.equal(h.ctx.playbackControl().system,'paused','system clock must stop while seeking');
+  h.audio.seeking=false;assert.equal(h.ctx.playbackControl().system,'playing');
+  h.ctx.pausePlayback();
   assert.equal(h.ctx.pausedPosition.time,93.5);assert.equal(h.storage.get('playback').time,93.5);
   h.events.visibilitychange();assert.equal(h.audio.currentTime,93.5,'visibility must preserve a seek made while paused');
   h.audio.paused=false;h.audio.currentTime=94;assert.equal(h.ctx.handleAudioStart(),false);

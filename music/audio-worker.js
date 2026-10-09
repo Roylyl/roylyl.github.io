@@ -1,6 +1,6 @@
 'use strict';
-const AUDIO='roylyl-music-audio-v2',META='roylyl-music-audio-meta-v1',SHELL='roylyl-music-shell-20261009-42';
-const FILES=['/music/','/music/index.html','/music/music.css?v=20261009-pwa-40','/music/app.js?v=20261009-pwa-40','/music/playback-feedback.js?v=20261009-pwa-40','/music/lyric-parser.js?v=20261009-pwa-40','/music/image-loading.css?v=20260927-1','/music/image-loading.js?v=20260927-1','/music/region-notice.css?v=20260928-1','/music/region-notice.js?v=20260928-1','/music/data/catalog.json?v=20261009-pwa-40','/music/favicon.svg','/music/placeholder.svg','/music/manifest.webmanifest','/music/icons/icon-192.png','/music/icons/icon-512.png','/music/icons/apple-touch-icon.png'];
+const AUDIO='roylyl-music-audio-v2',META='roylyl-music-audio-meta-v1',SHELL='roylyl-music-shell-20261009-43';
+const FILES=['/music/','/music/index.html','/music/music.css?v=20261009-pwa-41','/music/app.js?v=20261009-pwa-41','/music/playback-feedback.js?v=20261009-pwa-41','/music/lyric-parser.js?v=20261009-pwa-41','/music/image-loading.css?v=20260927-1','/music/image-loading.js?v=20260927-1','/music/region-notice.css?v=20260928-1','/music/region-notice.js?v=20260928-1','/music/data/catalog.json?v=20261009-pwa-41','/music/favicon.svg','/music/placeholder.svg','/music/manifest.webmanifest','/music/icons/icon-192.png','/music/icons/icon-512.png','/music/icons/apple-touch-icon.png'];
 const metaKey='/music/__audio_index__',configKey='/music/__audio_config__',freshKey='/music/__audio_recovery__';
 let generation=0,budget=-1,preloadEnabled=true,writeQueue=Promise.resolve(),configRevision=0,configRead,freshRead,optionalEpoch=0,lastKeptSource='';
 const inflight=new Map(),playingRequests=new Map(),protectedSources=new Map();

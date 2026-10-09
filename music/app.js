@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const APP_VERSION='20261009-pwa-40', SHELL_VERSION='roylyl-music-shell-20261009-42';
+  const APP_VERSION='20261009-pwa-41', SHELL_VERSION='roylyl-music-shell-20261009-43';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const themeMedia=window.matchMedia('(prefers-color-scheme: dark)');
@@ -361,7 +361,8 @@
     $('full-lyrics').querySelector(`[data-group="${active}"]`)?.classList.add('is-active');
     scrollActiveLyric(!force);
   }
-  audio.addEventListener('seeked',()=>updateLyricPosition(true));
+  audio.addEventListener('seeked',()=>{updateLyricPosition(true);syncPlaybackState();});
+  audio.addEventListener('seeking',()=>syncPlaybackState());
   async function loadLyrics(track,{force=false}={}) {
     if(!track?.src)return;
     const resource=lyricResource(track);
@@ -961,8 +962,9 @@
     if(!current||loadedTrackId!==current.id||!Number.isFinite(position)||!Number.isFinite(audio.duration))return;
     const time=Math.max(0,Math.min(position,audio.duration));
     audio.currentTime=time;pendingResumePosition=null;
+    seekPlayback.revision=(seekPlayback.revision||0)+1;
     if(audio.paused||playbackBlocked)pausedPosition={id:current.id,time};
-    savePlaybackSession();updateLyricPosition(true);
+    savePlaybackSession();updateLyricPosition(true);syncPlaybackState();
   }
   function restorePlaybackPosition() {
     const position=pendingResumePosition;
@@ -1013,7 +1015,7 @@
     if(retryWaiting&&!playbackBlocked)return {icon:'pause',label:'取消重试',system:'paused'};
     if(playbackBlocked||audio.error||audio.ended)return {icon:'play',label:'播放',system:current?'paused':'none'};
     if(pendingTrackId)return {icon:'pause',label:'取消加载',system:'paused'};
-    if(!audio.paused&&audio.readyState<3)return {icon:'pause',label:'暂停',system:current?'paused':'none'};
+    if(!audio.paused&&(audio.seeking||audio.readyState<3))return {icon:'pause',label:'暂停',system:current?'paused':'none'};
     return {icon:audio.paused?'play':'pause',label:audio.paused?'播放':'暂停',system:current?(audio.paused?'paused':'playing'):'none'};
   }
   function syncPlaybackState() {
@@ -1048,6 +1050,12 @@
     // A system play action is explicit intent, not a play/pause toggle. Do not
     // let an interrupted or unresolved play promise block this new attempt.
     if(current)return play(current,queue,true,true,!!insertionAnchor);
+  }
+  function togglePlayback() {
+    if(!audio.paused||pendingTrackId||retryWaiting){pausePlayback();return;}
+    if(current)return play(current,queue,true,true,!!insertionAnchor);
+    const visible=$('songs')._tracks??filtered();
+    if(visible[0])return play(visible[0],visible);
   }
   function rememberPausedPosition() {
     if(current&&loadedTrackId===current.id&&Number.isFinite(audio.currentTime)) {
@@ -1148,11 +1156,11 @@
       // Source replacement queues pause events. Record intent after replacement
       // so those events cannot cancel the new source's start.
       playbackRequestedAt=performance.now();
-      const startingAt=savedPlaybackPosition();
+      const startingAt=savedPlaybackPosition(),seekRevision=seekPlayback.revision||0;
       const started=audio.play();
       tracePlayback('native-play-called');
       if(immediate)startWatchdog=setTimeout(()=>{
-        if(token!==playToken||playbackBlocked||audio.currentTime>startingAt+.1)return;
+        if(token!==playToken||playbackBlocked||seekRevision!==(seekPlayback.revision||0)||audio.currentTime>startingAt+.1)return;
         tracePlayback('start-timeout');recoverStart();
       },8000);
       if(refreshCurrent)setCurrent(t);
@@ -1214,12 +1222,7 @@
       $(id).setAttribute('aria-pressed',String(repeat!=='all'));
     }
   }
-  $('play').onclick = () => {
-    if (!audio.paused || pendingTrackId) { pausePlayback(); return; }
-    const visible=$('songs')._tracks ?? filtered();
-    const target=current || visible[0];
-    if(target)play(target,current&&queue.length?queue:visible);
-  };
+  $('play').onclick = togglePlayback;
   $('prev').onclick = previousTrack;
   $('next').onclick = () => advance(1);
   $('repeat').onclick = () => { repeat=({all:'shuffle',shuffle:'one',one:'all'})[repeat];if(repeat==='shuffle')resetShuffle(insertionAnchor||current?.id);cancelPreload();releasePrepared();renderQueue();savePlaybackSession();updateModeControls();if(current){preloadNextLyrics(current);cachedAudioUrl(audioSource(current)).then(blob=>{if(blob){URL.revokeObjectURL(blob);preloadNext();}});} };

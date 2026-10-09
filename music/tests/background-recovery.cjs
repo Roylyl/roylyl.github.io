@@ -49,6 +49,11 @@ function stalled(){
   h=stalled();h.ctx.play(h.ctx.current,h.ctx.queue,true,true);
   h.audio.currentTime=85;h.flushTimer(8000);assert.equal(h.requests.length,1);
 
+  // A deliberate backwards seek invalidates the old startup position baseline.
+  h=stalled();h.ctx.play(h.ctx.current,h.ctx.queue,true,true);
+  h.ctx.seekPlayback(10);h.audio.currentTime=12;
+  h.flushTimer(8000);assert.equal(h.requests.length,1,'backwards seek must not trigger a source reload');
+
   // AbortError without a newer pause gets the same bounded recovery.
   h=stalled();promise=h.ctx.play(h.ctx.current,h.ctx.queue,true,true);
   h.requests[0].reject(Object.assign(Error('native start aborted'),{name:'AbortError'}));
