@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const APP_VERSION='20260929-pwa-36', SHELL_VERSION='roylyl-music-shell-20260929-38';
+  const APP_VERSION='20261009-pwa-37', SHELL_VERSION='roylyl-music-shell-20261009-39';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const themeMedia=window.matchMedia('(prefers-color-scheme: dark)');
@@ -1022,7 +1022,7 @@
     tracePlayback('system-play');
     // A system play action is explicit intent, not a play/pause toggle. Do not
     // let an interrupted or unresolved play promise block this new attempt.
-    if(current)return play(current,queue,true,true);
+    if(current)return play(current,queue,true,true,!!insertionAnchor);
   }
   function rememberPausedPosition() {
     if(current&&loadedTrackId===current.id&&Number.isFinite(audio.currentTime)) {
@@ -1073,7 +1073,6 @@
 
     if(!inserted&&!queue.some(x=>x.id===t.id))queue=[t];
     if(newQueue&&repeat==='shuffle')resetShuffle(t.id);
-    if(current?.id===t.id && typeof preloadNextLyrics === 'function')preloadNextLyrics(t);
     if(repeat==='shuffle'&&!inserted&&!fromHistory)selectShuffleTrack(t.id);
     if(!fromHistory&&(newQueue||options.newOccurrence||playbackHistory[historyCursor]!==t.id)){
       // Inserting while browsing history preserves the already-played forward path.
@@ -1085,34 +1084,60 @@
     const source=audioSource(t),recover=failedAudioSources.has(source)&&navigator.onLine!==false;
     cancelPreload(source);
     if(recover&&!navigator.serviceWorker?.controller&&typeof caches!=='undefined')caches.open(AUDIO_CACHE).then(cache=>cache.delete(source)).catch(()=>{});
-    if(recover || loadedTrackId!==t.id || !audio.getAttribute('src') || audio.error){
+    let refreshCurrent=false;
+    if(options.forceReload || recover || loadedTrackId!==t.id || !audio.getAttribute('src') || audio.error){
       const position=current?.id===t.id?savedPlaybackPosition():0;
       pendingResumePosition=position>0?{id:t.id,time:position}:null;
       if(current?.id!==t.id)pausedPosition=null;
       pendingTrackId=t.id;loadedTrackId=null;fallbackCachedId=null;
       if(!immediate){audio.pause();audio.removeAttribute('src');audio.load();}
-      setCurrent(t);status(BUFFERING_STATUS);renderCurrent();
+      // Reach native play before rendering/metadata work on a background task.
+      current=t;refreshCurrent=true;
+      if(!immediate){setCurrent(t);status(BUFFERING_STATUS);renderCurrent();}
       // Background transitions must reach play() in the same ended/media-session task.
       let cached=preparedAudio.get(source)||null;preparedAudio.delete(source);releasePrepared();
       if(recover&&cached){URL.revokeObjectURL(cached);cached=null;}
       if(!recover && !cached && !immediate && !navigator.serviceWorker?.controller)cached=await cachedAudioUrl(source);
       if(token!==playToken){if(cached)URL.revokeObjectURL(cached);return;}
       const previousUrl=localAudioUrl;localAudioUrl=cached;
-      audio.src=recover?source+'&recovery='+Date.now()+'-'+token:cached||source;loadedTrackId=t.id;paintBufferedProgress();
+      audio.src=recover?source+'&recovery='+Date.now()+'-'+token:cached||source;loadedTrackId=t.id;
+      if(options.forceReload)audio.load();
       if(previousUrl)URL.revokeObjectURL(previousUrl);
     }
-    pendingTrackId=t.id;status(BUFFERING_STATUS);renderCurrent();
+    pendingTrackId=t.id;
+    let startWatchdog;
+    const recoverStart=()=>{
+      if(token!==playToken||playbackBlocked||current?.id!==t.id)return;
+      if(navigator.audioSession?.state==='interrupted'){pausePlayback();return;}
+      if(options.forceReload){pausePlayback();showPlaybackFailure('播放未能恢复，请重试或跳过此曲。');return;}
+      tracePlayback('start-recovery','reload once, preserve position');
+      return play(t,queue,true,true,!!insertionAnchor,{forceReload:true,retryTicket});
+    };
     try {
       restorePlaybackPosition();
-      await audio.play();
+      // Source replacement queues pause events. Record intent after replacement
+      // so those events cannot cancel the new source's start.
+      playbackRequestedAt=performance.now();
+      const startingAt=savedPlaybackPosition();
+      const started=audio.play();
+      if(immediate)startWatchdog=setTimeout(()=>{
+        if(token!==playToken||playbackBlocked||audio.currentTime>startingAt+.1)return;
+        tracePlayback('start-timeout');recoverStart();
+      },8000);
+      if(refreshCurrent)setCurrent(t);
+      paintBufferedProgress();status(BUFFERING_STATUS);renderCurrent();
+      await started;
+      clearTimeout(startWatchdog);
       tracePlayback('play-resolved',token===playToken?'current':'superseded');
       if(token!==playToken)return;
       failedAudioSources.delete(source);pendingTrackId=null;restorePlaybackPosition();status('');savePlaybackSession();renderCurrent();
       if(typeof preloadNextLyrics==='function')preloadNextLyrics(t);
       if(audioBudget())cacheAudio(source).then(ok=>{if(ok&&token===playToken)preloadNext();});
     } catch(error) {
+      clearTimeout(startWatchdog);
       tracePlayback('play-rejected',error.name+': '+error.message);
       if(token!==playToken)return;
+      if(immediate&&error.name==='AbortError'&&!playbackBlocked)return recoverStart();
       handlePlaybackFailure(error);
     }
   }
@@ -1342,7 +1367,7 @@
     }
   }
   window.addEventListener('pagehide',()=>{savePlaybackSession();tracePlayback('pagehide');});
-  document.addEventListener('visibilitychange',()=>{checkSleepTimer();if(!document.hidden)reportShellVersion();else savePlaybackSession();if(current){registerMediaActions();if(navigator.audioSession?.state==='interrupted')pausePlayback();else if(playbackBlocked)handleAudioStart();else if(audio.paused)handleAudioPause();}if(!document.hidden&&current){loadLyrics(current);updateLyricPosition(true);}});
+  document.addEventListener('visibilitychange',()=>{checkSleepTimer();if(!document.hidden)reportShellVersion();else savePlaybackSession();tracePlayback('visibilitychange');if(current){registerMediaActions();if(navigator.audioSession?.state==='interrupted')pausePlayback();else if(playbackBlocked)handleAudioStart();else if(audio.paused&&!pendingTrackId)handleAudioPause();}if(!document.hidden&&current){loadLyrics(current);updateLyricPosition(true);}});
   const full = $('full-player');
   function isFullOpen() { return Boolean(full.open || full.classList.contains('dialog-fallback-open')); }
   function updateFull() {
