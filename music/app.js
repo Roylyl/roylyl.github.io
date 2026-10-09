@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const APP_VERSION='20261009-pwa-39', SHELL_VERSION='roylyl-music-shell-20261009-41';
+  const APP_VERSION='20261009-pwa-40', SHELL_VERSION='roylyl-music-shell-20261009-42';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const themeMedia=window.matchMedia('(prefers-color-scheme: dark)');
@@ -1012,11 +1012,19 @@
   function playbackControl() {
     if(retryWaiting&&!playbackBlocked)return {icon:'pause',label:'取消重试',system:'paused'};
     if(playbackBlocked||audio.error||audio.ended)return {icon:'play',label:'播放',system:current?'paused':'none'};
-    if(pendingTrackId)return {icon:'pause',label:'取消加载',system:audio.paused?'paused':'playing'};
+    if(pendingTrackId)return {icon:'pause',label:'取消加载',system:'paused'};
+    if(!audio.paused&&audio.readyState<3)return {icon:'pause',label:'暂停',system:current?'paused':'none'};
     return {icon:audio.paused?'play':'pause',label:audio.paused?'播放':'暂停',system:current?(audio.paused?'paused':'playing'):'none'};
   }
   function syncPlaybackState() {
-    if('mediaSession' in navigator)navigator.mediaSession.playbackState=playbackControl().system;
+    if(!('mediaSession' in navigator))return;
+    navigator.mediaSession.playbackState=playbackControl().system;
+    // The lock screen extrapolates time while marked playing. Publish the
+    // actual media position on both buffering and playback transitions.
+    const duration=loadedTrackId===current?.id&&Number.isFinite(audio.duration)?audio.duration:current?.duration;
+    if(Number.isFinite(duration)&&duration>0){
+      try{navigator.mediaSession.setPositionState?.({duration,playbackRate:audio.playbackRate||1,position:Math.max(0,Math.min(savedPlaybackPosition(),duration))});}catch{}
+    }
   }
   function finishPlaybackIfEnded(reason) {
     if(!current||loadedTrackId!==current.id||pendingTrackId||playbackBlocked||audio.error||!queue.length)return false;
@@ -1343,8 +1351,8 @@
     if(e.key==='/'){e.preventDefault();$('search').focus();}
     if(e.code==='Space'){e.preventDefault();$('play').click();}
   });
-  audio.addEventListener('loadedmetadata',()=>{tracePlayback('loadedmetadata');paintBufferedProgress();restorePlaybackPosition();$('seek').disabled=!Number.isFinite(audio.duration);$('duration').textContent=time(audio.duration);updateFull();registerMediaActions();});
-  for(const name of ['loadstart','stalled'])audio.addEventListener(name,()=>tracePlayback(name));
+  audio.addEventListener('loadedmetadata',()=>{tracePlayback('loadedmetadata');paintBufferedProgress();restorePlaybackPosition();$('seek').disabled=!Number.isFinite(audio.duration);$('duration').textContent=time(audio.duration);updateFull();registerMediaActions();syncPlaybackState();});
+  for(const name of ['loadstart','stalled'])audio.addEventListener(name,()=>{tracePlayback(name);syncPlaybackState();});
   audio.addEventListener('timeupdate',()=>{
     if(checkSleepTimer())return;
     if(finishPlaybackIfEnded('timeupdate'))return;
@@ -1352,10 +1360,10 @@
     updateLyricPosition();
     for(const id of ['seek','full-seek']){$(id).setAttribute('aria-valuetext',time(audio.currentTime)+' / '+time(Number.isFinite(audio.duration)?audio.duration:current?.duration));}
     if(current&&Date.now()-lastSaved>5000){savePlaybackSession();lastSaved=Date.now();}
-    if('mediaSession'in navigator&&navigator.mediaSession.setPositionState&&Number.isFinite(audio.duration)&&audio.duration>0){try{navigator.mediaSession.setPositionState({duration:audio.duration,playbackRate:audio.playbackRate,position:Math.min(audio.currentTime,audio.duration)});}catch{}}
+    syncPlaybackState();
   });
   audio.addEventListener('play',()=>{if(!handleAudioStart())return;renderCurrent();registerMediaActions();});
-  audio.addEventListener('waiting',()=>{tracePlayback('audio-waiting');if(!audio.paused)status(BUFFERING_STATUS);});
+  audio.addEventListener('waiting',()=>{tracePlayback('audio-waiting');if(!audio.paused)status(BUFFERING_STATUS);syncPlaybackState();});
   audio.addEventListener('pause',handleAudioPause);
   audio.addEventListener('playing',()=>{
     tracePlayback('audio-playing');

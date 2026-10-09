@@ -27,6 +27,24 @@ function harness(){
   ctx.registerMediaActions();return {ctx,audio,handlers,requests,sessionEvents};
 }
 (async()=>{
+  // iPhone report: paused=false at HAVE_METADATA, while currentTime stays at 0.
+  // The system must not extrapolate 37 seconds from that pending start.
+  let buffering=harness(),positions=[];
+  buffering.audio.currentTime=0;buffering.audio.readyState=1;
+  buffering.ctx.navigator.mediaSession.setPositionState=state=>positions.push(state);
+  const starting=buffering.handlers.play();buffering.ctx.syncPlaybackState();
+  assert.equal(buffering.audio.paused,false);
+  assert.equal(buffering.ctx.navigator.mediaSession.playbackState,'paused');
+  assert.equal(positions.at(-1).position,0);
+  buffering.requests[0].resolve();await starting;buffering.ctx.syncPlaybackState();
+  assert.equal(buffering.ctx.navigator.mediaSession.playbackState,'paused','resolved play at readyState=1 is still buffering');
+  buffering.audio.readyState=4;buffering.audio.currentTime=.25;buffering.ctx.syncPlaybackState();
+  assert.equal(buffering.ctx.navigator.mediaSession.playbackState,'playing');
+  assert.equal(positions.at(-1).position,.25);
+  buffering.audio.currentTime=12.5;buffering.audio.readyState=2;buffering.ctx.syncPlaybackState();
+  assert.equal(buffering.ctx.navigator.mediaSession.playbackState,'paused','rebuffering freezes the system timeline');
+  assert.equal(positions.at(-1).position,12.5);
+  console.log('通过：加载与再次缓冲时锁屏进度保持实际位置，数据可播放后恢复系统播放状态。');
   let h=harness();let promise=h.handlers.play();
   assert.equal(h.requests.length,1,'stale pending flag cannot block system play');
   assert.equal(h.audio.currentTime,83.25);assert.equal(h.audio.src,'one.mp3');
