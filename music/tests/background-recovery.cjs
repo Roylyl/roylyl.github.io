@@ -55,5 +55,34 @@ function stalled(){
   await settle();assert.equal(h.requests.length,2);
   h.metadata();h.audio.paused=false;h.requests[1].resolve();await promise;
   assert.equal(h.audio.currentTime,83.25);assert.equal(h.ctx.pendingTrackId,null);
+
+  // A resolved native play promise with a frozen clock still needs recovery.
+  h=stalled();promise=h.ctx.play(h.ctx.current,h.ctx.queue,true,true);
+  h.audio.paused=false;h.requests[0].resolve();await promise;
+  h.flushTimer(8000);assert.equal(h.requests.length,2,'resolved promise cannot suppress the frozen-clock watchdog');
+
+  // The last timeupdate can finish a track even if ended delivery is delayed.
+  h=harness();h.loaded('a',240);h.audio.paused=false;
+  assert.equal(h.ctx.finishPlaybackIfEnded('timeupdate'),true);
+  assert.equal(h.ctx.current.id,'b');await settle();h.metadata();
+  assert.equal(h.ctx.finishPlaybackIfEnded('late-ended'),false,'late ended must not skip b');
+  assert.equal(h.ctx.current.id,'b');
+
+  // A native pause at the exact end must not block the new song.
+  h=harness();h.loaded('a',240);h.audio.paused=true;h.audio.ended=false;
+  h.ctx.handleAudioPause();assert.equal(h.ctx.current.id,'b');assert.equal(h.ctx.playbackBlocked,false);
+  await settle();
+  h=harness();h.loaded('a',239.99);h.audio.paused=true;
+  h.ctx.handleAudioPause();assert.equal(h.ctx.current.id,'a');assert.equal(h.ctx.playbackBlocked,true,'never truncate the last samples or override an early pause');
+  h=harness();h.loaded('a',240);h.ctx.pausePlayback();
+  assert.equal(h.ctx.finishPlaybackIfEnded('timeupdate'),false,'explicit pause remains authoritative at the end');
+
+  // Reload must happen synchronously between src assignment and native play.
+  h=harness();h.loaded('a',240);const handoff=[];
+  h.audio.load=()=>handoff.push('load');
+  h.audio.play=async()=>{handoff.push('play');h.audio.paused=false;};
+  h.ctx.setCurrent=t=>{handoff.push('ui');h.ctx.current=t;};
+  h.ctx.advance(1,true);assert.deepEqual(handoff,['load','play','ui']);await settle();
+  console.log('PASS: resolved-but-frozen play, delayed ended, end/pause ordering, no early truncation, explicit pause, synchronous load/play handoff.');
   console.log('PASS: background visibility race, native play before rendering, bounded stalled/aborted start recovery, preserved position, pause/new-track/interruption cancellation.');
 })().catch(error=>{console.error(error);process.exitCode=1;});

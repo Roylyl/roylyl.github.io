@@ -3,6 +3,8 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('nod
 const source=fs.readFileSync(require('node:path').join(__dirname,'../app.js'),'utf8');
 require('../playback-feedback.js');
 function harness(){
+  const timers=new Map();let timerId=0;
+  const setTimeout=(fn,delay)=>{timers.set(++timerId,{fn,delay});return timerId;},clearTimeout=id=>timers.delete(id);
   const handlers={},sessionEvents={},requests=[];
   const track={id:'one',src:'one.mp3'},audio={paused:true,src:'one.mp3',currentTime:83.25,error:null,duration:300,readyState:4,
     getAttribute(){return this.src;},pause(){this.paused=true;},load(){throw Error('unexpected reload');},

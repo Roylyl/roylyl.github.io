@@ -117,7 +117,7 @@ if(require.main===module){
 {
   const now=Date.now(),fresh=Array.from({length:140},(_,i)=>({at:new Date(now-1000*(140-i)).toISOString(),event:'old-'+i}));
   let stored=[{at:new Date(now-90000000).toISOString(),event:'expired'},...fresh];
-  const context={read:()=>stored,save:(key,events)=>stored=plain(events),audio:{currentTime:0,paused:true},current:null,pendingTrackId:null,playbackBlocked:false,navigator:{},document:{hidden:false}};
+  const context={APP_VERSION:"test-version",read:()=>stored,save:(key,events)=>stored=plain(events),audio:{currentTime:0,paused:true},current:null,pendingTrackId:null,playbackBlocked:false,navigator:{},document:{hidden:false}};
   vm.createContext(context);
   vm.runInContext(source.slice(source.indexOf('  const playbackLog='),source.indexOf("  $('copy-playback-diagnostics')")),context);
   context.tracePlayback('new-page');assert.equal(stored.length,120);assert.equal(stored.at(-1).event,'new-page');assert(!stored.some(e=>e.event==='expired'));assert(stored.some(e=>e.event==='old-139'));
