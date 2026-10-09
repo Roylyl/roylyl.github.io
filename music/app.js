@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const APP_VERSION='20261009-pwa-38', SHELL_VERSION='roylyl-music-shell-20261009-40';
+  const APP_VERSION='20261009-pwa-39', SHELL_VERSION='roylyl-music-shell-20261009-41';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const themeMedia=window.matchMedia('(prefers-color-scheme: dark)');
@@ -821,8 +821,14 @@
     while(playbackLog.length>120 || playbackLog.length && Date.now()-Date.parse(playbackLog[0].at)>86400000)playbackLog.shift();
     save('playback-log',playbackLog);
   }
+  function playbackDiagnosticsText() {
+    const report={version:APP_VERSION,browser:navigator.userAgent,standalone:!!navigator.standalone||matchMedia('(display-mode: standalone)').matches,eventOrder:'newest-first',retainedEvents:playbackLog.length,events:playbackLog.slice().reverse()};
+    let text=JSON.stringify(report);
+    while(text.length>12000&&report.events.length>1){report.events.pop();text=JSON.stringify(report);}
+    return text;
+  }
   $('copy-playback-diagnostics').onclick=async()=>{
-    const text=JSON.stringify({version:APP_VERSION,browser:navigator.userAgent,standalone:!!navigator.standalone||matchMedia('(display-mode: standalone)').matches,events:playbackLog},null,2);
+    const text=playbackDiagnosticsText();
     try{await navigator.clipboard.writeText(text);$('playback-diagnostics-status').textContent='播放诊断已复制';}
     catch{const box=$('playback-diagnostics-text');box.hidden=false;box.value=text;box.focus();box.select();$('playback-diagnostics-status').textContent='请复制下方诊断内容';}
   };
@@ -1150,7 +1156,10 @@
       if(token!==playToken)return;
       failedAudioSources.delete(source);pendingTrackId=null;restorePlaybackPosition();status('');savePlaybackSession();renderCurrent();
       if(typeof preloadNextLyrics==='function')preloadNextLyrics(t);
-      if(audioBudget())cacheAudio(source).then(ok=>{if(ok&&token===playToken)preloadNext();});
+      // Prepare the next track while this one is playing, even if storing the
+      // current track is slow or fails. Neither cache operation gates playback.
+      preloadNext();
+      if(audioBudget())cacheAudio(source);
     } catch(error) {
       clearTimeout(startWatchdog);
       tracePlayback('play-rejected',error.name+': '+error.message);

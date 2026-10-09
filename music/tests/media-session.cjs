@@ -17,7 +17,7 @@ function harness(){
     preparedAudio:new Map(),localAudioUrl:null,navigator:{onLine:true,mediaSession:{setActionHandler:(name,fn)=>handlers[name]=fn},
       audioSession:{state:'active',addEventListener:(name,fn)=>sessionEvents[name]=fn}},
     canPlay:t=>!!t?.src,audioSource:t=>t.src,cancelPreload(){},status(t){ctx.playerStatusText=t;},renderCurrent(){},
-    save(){},audioBudget:()=>0,releasePrepared(){},URL:{revokeObjectURL(){}},
+    save(){},preloadNext(){},audioBudget:()=>0,releasePrepared(){},URL:{revokeObjectURL(){}},
     cachedAudioUrl(){throw Error('system action must not await a cache read');},
     $:id=>{if(!nodes.has(id))nodes.set(id,{hidden:true,style:{setProperty(){}},click(){throw Error('system action must not simulate a DOM click');}});return nodes.get(id);}};
   vm.createContext(ctx);
