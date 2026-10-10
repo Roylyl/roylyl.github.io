@@ -47,7 +47,9 @@ function harness(){
   console.log('通过：加载与再次缓冲时锁屏进度保持实际位置，数据可播放后恢复系统播放状态。');
   const stable=harness(),registered=stable.registrations.length;
   stable.ctx.registerMediaActions();stable.ctx.registerMediaActions();
-  assert.equal(stable.registrations.length,registered,'media actions stay registered across routine updates');
+  assert.equal(stable.registrations.length,registered*3,'reassert controls after native session changes');
+  assert.equal(stable.handlers.seekforward,null);assert.equal(stable.handlers.seekbackward,null);
+  assert.equal(typeof stable.handlers.nexttrack,'function');assert.equal(typeof stable.handlers.previoustrack,'function');
   let fastTarget;
   stable.audio.fastSeek=value=>{fastTarget=value;stable.audio.currentTime=Math.floor(value);};
   stable.handlers.seekto({seekTime:42.75,fastSeek:true});assert.equal(fastTarget,42.75);

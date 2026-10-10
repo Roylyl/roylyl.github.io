@@ -14,8 +14,8 @@
 <meta property="og:image:alt" content="Roylyl Music的字母R音乐标识">
 <title>Roylyl Music</title>
 <script>try{const p=localStorage.getItem('roylyl-music-theme')||'dark';document.documentElement.dataset.theme=p==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):p}catch{document.documentElement.dataset.theme='dark'}</script>
-<link rel="icon" type="image/svg+xml" href="./favicon.svg"><link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./icons/apple-touch-icon.png"><link rel="stylesheet" href="./image-loading.css?v=20260927-1"><script src="./image-loading.js?v=20260927-1" defer></script><link rel="stylesheet" href="./music.css?v=20261010-pwa-44"><link rel="stylesheet" href="./region-notice.css?v=20260928-1">
-<script src="./lyric-parser.js?v=20261010-pwa-44" defer></script><script src="./playback-feedback.js?v=20261010-pwa-44" defer></script><script src="./app.js?v=20261010-pwa-44" defer></script><script src="./region-notice.js?v=20260928-1" defer></script>
+<link rel="icon" type="image/svg+xml" href="./favicon.svg"><link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./icons/apple-touch-icon.png"><link rel="stylesheet" href="./image-loading.css?v=20260927-1"><script src="./image-loading.js?v=20260927-1" defer></script><link rel="stylesheet" href="./music.css?v=20261010-pwa-45"><link rel="stylesheet" href="./region-notice.css?v=20260928-1">
+<script src="./lyric-parser.js?v=20261010-pwa-45" defer></script><script src="./playback-feedback.js?v=20261010-pwa-45" defer></script><script src="./app.js?v=20261010-pwa-45" defer></script><script src="./region-notice.js?v=20260928-1" defer></script>
 </head>
 <body>
 <a class="skip" href="#content">跳到音乐库</a>
@@ -55,7 +55,7 @@
     </section>
     <section class="settings-section"><div class="settings-row"><div><h3>歌词缓存</h3><p class="settings-description">单独保存，更新后重新验证</p></div><button type="button" id="clear-lyric-cache" class="secondary" aria-label="清理歌词缓存">清理</button></div><p id="lyric-cache-status" role="status"></p></section>
     <section class="settings-section"><div class="settings-row"><div><h3>专辑封面缓存</h3><p id="cover-cache-status" role="status">正在检查缓存…</p></div><button type="button" id="clear-cover-cache" class="secondary" aria-label="清理专辑封面缓存">清理</button></div></section>
-    <section class="settings-section"><h3>播放诊断</h3><p class="settings-description">当前版本：20261010-pwa-44。保留最近24小时最多120条事件，刷新后仍保留。复制时优先导出最新事件，并限制文本长度。诊断仅保留在本机，不自动上传。</p><button type="button" id="copy-playback-diagnostics" class="secondary">复制播放诊断</button><p id="playback-diagnostics-status" role="status"></p><textarea id="playback-diagnostics-text" aria-label="播放诊断内容" readonly hidden style="width:100%;min-height:120px"></textarea></section>
+    <section class="settings-section"><h3>播放诊断</h3><p class="settings-description">当前版本：20261010-pwa-45。保留最近24小时最多120条事件，刷新后仍保留。复制时优先导出最新事件，并限制文本长度。诊断仅保留在本机，不自动上传。</p><button type="button" id="copy-playback-diagnostics" class="secondary">复制播放诊断</button><p id="playback-diagnostics-status" role="status"></p><textarea id="playback-diagnostics-text" aria-label="播放诊断内容" readonly hidden style="width:100%;min-height:120px"></textarea></section>
     <section class="settings-section install-section"><h3>安装与更新</h3><p id="install-help" class="settings-description">iPhone在Safari中选择“分享→添加到主屏幕”。</p><button type="button" id="apply-update" class="secondary" hidden>更新已就绪，点击刷新</button></section>
   </div>
 </dialog>

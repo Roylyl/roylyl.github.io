@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const APP_VERSION='20261010-pwa-44', SHELL_VERSION='roylyl-music-shell-20261010-46';
+  const APP_VERSION='20261010-pwa-45', SHELL_VERSION='roylyl-music-shell-20261010-47';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const themeMedia=window.matchMedia('(prefers-color-scheme: dark)');
@@ -1159,6 +1159,7 @@
     let refreshCurrent=false;
     if(options.forceReload || recover || loadedTrackId!==t.id || !audio.getAttribute('src') || audio.error){
       const position=current?.id===t.id?savedPlaybackPosition():0;
+      const reusableBlob=!recover&&loadedTrackId===t.id?localAudioUrl:null;
       pendingResumePosition=position>0?{id:t.id,time:position}:null;
       if(current?.id!==t.id)pausedPosition=null;
       pendingTrackId=t.id;loadedTrackId=null;fallbackCachedId=null;
@@ -1167,7 +1168,7 @@
       current=t;refreshCurrent=true;
       if(!immediate){setCurrent(t);status(BUFFERING_STATUS);renderCurrent();}
       // Background transitions must reach play() in the same ended/media-session task.
-      let cached=preparedAudio.get(source)||null;preparedAudio.delete(source);releasePrepared();
+      let cached=reusableBlob||preparedAudio.get(source)||null;preparedAudio.delete(source);releasePrepared();
       if(recover&&cached){URL.revokeObjectURL(cached);cached=null;}
       if(!recover && !cached && !immediate && !navigator.serviceWorker?.controller)cached=await cachedAudioUrl(source);
       if(token!==playToken){if(cached)URL.revokeObjectURL(cached);return;}
@@ -1178,16 +1179,16 @@
       // Leaving this to a later browser task can stall a locked-screen handoff.
       audio.load();
       tracePlayback('source-load',cached?'prepared-blob':'url');
-      if(previousUrl)URL.revokeObjectURL(previousUrl);
+      if(previousUrl&&previousUrl!==localAudioUrl)URL.revokeObjectURL(previousUrl);
     }
     pendingTrackId=t.id;
     let startWatchdog;
     const recoverStart=()=>{
       if(token!==playToken||playbackBlocked||current?.id!==t.id)return;
       if(navigator.audioSession?.state==='interrupted'){pausePlayback();return;}
-      if(options.forceReload){pausePlayback();showPlaybackFailure('播放未能恢复，请重试或跳过此曲。');return;}
+      if(options.recoveryAttempt){pausePlayback();showPlaybackFailure('播放未能恢复，请重试或跳过此曲。');return;}
       tracePlayback('start-recovery','reload once, preserve position');
-      return play(t,queue,true,true,!!insertionAnchor,{forceReload:true,retryTicket});
+      return play(t,queue,true,true,!!insertionAnchor,{forceReload:true,recoveryAttempt:true,retryTicket});
     };
     try {
       restorePlaybackPosition();
@@ -1427,9 +1428,6 @@
   audio.addEventListener('ended',()=>{tracePlayback('audio-ended');finishPlaybackIfEnded('ended');});
   function registerMediaActions() {
     if (!navigator.mediaSession?.setActionHandler) return;
-    if(registerMediaActions.session!==navigator.mediaSession){
-      registerMediaActions.session=navigator.mediaSession;registerMediaActions.bound=new Set();
-    }
     const handlers = {
       seekbackward: null, seekforward: null,
       play: resumePlayback,
@@ -1439,8 +1437,7 @@
       seekto: e => {tracePlayback('system-seek','target='+e.seekTime);seekPlayback(e.seekTime,e.fastSeek===true);}
     };
     for (const [name, handler] of Object.entries(handlers)) {
-      if(registerMediaActions.bound.has(name))continue;
-      try { navigator.mediaSession.setActionHandler(name, handler);registerMediaActions.bound.add(name); } catch {}
+      try { navigator.mediaSession.setActionHandler(name, handler); } catch {}
     }
   }
   window.addEventListener('pagehide',()=>{savePlaybackSession();tracePlayback('pagehide');});

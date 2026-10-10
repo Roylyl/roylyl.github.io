@@ -17,6 +17,21 @@ function stalled(){
   background.audio.currentTime=240;background.timeupdate();await settle();
   assert.equal(background.ctx.current.id,'b');
 
+  // Reloading a cached current track must neither switch to network nor revoke it.
+  const cached=harness();cached.loaded('a',5.24);cached.ctx.localAudioUrl='blob:current';
+  cached.audio.src='blob:current';cached.metadata();cached.audio.currentTime=5.24;
+  const revoked=[];cached.ctx.URL.revokeObjectURL=url=>revoked.push(url);
+  cached.ctx.playbackBlocked=true;await cached.ctx.resumePlayback();cached.metadata();
+  assert.equal(cached.audio.src,'blob:current');assert.equal(cached.audio.currentTime,5.24);
+  assert.deepEqual(revoked,[]);
+  await cached.ctx.play(cached.ctx.get('b'),cached.ctx.queue,false,true);
+  assert.deepEqual(revoked,['blob:current'],'release cached audio only after leaving its track');
+
+  // A user-requested reload still gets one bounded recovery attempt.
+  const reload=stalled();reload.ctx.play(reload.ctx.current,reload.ctx.queue,true,true,false,{forceReload:true});
+  reload.flushTimer(8000);assert.equal(reload.requests.length,2);
+  reload.flushTimer(8000);assert.equal(reload.requests.length,2);assert.equal(reload.ctx.playbackBlocked,true);
+
   // Visibility changes can arrive while native play has not yet unpaused.
   let h=stalled(),promise=h.ctx.play(h.ctx.current,h.ctx.queue,true,true);
   h.ctx.document.hidden=true;h.events.visibilitychange();
