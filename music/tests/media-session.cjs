@@ -7,7 +7,7 @@ function harness(){
   const setTimeout=(fn,delay)=>{timers.set(++timerId,{fn,delay});return timerId;},clearTimeout=id=>timers.delete(id);
   const handlers={},sessionEvents={},requests=[];
   const track={id:'one',src:'one.mp3'},audio={paused:true,src:'one.mp3',currentTime:83.25,error:null,duration:300,readyState:4,
-    getAttribute(){return this.src;},pause(){this.paused=true;},load(){throw Error('unexpected reload');},
+    getAttribute(){return this.src;},pause(){this.paused=true;},load(){this.reloads=(this.reloads||0)+1;},
     play(){this.paused=false;return new Promise((resolve,reject)=>requests.push({resolve,reject}));}};
   const nodes=new Map();
   const ctx={shuffleOrder:[],shuffleCursor:-1,historyAnchors:[],queueUndo:null,queueUndoTimer:null,retryTicket:null,lastFailureToken:-1,retryWaiting:false,
@@ -17,7 +17,7 @@ function harness(){
     preparedAudio:new Map(),localAudioUrl:null,navigator:{onLine:true,mediaSession:{setActionHandler:(name,fn)=>handlers[name]=fn},
       audioSession:{state:'active',addEventListener:(name,fn)=>sessionEvents[name]=fn}},
     canPlay:t=>!!t?.src,audioSource:t=>t.src,cancelPreload(){},status(t){ctx.playerStatusText=t;},renderCurrent(){},
-    save(){},preloadNext(){},audioBudget:()=>0,releasePrepared(){},URL:{revokeObjectURL(){}},
+    setCurrent(t){ctx.current=t;},save(){},preloadNext(){},audioBudget:()=>0,releasePrepared(){},URL:{revokeObjectURL(){}},
     cachedAudioUrl(){throw Error('system action must not await a cache read');},
     $:id=>{if(!nodes.has(id))nodes.set(id,{hidden:true,style:{setProperty(){}},click(){throw Error('system action must not simulate a DOM click');}});return nodes.get(id);}};
   vm.createContext(ctx);
@@ -47,7 +47,7 @@ function harness(){
   console.log('通过：加载与再次缓冲时锁屏进度保持实际位置，数据可播放后恢复系统播放状态。');
   let h=harness();let promise=h.handlers.play();
   assert.equal(h.requests.length,1,'stale pending flag cannot block system play');
-  assert.equal(h.audio.currentTime,83.25);assert.equal(h.audio.src,'one.mp3');
+  assert.equal(h.audio.currentTime,83.25);assert.equal(h.audio.src,'one.mp3');assert.equal(h.audio.reloads,undefined,'ordinary system resume should reuse audio');
   h.requests[0].resolve();await promise;assert.equal(h.ctx.pendingTrackId,null);
   assert.equal(h.ctx.playbackHistory.length,1);
   h=harness();h.audio.paused=false;promise=h.handlers.play();
@@ -66,7 +66,7 @@ function harness(){
   assert.equal(h.audio.paused,true);assert.equal(h.ctx.pendingTrackId,null);assert.equal(h.ctx.navigator.audioSession.type,'playback');
   h.ctx.navigator.audioSession.state='active';h.sessionEvents.statechange();assert.equal(h.requests.length,1,'no automatic focus stealing');
   h.requests[0].resolve();await promise;
-  delete h.ctx.navigator.audioSession;promise=h.handlers.play();h.requests[1].resolve();await promise;
+  delete h.ctx.navigator.audioSession;promise=h.handlers.play();assert.equal(h.audio.reloads,1,'explicit resume after interruption must reload synchronously');assert.equal(h.audio.currentTime,83.25);h.requests[1].resolve();await promise;
   h=harness();h.audio.paused=false;h.audio.currentTime=126.75;h.audio.paused=true;h.ctx.handleAudioPause();
   assert.equal(h.ctx.playbackBlocked,true,'耳机触发音频pause后保持暂停');
   assert.equal(h.ctx.pausedPosition.time,126.75);

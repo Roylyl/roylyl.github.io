@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const APP_VERSION='20261009-pwa-41', SHELL_VERSION='roylyl-music-shell-20261009-43';
+  const APP_VERSION='20261010-pwa-42', SHELL_VERSION='roylyl-music-shell-20261010-44';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const themeMedia=window.matchMedia('(prefers-color-scheme: dark)');
@@ -1049,11 +1049,31 @@
     tracePlayback('system-play');
     // A system play action is explicit intent, not a play/pause toggle. Do not
     // let an interrupted or unresolved play promise block this new attempt.
-    if(current)return play(current,queue,true,true,!!insertionAnchor);
+    return resumeCurrentPlayback();
+  }
+  function resumeCurrentPlayback() {
+    if(!current)return;
+    // Explicit play at the end means continuing the queue, including inserts.
+    if(loadedTrackId===current.id&&(audio.ended||(Number.isFinite(audio.duration)&&audio.duration>0&&audio.currentTime>=audio.duration))){
+      playbackBlocked=false;
+      return advance(1,true);
+    }
+    const interrupted=resumeCurrentPlayback.interrupted||navigator.audioSession?.state==='interrupted';
+    resumeCurrentPlayback.interrupted=false;
+    // Re-select the source in the user's media-key task, preserving the position.
+    // A native player displaced by another app may not recover with play alone.
+    return play(current,queue,true,true,!!insertionAnchor,{forceReload:!!interrupted});
+  }
+  function handleSessionChange() {
+    tracePlayback('session-statechange');
+    if(navigator.audioSession?.state==='interrupted'){
+      resumeCurrentPlayback.interrupted=true;
+      pausePlayback();
+    }
   }
   function togglePlayback() {
     if(!audio.paused||pendingTrackId||retryWaiting){pausePlayback();return;}
-    if(current)return play(current,queue,true,true,!!insertionAnchor);
+    if(current)return resumeCurrentPlayback();
     const visible=$('songs')._tracks??filtered();
     if(visible[0])return play(visible[0],visible);
   }
@@ -1083,7 +1103,10 @@
     // interruption of the currently loaded recording.
     if(current&&loadedTrackId===current.id&&audio.getAttribute('src')&&!audio.error) {
       cancelPlaybackRecovery();
-      if(!audio.ended){playbackBlocked=true;rememberPausedPosition();}
+      if(!audio.ended){
+        if(!playbackBlocked)resumeCurrentPlayback.interrupted=true;
+        playbackBlocked=true;rememberPausedPosition();
+      }
       ++playToken;pendingTrackId=null;
       if(playerStatusText===BUFFERING_STATUS)status('');
     }
@@ -1377,10 +1400,7 @@
   });
   // AudioSession is optional. Never auto-resume on 'active': that could fight
   // another app or undo the user's pause. The next system play acts directly.
-  navigator.audioSession?.addEventListener('statechange',()=>{
-    tracePlayback('session-statechange');
-    if(navigator.audioSession.state==='interrupted')pausePlayback();
-  });
+  navigator.audioSession?.addEventListener('statechange',handleSessionChange);
   audio.addEventListener('error',()=>{if(audio.getAttribute('src')&&loadedTrackId===current?.id)handlePlaybackFailure(audio.error);});
   audio.addEventListener('progress',()=>{
     paintBufferedProgress();
@@ -1407,7 +1427,7 @@
     }
   }
   window.addEventListener('pagehide',()=>{savePlaybackSession();tracePlayback('pagehide');});
-  document.addEventListener('visibilitychange',()=>{checkSleepTimer();if(!document.hidden)reportShellVersion();else savePlaybackSession();tracePlayback('visibilitychange');if(current){registerMediaActions();if(navigator.audioSession?.state==='interrupted')pausePlayback();else if(playbackBlocked)handleAudioStart();else if(!finishPlaybackIfEnded('visibility')&&audio.paused&&!pendingTrackId)handleAudioPause();}if(!document.hidden&&current){loadLyrics(current);updateLyricPosition(true);}});
+  document.addEventListener('visibilitychange',()=>{checkSleepTimer();if(!document.hidden)reportShellVersion();else savePlaybackSession();tracePlayback('visibilitychange');if(current){registerMediaActions();if(navigator.audioSession?.state==='interrupted')handleSessionChange();else if(playbackBlocked)handleAudioStart();else if(!finishPlaybackIfEnded('visibility')&&audio.paused&&!pendingTrackId)handleAudioPause();}if(!document.hidden&&current){loadLyrics(current);updateLyricPosition(true);}});
   const full = $('full-player');
   function isFullOpen() { return Boolean(full.open || full.classList.contains('dialog-fallback-open')); }
   function updateFull() {

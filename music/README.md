@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="https://roylyl.github.io/music/"><img src="https://img.shields.io/badge/在线收听-Roylyl%20Music-83e8c0?style=flat-square" alt="在线收听"></a>
-  <a href="app.js"><img src="https://img.shields.io/badge/version-20261009--pwa--41-62c9f3?style=flat-square" alt="前端版本20261009-pwa-41"></a>
+  <a href="app.js"><img src="https://img.shields.io/badge/version-20261010--pwa--42-62c9f3?style=flat-square" alt="前端版本20261010-pwa-42"></a>
   <a href="#开始使用"><img src="https://img.shields.io/badge/platform-Web%20%2F%20PWA-485866?style=flat-square" alt="Web与PWA"></a>
   <a href="../LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-485866?style=flat-square" alt="GPL-3.0许可证"></a>
 </p>

@@ -88,6 +88,15 @@ function stalled(){
   h.audio.play=async()=>{handoff.push('play');h.audio.paused=false;};
   h.ctx.setCurrent=t=>{handoff.push('ui');h.ctx.current=t;};
   h.ctx.advance(1,true);assert.deepEqual(handoff,['load','play','ui']);await settle();
+  // System play on an ended recording continues the queue, never repeats it.
+  h=harness();h.loaded('a',240);h.audio.ended=true;h.ctx.playbackBlocked=true;
+  h.ctx.resumePlayback();await settle();assert.equal(h.ctx.current.id,'b');
+  h=harness();h.loaded('a',240);h.ctx.addNext(h.ctx.get('d'));h.ctx.playbackBlocked=true;
+  h.ctx.resumePlayback();await settle();assert.equal(h.ctx.current.id,'d');
+  h=harness();h.loaded('a',83.25);h.audio.paused=true;h.ctx.handleAudioPause();
+  let loads=0;h.audio.load=()=>{loads++;};
+  await h.ctx.resumePlayback();h.metadata();assert.equal(loads,1);assert.equal(h.audio.currentTime,83.25);
+  console.log('PASS: system play after end follows queue/inserts; native interruption reload preserves position.');
   console.log('PASS: resolved-but-frozen play, delayed ended, end/pause ordering, no early truncation, explicit pause, synchronous load/play handoff.');
   console.log('PASS: background visibility race, native play before rendering, bounded stalled/aborted start recovery, preserved position, pause/new-track/interruption cancellation.');
 })().catch(error=>{console.error(error);process.exitCode=1;});
