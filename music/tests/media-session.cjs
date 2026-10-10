@@ -5,7 +5,7 @@ require('../playback-feedback.js');
 function harness(){
   const timers=new Map();let timerId=0;
   const setTimeout=(fn,delay)=>{timers.set(++timerId,{fn,delay});return timerId;},clearTimeout=id=>timers.delete(id);
-  const handlers={},sessionEvents={},requests=[];
+  const handlers={},sessionEvents={},requests=[],registrations=[];
   const track={id:'one',src:'one.mp3'},audio={paused:true,src:'one.mp3',currentTime:83.25,error:null,duration:300,readyState:4,
     getAttribute(){return this.src;},pause(){this.paused=true;},load(){this.reloads=(this.reloads||0)+1;},
     play(){this.paused=false;return new Promise((resolve,reject)=>requests.push({resolve,reject}));}};
@@ -14,7 +14,7 @@ function harness(){
     RoylylPlaybackFeedback,playbackRetries:RoylylPlaybackFeedback.createRetryController(),isFullOpen:()=>false,document:{body:{append(node){node.parentElement=this;}}},
     setTimeout,clearTimeout,insertionAnchor:null,checkSleepTimer:()=>false,window:{addEventListener(){}},nextUp:[],pendingResumePosition:null,repeat:'all',updateLyricPosition(){},read:(key,fallback)=>fallback,albums:[],get:id=>id===track.id?track:null,tracePlayback(){},performance:{now:()=>100},playbackRequestedAt:0,failedAudioSources:new Set(),playbackBlocked:false,pausedPosition:null,audio,current:track,queue:[track],loadedTrackId:track.id,pendingTrackId:track.id,playToken:0,
     playbackHistory:[track.id],historyCursor:0,persistenceRequested:true,playerStatusText:'buffering',BUFFERING_STATUS:'buffering',
-    preparedAudio:new Map(),localAudioUrl:null,navigator:{onLine:true,mediaSession:{setActionHandler:(name,fn)=>handlers[name]=fn},
+    preparedAudio:new Map(),localAudioUrl:null,navigator:{onLine:true,mediaSession:{setActionHandler:(name,fn)=>{registrations.push(name);handlers[name]=fn;}},
       audioSession:{state:'active',addEventListener:(name,fn)=>sessionEvents[name]=fn}},
     canPlay:t=>!!t?.src,audioSource:t=>t.src,cancelPreload(){},status(t){ctx.playerStatusText=t;},renderCurrent(){},
     setCurrent(t){ctx.current=t;},save(){},preloadNext(){},audioBudget:()=>0,releasePrepared(){},URL:{revokeObjectURL(){}},
@@ -24,7 +24,7 @@ function harness(){
   vm.runInContext(source.slice(source.indexOf('  function resetShuffle('),source.indexOf('  function advance(')),ctx);
   vm.runInContext(source.slice(source.indexOf('  function registerMediaActions()'),source.indexOf("  document.addEventListener('visibilitychange'")),ctx);
   vm.runInContext(source.slice(source.indexOf("  navigator.audioSession?.addEventListener('statechange'"),source.indexOf("  audio.addEventListener('error'")),ctx);
-  ctx.registerMediaActions();return {ctx,audio,handlers,requests,sessionEvents};
+  ctx.registerMediaActions();return {ctx,audio,handlers,requests,sessionEvents,registrations};
 }
 (async()=>{
   // iPhone report: paused=false at HAVE_METADATA, while currentTime stays at 0.
@@ -45,6 +45,31 @@ function harness(){
   assert.equal(buffering.ctx.navigator.mediaSession.playbackState,'paused','rebuffering freezes the system timeline');
   assert.equal(positions.at(-1).position,12.5);
   console.log('通过：加载与再次缓冲时锁屏进度保持实际位置，数据可播放后恢复系统播放状态。');
+  const stable=harness(),registered=stable.registrations.length;
+  stable.ctx.registerMediaActions();stable.ctx.registerMediaActions();
+  assert.equal(stable.registrations.length,registered,'media actions stay registered across routine updates');
+  let fastTarget;
+  stable.audio.fastSeek=value=>{fastTarget=value;stable.audio.currentTime=Math.floor(value);};
+  stable.handlers.seekto({seekTime:42.75,fastSeek:true});assert.equal(fastTarget,42.75);
+  stable.handlers.seekto({seekTime:42.75});assert.equal(stable.audio.currentTime,42.75);
+  stable.handlers.seekto({seekTime:0});assert.equal(stable.audio.currentTime,0);
+  Object.defineProperty(stable.ctx.navigator.mediaSession,'playbackState',{set(){throw Error('platform refused');}});
+  assert.doesNotThrow(()=>stable.ctx.syncPlaybackState());
+
+  // A blocked native player can claim playing without advancing its clock.
+  let blocked=harness();blocked.ctx.playbackBlocked=true;blocked.ctx.pendingTrackId=null;
+  let blockedPlay=blocked.handlers.play();assert.equal(blocked.audio.reloads,1);
+  assert.equal(blocked.audio.currentTime,83.25);blocked.requests[0].resolve();await blockedPlay;
+  // System scrubbing while reloading must not be discarded or resume playback.
+  let seeking=harness();seeking.audio.duration=NaN;seeking.audio.readyState=0;
+  seeking.ctx.playbackBlocked=true;seeking.handlers.seekto({seekTime:140});
+  assert.equal(seeking.ctx.pendingResumePosition.time,140);assert.equal(seeking.requests.length,0);
+  seeking.handlers.seekto({seekTime:190});seeking.ctx.rememberPausedPosition();
+  assert.equal(seeking.ctx.pausedPosition.time,190);
+  seeking.audio.duration=300;seeking.audio.readyState=1;seeking.ctx.restorePlaybackPosition();
+  assert.equal(seeking.audio.currentTime,190);assert.equal(seeking.ctx.pendingResumePosition,null);
+  seeking.handlers.seekto({seekTime:205});assert.equal(seeking.audio.currentTime,205);
+  assert.equal(seeking.ctx.playbackBlocked,true);assert.equal(seeking.requests.length,0);
   let h=harness();let promise=h.handlers.play();
   assert.equal(h.requests.length,1,'stale pending flag cannot block system play');
   assert.equal(h.audio.currentTime,83.25);assert.equal(h.audio.src,'one.mp3');assert.equal(h.audio.reloads,undefined,'ordinary system resume should reuse audio');

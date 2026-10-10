@@ -10,6 +10,13 @@ function stalled(){
 }
 
 (async()=>{
+  // Hidden timeupdates still save position and finish tracks without DOM work.
+  let background=harness();background.loaded('a',25);background.ctx.document.hidden=true;
+  background.ctx.renderPlaybackProgress=()=>{throw Error('hidden DOM work');};
+  background.timeupdate();assert.equal(background.storage.get('playback').time,25);
+  background.audio.currentTime=240;background.timeupdate();await settle();
+  assert.equal(background.ctx.current.id,'b');
+
   // Visibility changes can arrive while native play has not yet unpaused.
   let h=stalled(),promise=h.ctx.play(h.ctx.current,h.ctx.queue,true,true);
   h.ctx.document.hidden=true;h.events.visibilitychange();

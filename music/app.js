@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const APP_VERSION='20261010-pwa-42', SHELL_VERSION='roylyl-music-shell-20261010-44';
+  const APP_VERSION='20261010-pwa-44', SHELL_VERSION='roylyl-music-shell-20261010-46';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const themeMedia=window.matchMedia('(prefers-color-scheme: dark)');
@@ -958,12 +958,27 @@
       input.style?.setProperty('--seek-progress',percent+'%');
     }
   }
-  function seekPlayback(position) {
-    if(!current||loadedTrackId!==current.id||!Number.isFinite(position)||!Number.isFinite(audio.duration))return;
-    const time=Math.max(0,Math.min(position,audio.duration));
-    audio.currentTime=time;pendingResumePosition=null;
+  function renderPlaybackProgress() {
+    $('elapsed').textContent=time(audio.currentTime); $('full-elapsed').textContent=time(audio.currentTime); $('full-seek').value=Number.isFinite(audio.duration)&&audio.duration>0?audio.currentTime/audio.duration*100:0; if(Number.isFinite(audio.duration)&&audio.duration>0)$('seek').value=audio.currentTime/audio.duration*100;paintSeekProgress();
+    updateLyricPosition();
+    for(const id of ['seek','full-seek']){$(id).setAttribute('aria-valuetext',time(audio.currentTime)+' / '+time(Number.isFinite(audio.duration)?audio.duration:current?.duration));}
+  }
+  function seekPlayback(position,fast=false) {
+    if(!current||!Number.isFinite(position))return;
+    const duration=loadedTrackId===current.id&&Number.isFinite(audio.duration)?audio.duration:current.duration;
+    const time=Math.max(0,Number.isFinite(duration)&&duration>0?Math.min(position,duration):position);
+    // Keep the newest target even while a reload has no metadata or cannot seek.
+    pendingResumePosition={id:current.id,time};
     seekPlayback.revision=(seekPlayback.revision||0)+1;
     if(audio.paused||playbackBlocked)pausedPosition={id:current.id,time};
+    if(loadedTrackId===current.id&&audio.readyState>=1){
+      try{
+        if(fast&&typeof audio.fastSeek==='function')audio.fastSeek(time);
+        else audio.currentTime=time;
+        pendingResumePosition=null;
+      }catch{}
+    }
+    tracePlayback('seek-request','target='+time+(pendingResumePosition?' deferred':' applied'));
     savePlaybackSession();updateLyricPosition(true);syncPlaybackState();
   }
   function restorePlaybackPosition() {
@@ -1020,7 +1035,7 @@
   }
   function syncPlaybackState() {
     if(!('mediaSession' in navigator))return;
-    navigator.mediaSession.playbackState=playbackControl().system;
+    try{navigator.mediaSession.playbackState=playbackControl().system;}catch{}
     // The lock screen extrapolates time while marked playing. Publish the
     // actual media position on both buffering and playback transitions.
     const duration=loadedTrackId===current?.id&&Number.isFinite(audio.duration)?audio.duration:current?.duration;
@@ -1049,16 +1064,16 @@
     tracePlayback('system-play');
     // A system play action is explicit intent, not a play/pause toggle. Do not
     // let an interrupted or unresolved play promise block this new attempt.
-    return resumeCurrentPlayback();
+    return resumeCurrentPlayback(true);
   }
-  function resumeCurrentPlayback() {
+  function resumeCurrentPlayback(systemAction=false) {
     if(!current)return;
     // Explicit play at the end means continuing the queue, including inserts.
     if(loadedTrackId===current.id&&(audio.ended||(Number.isFinite(audio.duration)&&audio.duration>0&&audio.currentTime>=audio.duration))){
       playbackBlocked=false;
       return advance(1,true);
     }
-    const interrupted=resumeCurrentPlayback.interrupted||navigator.audioSession?.state==='interrupted';
+    const interrupted=resumeCurrentPlayback.interrupted||navigator.audioSession?.state==='interrupted'||(systemAction&&playbackBlocked&&audio.paused);
     resumeCurrentPlayback.interrupted=false;
     // Re-select the source in the user's media-key task, preserving the position.
     // A native player displaced by another app may not recover with play alone.
@@ -1079,7 +1094,7 @@
   }
   function rememberPausedPosition() {
     if(current&&loadedTrackId===current.id&&Number.isFinite(audio.currentTime)) {
-      pausedPosition={id:current.id,time:audio.currentTime};
+      pausedPosition={id:current.id,time:savedPlaybackPosition()};
       savePlaybackSession();
     }
   }
@@ -1201,7 +1216,7 @@
       if(audioBudget())cacheAudio(source);
     } catch(error) {
       clearTimeout(startWatchdog);
-      tracePlayback('play-rejected',error.name+': '+error.message);
+      tracePlayback('play-rejected',(token===playToken?'current':'superseded')+' target='+t.id+' '+error.name+': '+error.message);
       if(token!==playToken)return;
       if(immediate&&error.name==='AbortError'&&!playbackBlocked)return recoverStart();
       handlePlaybackFailure(error);
@@ -1382,9 +1397,7 @@
   audio.addEventListener('timeupdate',()=>{
     if(checkSleepTimer())return;
     if(finishPlaybackIfEnded('timeupdate'))return;
-    $('elapsed').textContent=time(audio.currentTime); $('full-elapsed').textContent=time(audio.currentTime); $('full-seek').value=Number.isFinite(audio.duration)&&audio.duration>0?audio.currentTime/audio.duration*100:0; if(Number.isFinite(audio.duration)&&audio.duration>0)$('seek').value=audio.currentTime/audio.duration*100;paintSeekProgress();
-    updateLyricPosition();
-    for(const id of ['seek','full-seek']){$(id).setAttribute('aria-valuetext',time(audio.currentTime)+' / '+time(Number.isFinite(audio.duration)?audio.duration:current?.duration));}
+    if(!document.hidden)renderPlaybackProgress();
     if(current&&Date.now()-lastSaved>5000){savePlaybackSession();lastSaved=Date.now();}
     syncPlaybackState();
   });
@@ -1413,21 +1426,25 @@
   let fallbackCachedId=null;
   audio.addEventListener('ended',()=>{tracePlayback('audio-ended');finishPlaybackIfEnded('ended');});
   function registerMediaActions() {
-    if (!('mediaSession' in navigator)) return;
+    if (!navigator.mediaSession?.setActionHandler) return;
+    if(registerMediaActions.session!==navigator.mediaSession){
+      registerMediaActions.session=navigator.mediaSession;registerMediaActions.bound=new Set();
+    }
     const handlers = {
       seekbackward: null, seekforward: null,
       play: resumePlayback,
       pause: () => {tracePlayback('system-pause');pausePlayback();},
-      previoustrack: () => advance(-1),
-      nexttrack: () => advance(1),
-      seekto: e => seekPlayback(e.seekTime)
+      previoustrack: () => {tracePlayback('system-previous');advance(-1);},
+      nexttrack: () => {tracePlayback('system-next');advance(1);},
+      seekto: e => {tracePlayback('system-seek','target='+e.seekTime);seekPlayback(e.seekTime,e.fastSeek===true);}
     };
     for (const [name, handler] of Object.entries(handlers)) {
-      try { navigator.mediaSession.setActionHandler(name, handler); } catch {}
+      if(registerMediaActions.bound.has(name))continue;
+      try { navigator.mediaSession.setActionHandler(name, handler);registerMediaActions.bound.add(name); } catch {}
     }
   }
   window.addEventListener('pagehide',()=>{savePlaybackSession();tracePlayback('pagehide');});
-  document.addEventListener('visibilitychange',()=>{checkSleepTimer();if(!document.hidden)reportShellVersion();else savePlaybackSession();tracePlayback('visibilitychange');if(current){registerMediaActions();if(navigator.audioSession?.state==='interrupted')handleSessionChange();else if(playbackBlocked)handleAudioStart();else if(!finishPlaybackIfEnded('visibility')&&audio.paused&&!pendingTrackId)handleAudioPause();}if(!document.hidden&&current){loadLyrics(current);updateLyricPosition(true);}});
+  document.addEventListener('visibilitychange',()=>{checkSleepTimer();if(!document.hidden)reportShellVersion();else savePlaybackSession();tracePlayback('visibilitychange');if(current){registerMediaActions();if(navigator.audioSession?.state==='interrupted')handleSessionChange();else if(playbackBlocked)handleAudioStart();else if(!finishPlaybackIfEnded('visibility')&&audio.paused&&!pendingTrackId)handleAudioPause();}if(!document.hidden&&current){renderPlaybackProgress();loadLyrics(current);updateLyricPosition(true);}});
   const full = $('full-player');
   function isFullOpen() { return Boolean(full.open || full.classList.contains('dialog-fallback-open')); }
   function updateFull() {

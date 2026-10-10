@@ -20,7 +20,7 @@ function harness(storage=new Map()){
     RoylylPlaybackFeedback,playbackRetries:RoylylPlaybackFeedback.createRetryController({setTimeout:schedule,clearTimeout:cancel,isOnline:()=>true}),
     isFullOpen:()=>false,insertionAnchor:null,checkSleepTimer:()=>false,setTimeout:schedule,clearTimeout:cancel,audio,tracks,albums:[{tracks}],current:null,queue:[],repeat:'all',nextUp:[],playbackHistory:[],historyCursor:-1,
     loadedTrackId:null,pendingTrackId:null,playbackBlocked:false,pausedPosition:null,pendingResumePosition:null,
-    playbackRequestedAt:0,playToken:0,persistenceRequested:true,failedAudioSources:new Set(),preparedAudio:new Map(),localAudioUrl:null,fallbackCachedId:null,
+    lastSaved:0,playbackRequestedAt:0,playToken:0,persistenceRequested:true,failedAudioSources:new Set(),preparedAudio:new Map(),localAudioUrl:null,fallbackCachedId:null,
     playerStatusText:'',BUFFERING_STATUS:'buffering',navigator:{onLine:true,mediaSession:{}},performance:{now:()=>100},
     document:{body,hidden:false,addEventListener(name,fn){events[name]=fn;}},URL:{revokeObjectURL(){}},
     get:id=>tracks.find(t=>t.id===id),canPlay:t=>!!t?.src,audioSource:t=>'https://example.test/'+t.src+'?v=1',
@@ -34,12 +34,13 @@ function harness(storage=new Map()){
   vm.runInContext(source.slice(source.indexOf('  function playAlbum('),source.indexOf('  function openAlbum(')),ctx);
   vm.runInContext(listener("  audio.addEventListener('loadedmetadata'"),ctx);
   vm.runInContext(listener("  document.addEventListener('visibilitychange'"),ctx);
+  vm.runInContext(source.slice(source.indexOf("  audio.addEventListener('timeupdate'"),source.indexOf("  audio.addEventListener('play',")),ctx);
   const metadata=(duration=240)=>{audio.duration=duration;audio.readyState=1;audioEvents.loadedmetadata();};
   const loaded=(id='a',time=0)=>{
     ctx.current=ctx.get(id);ctx.queue=[...tracks];ctx.loadedTrackId=id;ctx.playbackHistory=[id];ctx.historyCursor=0;
     audio.src=ctx.audioSource(ctx.current);metadata();audio.currentTime=time;
   };
-  return {ctx,audio,storage,calls,events,metadata,loaded,timers,flushTimer(delay){for(const [id,job] of [...timers])if(job.delay===delay){timers.delete(id);job.fn();}}};
+  return {ctx,audio,storage,calls,events,metadata,loaded,timers,timeupdate:()=>audioEvents.timeupdate(),flushTimer(delay){for(const [id,job] of [...timers])if(job.delay===delay){timers.delete(id);job.fn();}}};
 }
 module.exports={harness,plain,settle};
 if(require.main===module){
