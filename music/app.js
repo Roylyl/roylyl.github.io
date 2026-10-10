@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const APP_VERSION='20261010-pwa-45', SHELL_VERSION='roylyl-music-shell-20261010-47';
+  const APP_VERSION='20261010-pwa-46', SHELL_VERSION='roylyl-music-shell-20261010-48';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const themeMedia=window.matchMedia('(prefers-color-scheme: dark)');
@@ -361,8 +361,8 @@
     $('full-lyrics').querySelector(`[data-group="${active}"]`)?.classList.add('is-active');
     scrollActiveLyric(!force);
   }
-  audio.addEventListener('seeked',()=>{updateLyricPosition(true);syncPlaybackState();});
-  audio.addEventListener('seeking',()=>syncPlaybackState());
+  audio.addEventListener('seeked',()=>{tracePlayback('audio-seeked');updateLyricPosition(true);syncPlaybackState();});
+  audio.addEventListener('seeking',()=>{tracePlayback('audio-seeking');syncPlaybackState();});
   async function loadLyrics(track,{force=false}={}) {
     if(!track?.src)return;
     const resource=lyricResource(track);
@@ -1030,12 +1030,16 @@
     if(retryWaiting&&!playbackBlocked)return {icon:'pause',label:'取消重试',system:'paused'};
     if(playbackBlocked||audio.error||audio.ended)return {icon:'play',label:'播放',system:current?'paused':'none'};
     if(pendingTrackId)return {icon:'pause',label:'取消加载',system:'paused'};
-    if(!audio.paused&&(audio.seeking||audio.readyState<3))return {icon:'pause',label:'暂停',system:current?'paused':'none'};
+    if(!audio.paused&&!audio.seeking&&audio.readyState<3)return {icon:'pause',label:'暂停',system:current?'paused':'none'};
     return {icon:audio.paused?'play':'pause',label:audio.paused?'播放':'暂停',system:current?(audio.paused?'paused':'playing'):'none'};
   }
   function syncPlaybackState() {
     if(!('mediaSession' in navigator))return;
-    try{navigator.mediaSession.playbackState=playbackControl().system;}catch{}
+    const state=playbackControl().system;
+    try{if(navigator.mediaSession.playbackState!==state)navigator.mediaSession.playbackState=state;}catch{}
+    // Let the native scrubber own its position until the seek completes.
+    // Repeated position/state writes during seeking can reset that interaction.
+    if(audio.seeking)return;
     // The lock screen extrapolates time while marked playing. Publish the
     // actual media position on both buffering and playback transitions.
     const duration=loadedTrackId===current?.id&&Number.isFinite(audio.duration)?audio.duration:current?.duration;
@@ -1434,7 +1438,7 @@
       pause: () => {tracePlayback('system-pause');pausePlayback();},
       previoustrack: () => {tracePlayback('system-previous');advance(-1);},
       nexttrack: () => {tracePlayback('system-next');advance(1);},
-      seekto: e => {tracePlayback('system-seek','target='+e.seekTime);seekPlayback(e.seekTime,e.fastSeek===true);}
+      seekto: e => {tracePlayback('system-seek','target='+e.seekTime+' fast='+!!e.fastSeek);seekPlayback(e.seekTime,e.fastSeek===true);}
     };
     for (const [name, handler] of Object.entries(handlers)) {
       try { navigator.mediaSession.setActionHandler(name, handler); } catch {}

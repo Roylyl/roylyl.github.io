@@ -85,7 +85,7 @@ if(require.main===module){
   h.ctx.navigator.mediaSession.setPositionState=value=>systemPosition=value.position;
   h.ctx.seekPlayback(93.5);assert.equal(systemPosition,93.5,'paused seeking must update system position immediately');
   h.audio.paused=false;h.audio.readyState=4;h.ctx.playbackBlocked=false;h.audio.seeking=true;
-  assert.equal(h.ctx.playbackControl().system,'paused','system clock must stop while seeking');
+  assert.equal(h.ctx.playbackControl().system,'playing','seeking must not change playback intent to paused');
   h.audio.seeking=false;assert.equal(h.ctx.playbackControl().system,'playing');
   h.ctx.pausePlayback();
   assert.equal(h.ctx.pausedPosition.time,93.5);assert.equal(h.storage.get('playback').time,93.5);

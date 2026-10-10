@@ -58,6 +58,16 @@ function harness(){
   Object.defineProperty(stable.ctx.navigator.mediaSession,'playbackState',{set(){throw Error('platform refused');}});
   assert.doesNotThrow(()=>stable.ctx.syncPlaybackState());
 
+  // A native drag must not be interrupted by paused/position updates.
+  const drag=harness();drag.ctx.pendingTrackId=null;drag.audio.paused=false;
+  drag.ctx.navigator.mediaSession.playbackState='playing';let positionWrites=0;
+  drag.ctx.navigator.mediaSession.setPositionState=()=>positionWrites++;
+  drag.audio.seeking=true;drag.audio.readyState=1;
+  for(let i=0;i<4;i++)drag.ctx.syncPlaybackState();
+  assert.equal(drag.ctx.navigator.mediaSession.playbackState,'playing');assert.equal(positionWrites,0);
+  drag.ctx.pausePlayback();assert.equal(drag.ctx.navigator.mediaSession.playbackState,'paused','explicit pause still wins during seek');
+  drag.audio.seeking=false;drag.ctx.syncPlaybackState();assert.equal(positionWrites,1);
+
   // A blocked native player can claim playing without advancing its clock.
   let blocked=harness();blocked.ctx.playbackBlocked=true;blocked.ctx.pendingTrackId=null;
   let blockedPlay=blocked.handlers.play();assert.equal(blocked.audio.reloads,1);
