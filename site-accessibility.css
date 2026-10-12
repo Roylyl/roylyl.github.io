@@ -41,3 +41,9 @@ html:not(.reveal-ready) .reveal {
   .reveal { opacity: 1 !important; }
   .page-particle-canvas { transform: none; will-change: auto; }
 }
+
+/* Vector UI icons share a fixed box; font metrics never position the arrow. */
+.site-icon { display: inline-block; width: 20px; height: 20px; flex: 0 0 auto; vertical-align: middle; }
+.icon-label { display: inline-flex; align-items: center; justify-content: center; gap: 6px; max-width: 100%; vertical-align: middle; }
+.icon-label-text { min-width: 0; }
+.qr-dialog-close { display: inline-flex; align-items: center; justify-content: center; }

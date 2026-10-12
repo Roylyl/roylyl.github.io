@@ -389,10 +389,10 @@
   "查看上游与引用说明 ↗": "查看上游与引用说明 ↗",
   "查看MacDuo源码 ↗": "查看MacDuo源码 ↗",
   "晚渡": "晚渡",
-  "单独打开音频 ↗": "单独打开音频 ↗",
+  "单独打开音频": "单独打开音频",
   "编曲": "编曲",
   "九声部MIDI · 88 BPM · E小调": "九声部MIDI · 88 BPM · E小调",
-  "浏览MIDI素材 ↗": "浏览MIDI素材 ↗",
+  "浏览MIDI素材": "浏览MIDI素材",
   "也可以查看我的GitHub、简历与项目的完整介绍。": "也可以查看我的GitHub、简历与项目的完整介绍。",
   "ASTRA COMPUTER USE TEST": "Astra电脑操作测试",
   "《晚渡》完全由Codex GPT-6 Astra模型操作MacBook上的FL Studio完成。这不是我的个人作品，而是一次Astra Computer Use测试；此处保留试听、工程与MIDI，供查看测试产物。": "《晚渡》完全由Codex GPT-6 Astra模型操作MacBook上的FL Studio完成。这不是我的个人作品，而是一次Astra Computer Use测试；此处保留试听、工程与MIDI，供查看测试产物。",
@@ -404,7 +404,7 @@
   "这次测试留下了什么": "这次测试留下了什么",
   "本案例用于展示模型操作桌面音乐软件后留下的文件与音频，不作为个人作曲、编曲或演奏能力的证明。": "本案例用于展示模型操作桌面音乐软件后留下的文件与音频，不作为个人作曲、编曲或演奏能力的证明。",
   "小号承担主旋律，乐器由MIDI驱动音源演奏，没有真实乐手或人声录音。生成脚本负责MIDI与曲目清单，FL Studio工程和试听音频分别保留。": "小号承担主旋律，乐器由MIDI驱动音源演奏，没有真实乐手或人声录音。生成脚本负责MIDI与曲目清单，FL Studio工程和试听音频分别保留。",
-  "测试说明与工程 ↗": "测试说明与工程 ↗"
+  "测试说明与工程": "测试说明与工程"
 });
   Object.assign(tw, {
   "两个人各自拥有耳机，也能更方便地共同收听。音享贴以轻量中继连接已有设备，保留独立调节的选择；已完成首版PCB与板级功能验证，并实现双A2DP、多设备同步及延迟调节。": "兩個人各自擁有耳機，也能更方便地共同收聽。音享貼以輕量中繼連接已有設備，保留獨立調節的選擇；已完成首版PCB與板級功能驗證，並實現雙A2DP、多設備同步及延遲調節。",
@@ -435,10 +435,10 @@
   "查看上游与引用说明 ↗": "查看上游與引用說明 ↗",
   "查看MacDuo源码 ↗": "查看MacDuo原始碼 ↗",
   "晚渡": "晚渡",
-  "单独打开音频 ↗": "單獨開啟音訊 ↗",
+  "单独打开音频": "單獨開啟音訊",
   "编曲": "編曲",
   "九声部MIDI · 88 BPM · E小调": "九聲部MIDI · 88 BPM · E小調",
-  "浏览MIDI素材 ↗": "瀏覽MIDI素材 ↗",
+  "浏览MIDI素材": "瀏覽MIDI素材",
   "也可以查看我的GitHub、简历与项目的完整介绍。": "也可以查看我的GitHub、履歷與項目的完整介紹。",
   "ASTRA COMPUTER USE TEST": "Astra電腦操作測試",
   "《晚渡》完全由Codex GPT-6 Astra模型操作MacBook上的FL Studio完成。这不是我的个人作品，而是一次Astra Computer Use测试；此处保留试听、工程与MIDI，供查看测试产物。": "《晚渡》完全由Codex GPT-6 Astra模型操作MacBook上的FL Studio完成。這不是我的個人作品，而是一次Astra Computer Use測試；此處保留試聽、工程與MIDI，供查看測試產物。",
@@ -450,7 +450,7 @@
   "这次测试留下了什么": "這次測試留下了什麼",
   "本案例用于展示模型操作桌面音乐软件后留下的文件与音频，不作为个人作曲、编曲或演奏能力的证明。": "本案例用於展示模型操作桌面音樂軟件後留下的檔案與音訊，不作為個人作曲、編曲或演奏能力的證明。",
   "小号承担主旋律，乐器由MIDI驱动音源演奏，没有真实乐手或人声录音。生成脚本负责MIDI与曲目清单，FL Studio工程和试听音频分别保留。": "小號承擔主旋律，樂器由MIDI驅動音源演奏，沒有真實樂手或人聲錄音。生成腳本負責MIDI與曲目清單，FL Studio工程和試聽音訊分別保留。",
-  "测试说明与工程 ↗": "測試說明與工程 ↗",
+  "测试说明与工程": "測試說明與工程",
   "两个人已经各自拥有耳机，却不一定能方便地一起听同一段内容。我希望用轻量中继改善设备之间的协作，并保留各自的音量与控制选择。音享贴由此展开硬件、音频链路和多端交互的设计，先把共同收听这一段体验说明白。": "兩個人已經各自擁有耳機，卻不一定能方便地一起聽同一段內容。我希望用輕量中繼改善設備之間的協作，並保留各自的音量與控制選擇。音享貼由此展開硬件、音頻鏈路和多端互動的設計，先把共同收聽這一段體驗說明白。",
   "从一个音源、两台播放设备的任务出发，让已有耳机获得共同收听的新用途。": "從一個音源、兩台播放設備的任務出發，讓已有耳機獲得共同收聽的新用途。",
   "新增的携带与设置负担，应小于它消除的麻烦。磁吸与轻量形态仍需结合结构、功耗继续打磨。": "新增的攜帶與設定負擔，應小於它消除的麻煩。磁吸與輕量形態仍需結合結構、功耗繼續打磨。",
@@ -519,10 +519,10 @@
   "查看上游与引用说明 ↗": "View upstream sources and credits ↗",
   "查看MacDuo源码 ↗": "View MacDuo source ↗",
   "晚渡": "WANDU",
-  "单独打开音频 ↗": "Open audio separately ↗",
+  "单独打开音频": "Open audio separately",
   "编曲": "Arrangement",
   "九声部MIDI · 88 BPM · E小调": "Nine-part MIDI · 88 BPM · E minor",
-  "浏览MIDI素材 ↗": "Browse MIDI files ↗",
+  "浏览MIDI素材": "Browse MIDI files",
   "也可以查看我的GitHub、简历与项目的完整介绍。": "You can also explore my GitHub, résumé, and full project descriptions.",
   "ASTRA COMPUTER USE TEST": "ASTRA COMPUTER USE TEST",
   "《晚渡》完全由Codex GPT-6 Astra模型操作MacBook上的FL Studio完成。这不是我的个人作品，而是一次Astra Computer Use测试；此处保留试听、工程与MIDI，供查看测试产物。": "Wandu was created entirely by the Codex GPT-6 Astra model operating FL Studio on a MacBook. It is not my own musical work, but an Astra Computer Use test. The audio preview, project, and MIDI files are provided here to show the test outputs.",
@@ -534,7 +534,7 @@
   "这次测试留下了什么": "What the test produced",
   "本案例用于展示模型操作桌面音乐软件后留下的文件与音频，不作为个人作曲、编曲或演奏能力的证明。": "This case shows the files and audio produced by a model operating desktop music software. It is not evidence of my personal composition, arrangement, or performance skills.",
   "小号承担主旋律，乐器由MIDI驱动音源演奏，没有真实乐手或人声录音。生成脚本负责MIDI与曲目清单，FL Studio工程和试听音频分别保留。": "Trumpet carries the main melody, with instruments played through MIDI-driven sound sources. There are no live musician or vocal recordings. The generation script produces MIDI and the score manifest; the FL Studio project and audio preview are retained separately.",
-  "测试说明与工程 ↗": "Test notes and project ↗",
+  "测试说明与工程": "Test notes and project",
   "两个人已经各自拥有耳机，却不一定能方便地一起听同一段内容。我希望用轻量中继改善设备之间的协作，并保留各自的音量与控制选择。音享贴由此展开硬件、音频链路和多端交互的设计，先把共同收听这一段体验说明白。": "Two people may each own headphones yet still struggle to listen together. I want a lightweight relay to help their devices work together while keeping individual volume and control. This shared listening task guides SoundShare's hardware, audio path and interfaces.",
   "从一个音源、两台播放设备的任务出发，让已有耳机获得共同收听的新用途。": "Start with one source and two playback devices, giving existing headphones a new way to be used together.",
   "新增的携带与设置负担，应小于它消除的麻烦。磁吸与轻量形态仍需结合结构、功耗继续打磨。": "The relay should add less carrying and setup effort than it removes. The magnetic, lightweight form still needs refinement alongside structure and power use.",
@@ -700,9 +700,9 @@
     ['长期方向', '長期方向', 'Long-term direction'],
     ['本页目录', '本頁目錄', 'On this page'],
     ['返回主页', '返回首頁', 'Back to home'],
-    ['查看音享贴项目 →', '查看音享貼項目 →', 'View the SoundShare project →'],
-    ['查看超声波定向扬声器项目 →', '查看超聲波定向揚聲器項目 →', 'View the ultrasonic directional speaker project →'],
-    ['阅读完整理念 →', '閱讀完整理念 →', 'Read the full philosophy →'],
+    ['查看音享贴项目', '查看音享貼項目', 'View the SoundShare project'],
+    ['查看超声波定向扬声器项目', '查看超聲波定向揚聲器項目', 'View the ultrasonic directional speaker project'],
+    ['阅读完整理念', '閱讀完整理念', 'Read the full philosophy'],
     [
       '罗宇伦关于产品判断、交互设计、技术融合、工程验证与长期研究的思考。',
       '羅宇倫關於產品判斷、互動設計、技術融合、工程驗證與長期研究的思考。',
@@ -727,9 +727,9 @@
     "Software & interaction"
   ],
   [
-    "查看其他项目 →",
-    "查看其他項目 →",
-    "Explore other projects →"
+    "查看其他项目",
+    "查看其他項目",
+    "Explore other projects"
   ],
   [
     "DeerWebTranslator与MacDuo：从网页阅读到桌面交互，记录两个开源项目的实现与设计思考。",
@@ -1396,9 +1396,9 @@
     "Audio testing, CarPlay receivers, web translation, desktop interaction and README tools, plus an Astra Computer Use experiment."
   ],
   [
-    "详情·源码 ↗",
-    "詳情·原始碼 ↗",
-    "Details · Source ↗"
+    "详情·源码",
+    "詳情·原始碼",
+    "Details · Source"
   ],
   [
     "工具06 · Codex技能",

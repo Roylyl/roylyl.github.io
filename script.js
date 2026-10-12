@@ -146,16 +146,16 @@ if (mobileMenuToggle && header && nav) {
 
 // Keep contact actions usable without a second device or a clipboard permission.
 const socialLabels = {
-  'zh-CN': { copy: '复制账号', open: '打开平台 ↗', copied: '账号已复制', failed: '无法自动复制，请长按或选中上方账号复制', zoom: '放大二维码' },
-  'zh-TW': { copy: '複製帳號', open: '開啟平台 ↗', copied: '帳號已複製', failed: '無法自動複製，請長按或選取上方帳號複製', zoom: '放大二維碼' },
-  en: { copy: 'Copy ID', open: 'Open profile ↗', copied: 'Account copied', failed: 'Select or long-press the account above to copy it', zoom: 'Enlarge QR code' }
+  'zh-CN': { copy: '复制账号', open: '打开平台', copied: '账号已复制', failed: '无法自动复制，请长按或选中上方账号复制', zoom: '放大二维码' },
+  'zh-TW': { copy: '複製帳號', open: '開啟平台', copied: '帳號已複製', failed: '無法自動複製，請長按或選取上方帳號複製', zoom: '放大二維碼' },
+  en: { copy: 'Copy ID', open: 'Open profile', copied: 'Account copied', failed: 'Select or long-press the account above to copy it', zoom: 'Enlarge QR code' }
 };
 const socialStatus = document.querySelector('.social-status');
 let statusTimer;
 function updateSocialLabels() {
   const labels = socialLabels[document.documentElement.lang] || socialLabels['zh-CN'];
   document.querySelectorAll('.social-copy').forEach((button) => { button.textContent = labels.copy; });
-  document.querySelectorAll('.social-direct').forEach((link) => { link.textContent = labels.open; });
+  document.querySelectorAll('.social-direct').forEach((link) => { link.querySelector('.icon-label-text').textContent = labels.open; });
   document.querySelectorAll('.qr-toggle').forEach((button) => {
     const title = button.closest('.social-card').querySelector('h3').textContent;
     button.setAttribute('aria-label', `${title} · ${labels.zoom}`);
