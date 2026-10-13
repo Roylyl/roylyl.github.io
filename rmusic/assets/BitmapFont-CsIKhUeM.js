@@ -1,1 +1,0 @@
-export{BitmapFont}from"./lib-yKNrK_Gb.js";

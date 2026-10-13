@@ -30,17 +30,11 @@ export const SETTINGS_ANCHOR_DEFINITIONS = {
     bottomUiSettings: { section: 'general', labelKey: 'options.bottomUiSettings' },
     pinnedCommands: { section: 'general', labelKey: 'options.pinnedCommands' },
 
-    // PlaybackSettingsSubview (TransitionSettingsSection renders inside it)
-    queueSettings: { section: 'playback', labelKey: 'options.queueSettings' },
+    // PlaybackSettingsSubview
     scrobbleSettings: { section: 'playback', labelKey: 'options.scrobbleSettings' },
-    transitionSettings: { section: 'playback', labelKey: 'options.transitionSettings' },
-    replayGainSettings: { section: 'playback', labelKey: 'options.replayGainSettings' },
     lyrics: { section: 'playback', labelKey: 'options.lyrics' },
     audioOutputSettings: { section: 'playback', labelKey: 'options.audioOutputSettings' },
 
-    // InteractionSettingsSubview
-    gridActionButton: { section: 'interaction', labelKey: 'options.gridActionButton' },
-    gridPaletteHotkey: { section: 'interaction', labelKey: 'options.gridPaletteHotkey' },
 
     // IntegrationSettingsSubview — stageMode is declared twice on purpose, the Electron and web
     // panels being mutually exclusive; it is still one destination.

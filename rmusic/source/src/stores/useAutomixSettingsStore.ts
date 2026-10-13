@@ -51,6 +51,12 @@ const TRANSITION_ANIMATION_KEY = 'folia_transition_animation';
 
 const TRANSITION_ANIMATION_CARD_KEY = 'folia_transition_animation_card';
 
+if (typeof window !== 'undefined') {
+    for (const key of [AUTOMIX_ENABLED_KEY, TRANSITION_PERFORMANCE_KEY, TRANSITION_ANIMATION_KEY, TRANSITION_ANIMATION_CARD_KEY]) {
+        localStorage.removeItem(key);
+    }
+}
+
 /**
  * The card border's switch, seeded once from the switch the two renderers used to share.
  *
@@ -124,23 +130,19 @@ export type AutomixSettingsState = {
 };
 
 export const useAutomixSettingsStore = create<AutomixSettingsState>((set, get) => ({
-    automixEnabled: getStoredBoolean(AUTOMIX_ENABLED_KEY, false),
+    automixEnabled: false,
     isAutomixModelReminderOpen: false,
     transitionMode: readStoredTransitionMode(),
     crossfadeMaxSec: readStoredCrossfadeMaxSec(),
-    transitionPerformance: getStoredBoolean(
-        TRANSITION_PERFORMANCE_KEY, DEFAULT_TRANSITION_SETTINGS.performance,
-    ),
+    transitionPerformance: false,
     // Off by default: it draws over whatever the listener is already looking at, which is a
     // choice to make rather than one to arrive at after an update.
-    transitionAnimation: getStoredBoolean(TRANSITION_ANIMATION_KEY, false),
-    transitionAnimationCard: readTransitionAnimationCard(),
-    handleToggleAutomix: (enable) => {
-        setStoredBoolean(AUTOMIX_ENABLED_KEY, enable);
-        // Asked here rather than in the settings section because there are two switches - the
-        // options page and the volume row - and a prompt wired to one of them is missing from the
-        // one people actually reach mid-song.
-        set({ automixEnabled: enable, isAutomixModelReminderOpen: enable && shouldRemindAboutModels() });
+    transitionAnimation: false,
+    transitionAnimationCard: false,
+    handleToggleAutomix: (_enable) => {
+        setStoredBoolean(AUTOMIX_ENABLED_KEY, false);
+        // Keep legacy callers inert after removing smart transitions from R music.
+        set({ automixEnabled: false, isAutomixModelReminderOpen: false });
     },
     dismissAutomixModelReminder: (mute) => {
         if (mute) setStoredBoolean(AUTOMIX_MODEL_REMINDER_MUTED_KEY, true);
@@ -160,17 +162,17 @@ export const useAutomixSettingsStore = create<AutomixSettingsState>((set, get) =
         }
         set({ crossfadeMaxSec: next });
     },
-    handleToggleTransitionPerformance: (enable) => {
-        setStoredBoolean(TRANSITION_PERFORMANCE_KEY, enable);
-        set({ transitionPerformance: enable });
+    handleToggleTransitionPerformance: (_enable) => {
+        setStoredBoolean(TRANSITION_PERFORMANCE_KEY, false);
+        set({ transitionPerformance: false });
     },
-    handleToggleTransitionAnimation: (enable) => {
-        setStoredBoolean(TRANSITION_ANIMATION_KEY, enable);
-        set({ transitionAnimation: enable });
+    handleToggleTransitionAnimation: (_enable) => {
+        setStoredBoolean(TRANSITION_ANIMATION_KEY, false);
+        set({ transitionAnimation: false });
     },
-    handleToggleTransitionAnimationCard: (enable) => {
-        setStoredBoolean(TRANSITION_ANIMATION_CARD_KEY, enable);
-        set({ transitionAnimationCard: enable });
+    handleToggleTransitionAnimationCard: (_enable) => {
+        setStoredBoolean(TRANSITION_ANIMATION_CARD_KEY, false);
+        set({ transitionAnimationCard: false });
     },
 }));
 

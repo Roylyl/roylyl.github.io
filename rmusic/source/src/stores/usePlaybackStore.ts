@@ -77,9 +77,8 @@ const resolve = <T,>(next: React.SetStateAction<T>, previous: T): T => (
 );
 
 const readStoredReplayGainMode = (): ReplayGainMode => {
-    if (typeof window === 'undefined') return 'off';
-    const saved = localStorage.getItem('local_replaygain_mode');
-    return saved === 'track' || saved === 'album' ? saved : 'off';
+    if (typeof window !== 'undefined') localStorage.removeItem('local_replaygain_mode');
+    return 'off';
 };
 
 export const usePlaybackStore = create<PlaybackStoreState>((set, get) => ({
@@ -111,7 +110,7 @@ export const usePlaybackStore = create<PlaybackStoreState>((set, get) => ({
     setPlayQueue: (next) => set({ playQueue: resolve(next, get().playQueue) }),
     setActivePlaybackContext: (next) => set({ activePlaybackContext: resolve(next, get().activePlaybackContext) }),
     setIsFmMode: (next) => set({ isFmMode: resolve(next, get().isFmMode) }),
-    setReplayGainMode: (next) => set({ replayGainMode: resolve(next, get().replayGainMode) }),
+    setReplayGainMode: (_next) => set({ replayGainMode: 'off' }),
     setLyricTimelineOffsetMs: (next) => set({ lyricTimelineOffsetMs: resolve(next, get().lyricTimelineOffsetMs) }),
     setTransitionDisplay: (next) => set({ transitionDisplay: resolve(next, get().transitionDisplay) }),
 }));

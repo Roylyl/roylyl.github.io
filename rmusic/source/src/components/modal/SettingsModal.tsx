@@ -14,7 +14,6 @@ import { NavidromeConfig, NavidromeServerProfile } from '../../types/navidrome';
 import VisPlayground from '../visualizer/VisPlayground';
 import { VISUALIZER_REGISTRY, getVisualizerModeLabel } from '../visualizer/registry';
 import ThemePark from './ThemePark';
-import LyricFilterSettingsModal from './LyricFilterSettingsModal';
 import type { LyricFilterDraft } from './LyricFilterSettingsModal';
 import GlobalLyricOffsetModal from './settings/GlobalLyricOffsetModal';
 import { settingsCardClassFor, settingsToggleOffClassFor } from './settings/settingsCardClasses';
@@ -28,7 +27,6 @@ import GraphicsSettingsSubview from './settings/GraphicsSettingsSubview';
 import ModsSettingsSubview from './settings/ModsSettingsSubview';
 import DeveloperSettingsSubview from './settings/DeveloperSettingsSubview';
 import PlaybackSettingsSubview from './settings/PlaybackSettingsSubview';
-import InteractionSettingsSubview from './settings/InteractionSettingsSubview';
 import StorageSettingsSection from './settings/StorageSettingsSection';
 import { AiHelpPromptModal } from './AiHelpPromptModal';
 import SettingsHelpActions from './SettingsHelpActions';
@@ -433,7 +431,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
     const [showVisPlayground, setShowVisPlayground] = useState(false);
     const [showThemePark, setShowThemePark] = useState(false);
-    const [showLyricFilterSettings, setShowLyricFilterSettings] = useState(false);
     const [showGlobalLyricOffset, setShowGlobalLyricOffset] = useState(false);
     const [showAiHelpPrompt, setShowAiHelpPrompt] = useState(false);
     const [showReleaseNotes, setShowReleaseNotes] = useState(false);
@@ -447,7 +444,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         setActiveTab(initialTab);
         setShowVisPlayground(initialSubview === 'visualizer');
         setShowThemePark(initialSubview === 'themePark');
-        setShowLyricFilterSettings(initialSubview === 'lyricFilter');
         setShowGlobalLyricOffset(initialSubview === 'globalLyricOffset');
 
         const targetSection = sectionForSettingsSubview(initialSubview);
@@ -1114,7 +1110,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     };
     const isAnySubviewOpen = showVisPlayground
         || showThemePark
-        || showLyricFilterSettings
         || showGlobalLyricOffset
         || showAiHelpPrompt
         || showReleaseNotes;
@@ -1126,7 +1121,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         }
         setShowVisPlayground(false);
         setShowThemePark(false);
-        setShowLyricFilterSettings(false);
         setShowGlobalLyricOffset(false);
         setShowAiHelpPrompt(false);
         setShowReleaseNotes(false);
@@ -1551,19 +1545,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                                                 isDaylight={isDaylight}
                                                 onAudioOutputDeviceChange={onAudioOutputDeviceChange}
                                                 onOpenGlobalLyricOffsetSettings={() => setShowGlobalLyricOffset(true)}
-                                                onOpenLyricFilterSettings={() => setShowLyricFilterSettings(true)}
-                                                replayGainMode={replayGainMode}
-                                                onReplayGainModeChange={onReplayGainModeChange}
                                                 settingsCardClass={settingsCardClass}
                                                 theme={theme}
                                                 utilityGhostButtonClass={utilityGhostButtonClass}
-                                            />
-                                        )}
-                                        {activeSettingsSection === 'interaction' && (
-                                            <InteractionSettingsSubview
-                                                isDaylight={isDaylight}
-                                                settingsCardClass={settingsCardClass}
-                                                theme={theme}
                                             />
                                         )}
                                         {activeSettingsSection === 'integration' && (
@@ -1995,20 +1979,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                 )}
             </AnimatePresence>
 
-            <LyricFilterSettingsModal
-                isOpen={showLyricFilterSettings}
-                isDaylight={isDaylight}
-                currentSongTitle={currentSongTitle}
-                initialPattern={lyricFilterPattern}
-                initialFilterEnabled={lyricFilterEnabled}
-                initialStaffPolicy={lyricStaffPolicy}
-                initialStaffMinDwellSeconds={lyricStaffMinDwellSeconds}
-                initialStaffAbsorbMode={lyricStaffAbsorbMode}
-                initialStaffPattern={lyricStaffPattern}
-                loadPreviewLyrics={loadLyricFilterPreview}
-                onClose={() => closeSubviewOrModal(() => setShowLyricFilterSettings(false))}
-                onSave={onSaveLyricFilterPattern}
-            />
             <GlobalLyricOffsetModal
                 isOpen={showGlobalLyricOffset}
                 isDaylight={isDaylight}

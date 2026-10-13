@@ -6,7 +6,7 @@
 // screen — and because the settings section that shows it is its own section for the same reason.
 
 import { create } from 'zustand';
-import { getStoredBoolean, getStoredString, setStoredBoolean } from './storagePrimitives';
+import { getStoredBoolean, setStoredBoolean } from './storagePrimitives';
 
 /** What the grid action button's leftward slide reaches. */
 export type GridActionButtonSlideTarget = 'filter' | 'command-palette';
@@ -15,20 +15,10 @@ const SLIDE_TARGET_KEY = 'grid_action_button_slide_target';
 const PALETTE_HOTKEY_KEY = 'grid_command_palette_hotkey';
 const QUEUE_PALETTE_KEEP_OPEN_KEY = 'queue_palette_keep_open';
 
-const readSlideTarget = (): GridActionButtonSlideTarget => (
-    getStoredString(SLIDE_TARGET_KEY, 'filter') === 'command-palette' ? 'command-palette' : 'filter'
-);
-
-const writeString = (key: string, value: string | null) => {
-    if (typeof window === 'undefined') {
-        return;
-    }
-    if (value) {
-        localStorage.setItem(key, value);
-    } else {
-        localStorage.removeItem(key);
-    }
-};
+if (typeof window !== 'undefined') {
+    localStorage.removeItem(SLIDE_TARGET_KEY);
+    localStorage.removeItem(PALETTE_HOTKEY_KEY);
+}
 
 export type InteractionSettingsState = {
     gridActionButtonSlideTarget: GridActionButtonSlideTarget;
@@ -46,18 +36,12 @@ export type InteractionSettingsState = {
 };
 
 export const useInteractionSettingsStore = create<InteractionSettingsState>((set) => ({
-    gridActionButtonSlideTarget: readSlideTarget(),
-    gridCommandPaletteHotkey: getStoredBoolean(PALETTE_HOTKEY_KEY, false),
+    gridActionButtonSlideTarget: 'filter',
+    gridCommandPaletteHotkey: false,
     queuePaletteKeepOpen: getStoredBoolean(QUEUE_PALETTE_KEEP_OPEN_KEY, false),
 
-    setGridActionButtonSlideTarget: (target) => {
-        writeString(SLIDE_TARGET_KEY, target);
-        set({ gridActionButtonSlideTarget: target });
-    },
-    handleToggleGridCommandPaletteHotkey: (enable) => {
-        setStoredBoolean(PALETTE_HOTKEY_KEY, enable);
-        set({ gridCommandPaletteHotkey: enable });
-    },
+    setGridActionButtonSlideTarget: (_target) => set({ gridActionButtonSlideTarget: 'filter' }),
+    handleToggleGridCommandPaletteHotkey: (_enable) => set({ gridCommandPaletteHotkey: false }),
     setQueuePaletteKeepOpen: (enable) => {
         setStoredBoolean(QUEUE_PALETTE_KEEP_OPEN_KEY, enable);
         set({ queuePaletteKeepOpen: enable });

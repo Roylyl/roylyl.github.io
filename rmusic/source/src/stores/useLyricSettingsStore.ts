@@ -148,18 +148,23 @@ export type LyricSettingsState = {
 
 const initialLyricFilterPattern = readStoredLyricFilterPattern();
 
+// R music preserves every lyric line and always displays leading credits.
+if (typeof window !== 'undefined') {
+    for (const key of ['lyrics_filter_pattern', 'lyrics_filter_enabled', 'lyrics_staff_policy', 'lyrics_staff_absorb_mode', 'lyrics_staff_pattern']) localStorage.removeItem(key);
+}
+
 export const useLyricSettingsStore = create<LyricSettingsState>((set, get) => ({
     autoUseBestLyric: getStoredBoolean('auto_use_best_lyric', true),
     preferredAlternativeLyricSource: readStoredPreferredAlternativeLyricSource(),
     localLyricsPriority: readStoredLocalLyricsPriority(),
     localLyricFormatOrder: readStoredLocalLyricFormatOrder(),
     globalLyricTimelineOffsetMs: readStoredGlobalLyricTimelineOffsetMs(),
-    lyricFilterPattern: initialLyricFilterPattern,
-    lyricFilterEnabled: readStoredLyricFilterEnabled(initialLyricFilterPattern),
-    lyricStaffPolicy: readStoredLyricStaffPolicy(),
+    lyricFilterPattern: '',
+    lyricFilterEnabled: false,
+    lyricStaffPolicy: 'keep',
     lyricStaffMinDwellSeconds: readStoredLyricStaffMinDwellSeconds(),
-    lyricStaffAbsorbMode: readStoredLyricStaffAbsorbMode(),
-    lyricStaffPattern: getStoredString('lyrics_staff_pattern', ''),
+    lyricStaffAbsorbMode: 'off',
+    lyricStaffPattern: '',
     handleToggleAutoUseBestLyric: (enable) => {
         setStoredBoolean('auto_use_best_lyric', enable);
         set({ autoUseBestLyric: enable });
@@ -198,33 +203,9 @@ export const useLyricSettingsStore = create<LyricSettingsState>((set, get) => ({
         }
         set({ globalLyricTimelineOffsetMs: nextOffsetMs });
     },
-    handleSetLyricFilterPattern: (pattern) => {
-        const next = pattern.trim();
-        set({ lyricFilterPattern: next });
-
-        if (typeof window === 'undefined') {
-            return;
-        }
-
-        if (next) {
-            localStorage.setItem('lyrics_filter_pattern', next);
-        } else {
-            localStorage.removeItem('lyrics_filter_pattern');
-        }
-    },
-    handleSetLyricFilterEnabled: (enabled) => {
-        setStoredBoolean('lyrics_filter_enabled', enabled);
-        set({ lyricFilterEnabled: enabled });
-    },
-    handleSetLyricStaffPolicy: (policy) => {
-        set({ lyricStaffPolicy: policy });
-
-        if (typeof window === 'undefined') {
-            return;
-        }
-
-        localStorage.setItem('lyrics_staff_policy', policy);
-    },
+    handleSetLyricFilterPattern: (_pattern) => set({ lyricFilterPattern: '' }),
+    handleSetLyricFilterEnabled: (_enabled) => set({ lyricFilterEnabled: false }),
+    handleSetLyricStaffPolicy: (_policy) => set({ lyricStaffPolicy: 'keep' }),
     handleSetLyricStaffMinDwellSeconds: (seconds) => {
         const next = Number.isFinite(seconds)
             ? Math.min(LYRIC_STAFF_MIN_DWELL_RANGE.max, Math.max(LYRIC_STAFF_MIN_DWELL_RANGE.min, seconds))

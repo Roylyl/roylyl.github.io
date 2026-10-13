@@ -101,10 +101,7 @@ export const settingsCommands: CommandPaletteCommand[] = [
     // bravais 的透光档位与每块窗数：只在生效 suite 是 bravais 时可用（与设置分区同一个谓词）。
     ...libraryWallLookCommands,
     createSettingsAnchorCommand('settings-pinned-commands', 'Pinned command slots', 'Choose the three commands pinned in the palette', ['pinned commands', 'quick slots', '固定命令'], 'pinnedCommands'),
-    createSettingsCommand('settings-interaction', 'Interaction settings', 'Open keyboard, shortcut and grid interaction settings', ['interaction', 'keyboard', 'hotkey', '交互', '快捷键设置'], 'options', 'interaction'),
-    createSettingsAnchorCommand('settings-grid-action-button', 'Grid action button', 'Jump to what the grid action button slides to', ['grid button', 'action button', '海报墙按钮'], 'gridActionButton'),
     createSettingsCommand('settings-playback', 'Playback settings', 'Open playback behavior settings', ['playback', '播放', '播放设置'], 'options', 'playback'),
-    createSettingsAnchorCommand('settings-queue-behavior', 'Queue behavior', 'Jump to how the play queue is built and kept', ['queue settings', 'queue behaviour', '队列行为'], 'queueSettings'),
     createSettingsAnchorCommand('settings-netease-scrobble', 'NetEase listening report', 'Jump to whether finished plays are reported to NetEase Cloud Music', ['scrobble', 'netease scrobble', 'listening report', 'play count', '听歌打卡', '打卡', '听歌排行'], 'scrobbleSettings'),
     createToggleCommand(
         'netease-scrobble-toggle',
@@ -118,66 +115,11 @@ export const settingsCommands: CommandPaletteCommand[] = [
         { isAvailable: context => context?.settings.canReportNeteasePlayback() ?? true },
     ),
     createSettingsAnchorCommand('settings-audio-output', 'Audio output', 'Jump to the audio output device and format settings', ['output device', 'audio device', 'sound card', '输出设备'], 'audioOutputSettings'),
-    createSettingsAnchorCommand('settings-transition', 'Smart transition', 'Jump to the FOLIA transition settings', ['automix', 'crossfade', 'transition', '智能过渡', '转场'], 'transitionSettings'),
     createSettingsAnchorCommand('settings-local-lyrics-priority', 'Local song lyrics priority', 'Choose whether local songs prefer local or online lyrics', ['local lyrics priority', 'online lyrics first', 'local song lyrics', '本地歌曲歌词优先级', '在线优先', '本地歌词', 'bendigeciyouxianji', 'bdgcyxj'], 'lyrics'),
     createSettingsAnchorCommand('settings-local-lyric-format-order', 'Local lyric file format priority', 'Choose which format wins when a track has several lyric files', ['lyric format priority', 'lyric file order', 'lrc ttml priority', '本地歌词文件格式优先级', '歌词格式', '格式优先级', 'geciwenjiangeshi', 'gcgsyxj'], 'lyrics'),
     createSettingsCommand('settings-integration', 'Integration settings', 'Open Stage, Now Playing, and Navidrome settings', ['integration', 'stage', 'now playing', 'navidrome settings', '集成', '连接'], 'options', 'integration'),
     createSettingsAnchorCommand('settings-navidrome', 'Navidrome server', 'Jump to the Navidrome server connection', ['navidrome', 'subsonic', 'music server', '音乐服务器'], 'navidrome'),
     createSettingsAnchorCommand('settings-stage-mode', 'Stage mode', 'Jump to the Stage external player settings', ['stage', 'external player', '舞台模式'], 'stageMode'),
-    {
-        id: 'automix-toggle',
-        group: 'settings',
-        title: 'Smart transition',
-        description: 'Turn FOLIA smart transitions on or off',
-        keywords: ['automix', 'blend', 'auto mix', 'transition', '智能过渡', '自动混音', '过渡', '开启过渡', 'znguodu'],
-        execute: (_input, context) => {
-            context.settings.toggleAutomix();
-            return true;
-        },
-    },
-    {
-        id: 'transition-mode-crossfade',
-        isAvailable: context => (context ? context.settings.transitionMode !== 'crossfade' : true),
-        group: 'settings',
-        title: 'Transition mode: Folia Crossfade',
-        description: 'Use the simple one-out one-in crossfade',
-        keywords: ['crossfade', 'folia crossfade', 'transition mode crossfade', '交叉淡化', '过渡模式交叉淡化', 'gdmscf'],
-        execute: (_input, context) => {
-            if (context.settings.transitionMode === 'crossfade') return false;
-            context.settings.setTransitionMode('crossfade');
-            return true;
-        },
-    },
-    {
-        id: 'transition-mode-automix',
-        isAvailable: context => (context ? context.settings.transitionMode !== 'automix' : true),
-        group: 'settings',
-        title: 'Transition mode: Folia Automix',
-        description: 'Analyse both tracks and mix them automatically',
-        keywords: ['automix', 'folia automix', 'transition mode automix', '自动混音', '过渡模式自动混音', 'gdmsauto'],
-        execute: (_input, context) => {
-            if (context.settings.transitionMode === 'automix') return false;
-            context.settings.setTransitionMode('automix');
-            return true;
-        },
-    },
-    {
-        id: 'transition-performance-toggle',
-        platform: ['electron'],
-        // Hidden without a stem model, matching the disabled switch in the transition settings.
-        // Without this the command could persist `transitionPerformance = true` in a state the
-        // settings panel refuses to produce, and the mode would then be silently on the moment a
-        // model finished downloading.
-        isAvailable: context => (context ? context.settings.canUseTransitionPerformance() : true),
-        group: 'settings',
-        title: 'Transition performance mode',
-        description: 'Toggle the more aggressive transition (needs the stem model)',
-        keywords: ['performance mode', 'transition performance', 'aggressive transition', '表现模式', '过渡表现', '性能模式'],
-        execute: (_input, context) => {
-            context.settings.toggleTransitionPerformance();
-            return true;
-        },
-    },
     createSettingsAnchorCommand('settings-discord-presence', 'Discord playback status', 'Open Discord Rich Presence settings', ['discord', 'rich presence', 'discord presence', 'playing status', '播放状态', 'discord状态', 'discordzhuangtai', 'dc'], 'discordRichPresence'),
     createSettingsAnchorCommand('settings-obs-browser-source', 'OBS browser source', 'Open OBS browser source settings', ['obs', 'browser source', 'live source', '直播源', '浏览器源'], 'obsBrowserSource'),
     createToggleCommand(
@@ -404,31 +346,6 @@ export const settingsCommands: CommandPaletteCommand[] = [
     createSettingsCommand('settings-visualizer', 'Visualizer settings', 'Open lyrics animation workbench', ['visualizer workbench', '可视化', '歌词动画', 'donghua'], 'options', 'visualizer'),
     createSettingsCommand('settings-theme-park', 'Color', 'Open theme editor', ['theme park', 'theme', '配色', '主题', '主题公园'], 'options', 'themePark', { executeShortcut: 't' }),
     createSettingsCommand('settings-global-lyric-offset', 'Global timing offset', 'Calibrate lyric timing against Bluetooth or device audio latency', ['lyric delay', 'audio latency', 'bluetooth delay', 'sync lyrics', '全局时间偏移', '歌词延迟', '音画同步', '蓝牙延迟'], 'options', 'globalLyricOffset'),
-    createSettingsCommand('settings-lyric-filter', 'Lyric filter', 'Open lyric filter settings', ['lyrics filter', '歌词过滤', '过滤'], 'options', 'lyricFilter'),
-    {
-        id: 'lyric-staff-policy-cycle',
-        group: 'settings',
-        title: 'Opening credits handling',
-        description: 'Cycle how the credit block at the start of the lyrics is handled',
-        keywords: ['opening credits', 'staff credits', 'lyric credits', 'credits', '制作人员', '署名', '开头署名', '前奏署名'],
-        execute: (_input, context) => {
-            context.settings.cycleLyricStaffPolicy();
-            return true;
-        },
-    },
-    {
-        id: 'lyric-staff-absorb-cycle',
-        // 与设置面板同一个判断：吸收只在 smart 下有意义，hide 不吸收、keep 不处理。
-        isAvailable: context => (context ? context.settings.lyricStaffPolicy === 'smart' : true),
-        group: 'settings',
-        title: 'Opening credits absorb mode',
-        description: 'Cycle whether neighbouring lines are folded into the opening credit block',
-        keywords: ['absorb', 'absorb neighbouring lines', 'lyric credits absorb', '吸收相邻行', '吸收', '署名吸收', '前奏吸收', 'xsh'],
-        execute: (_input, context) => {
-            context.settings.cycleLyricStaffAbsorbMode();
-            return true;
-        },
-    },
     {
         id: 'theme-generate-current',
         isAvailable: context => (context ? context.settings.canGenerateAITheme && !context.settings.isGeneratingTheme : true),

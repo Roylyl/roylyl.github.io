@@ -95,12 +95,12 @@ const readStoredAudioQuality = (): AudioQuality => {
 };
 
 const readStoredQueueAddBehavior = (): QueueAddBehavior => {
-    if (typeof window === 'undefined') {
-        return 'append';
+    if (typeof window !== 'undefined') {
+        // R music always inserts after the current song. Drop the old setting
+        // so an earlier "append" preference cannot change this behavior.
+        localStorage.removeItem('queue_add_behavior');
     }
-
-    const saved = localStorage.getItem('queue_add_behavior');
-    return saved === 'next' ? 'next' : 'append';
+    return 'next';
 };
 
 const readStoredAudioOutputDeviceId = (): string => {
@@ -153,7 +153,6 @@ export type AudioSettingsState = {
     setAudioQuality: (quality: AudioQuality) => void;
     handleToggleMediaCache: (enable: boolean) => void;
     handleSetMediaCacheLimitGb: (gigabytes: number) => void;
-    handleSetQueueAddBehavior: (behavior: QueueAddBehavior) => void;
     handleToggleAutoPlayOnLaunch: (enable: boolean) => void;
     handleToggleTranscodeFallback: (enable: boolean) => void;
     handleToggleNeteaseScrobble: (enable: boolean) => void;
@@ -203,16 +202,6 @@ export const useAudioSettingsStore = create<AudioSettingsState>((set, get) => ({
             localStorage.setItem(MEDIA_CACHE_LIMIT_GB_KEY, String(next));
         }
         set({ mediaCacheLimitGb: next });
-    },
-    handleSetQueueAddBehavior: (behavior) => {
-        if (typeof window !== 'undefined') {
-            localStorage.setItem('queue_add_behavior', behavior);
-        }
-        set({ queueAddBehavior: behavior });
-        setStatusMessage({
-            type: 'info',
-            text: i18n.t('notifications.' + (behavior === 'next' ? 'queueInsertNext' : 'queueAppend')),
-        });
     },
     handleToggleAutoPlayOnLaunch: (enable) => {
         setStoredBoolean(AUTO_PLAY_ON_LAUNCH_KEY, enable);
@@ -326,7 +315,6 @@ export const selectAudioSettingsSnapshot = (state: AudioSettingsState) => ({
     setAudioQuality: state.setAudioQuality,
     handleToggleMediaCache: state.handleToggleMediaCache,
     handleSetMediaCacheLimitGb: state.handleSetMediaCacheLimitGb,
-    handleSetQueueAddBehavior: state.handleSetQueueAddBehavior,
     handleToggleAutoPlayOnLaunch: state.handleToggleAutoPlayOnLaunch,
     handleToggleTranscodeFallback: state.handleToggleTranscodeFallback,
     handleToggleNeteaseScrobble: state.handleToggleNeteaseScrobble,
