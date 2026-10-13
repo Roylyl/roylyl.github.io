@@ -1,0 +1,1 @@
+var e=[`basics`,`playback`,`browsing`,`appearance`,`desktop`],t=[`always`,`unseen`,`off`],n=e=>typeof e==`string`&&t.includes(e),r=1400,i=2e3,a=.3;export{e as a,t as i,r as n,n as o,a as r,i as t};

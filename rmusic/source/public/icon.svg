@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <title>R music</title>
+  <defs>
+    <linearGradient id="surface" x1="74" y1="42" x2="447" y2="475" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7946e4"/><stop offset=".32" stop-color="#ad74db"/><stop offset=".64" stop-color="#e6a4b8"/><stop offset="1" stop-color="#f5c744"/>
+    </linearGradient>
+    <radialGradient id="sunlight" cx="480" cy="426" r="341" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffdb4e"/><stop offset="1" stop-color="#ffdb4e" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="128" cy="29" r="321" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#dfcfff" stop-opacity=".23"/><stop offset="1" stop-color="#dfcfff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="letter" x1="168" y1="126" x2="332" y2="385" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#211d3c"/><stop offset="1" stop-color="#302445"/>
+    </linearGradient>
+    <linearGradient id="note" x1="165" y1="320" x2="103" y2="412" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#a6ffd3"/><stop offset="1" stop-color="#3bdda6"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="40" y1="20" x2="439" y2="481" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff" stop-opacity=".55"/><stop offset="1" stop-color="#ffffff" stop-opacity=".12"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#surface)"/>
+  <rect width="512" height="512" rx="112" fill="url(#sunlight)"/>
+  <rect width="512" height="512" rx="112" fill="url(#glow)"/>
+  <rect x="1.5" y="1.5" width="509" height="509" rx="110.5" stroke="url(#edge)" stroke-width="3"/>
+  <g transform="translate(30 0) skewX(-6)">
+    <path fill-rule="evenodd" d="M151 374V145c0-8 5-13 13-13h96c64 0 101 31 101 83 0 40-23 66-60 78l75 81h-72l-68-76h-30v76h-55Zm55-130h49c32 0 49-9 49-29s-17-30-49-30h-49v59Z" fill="url(#letter)"/>
+    <path d="M151 318h28v57c0 23-21 41-46 41-20 0-34-11-34-27 0-20 23-36 52-35v-36Z" fill="url(#note)"/>
+  </g>
+</svg>

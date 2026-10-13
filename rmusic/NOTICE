@@ -1,0 +1,36 @@
+R music 1.0.0
+
+This frontend is a modified version of Folia, created by chthollyphile and
+contributors. Upstream: https://github.com/chthollyphile/folia-major
+The source supplied in folia-major-main.zip identifies commit
+9a01e788ed52d25ea01b1f0d37934e5e371ae82b and package version 0.7.18.
+
+R music uses Folia's React interface, player components, visualizers,
+lyric processing and browser integration, adapted for Roylyl's Music catalog
+and the /rmusic/ GitHub Pages path. These adaptations were made by Roylyl
+on 2026-10-13 and include product branding, static catalog integration,
+independent browser storage, PWA scope and responsive UI changes.
+They also include an adapted R monogram, per-song share pages, native system
+sharing entry points and paused restoration of shared tracks.
+R music is an independently maintained modification, not an official Folia
+release or a product endorsed by the upstream authors or music providers.
+
+The corresponding modified source and
+build configuration are in source/ and are provided under AGPL-3.0.
+The complete license text is in LICENSE.
+When distributing or publicly hosting this version, retain these notices
+and provide the corresponding source and necessary build files for the
+deployed version as required by the applicable license provisions.
+The application's source link must lead to the actual published modified
+source; linking only to the upstream project is not a substitute.
+
+Separately licensed third-party components retain their own licenses and
+copyright notices. See THIRD_PARTY_NOTICES.md and the notices kept alongside
+their source. The AGPL-3.0 license does not replace those notices.
+
+Audio, lyrics, album artwork and other music materials retain the rights
+and source information recorded in the Music catalog. This notice covers
+the frontend software; it does not grant rights to those music materials,
+upstream illustration assets, trademarks or service names.
+Attribution, personal possession and publicly accessible URLs are not
+evidence of permission to publicly redistribute these materials.
