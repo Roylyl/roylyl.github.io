@@ -1,3 +1,4 @@
+import RmusicThemeSelector from '../../shared/RmusicThemeSelector';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Theme, ThemeMode } from '../../../types';
@@ -60,35 +61,7 @@ const ThemeSourceRow: React.FC<ThemeSourceRowProps> = ({
         },
     ];
 
-    return (
-        <div className={`flex ${wellBg} p-1 rounded-xl`}>
-            {sources.map(source => {
-                const isActive = themeSourceModel.activeSource === source.mode;
-
-                return (
-                    <button
-                        key={source.mode}
-                        onClick={() => source.available && onBgModeChange(source.mode)}
-                        disabled={!source.available}
-                        title={source.available ? source.label : t('options.customThemeUnavailable')}
-                        className={`flex-1 py-1.5 flex items-center justify-center gap-2 text-[10px] font-medium rounded-lg transition-all ${
-                            isActive
-                                ? activeOptionBg
-                                : source.available
-                                    ? 'opacity-40 hover:opacity-100'
-                                    : 'opacity-25 cursor-not-allowed'
-                        }`}
-                    >
-                        <div
-                            className={`w-3 h-3 rounded-full ${source.bordered ? 'border border-white/20' : ''} ${source.available ? '' : 'border-dashed'}`}
-                            style={{ backgroundColor: source.available ? source.swatch : 'transparent' }}
-                        />
-                        {source.label}
-                    </button>
-                );
-            })}
-        </div>
-    );
+    return <RmusicThemeSelector />;
 };
 
 export default ThemeSourceRow;

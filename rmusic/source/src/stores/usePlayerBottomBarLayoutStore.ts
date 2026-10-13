@@ -23,18 +23,8 @@ export const usePlayerBottomBarLayoutStore = create<PlayerBottomBarLayoutState>(
     isPositioning: false,
     positioningStartOffset: PLAYER_BOTTOM_BAR_BASE_OFFSET_PX,
     positioningRequest: { seq: 0 },
-    requestPositioning: () => set(state => ({
-        positioningRequest: { seq: state.positioningRequest.seq + 1 },
-    })),
-    startPositioning: () => {
-        if (get().isPositioning) {
-            return;
-        }
-        set({
-            isPositioning: true,
-            positioningStartOffset: playerBottomBarLiveOffset.get(),
-        });
-    },
+    requestPositioning: () => {},
+    startPositioning: () => {},
     commitPositioning: () => {
         const committed = clampPlayerBottomBarOffset(
             playerBottomBarLiveOffset.get(),

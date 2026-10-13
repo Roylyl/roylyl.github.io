@@ -22,28 +22,16 @@ const PLAYER_CONTROL_SLOT_SECONDARY_STORAGE_KEY = 'player_control_slot_secondary
 
 /** Reads the persisted lower-bounded offset; the viewport-dependent upper bound is applied by consumers. */
 const readStoredPlayerBottomBarOffset = (): number => {
-    if (typeof window === 'undefined') {
-        return PLAYER_BOTTOM_BAR_BASE_OFFSET_PX;
-    }
-
-    const parsed = parseFloat(localStorage.getItem(PLAYER_BOTTOM_BAR_OFFSET_STORAGE_KEY) ?? '');
-    if (!Number.isFinite(parsed)) {
-        return PLAYER_BOTTOM_BAR_BASE_OFFSET_PX;
-    }
-
-    return Math.max(PLAYER_BOTTOM_BAR_BASE_OFFSET_PX, Math.round(parsed));
+    if (typeof window !== 'undefined') localStorage.removeItem(PLAYER_BOTTOM_BAR_OFFSET_STORAGE_KEY);
+    return 113;
 };
 
 const readStoredPlayerControlSlot = (
     key: string,
     fallback: PlayerControlSlotActionId,
 ): PlayerControlSlotActionId => {
-    if (typeof window === 'undefined') {
-        return fallback;
-    }
-
-    const saved = localStorage.getItem(key);
-    return isPlayerControlSlotActionId(saved) ? saved : fallback;
+    if (typeof window !== 'undefined') localStorage.removeItem(key);
+    return fallback;
 };
 
 export type PlayerChromeSettingsState = {
@@ -135,29 +123,11 @@ export const usePlayerChromeSettingsStore = create<PlayerChromeSettingsState>((s
             text: i18n.t('notifications.' + (enable ? 'progressBarHidden' : 'progressBarShown')),
         });
     },
-    handleSetPlayerBottomBarOffset: (offsetPx) => {
-        const next = Number.isFinite(offsetPx)
-            ? Math.max(PLAYER_BOTTOM_BAR_BASE_OFFSET_PX, Math.round(offsetPx))
-            : PLAYER_BOTTOM_BAR_BASE_OFFSET_PX;
-        if (typeof window !== 'undefined') {
-            localStorage.setItem(PLAYER_BOTTOM_BAR_OFFSET_STORAGE_KEY, String(next));
-        }
-        set({ playerBottomBarOffset: next });
-    },
-    handleSetPlayerControlSlot: (slot, actionId) => {
-        if (!isPlayerControlSlotActionId(actionId)) {
-            return;
-        }
-        const key = slot === 'primary'
-            ? PLAYER_CONTROL_SLOT_PRIMARY_STORAGE_KEY
-            : PLAYER_CONTROL_SLOT_SECONDARY_STORAGE_KEY;
-        if (typeof window !== 'undefined') {
-            localStorage.setItem(key, actionId);
-        }
-        set(slot === 'primary'
-            ? { playerControlSlotPrimary: actionId }
-            : { playerControlSlotSecondary: actionId });
-    },
+    handleSetPlayerBottomBarOffset: () => set({ playerBottomBarOffset: 113 }),
+    handleSetPlayerControlSlot: () => set({
+        playerControlSlotPrimary: DEFAULT_PLAYER_CONTROL_SLOT_PRIMARY,
+        playerControlSlotSecondary: DEFAULT_PLAYER_CONTROL_SLOT_SECONDARY,
+    }),
     handleToggleAlwaysShowPlayerBackButton: (enable) => {
         setStoredBoolean('always_show_player_back_button', enable);
         set({ alwaysShowPlayerBackButton: enable });

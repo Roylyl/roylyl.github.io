@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { getStoredBoolean, getStoredString, setStoredBoolean } from './storagePrimitives';
+import { getStoredString, setStoredBoolean } from './storagePrimitives';
 import {
     canPersistVideoLayerFile,
     clearVideoLayerFileHandle,
@@ -105,8 +105,9 @@ export const useVideoLayerSettingsStore = create<VideoLayerSettingsState>((set, 
         }
     };
 
+    setStoredBoolean(VIDEO_LAYER_ENABLED_KEY, false);
     return {
-        videoLayerEnabled: getStoredBoolean(VIDEO_LAYER_ENABLED_KEY, false),
+        videoLayerEnabled: false,
         videoLayerUrl: getStoredString(VIDEO_LAYER_URL_KEY, ''),
         videoLayerOpacity: clampVideoLayerOpacity(Number(getStoredString(VIDEO_LAYER_OPACITY_KEY, String(VIDEO_LAYER_OPACITY_DEFAULT)))),
         videoLayerFit: getStoredString(VIDEO_LAYER_FIT_KEY, 'cover') === 'contain' ? 'contain' : 'cover',
@@ -114,9 +115,9 @@ export const useVideoLayerSettingsStore = create<VideoLayerSettingsState>((set, 
         localFileName: null,
         localFileStatus: 'none',
         canPersistLocalFile: canPersistVideoLayerFile(),
-        setVideoLayerEnabled: (enabled) => {
-            set({ videoLayerEnabled: enabled });
-            setStoredBoolean(VIDEO_LAYER_ENABLED_KEY, enabled);
+        setVideoLayerEnabled: () => {
+            set({ videoLayerEnabled: false });
+            setStoredBoolean(VIDEO_LAYER_ENABLED_KEY, false);
         },
         setVideoLayerUrl: (url) => {
             const normalized = url.trim();

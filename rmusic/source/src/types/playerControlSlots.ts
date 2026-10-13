@@ -29,9 +29,9 @@ export const PLAYER_CONTROL_SLOT_ACTION_IDS: readonly PlayerControlSlotActionId[
     'sleep-timer',
 ];
 
-/** 默认保持改动前的样子：循环模式 + 歌词时间轴。 */
+/** 默认保持改动前的样子：循环模式 + 播放队列。 */
 export const DEFAULT_PLAYER_CONTROL_SLOT_PRIMARY: PlayerControlSlotActionId = 'loop';
-export const DEFAULT_PLAYER_CONTROL_SLOT_SECONDARY: PlayerControlSlotActionId = 'lyrics-timeline';
+export const DEFAULT_PLAYER_CONTROL_SLOT_SECONDARY: PlayerControlSlotActionId = 'queue';
 
 export const isPlayerControlSlotActionId = (value: unknown): value is PlayerControlSlotActionId => (
     typeof value === 'string' && (PLAYER_CONTROL_SLOT_ACTION_IDS as readonly string[]).includes(value)

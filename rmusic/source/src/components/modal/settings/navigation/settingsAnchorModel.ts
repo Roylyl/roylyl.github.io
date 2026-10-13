@@ -15,20 +15,15 @@ export const SETTINGS_ANCHOR_DEFINITIONS = {
     grid3dCardStyle: { section: 'appearance', labelKey: 'options.grid3dCardStyle' },
     latticeSettings: { section: 'appearance', labelKey: 'options.latticeSettings' },
     gridViewCardSettings: { section: 'appearance', labelKey: 'options.gridViewCardSettings' },
-    videoLayerSettings: { section: 'appearance', labelKey: 'options.videoLayerSettings' },
-    importExportTitle: { section: 'appearance', labelKey: 'options.importExportTitle' },
 
     // GeneralSettingsSubview (PinnedCommandSettings renders inside it)
     languageSettings: { section: 'general', labelKey: 'options.languageSettings' },
     homeTabsVisibility: { section: 'general', labelKey: 'options.homeTabsVisibility' },
-    rememberHomeCardPosition: { section: 'general', labelKey: 'options.rememberHomeCardPosition' },
     playbackEntryView: { section: 'general', labelKey: 'options.playbackEntryView' },
     // Rendered only when more than one library suite is available (hasLibrarySuiteChoice).
     librarySuite: { section: 'general', labelKey: 'options.librarySuite', requiresLibrarySuiteChoice: true },
     // bravais 独有的设置（透光、每块窗数、集合叠页边）：只在生效 suite 是 bravais 时渲染（isBravaisLibraryActive）。
     bravaisSettings: { section: 'general', labelKey: 'options.bravaisSettings', requiresBravaisSuite: true },
-    bottomUiSettings: { section: 'general', labelKey: 'options.bottomUiSettings' },
-    pinnedCommands: { section: 'general', labelKey: 'options.pinnedCommands' },
 
     // PlaybackSettingsSubview
     scrobbleSettings: { section: 'playback', labelKey: 'options.scrobbleSettings' },

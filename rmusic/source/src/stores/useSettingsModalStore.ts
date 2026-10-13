@@ -102,7 +102,7 @@ export const useSettingsModalStore = create<SettingsModalUiState>((set, get) => 
         const getLanguageLabel = (pref: AppLanguagePreference): string => {
             switch (pref) {
                 case 'zh-CN': return i18n.t('options.appLanguageZhCN', { lng: 'zh-CN' });
-                case 'in': return i18n.t('options.appLanguageInID', { lng: 'in' });
+                case 'zh-TW': return '繁體中文';
                 case 'en': return i18n.t('options.appLanguageEnUS', { lng: 'en' });
                 default: return '';
             }
@@ -115,19 +115,7 @@ export const useSettingsModalStore = create<SettingsModalUiState>((set, get) => 
                 : i18n.t('notifications.langManual', { language: getLanguageLabel(preference) }),
         });
     },
-    setPinnedCommandId: (slotIndex, commandId) => {
-        if (!Number.isInteger(slotIndex) || slotIndex < 0 || slotIndex >= 3) {
-            return;
-        }
-        const current = get().pinnedCommandIds;
-        const next = normalizePinnedCommandIds(
-            current.map((currentCommandId, index) => (
-                index === slotIndex ? commandId : currentCommandId
-            )),
-        );
-        writePinnedCommandIds(next);
-        set({ pinnedCommandIds: next });
-    },
+    setPinnedCommandId: () => set({ pinnedCommandIds: readPinnedCommandIds() }),
 }));
 
 /**

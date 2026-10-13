@@ -13,7 +13,7 @@ export const PINNED_COMMANDS_STORAGE_KEY = 'command_palette_pinned_commands_v1';
 export const DEFAULT_PINNED_COMMAND_IDS: PinnedCommandIds = [
     'playback-prev',
     'playback-next',
-    'panel-queue',
+    'playback-loop',
 ];
 
 const cloneDefaults = (): PinnedCommandIds => [...DEFAULT_PINNED_COMMAND_IDS];
@@ -40,20 +40,8 @@ export const normalizePinnedCommandIds = (
 };
 
 export const readPinnedCommandIds = (): PinnedCommandIds => {
-    if (typeof window === 'undefined') {
-        return cloneDefaults();
-    }
-
-    const storedValue = window.localStorage.getItem(PINNED_COMMANDS_STORAGE_KEY);
-    if (storedValue === null) {
-        return cloneDefaults();
-    }
-
-    try {
-        return normalizePinnedCommandIds(JSON.parse(storedValue), cloneDefaults());
-    } catch {
-        return cloneDefaults();
-    }
+    if (typeof window !== 'undefined') window.localStorage.removeItem(PINNED_COMMANDS_STORAGE_KEY);
+    return cloneDefaults();
 };
 
 export const writePinnedCommandIds = (commandIds: PinnedCommandIds) => {

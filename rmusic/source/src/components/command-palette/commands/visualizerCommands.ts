@@ -50,20 +50,6 @@ export const visualizerCommands: CommandPaletteCommand[] = [
     createVisualizerCommand('cappella', 'Visualizer: Cappella', 'Switch to cappella visualizer', ['cappella', '群唱']),
     createVisualizerCommand('diorama', 'Visualizer: Diorama', 'Switch to Diorama visualizer', ['diorama', '镜台', '切换到可视化：镜台', '切换到可视化镜台']),
     createVisualizerCommand('still', 'Visualizer: Still', 'Switch to the static low-resource visualizer', ['still', 'static', 'low resource', '静止', '静态', '低占用']),
-    createToggleCommand('video-layer-toggle', 'visualizer', 'Video layer behind lyrics', 'Show or hide the muted video layer behind the lyrics', ['video layer', 'background video', 'video behind lyrics', '视频层', '背景视频', '歌词后方视频'], context => context.visualizer.toggleVideoLayer()),
-    defineCommand({
-        id: 'video-layer-pick',
-        group: 'visualizer',
-        title: 'Video layer: pick a local video',
-        description: 'Choose a local video to play behind the lyrics',
-        keywords: ['pick video', 'local video', 'video layer', 'mv', '选择视频', '本地视频', '视频层', '背景视频'],
-        execute: (_input, context) => {
-            void context.visualizer.pickVideoLayerFile().catch((error) => {
-                console.error('[VideoLayer] Failed to pick a video:', error);
-            });
-            return true;
-        },
-    }),
     createToggleCommand(
         'visualizer-toggle-glow-blur-quantize',
         'visualizer',

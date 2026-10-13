@@ -8,7 +8,6 @@ import { type VisualizerSharedProps } from './definition';
 import VisualizerBackgroundRenderer from './backgrounds/VisualizerBackgroundRenderer';
 import { getSizedCoverUrl } from '../../utils/coverUrl';
 import { FoliumStageLayerSlot } from '../../mods/folium/registries/stageLayers';
-import VideoLayer from './videoLayer/VideoLayer';
 import { isMainAppSurface } from '../../utils/appSurface';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 
@@ -200,7 +199,6 @@ const VisualizerShell = forwardRef<HTMLDivElement, VisualizerShellProps>(({
 
             {/* The built-in video layer follows the same rule as stage layers and stays out of the OBS
                 sources, which cannot open the main window's local file handle. */}
-            {showStageLayers && isMainAppSurface && <VideoLayer paused={resolvedPaused} />}
 
             {/* Folium stage layers exist on the real player page only, never in previews. */}
             {showStageLayers && (

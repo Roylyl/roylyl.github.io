@@ -5,12 +5,9 @@ import { useShallow } from 'zustand/react/shallow';
 import type { Theme } from '../../../types';
 import type { AppLanguagePreference } from '../../../i18n/config';
 import { CustomSelect } from '../../shared/CustomSelect';
-import PinnedCommandSettings from './PinnedCommandSettings';
 import PlaybackEntryViewSection from './PlaybackEntryViewSection';
 import LibrarySuiteSection from './LibrarySuiteSection';
 import BravaisSettingsSection from './BravaisSettingsSection';
-import PlayerBottomBarSection from './PlayerBottomBarSection';
-import HomeCardPositionSection from './HomeCardPositionSection';
 import { SettingsAnchor } from './navigation/SettingsAnchorContext';
 import SettingsSectionHeading from './navigation/SettingsSectionHeading';
 import { settingsDividerClassFor } from './settingsCardClasses';
@@ -62,12 +59,8 @@ const GeneralSettingsSubview: React.FC<GeneralSettingsSubviewProps> = ({
     })));
     const getResolvedLanguageLabel = (): string => {
         const lang = i18n.resolvedLanguage;
-        if (lang?.startsWith('zh')) {
-            return t('options.appLanguageZhCN');
-        }
-        if (lang === 'in' || lang?.startsWith('id')) {
-            return t('options.appLanguageInID') || 'Bahasa Indonesia';
-        }
+        if (lang === 'zh-TW') return '繁體中文';
+        if (lang?.startsWith('zh')) return '简体中文';
         return t('options.appLanguageEnUS') || 'English';
     };
 
@@ -75,9 +68,9 @@ const GeneralSettingsSubview: React.FC<GeneralSettingsSubviewProps> = ({
 
     const languageOptions: Array<{ value: AppLanguagePreference; label: string; }> = [
         { value: 'system', label: t('options.appLanguageSystem') },
-        { value: 'zh-CN', label: t('options.appLanguageZhCN') },
+        { value: 'zh-CN', label: '简体中文' },
         { value: 'en', label: t('options.appLanguageEnUS') || 'English' },
-        { value: 'in', label: t('options.appLanguageInID') || 'Bahasa Indonesia' },
+        { value: 'zh-TW', label: '繁體中文' },
     ];
 
     const languageHint = appLanguagePreference === 'system'
@@ -122,7 +115,6 @@ const GeneralSettingsSubview: React.FC<GeneralSettingsSubviewProps> = ({
 
             
 
-            <HomeCardPositionSection isDaylight={isDaylight} settingsCardClass={settingsCardClass} theme={theme} />
 
             <PlaybackEntryViewSection
                 isDaylight={isDaylight}
@@ -142,22 +134,6 @@ const GeneralSettingsSubview: React.FC<GeneralSettingsSubviewProps> = ({
                 theme={theme}
             />
 
-            <SettingsAnchor anchorId="bottomUiSettings" label={t('options.bottomUiSettings')} className="space-y-4">
-                <SettingsSectionHeading icon={Move} label={t('options.bottomUiSettings')} />
-                <PlayerBottomBarSection
-                    settingsCardClass={settingsCardClass}
-                    utilityGhostButtonClass={utilityGhostButtonClass}
-                    rangeInputClass={rangeInputClass}
-                    isDaylight={isDaylight}
-                    theme={theme}
-                />
-            </SettingsAnchor>
-
-            <PinnedCommandSettings
-                isDaylight={isDaylight}
-                settingsCardClass={settingsCardClass}
-                theme={theme}
-            />
 
         </div>
     );

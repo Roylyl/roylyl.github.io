@@ -826,7 +826,7 @@ export default {
       "settings-language-system": { "title": "跟随系统语言", "description": "使用浏览器或系统语言" },
       "settings-language-zh-CN": { "title": "切换为中文", "description": "界面使用简体中文" },
       "settings-language-en": { "title": "切换为英文", "description": "界面使用English" },
-      "settings-language-in": { "title": "切换为印尼语", "description": "界面使用Bahasa Indonesia" }
+      "settings-language-zh-TW": { "title": "切换为繁体中文", "description": "界面使用繁体中文" }
     }
   },
   "ui": {
@@ -1679,7 +1679,7 @@ export default {
     "appLanguageSystem": "跟随系统",
     "appLanguageZhCN": "简体中文",
     "appLanguageEnUS": "English",
-    "appLanguageInID": "Indonesian",
+    "appLanguageZhTW": "繁體中文",
     "appLanguageSystemHint": "跟随浏览器或系统语言。当前生效：{{language}}",
     "playbackEntryView": "播放后进入的视图",
     "playbackEntryViewDesc": "点击播放后默认打开哪个视图。",
@@ -2471,7 +2471,7 @@ export default {
     "glowBlurQuantizeDesc": "改变部分歌词动画的发光绘制方式，修复Linux下长时间播放后偶发的卡死问题。Linux下默认开启，其他平台默认关闭。详见",
     "glowBlurQuantizeDocs": "chromium FD耗尽问题",
     "visualizerFrameRateValue": "限制档位",
-    "themePresets": "配色主题预设",
+    "themePresets": "主题",
     "themePresetsDefault": "墨染/素白",
     "openThemePark": "打开Theme Park",
     "themeParkDesc": "自定义配色主题。",

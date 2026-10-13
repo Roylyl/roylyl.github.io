@@ -3,7 +3,7 @@ import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import en from './locales/en.ts';
 import zhCN from './locales/zh-CN.ts';
-import ind from './locales/in.ts';
+import zhTW from './locales/zh-TW.ts';
 import { resolveMissingTranslation } from './missingTranslation';
 
 /*
@@ -26,11 +26,11 @@ function flattenLocale(obj: Record<string, any>, prefix = ''): Record<string, st
 
 const ZH_FALLBACKS: Record<string, string> = flattenLocale(zhCN);
 
-export type AppLanguagePreference = 'system' | 'en' | 'zh-CN' | 'in';
+export type AppLanguagePreference = 'system' | 'en' | 'zh-CN' | 'zh-TW';
 export const APP_LANGUAGE_STORAGE_KEY = 'folia_app_language';
 
 const isSupportedManualLanguage = (value: string | null | undefined): value is Exclude<AppLanguagePreference, 'system'> => (
-  value === 'en' || value === 'zh-CN' || value === 'in'
+  value === 'en' || value === 'zh-CN' || value === 'zh-TW'
 );
 
 const normalizeSupportedLanguage = (value: string | null | undefined): Exclude<AppLanguagePreference, 'system'> => {
@@ -38,12 +38,10 @@ const normalizeSupportedLanguage = (value: string | null | undefined): Exclude<A
     return 'en';
   }
 
-  if (value === 'in' || value.toLowerCase().startsWith('id')) {
-    return 'in';
-  }
-
-  if (value.toLowerCase().startsWith('zh')) {
-    return 'zh-CN';
+  const language = value.toLowerCase().replaceAll('_', '-');
+  if (language.startsWith('zh')) {
+    return /(?:^|-)hant(?:-|$)|(?:^|-)(tw|hk|mo)(?:-|$)/.test(language)
+      && !language.includes('hans') ? 'zh-TW' : 'zh-CN';
   }
 
   return 'en';
@@ -73,12 +71,7 @@ const syncDocumentLanguage = (value: string | null | undefined) => {
 };
 
 const detectSystemLanguage = (): Exclude<AppLanguagePreference, 'system'> => {
-  const detected = i18n.services.languageDetector?.detect();
-  if (Array.isArray(detected)) {
-    return normalizeSupportedLanguage(detected[0]);
-  }
-
-  return normalizeSupportedLanguage(detected ?? (typeof navigator !== 'undefined' ? navigator.language : 'en'));
+  return normalizeSupportedLanguage(typeof navigator !== 'undefined' ? navigator.language : 'en');
 };
 
 i18n
@@ -92,19 +85,19 @@ i18n
       'zh-CN': {
         translation: zhCN
       },
-      in: {
-        translation: ind
+      'zh-TW': {
+        translation: zhTW
       }
     },
     fallbackLng: 'en',
     parseMissingKeyHandler: (key: string, defaultValue?: string): string => (
       resolveMissingTranslation(ZH_FALLBACKS, key, defaultValue)
     ),
-    supportedLngs: ['en', 'zh-CN', 'in'],
-    ...(initialLanguagePreference !== 'system' ? { lng: initialLanguagePreference } : {}),
+    supportedLngs: ['en', 'zh-CN', 'zh-TW'],
+    lng: initialLanguagePreference === 'system' ? detectSystemLanguage() : initialLanguagePreference,
     detection: {
-      order: ['localStorage', 'navigator', 'htmlTag'],
-      caches: ['localStorage'],
+      order: ['navigator'],
+      caches: [],
       lookupLocalStorage: 'i18nextLng'
     },
     interpolation: {
@@ -123,7 +116,7 @@ const pushLocaleToMainProcess = (value: string | null | undefined) => {
     return;
   }
 
-  void window.electron?.setAppLocale?.(normalizeSupportedLanguage(value));
+  void window.electron?.setAppLocale?.(normalizeSupportedLanguage(value) === 'zh-TW' ? 'zh-CN' : normalizeSupportedLanguage(value) as 'en' | 'zh-CN');
 };
 
 i18n.on('languageChanged', lng => {
@@ -149,9 +142,17 @@ export const applyAppLanguagePreference = async (
   const nextLanguage = preference === 'system' ? detectSystemLanguage() : preference;
   await i18n.changeLanguage(nextLanguage);
   if (typeof window !== 'undefined') {
-    await window.electron?.setAppLocale?.(nextLanguage);
+    await window.electron?.setAppLocale?.(nextLanguage === 'zh-TW' ? 'zh-CN' : nextLanguage);
   }
   return nextLanguage;
 };
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('languagechange', () => {
+    if (readStoredAppLanguagePreference() === 'system') {
+      void i18n.changeLanguage(detectSystemLanguage());
+    }
+  });
+}
 
 export default i18n;

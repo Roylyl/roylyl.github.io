@@ -6,7 +6,6 @@
 import { create } from 'zustand';
 import i18n from '../i18n/config';
 import { getStoredBoolean, setStoredBoolean } from './storagePrimitives';
-import { useHomeCardPositionStore } from './useHomeCardPositionStore';
 import { setStatusMessage } from './useStatusMessageStore';
 
 const readStoredHomeLayoutStyle = (): 'carousel' | 'grid' => {
@@ -47,12 +46,13 @@ export type HomeLayoutSettingsState = {
     handleToggleHomeTabLocal: (show: boolean) => void;
 };
 
+// Card positions are always remembered for the current app session.
+if (typeof window !== 'undefined') localStorage.removeItem('remember_home_card_position');
+
 export const useHomeLayoutSettingsStore = create<HomeLayoutSettingsState>((set, get) => ({
-    rememberHomeCardPosition: getStoredBoolean('remember_home_card_position', true),
-    handleToggleRememberHomeCardPosition: (remember) => {
-        set({ rememberHomeCardPosition: remember });
-        setStoredBoolean('remember_home_card_position', remember);
-        if (!remember) useHomeCardPositionStore.getState().clear();
+    rememberHomeCardPosition: true,
+    handleToggleRememberHomeCardPosition: () => {
+        set({ rememberHomeCardPosition: true });
     },
     grid3dCardStyle: readStoredGrid3dCardStyle(),
     handleSetGrid3dCardStyle: (style) => {

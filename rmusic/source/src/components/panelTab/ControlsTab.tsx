@@ -179,7 +179,7 @@ const ControlsTab: React.FC<ControlsTabProps> = ({
                                 {themeDisplayName}
                             </span>
                         )}
-                        {themeSourceModel.activeSource !== 'default' && (
+                        {themeSourceModel.canOpenQuickEditor && (
                             <button
                                 onClick={() => void runThemeSync()}
                                 disabled={themeSyncState === 'syncing'}

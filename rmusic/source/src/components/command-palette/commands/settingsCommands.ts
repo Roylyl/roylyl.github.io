@@ -26,14 +26,6 @@ export const settingsCommands: CommandPaletteCommand[] = [
     createSettingsAnchorCommand('settings-grid-card-style', 'Grid card style', 'Jump to how the home grid draws its cards', ['card style', 'polaroid', 'grid style', '卡片样式'], 'grid3dCardStyle'),
     createSettingsCommand('settings-general', 'General settings', 'Open general app preferences', ['general', 'language settings', 'locale', '通用', '语言'], 'options', 'general'),
     createSettingsAnchorCommand('settings-home-tabs', 'Home tab visibility', 'Choose which tabs the home screen shows', ['hide tabs', 'home tabs', '首页标签'], 'homeTabsVisibility'),
-    createToggleCommand(
-        'home-card-position-toggle',
-        'settings',
-        'Remember home card position',
-        'Toggle restoring each home section to its last card',
-        ['restore card', 'tab position', '卡片定位', '返回首页'],
-        context => context.settings.toggleRememberHomeCardPosition(),
-    ),
     createSettingsAnchorCommand('settings-playback-entry-view', 'Play opens', 'Jump to which view pressing play opens', ['entry view', 'open on play', 'default view', '播放进入视图', '默认视图'], 'playbackEntryView'),
     {
         id: 'playback-entry-view-player',
@@ -100,7 +92,6 @@ export const settingsCommands: CommandPaletteCommand[] = [
     }),
     // bravais 的透光档位与每块窗数：只在生效 suite 是 bravais 时可用（与设置分区同一个谓词）。
     ...libraryWallLookCommands,
-    createSettingsAnchorCommand('settings-pinned-commands', 'Pinned command slots', 'Choose the three commands pinned in the palette', ['pinned commands', 'quick slots', '固定命令'], 'pinnedCommands'),
     createSettingsCommand('settings-playback', 'Playback settings', 'Open playback behavior settings', ['playback', '播放', '播放设置'], 'options', 'playback'),
     createSettingsAnchorCommand('settings-netease-scrobble', 'NetEase listening report', 'Jump to whether finished plays are reported to NetEase Cloud Music', ['scrobble', 'netease scrobble', 'listening report', 'play count', '听歌打卡', '打卡', '听歌排行'], 'scrobbleSettings'),
     createToggleCommand(
@@ -316,96 +307,7 @@ export const settingsCommands: CommandPaletteCommand[] = [
     createSettingsCommand('settings-graphics', 'Graphics settings', 'Open static mode, frame rate cap, Linux glow fix and reduced motion', ['graphics', 'performance', 'frame rate', 'fps', 'rendering', '图形', '图形设置', '性能', '帧率', '渲染'], 'options', 'graphics'),
     createSettingsCommand('settings-mods', 'Mod settings', 'Open the mod system switch and the installed mods', ['mod manager', 'mod system', 'plugins', '模组设置', '模组系统', '插件'], 'options', 'mods', { platform: ['electron'] }),
     createSettingsCommand('settings-lab', 'Lab settings', 'Open experimental settings', ['lab', 'experimental', '实验', '实验室'], 'options', 'lab'),
-    {
-        id: 'settings-player-bottom-bar-position',
-        group: 'settings',
-        title: 'Reposition bottom bar',
-        description: 'Drag the player bottom bar, song card and panel button to a new height',
-        keywords: [
-            'bottom bar height', 'move progress bar', 'player bar position',
-            '底部控制条位置', '进度条高度', '调整底部高度', '移动进度条',
-        ],
-        isAvailable: context => (context ? context.settings.canStartPlayerBottomBarPositioning : true),
-        execute: (_input, context) => {
-            context.settings.startPlayerBottomBarPositioning();
-            return true;
-        },
-    },
-    // 用 anchor 版而不是 createSettingsCommand：后者只认页面，落在「通用」页顶部，
-    // 而槽位选择器在这一页的底部界面那一节里，跳过去等于没跳。
-    createSettingsAnchorCommand(
-        'settings-player-control-slots',
-        'Player button slots',
-        'Choose which actions the two buttons beside the progress bar run',
-        [
-            'progress bar buttons', 'customize player buttons',
-            '进度条按钮', '播放按钮自定义', '按钮槽位',
-        ],
-        'bottomUiSettings',
-    ),
-    createSettingsCommand('settings-visualizer', 'Visualizer settings', 'Open lyrics animation workbench', ['visualizer workbench', '可视化', '歌词动画', 'donghua'], 'options', 'visualizer'),
-    createSettingsCommand('settings-theme-park', 'Color', 'Open theme editor', ['theme park', 'theme', '配色', '主题', '主题公园'], 'options', 'themePark', { executeShortcut: 't' }),
     createSettingsCommand('settings-global-lyric-offset', 'Global timing offset', 'Calibrate lyric timing against Bluetooth or device audio latency', ['lyric delay', 'audio latency', 'bluetooth delay', 'sync lyrics', '全局时间偏移', '歌词延迟', '音画同步', '蓝牙延迟'], 'options', 'globalLyricOffset'),
-    {
-        id: 'theme-generate-current',
-        isAvailable: context => (context ? context.settings.canGenerateAITheme && !context.settings.isGeneratingTheme : true),
-        group: 'settings',
-        title: 'Generate AI theme',
-        description: 'Generate an AI theme for the current song',
-        keywords: ['ai theme', 'theme generation', 'generate theme', '生成AI主题', '生成主题', '主题生成', 'aizhuti', 'aizt'],
-        execute: (_input, context) => {
-            if (!context.settings.canGenerateAITheme || context.settings.isGeneratingTheme) {
-                return false;
-            }
-            context.settings.generateAITheme();
-            return true;
-        },
-    },
-    {
-        id: 'theme-source-ai',
-        isAvailable: context => (context ? context.settings.themeGenerationSource !== 'ai' : true),
-        group: 'settings',
-        title: 'Theme source: AI inference',
-        description: 'Generate song themes by having AI read the lyrics',
-        keywords: ['theme source ai', 'ai theme source', 'theme generation source', '主题来源AI', '主题生成来源', 'AI推断', 'aituiduan', 'ztsclly', 'aitd'],
-        execute: (_input, context) => {
-            if (context.settings.themeGenerationSource === 'ai') {
-                return false;
-            }
-            context.settings.setThemeGenerationSource('ai');
-            return true;
-        },
-    },
-    {
-        id: 'theme-source-cover',
-        isAvailable: context => (context ? context.settings.themeGenerationSource !== 'cover' : true),
-        group: 'settings',
-        title: 'Theme source: cover colors',
-        description: 'Generate song themes from the cover artwork palette',
-        keywords: ['theme source cover', 'cover theme source', 'cover colors', 'theme generation source', '主题来源封面', '封面取色', '主题生成来源', 'fengmianqvse', 'zhutilaiyuan'],
-        execute: (_input, context) => {
-            if (context.settings.themeGenerationSource === 'cover') {
-                return false;
-            }
-            context.settings.setThemeGenerationSource('cover');
-            return true;
-        },
-    },
-    {
-        id: 'theme-quick-editor',
-        isAvailable: context => context?.settings.canOpenThemeQuickEditor ?? true,
-        group: 'settings',
-        title: 'Quick theme editor',
-        description: 'Quickly edit the current AI or custom theme',
-        keywords: ['theme editor', 'ai theme editor', 'custom theme editor', '快速主题编辑器', '主题编辑器', '自定义主题编辑器'],
-        execute: (_input, context) => {
-            if (!context.settings.canOpenThemeQuickEditor) {
-                return false;
-            }
-            context.settings.openThemeQuickEditor();
-            return true;
-        },
-    },
     createToggleCommand('settings-toggle-transparent', 'settings', 'Toggle transparency', 'Toggle transparent player background', ['transparent', 'transparency', '透明', '透明化'], context => context.settings.toggleTransparentBackground()),
     createToggleCommand('settings-toggle-daylight', 'settings', 'Toggle light/dark', 'Toggle theme daylight/midnight mode', ['daylight', 'midnight', 'light', 'dark', '明暗', '切换明暗', '日夜', '日间', '夜间'], context => context.settings.toggleDaylightMode(), { executeShortcut: 'd' }),
     createToggleCommand('settings-toggle-player-back-button', 'settings', 'Always show player back button', 'Toggle whether the player page back button stays visible', ['always show back button', 'player back button', 'back button', '返回按钮', '始终显示返回按钮', '播放页返回按钮', 'fanhui annniu', 'bofangye fanhui annniu', 'fh', 'bfyfh'], context => context.settings.toggleAlwaysShowPlayerBackButton()),
@@ -523,5 +425,5 @@ export const settingsCommands: CommandPaletteCommand[] = [
     createAppLanguageCommand('settings-language-system', 'system', 'Follow system language', 'Use the browser or system language', ['system language', 'follow system', 'auto language', '跟随系统', '系统语言']),
     createAppLanguageCommand('settings-language-zh-CN', 'zh-CN', 'Switch language to Chinese', 'Use Simplified Chinese in the interface', ['chinese', 'simplified chinese', '中文', '简体中文']),
     createAppLanguageCommand('settings-language-en', 'en', 'Switch language to English', 'Use English in the interface', ['english', 'interface english', '英文']),
-    createAppLanguageCommand('settings-language-in', 'in', 'Switch language to Indonesian', 'Use Bahasa Indonesia in the interface', ['indonesian', 'bahasa indonesia', 'indonesia', '印尼语', 'bhs'])
+    createAppLanguageCommand('settings-language-zh-TW', 'zh-TW', 'Switch language to Traditional Chinese', 'Use Traditional Chinese in the interface', ['traditional chinese', '繁體中文', '繁体中文'])
 ];

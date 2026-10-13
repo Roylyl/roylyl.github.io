@@ -1,0 +1,1 @@
+export{li as getNavidromeConfig,pi as navidromeApi}from"./bootstrap-Ds43_Z3t.js";

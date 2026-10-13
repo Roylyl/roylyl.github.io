@@ -36,6 +36,7 @@ import {
 import { getPlaybackSongKey } from '../utils/appPlaybackGuards';
 import { setStatusMessage as setStatusMsg } from '../stores/useStatusMessageStore';
 import { useStableCallbacks } from './useStableCallbacks';
+import { useThemeSettingsStore } from '../stores/useThemeSettingsStore';
 
 type StatusSetter = Dispatch<SetStateAction<StatusMessage | null>>;
 export type GenerateAIThemeOptions = {
@@ -142,13 +143,27 @@ export function useThemeController({
     coverUrl?: string | null;
     t: (key: string, options?: Record<string, unknown>) => string;
 }) {
+    const appearanceMode = useThemeSettingsStore(state => state.appearanceMode);
+    const [coverDerivedTheme, setCoverDerivedTheme] = useState<DualTheme | null>(null);
+    useEffect(() => {
+        let cancelled = false;
+        setCoverDerivedTheme(null);
+        if (appearanceMode === 'cover' && coverUrl) {
+            void extractColors(coverUrl, 5).then(colors => {
+                // A cover keeps the same palette after reopening or revisiting
+                // a song; the original generator otherwise varies it randomly.
+                if (!cancelled) setCoverDerivedTheme(buildBuiltinDualTheme({ coverColors: colors, random: () => 0.5 }));
+            }).catch(() => { if (!cancelled) setCoverDerivedTheme(null); });
+        }
+        return () => { cancelled = true; };
+    }, [appearanceMode, coverUrl]);
     const getBaseTheme = () => getBaseThemeForMode({ defaultTheme, daylightTheme, isDaylight });
     const storedCustomTheme = useMemo(readStoredCustomTheme, []);
     const initialCustomTheme = useMemo(() => (
         storedCustomTheme ?? buildDefaultCustomDualTheme({ defaultTheme, daylightTheme })
     ), [daylightTheme, defaultTheme, storedCustomTheme]);
     const initialThemePreferenceState = useMemo<ThemePreferenceSwitchState>(() => {
-        const customPreferred = Boolean(initialCustomTheme && readStoredCustomPreferred());
+        const customPreferred = false;
         if (customPreferred) {
             return {
                 isCustomThemePreferred: true,
@@ -157,7 +172,7 @@ export function useThemeController({
             };
         }
 
-        const autoSwitchEnabled = readStoredThemeAutoSwitchEnabled();
+        const autoSwitchEnabled = false;
         return {
             isCustomThemePreferred: false,
             songThemeAutoSwitchEnabled: autoSwitchEnabled,
@@ -202,9 +217,9 @@ export function useThemeController({
     const getPreferenceSwitchState = (): ThemePreferenceSwitchState => preferenceSwitchRef.current;
 
     const applyPreferenceSwitchState = (state: ThemePreferenceSwitchState) => {
-        preferenceSwitchRef.current = state;
-        setIsCustomThemePreferred(state.isCustomThemePreferred);
-        setSongThemeAutoSwitchEnabled(state.songThemeAutoSwitchEnabled);
+        preferenceSwitchRef.current = { isCustomThemePreferred: false, songThemeAutoSwitchEnabled: false, songThemeAutoGenerateEnabled: false };
+        setIsCustomThemePreferred(false);
+        setSongThemeAutoSwitchEnabled(false);
         setSongThemeAutoGenerateEnabled(false);
     };
 
@@ -723,17 +738,30 @@ export function useThemeController({
         handleThemeGenerationSourceChange,
     });
 
+    const selectedTheme = useMemo(() => applyStoredAnimationIntensityToTheme(
+        appearanceMode === 'cover' && coverDerivedTheme
+            ? getSelectedDualTheme(coverDerivedTheme, isDaylight)
+            : getBaseThemeForMode({ defaultTheme, daylightTheme, isDaylight }),
+    ), [appearanceMode, coverDerivedTheme, isDaylight, defaultTheme, daylightTheme, theme.animationIntensity]);
+    const selectedThemeSource = useMemo(() => {
+        const source = appearanceMode === 'cover' ? 'ai' as const : 'default' as const;
+        const labels = { system: '跟随系统', dark: '深色模式', light: '浅色模式', cover: '跟随封面' };
+        return { ...themeSourceModel, activeSource: source,
+            current: { ...themeSourceModel.options[source], theme: selectedTheme, label: labels[appearanceMode], editable: false },
+            editableSource: null, canOpenQuickEditor: false };
+    }, [appearanceMode, selectedTheme, themeSourceModel]);
+
     return {
-        theme,
+        theme: selectedTheme,
         aiTheme,
         customTheme,
         hasCustomTheme: Boolean(customTheme),
-        themeSourceModel,
+        themeSourceModel: selectedThemeSource,
         isCustomThemePreferred,
         songThemeAutoSwitchEnabled,
         songThemeAutoGenerateEnabled,
         themeGenerationSource,
-        bgMode,
+        bgMode: (appearanceMode === 'cover' ? 'ai' : 'default') as ThemeMode,
         isGeneratingTheme,
         ...actions,
     };

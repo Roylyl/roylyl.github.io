@@ -13,6 +13,12 @@ import { getStoredBoolean, setStoredBoolean } from './storagePrimitives';
 import { setStatusMessage } from './useStatusMessageStore';
 
 export const FOLLOW_SYSTEM_THEME_STORAGE_KEY = 'follow_system_theme';
+export type RmusicAppearanceMode = 'system' | 'dark' | 'light' | 'cover';
+const APPEARANCE_MODE_KEY = 'appearance_mode';
+const initialAppearanceMode: RmusicAppearanceMode = (() => {
+    const saved = typeof window !== 'undefined' ? localStorage.getItem(APPEARANCE_MODE_KEY) : null;
+    return saved === 'dark' || saved === 'light' || saved === 'cover' ? saved : 'system';
+})();
 
 export const readSystemThemeIsDaylight = (): boolean | null => {
     if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
@@ -22,8 +28,8 @@ export const readSystemThemeIsDaylight = (): boolean | null => {
     return window.matchMedia('(prefers-color-scheme: light)').matches;
 };
 
-const initialFollowSystemTheme = getStoredBoolean(FOLLOW_SYSTEM_THEME_STORAGE_KEY, false);
-const initialStoredDaylight = getStoredBoolean('default_theme_daylight', false);
+const initialFollowSystemTheme = initialAppearanceMode === 'system' || initialAppearanceMode === 'cover';
+const initialStoredDaylight = initialAppearanceMode === 'light';
 const initialDaylight = initialFollowSystemTheme
     ? (readSystemThemeIsDaylight() ?? initialStoredDaylight)
     : initialStoredDaylight;
@@ -48,6 +54,8 @@ const readStoredDisableHomeDynamicBackground = (): boolean => {
 };
 
 export type ThemeSettingsState = {
+    appearanceMode: RmusicAppearanceMode;
+    setAppearanceMode: (mode: RmusicAppearanceMode) => void;
     useCoverColorBg: boolean;
     staticMode: boolean;
     disableHomeDynamicBackground: boolean;
@@ -62,6 +70,15 @@ export type ThemeSettingsState = {
 };
 
 export const useThemeSettingsStore = create<ThemeSettingsState>((set, get) => ({
+    appearanceMode: initialAppearanceMode,
+    setAppearanceMode: (mode) => {
+        const follow = mode === 'system' || mode === 'cover';
+        const daylight = follow ? (readSystemThemeIsDaylight() ?? false) : mode === 'light';
+        if (typeof window !== 'undefined') localStorage.setItem(APPEARANCE_MODE_KEY, mode);
+        setStoredBoolean(FOLLOW_SYSTEM_THEME_STORAGE_KEY, follow);
+        setStoredBoolean('default_theme_daylight', daylight);
+        set({ appearanceMode: mode, followSystemTheme: follow, isDaylight: daylight });
+    },
     useCoverColorBg: getStoredBoolean('use_cover_color_bg', false),
     staticMode: getStoredBoolean('static_mode', false),
     disableHomeDynamicBackground: readStoredDisableHomeDynamicBackground(),
@@ -119,6 +136,7 @@ export const useThemeSettingsStore = create<ThemeSettingsState>((set, get) => ({
         }
     },
     setDaylightPreference: (enabled) => {
+        get().setAppearanceMode(enabled ? 'light' : 'dark');
         const wasFollowingSystem = get().followSystemTheme;
         if (wasFollowingSystem) {
             setStoredBoolean(FOLLOW_SYSTEM_THEME_STORAGE_KEY, false);
