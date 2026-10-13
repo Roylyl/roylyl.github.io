@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
 const source=fs.readFileSync(path.join(__dirname,'../app.js'),'utf8');
 require('../playback-feedback.js');
-const segment=source.slice(source.indexOf('  function resetShuffle('),source.indexOf('  function previousTrack()'));
+const segment=source.slice(source.indexOf('  const playbackFlow='),source.indexOf('  function previousTrack()'));
 const listener=name=>source.split('\n').find(line=>line.startsWith(name));
 const plain=value=>JSON.parse(JSON.stringify(value));
 const settle=()=>new Promise(resolve=>setImmediate(resolve));
@@ -20,7 +20,7 @@ function harness(storage=new Map()){
     RoylylPlaybackFeedback,playbackRetries:RoylylPlaybackFeedback.createRetryController({setTimeout:schedule,clearTimeout:cancel,isOnline:()=>true}),
     isFullOpen:()=>false,insertionAnchor:null,checkSleepTimer:()=>false,setTimeout:schedule,clearTimeout:cancel,audio,tracks,albums:[{tracks}],current:null,queue:[],repeat:'all',nextUp:[],playbackHistory:[],historyCursor:-1,
     loadedTrackId:null,pendingTrackId:null,playbackBlocked:false,pausedPosition:null,pendingResumePosition:null,
-    lastSaved:0,playbackRequestedAt:0,playToken:0,persistenceRequested:true,failedAudioSources:new Set(),preparedAudio:new Map(),localAudioUrl:null,fallbackCachedId:null,
+    lastSaved:0,playbackRequestedAt:0,playToken:0,audioCacheGeneration:0,persistenceRequested:true,failedAudioSources:new Set(),preparedAudio:new Map(),localAudioUrl:null,fallbackCachedId:null,
     playerStatusText:'',BUFFERING_STATUS:'buffering',navigator:{onLine:true,mediaSession:{}},performance:{now:()=>100},
     document:{body,hidden:false,addEventListener(name,fn){events[name]=fn;}},URL:{revokeObjectURL(){}},
     get:id=>tracks.find(t=>t.id===id),canPlay:t=>!!t?.src,audioSource:t=>'https://example.test/'+t.src+'?v=1',
@@ -35,12 +35,13 @@ function harness(storage=new Map()){
   vm.runInContext(listener("  audio.addEventListener('loadedmetadata'"),ctx);
   vm.runInContext(listener("  document.addEventListener('visibilitychange'"),ctx);
   vm.runInContext(source.slice(source.indexOf("  audio.addEventListener('timeupdate'"),source.indexOf("  audio.addEventListener('play',")),ctx);
+  for(const name of ['seeked','seeking','waiting'])vm.runInContext(listener("  audio.addEventListener('"+name+"'"),ctx);
   const metadata=(duration=240)=>{audio.duration=duration;audio.readyState=1;audioEvents.loadedmetadata();};
   const loaded=(id='a',time=0)=>{
     ctx.current=ctx.get(id);ctx.queue=[...tracks];ctx.loadedTrackId=id;ctx.playbackHistory=[id];ctx.historyCursor=0;
     audio.src=ctx.audioSource(ctx.current);metadata();audio.currentTime=time;
   };
-  return {ctx,audio,storage,calls,events,metadata,loaded,timers,timeupdate:()=>audioEvents.timeupdate(),flushTimer(delay){for(const [id,job] of [...timers])if(job.delay===delay){timers.delete(id);job.fn();}}};
+  return {ctx,audio,audioEvents,storage,calls,events,metadata,loaded,timers,timeupdate:()=>audioEvents.timeupdate(),flushTimer(delay){for(const [id,job] of [...timers])if(job.delay===delay){timers.delete(id);job.fn();}}};
 }
 module.exports={harness,plain,settle};
 if(require.main===module){
@@ -132,7 +133,7 @@ if(require.main===module){
 {
   const now=Date.now(),fresh=Array.from({length:140},(_,i)=>({at:new Date(now-1000*(140-i)).toISOString(),event:'old-'+i}));
   let stored=[{at:new Date(now-90000000).toISOString(),event:'expired'},...fresh];
-  const context={APP_VERSION:"test-version",matchMedia:()=>({matches:false}),read:()=>stored,save:(key,events)=>stored=plain(events),audio:{currentTime:0,paused:true},current:null,pendingTrackId:null,playbackBlocked:false,navigator:{},document:{hidden:false}};
+  const context={APP_VERSION:"test-version",playbackFlow:{attempt:null,pauseReason:null},playToken:0,pendingResumePosition:null,matchMedia:()=>({matches:false}),read:()=>stored,save:(key,events)=>stored=plain(events),audio:{currentTime:0,paused:true},current:null,pendingTrackId:null,playbackBlocked:false,navigator:{},document:{hidden:false}};
   vm.createContext(context);
   vm.runInContext(source.slice(source.indexOf('  const playbackLog='),source.indexOf("  $('copy-playback-diagnostics')")),context);
   context.tracePlayback('new-page');const exported=JSON.parse(context.playbackDiagnosticsText());assert.equal(exported.events[0].event,'new-page');assert.equal(exported.eventOrder,'newest-first');assert(context.playbackDiagnosticsText().length<=12000);assert.equal(stored.length,120);assert.equal(stored.at(-1).event,'new-page');assert(!stored.some(e=>e.event==='expired'));assert(stored.some(e=>e.event==='old-139'));

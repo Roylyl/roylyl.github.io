@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const APP_VERSION='20261010-pwa-46', SHELL_VERSION='roylyl-music-shell-20261010-48';
+  const APP_VERSION='20261013-pwa-47', SHELL_VERSION='roylyl-music-shell-20261013-49';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const themeMedia=window.matchMedia('(prefers-color-scheme: dark)');
@@ -361,8 +361,8 @@
     $('full-lyrics').querySelector(`[data-group="${active}"]`)?.classList.add('is-active');
     scrollActiveLyric(!force);
   }
-  audio.addEventListener('seeked',()=>{tracePlayback('audio-seeked');updateLyricPosition(true);syncPlaybackState();});
-  audio.addEventListener('seeking',()=>{tracePlayback('audio-seeking');syncPlaybackState();});
+  audio.addEventListener('seeked',()=>{tracePlayback('audio-seeked');completePlaybackSeek();restorePlaybackPosition();rebasePlaybackClock();updateLyricPosition(true);syncPlaybackState();});
+  audio.addEventListener('seeking',()=>{tracePlayback('audio-seeking');rebasePlaybackClock();syncPlaybackState();});
   async function loadLyrics(track,{force=false}={}) {
     if(!track?.src)return;
     const resource=lyricResource(track);
@@ -795,7 +795,7 @@
     const position=savedPlaybackPosition();
     $('duration').textContent = time(t.duration); $('elapsed').textContent = time(position); $('seek').value = t.duration>0?position/t.duration*100:0; $('seek').disabled = true;paintSeekProgress();
     if ('mediaSession' in navigator && 'MediaMetadata' in window) navigator.mediaSession.metadata = new MediaMetadata({title:t.title,artist:t.artist,album:t.album,artwork:[{src:picture(t)}]});
-    try { navigator.mediaSession?.setPositionState?.(); } catch {}
+    syncPlaybackState(true);
     registerMediaActions();
     renderCurrent();
   }
@@ -818,7 +818,7 @@
   }
   const playbackLog=(()=>{const events=read('playback-log',[]);return Array.isArray(events)?events.filter(e=>e&&typeof e.event==='string'&&Date.now()-Date.parse(e.at)<86400000).slice(-120):[];})();
   function tracePlayback(event,detail='') {
-    playbackLog.push({at:new Date().toISOString(),version:APP_VERSION,event,detail,track:current?.id||null,position:audio.currentTime,duration:Number.isFinite(audio.duration)?audio.duration:null,ended:audio.ended,source:audio.currentSrc?.startsWith('blob:')?'blob':'network',paused:audio.paused,readyState:audio.readyState,networkState:audio.networkState,error:audio.error?.code||0,session:navigator.audioSession?.state||'unavailable',pending:pendingTrackId,blocked:playbackBlocked,hidden:document.hidden});
+    playbackLog.push({at:new Date().toISOString(),version:APP_VERSION,event,detail,track:current?.id||null,position:audio.currentTime,duration:Number.isFinite(audio.duration)?audio.duration:null,ended:audio.ended,source:audio.currentSrc?.startsWith('blob:')?'blob':'network',paused:audio.paused,readyState:audio.readyState,networkState:audio.networkState,error:audio.error?.code||0,session:navigator.audioSession?(navigator.audioSession.state||'state-unexposed'):'unsupported',sessionType:navigator.audioSession?.type||null,seeking:!!audio.seeking,seekTarget:pendingResumePosition?.time??null,attempt:playToken,pauseReason:playbackFlow.pauseReason,clockConfirmed:!!playbackFlow.attempt?.confirmed,pending:pendingTrackId,blocked:playbackBlocked,hidden:document.hidden});
     while(playbackLog.length>120 || playbackLog.length && Date.now()-Date.parse(playbackLog[0].at)>86400000)playbackLog.shift();
     save('playback-log',playbackLog);
   }
@@ -833,6 +833,44 @@
     try{await navigator.clipboard.writeText(text);$('playback-diagnostics-status').textContent='播放诊断已复制';}
     catch{const box=$('playback-diagnostics-text');box.hidden=false;box.value=text;box.focus();box.select();$('playback-diagnostics-status').textContent='请复制下方诊断内容';}
   };
+  const playbackFlow={attempt:null,pauseReason:'initial'};
+  function cancelPlaybackAttempt() {
+    clearTimeout(playbackFlow.attempt?.timer);
+    playbackFlow.attempt=null;
+  }
+  function armPlaybackWatchdog(attempt=playbackFlow.attempt) {
+    if(!attempt||attempt.token!==playToken||playbackBlocked)return;
+    clearTimeout(attempt.timer);
+    attempt.timer=setTimeout(()=>{
+      if(attempt!==playbackFlow.attempt||attempt.token!==playToken||playbackBlocked)return;
+      if(finishPlaybackIfEnded('watchdog'))return;
+      if(observePlaybackClock())return;
+      tracePlayback('start-timeout',pendingResumePosition?'seek pending':'clock frozen');
+      attempt.recover();
+    },8000);
+  }
+  function rebasePlaybackClock() {
+    const attempt=playbackFlow.attempt;
+    if(!attempt||attempt.token!==playToken)return;
+    attempt.baseline=audio.currentTime;
+    // A discontinuity from seeking is not proof that playback has resumed.
+    armPlaybackWatchdog(attempt);
+  }
+  function observePlaybackClock() {
+    const attempt=playbackFlow.attempt;
+    if(!attempt||attempt.token!==playToken||playbackBlocked||audio.paused||audio.seeking||pendingResumePosition||audio.readyState<3)return false;
+    if(audio.currentTime<=attempt.baseline+.05)return false;
+    clearTimeout(attempt.timer);
+    attempt.recoveryUsed=false;attempt.waiting=false;
+    if(playerStatusText===BUFFERING_STATUS)status('');
+    if(!attempt.confirmed){
+      attempt.confirmed=true;pendingTrackId=null;status('');clearPlaybackRecovery();
+      tracePlayback('clock-progress');renderCurrent();preloadNext();
+      if(typeof preloadNextLyrics==='function')preloadNextLyrics(current);
+      if(audioBudget())cacheAudio(audioSource(current));
+    }
+    return true;
+  }
   function resetShuffle(startId=null) {
     const ids=queue.map(t=>t.id).filter(id=>id!==startId);
     for(let i=ids.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[ids[i],ids[j]]=[ids[j],ids[i]];}
@@ -899,14 +937,14 @@
     for(const id of ['seek','full-seek'])$(id).style.setProperty('--seek-buffer-gradient',gradient);
   }
   function clearPlaybackRecovery() { $('playback-recovery').hidden=true; }
-  function cancelPlaybackRecovery() { playbackRetries.cancel();retryTicket=null;retryWaiting=false;clearPlaybackRecovery(); }
+  function cancelPlaybackRecovery() { cancelPlaybackAttempt();playbackRetries.cancel();retryTicket=null;retryWaiting=false;clearPlaybackRecovery(); }
   function showPlaybackFailure(message) {
-    clearQueueUndo();retryWaiting=false;pendingTrackId=null;status(message);renderCurrent();placePlaybackFeedback();
+    cancelPlaybackAttempt();clearQueueUndo();retryWaiting=false;pendingTrackId=null;status(message);renderCurrent();placePlaybackFeedback();
     $('playback-recovery-text').textContent=navigator.onLine===false?'当前离线，未完整缓存':message.startsWith('请点击')?'请点击重试开始播放':'播放失败';$('playback-recovery').hidden=false;
   }
   function handlePlaybackFailure(error) {
     if(!current||playbackBlocked||lastFailureToken===playToken)return;
-    lastFailureToken=playToken;pendingTrackId=null;
+    cancelPlaybackAttempt();lastFailureToken=playToken;pendingTrackId=null;
     if(error?.name==='AbortError'||error?.code===1){status('');renderCurrent();return;}
     if(error?.name==='NotAllowedError'){showPlaybackFailure('请点击重试，允许浏览器开始播放。');return;}
     failedAudioSources.add(audioSource(current));
@@ -967,28 +1005,47 @@
     if(!current||!Number.isFinite(position))return;
     const duration=loadedTrackId===current.id&&Number.isFinite(audio.duration)?audio.duration:current.duration;
     const time=Math.max(0,Number.isFinite(duration)&&duration>0?Math.min(position,duration):position);
-    // Keep the newest target even while a reload has no metadata or cannot seek.
-    pendingResumePosition={id:current.id,time};
-    seekPlayback.revision=(seekPlayback.revision||0)+1;
+    pendingResumePosition={id:current.id,time,fast};
     if(audio.paused||playbackBlocked)pausedPosition={id:current.id,time};
-    if(loadedTrackId===current.id&&audio.readyState>=1){
-      try{
-        if(fast&&typeof audio.fastSeek==='function')audio.fastSeek(time);
-        else audio.currentTime=time;
-        pendingResumePosition=null;
-      }catch{}
-    }
-    tracePlayback('seek-request','target='+time+(pendingResumePosition?' deferred':' applied'));
+    restorePlaybackPosition();rebasePlaybackClock();
+    tracePlayback('seek-request','target='+time+(pendingResumePosition?' pending':' completed'));
     savePlaybackSession();updateLyricPosition(true);syncPlaybackState();
   }
+  function completePlaybackSeek() {
+    const target=pendingResumePosition;
+    if(!target||target.id!==current?.id||loadedTrackId!==target.id||audio.seeking)return false;
+    // Background delivery can lag behind the actual seek completion. Accept
+    // the small amount the native clock could have advanced in that time.
+    const elapsed=Math.max(0,performance.now()-(target.appliedAt??performance.now()))/1000;
+    const forwardTolerance=audio.paused||!target.nativeSeek ? .15 : elapsed*(audio.playbackRate||1)+.15;
+    if(!target.applied||audio.currentTime<target.time-.15||audio.currentTime>target.time+forwardTolerance)return false;
+    pendingResumePosition=null;
+    if(audio.paused||playbackBlocked)pausedPosition={id:target.id,time:audio.currentTime};
+    tracePlayback('seek-completed','target='+target.time);
+    rebasePlaybackClock();savePlaybackSession();
+    return true;
+  }
   function restorePlaybackPosition() {
-    const position=pendingResumePosition;
-    if(!position||position.id!==current?.id||loadedTrackId!==position.id||!Number.isFinite(audio.duration)||audio.readyState<1)return;
+    const target=pendingResumePosition;
+    if(!target||target.id!==current?.id||loadedTrackId!==target.id||!Number.isFinite(audio.duration)||audio.readyState<1)return;
+    target.time=Math.max(0,Math.min(target.time,audio.duration));
+    // HAVE_METADATA does not imply a seekable range. WebKit may silently drop
+    // a currentTime assignment here, without ever emitting seeked.
+    if(audio.seekable){
+      let available=false;
+      for(let i=0;i<audio.seekable.length;i++)if(target.time>=audio.seekable.start(i)-.01&&target.time<=audio.seekable.end(i)+.01){available=true;break;}
+      if(!available)return;
+    }
+    if(target.applied&&audio.seeking)return;
+    if(completePlaybackSeek())return;
     try {
-      audio.currentTime=Math.max(0,Math.min(position.time,Math.max(0,audio.duration-.01)));
-      if(audio.paused||playbackBlocked)pausedPosition={id:position.id,time:audio.currentTime};
-      pendingResumePosition=null;
-    } catch { /* Keep the position until metadata makes seeking possible. */ }
+      const fast=target.fast;target.fast=false;target.appliedAt=performance.now();
+      if(fast&&typeof audio.fastSeek==='function')audio.fastSeek(target.time);
+      else audio.currentTime=target.time;
+      target.applied=true;target.nativeSeek=!!audio.seeking;
+      // Real asynchronous seeks remain pending; no-op seeks can finish now.
+      completePlaybackSeek();
+    } catch { target.applied=false; }
   }
   function displayQueue() {
     if(!current)return queue;
@@ -1029,26 +1086,35 @@
   function playbackControl() {
     if(retryWaiting&&!playbackBlocked)return {icon:'pause',label:'取消重试',system:'paused'};
     if(playbackBlocked||audio.error||audio.ended)return {icon:'play',label:'播放',system:current?'paused':'none'};
-    if(pendingTrackId)return {icon:'pause',label:'取消加载',system:'paused'};
+    if(pendingTrackId||playbackFlow.attempt&&!playbackFlow.attempt.confirmed)return {icon:'pause',label:'取消加载',system:'paused'};
+    if(playbackFlow.attempt?.waiting&&!audio.seeking)return {icon:'pause',label:'暂停',system:'paused'};
     if(!audio.paused&&!audio.seeking&&audio.readyState<3)return {icon:'pause',label:'暂停',system:current?'paused':'none'};
     return {icon:audio.paused?'play':'pause',label:audio.paused?'播放':'暂停',system:current?(audio.paused?'paused':'playing'):'none'};
   }
-  function syncPlaybackState() {
+  function syncPlaybackState(forcePosition=false) {
     if(!('mediaSession' in navigator))return;
     const state=playbackControl().system;
     try{if(navigator.mediaSession.playbackState!==state)navigator.mediaSession.playbackState=state;}catch{}
     // Let the native scrubber own its position until the seek completes.
     // Repeated position/state writes during seeking can reset that interaction.
-    if(audio.seeking)return;
-    // The lock screen extrapolates time while marked playing. Publish the
-    // actual media position on both buffering and playback transitions.
+    if(audio.seeking||typeof navigator.mediaSession.setPositionState!=='function')return;
+    // The system advances this clock itself. Rewriting the same running
+    // timeline on every timeupdate can fight a drag in the native scrubber.
     const duration=loadedTrackId===current?.id&&Number.isFinite(audio.duration)?audio.duration:current?.duration;
     if(Number.isFinite(duration)&&duration>0){
-      try{navigator.mediaSession.setPositionState?.({duration,playbackRate:audio.playbackRate||1,position:Math.max(0,Math.min(savedPlaybackPosition(),duration))});}catch{}
+      const now=performance.now(),rate=audio.playbackRate||1,position=Math.max(0,Math.min(savedPlaybackPosition(),duration));
+      const previous=syncPlaybackState.position;
+      const expected=previous?previous.position+(previous.state==='playing'?(now-previous.at)/1000*previous.rate:0):0;
+      if(forcePosition||!previous||previous.id!==current.id||previous.duration!==duration||previous.rate!==rate||previous.state!==state||Math.abs(position-expected)>(state==='playing'?1:.02)){
+        try{
+          navigator.mediaSession.setPositionState?.({duration,playbackRate:rate,position});
+          syncPlaybackState.position={id:current.id,duration,rate,position,state,at:now};
+        }catch{}
+      }
     }
   }
   function finishPlaybackIfEnded(reason) {
-    if(!current||loadedTrackId!==current.id||pendingTrackId||playbackBlocked||audio.error||!queue.length)return false;
+    if(!current||loadedTrackId!==current.id||playbackBlocked||audio.error||audio.seeking||pendingResumePosition||!queue.length)return false;
     // Use the media clock, never the catalog's rounded duration or a wall timer.
     // A late ended event from the old source must not skip the new recording.
     const atEnd=Number.isFinite(audio.duration)&&audio.duration>0&&audio.currentTime>=audio.duration;
@@ -1057,8 +1123,9 @@
     advance(1,true);
     return true;
   }
-  function pausePlayback() {
-    tracePlayback('pause-request');
+  function pausePlayback(reason='user') {
+    playbackFlow.pauseReason=reason;
+    tracePlayback('pause-request',reason);
     playbackBlocked=true;cancelPlaybackRecovery();
     rememberPausedPosition();
     ++playToken;pendingTrackId=null;audio.pause();status('');renderCurrent();
@@ -1068,27 +1135,23 @@
     tracePlayback('system-play');
     // A system play action is explicit intent, not a play/pause toggle. Do not
     // let an interrupted or unresolved play promise block this new attempt.
-    return resumeCurrentPlayback(true);
+    return resumeCurrentPlayback();
   }
-  function resumeCurrentPlayback(systemAction=false) {
+  function resumeCurrentPlayback() {
     if(!current)return;
     // Explicit play at the end means continuing the queue, including inserts.
-    if(loadedTrackId===current.id&&(audio.ended||(Number.isFinite(audio.duration)&&audio.duration>0&&audio.currentTime>=audio.duration))){
+    if(!audio.seeking&&!pendingResumePosition&&loadedTrackId===current.id&&(audio.ended||(Number.isFinite(audio.duration)&&audio.duration>0&&audio.currentTime>=audio.duration))){
       playbackBlocked=false;
       return advance(1,true);
     }
-    const interrupted=resumeCurrentPlayback.interrupted||navigator.audioSession?.state==='interrupted'||(systemAction&&playbackBlocked&&audio.paused);
-    resumeCurrentPlayback.interrupted=false;
-    // Re-select the source in the user's media-key task, preserving the position.
-    // A native player displaced by another app may not recover with play alone.
-    return play(current,queue,true,true,!!insertionAnchor,{forceReload:!!interrupted});
+    // Even after another app interrupts, first resume the existing resource.
+    // Reloading immediately discards a usable native buffer and can require a
+    // background network request. The clock watchdog owns bounded recovery.
+    return play(current,queue,true,true,!!insertionAnchor);
   }
   function handleSessionChange() {
     tracePlayback('session-statechange');
-    if(navigator.audioSession?.state==='interrupted'){
-      resumeCurrentPlayback.interrupted=true;
-      pausePlayback();
-    }
+    if(navigator.audioSession?.state==='interrupted')pausePlayback('interrupted');
   }
   function togglePlayback() {
     if(!audio.paused||pendingTrackId||retryWaiting){pausePlayback();return;}
@@ -1107,7 +1170,8 @@
     if(!playbackBlocked)return true;
     // A late browser restart must not undo an interruption or explicit pause.
     audio.pause();
-    if(pausedPosition?.id===current?.id&&loadedTrackId===current?.id)audio.currentTime=pausedPosition.time;
+    if(!pendingResumePosition&&pausedPosition?.id===current?.id&&loadedTrackId===current?.id)pendingResumePosition={...pausedPosition};
+    restorePlaybackPosition();
     pendingTrackId=null;status('');renderCurrent();
     syncPlaybackState();
     return false;
@@ -1123,7 +1187,7 @@
     if(current&&loadedTrackId===current.id&&audio.getAttribute('src')&&!audio.error) {
       cancelPlaybackRecovery();
       if(!audio.ended){
-        if(!playbackBlocked)resumeCurrentPlayback.interrupted=true;
+        if(!playbackBlocked)playbackFlow.pauseReason='native-pause';
         playbackBlocked=true;rememberPausedPosition();
       }
       ++playToken;pendingTrackId=null;
@@ -1137,7 +1201,7 @@
     if (!canPlay(t)) return;
     if(options.retryTicket&&!playbackRetries.isCurrent(options.retryTicket))return;
     retryTicket=options.retryTicket||playbackRetries.begin(t.id,audioSource(t));retryWaiting=false;clearPlaybackRecovery();
-    playbackBlocked=false;
+    cancelPlaybackAttempt();playbackFlow.pauseReason=null;playbackBlocked=false;
     if (!persistenceRequested && navigator.storage?.persist) { persistenceRequested = true; navigator.storage.persist().then(updateCacheStatus).catch(()=>{}); }
     const token=++playToken;playbackRequestedAt=performance.now();
     tracePlayback('play-request','target='+t.id);
@@ -1167,14 +1231,20 @@
       pendingResumePosition=position>0?{id:t.id,time:position}:null;
       if(current?.id!==t.id)pausedPosition=null;
       pendingTrackId=t.id;loadedTrackId=null;fallbackCachedId=null;
-      if(!immediate){audio.pause();audio.removeAttribute('src');audio.load();}
       // Reach native play before rendering/metadata work on a background task.
       current=t;refreshCurrent=true;
-      if(!immediate){setCurrent(t);status(BUFFERING_STATUS);renderCurrent();}
       // Background transitions must reach play() in the same ended/media-session task.
       let cached=reusableBlob||preparedAudio.get(source)||null;preparedAudio.delete(source);releasePrepared();
       if(recover&&cached){URL.revokeObjectURL(cached);cached=null;}
-      if(!recover && !cached && !immediate && !navigator.serviceWorker?.controller)cached=await cachedAudioUrl(source);
+      // System actions and auto-next must reach native play synchronously.
+      // A controlled PWA reads cached URLs through its worker; ordinary page
+      // clicks without a worker retain the offline Cache Storage fallback.
+      if(!recover&&!cached&&!immediate&&!navigator.serviceWorker?.controller){
+        audio.pause();setCurrent(t);status(BUFFERING_STATUS);renderCurrent();
+        const generation=audioCacheGeneration;
+        cached=await cachedAudioUrl(source);
+        if(generation!==audioCacheGeneration&&cached){URL.revokeObjectURL(cached);cached=null;}
+      }
       if(token!==playToken){if(cached)URL.revokeObjectURL(cached);return;}
       const previousUrl=localAudioUrl;localAudioUrl=cached;
       audio.preload='auto';
@@ -1186,11 +1256,11 @@
       if(previousUrl&&previousUrl!==localAudioUrl)URL.revokeObjectURL(previousUrl);
     }
     pendingTrackId=t.id;
-    let startWatchdog;
+    let attempt;
     const recoverStart=()=>{
       if(token!==playToken||playbackBlocked||current?.id!==t.id)return;
-      if(navigator.audioSession?.state==='interrupted'){pausePlayback();return;}
-      if(options.recoveryAttempt){pausePlayback();showPlaybackFailure('播放未能恢复，请重试或跳过此曲。');return;}
+      if(navigator.audioSession?.state==='interrupted'){pausePlayback('interrupted');return;}
+      if(attempt?attempt.recoveryUsed:options.recoveryAttempt){pausePlayback('recovery-failed');showPlaybackFailure('播放未能恢复，请重试或跳过此曲。');return;}
       tracePlayback('start-recovery','reload once, preserve position');
       return play(t,queue,true,true,!!insertionAnchor,{forceReload:true,recoveryAttempt:true,retryTicket});
     };
@@ -1199,13 +1269,11 @@
       // Source replacement queues pause events. Record intent after replacement
       // so those events cannot cancel the new source's start.
       playbackRequestedAt=performance.now();
-      const startingAt=savedPlaybackPosition(),seekRevision=seekPlayback.revision||0;
+      attempt={token,id:t.id,baseline:audio.currentTime,confirmed:false,waiting:false,recoveryUsed:!!options.recoveryAttempt,recover:recoverStart,timer:null};
+      playbackFlow.attempt=attempt;
       const started=audio.play();
       tracePlayback('native-play-called');
-      if(immediate)startWatchdog=setTimeout(()=>{
-        if(token!==playToken||playbackBlocked||seekRevision!==(seekPlayback.revision||0)||audio.currentTime>startingAt+.1)return;
-        tracePlayback('start-timeout');recoverStart();
-      },8000);
+      armPlaybackWatchdog(attempt);
       if(refreshCurrent)setCurrent(t);
       paintBufferedProgress();status(BUFFERING_STATUS);renderCurrent();
       await started;
@@ -1213,17 +1281,12 @@
       // Keep the bounded watchdog until it can observe actual progress.
       tracePlayback('play-resolved',token===playToken?'current':'superseded');
       if(token!==playToken)return;
-      failedAudioSources.delete(source);pendingTrackId=null;restorePlaybackPosition();status('');savePlaybackSession();renderCurrent();
-      if(typeof preloadNextLyrics==='function')preloadNextLyrics(t);
-      // Prepare the next track while this one is playing, even if storing the
-      // current track is slow or fails. Neither cache operation gates playback.
-      preloadNext();
-      if(audioBudget())cacheAudio(source);
+      failedAudioSources.delete(source);restorePlaybackPosition();observePlaybackClock();savePlaybackSession();renderCurrent();syncPlaybackState();
     } catch(error) {
-      clearTimeout(startWatchdog);
+      if(token===playToken)cancelPlaybackAttempt();
       tracePlayback('play-rejected',(token===playToken?'current':'superseded')+' target='+t.id+' '+error.name+': '+error.message);
       if(token!==playToken)return;
-      if(immediate&&error.name==='AbortError'&&!playbackBlocked)return recoverStart();
+      if(error.name==='AbortError'&&!playbackBlocked)return recoverStart();
       handlePlaybackFailure(error);
     }
   }
@@ -1401,27 +1464,29 @@
   for(const name of ['loadstart','stalled'])audio.addEventListener(name,()=>{tracePlayback(name);syncPlaybackState();});
   audio.addEventListener('timeupdate',()=>{
     if(checkSleepTimer())return;
+    restorePlaybackPosition();observePlaybackClock();
     if(finishPlaybackIfEnded('timeupdate'))return;
     if(!document.hidden)renderPlaybackProgress();
     if(current&&Date.now()-lastSaved>5000){savePlaybackSession();lastSaved=Date.now();}
     syncPlaybackState();
   });
   audio.addEventListener('play',()=>{if(!handleAudioStart())return;renderCurrent();registerMediaActions();});
-  audio.addEventListener('waiting',()=>{tracePlayback('audio-waiting');if(!audio.paused)status(BUFFERING_STATUS);syncPlaybackState();});
+  audio.addEventListener('waiting',()=>{tracePlayback('audio-waiting');if(!audio.paused){if(playbackFlow.attempt)playbackFlow.attempt.waiting=true;status(BUFFERING_STATUS);rebasePlaybackClock();}syncPlaybackState();});
   audio.addEventListener('pause',handleAudioPause);
   audio.addEventListener('playing',()=>{
     tracePlayback('audio-playing');
     if(!handleAudioStart())return;
     if(audio.paused)return;
-    pendingTrackId=null;clearPlaybackRecovery();status('');renderCurrent();
+    restorePlaybackPosition();observePlaybackClock();renderCurrent();
     syncPlaybackState();
   });
   // AudioSession is optional. Never auto-resume on 'active': that could fight
   // another app or undo the user's pause. The next system play acts directly.
   navigator.audioSession?.addEventListener('statechange',handleSessionChange);
   audio.addEventListener('error',()=>{if(audio.getAttribute('src')&&loadedTrackId===current?.id)handlePlaybackFailure(audio.error);});
+  for(const name of ['loadeddata','canplay'])audio.addEventListener(name,()=>{restorePlaybackPosition();syncPlaybackState();});
   audio.addEventListener('progress',()=>{
-    paintBufferedProgress();
+    restorePlaybackPosition();paintBufferedProgress();
     if(navigator.serviceWorker?.controller || !current || !Number.isFinite(audio.duration))return;
     for(let i=0;i<audio.buffered.length;i++)if(audio.buffered.start(i)===0 && audio.buffered.end(i)>=audio.duration-.1){
       const id=current.id;if(fallbackCachedId===id)return;fallbackCachedId=id;
@@ -1435,13 +1500,17 @@
     const handlers = {
       seekbackward: null, seekforward: null,
       play: resumePlayback,
-      pause: () => {tracePlayback('system-pause');pausePlayback();},
+      pause: () => {tracePlayback('system-pause');pausePlayback('system');},
       previoustrack: () => {tracePlayback('system-previous');advance(-1);},
       nexttrack: () => {tracePlayback('system-next');advance(1);},
       seekto: e => {tracePlayback('system-seek','target='+e.seekTime+' fast='+!!e.fastSeek);seekPlayback(e.seekTime,e.fastSeek===true);}
     };
     for (const [name, handler] of Object.entries(handlers)) {
-      try { navigator.mediaSession.setActionHandler(name, handler); } catch {}
+      try { navigator.mediaSession.setActionHandler(name, handler); }
+      catch(error) {
+        registerMediaActions.unsupported??=new Set();
+        if(!registerMediaActions.unsupported.has(name)){registerMediaActions.unsupported.add(name);tracePlayback('system-action-unavailable',name+': '+error.name);}
+      }
     }
   }
   window.addEventListener('pagehide',()=>{savePlaybackSession();tracePlayback('pagehide');});

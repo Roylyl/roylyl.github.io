@@ -12,6 +12,8 @@ const source=fs.readFileSync(require('node:path').join(__dirname,'../app.js'),'u
     vm.runInContext(source.slice(source.indexOf('  function preloadNext()'),source.indexOf('  const playbackLog=')),h.ctx);
     await h.ctx.play(h.ctx.current,h.ctx.queue,true,true);
     assert.equal(h.audio.paused,false,'uncached playback must not await storing any song');
+    assert.deepEqual(requests,[],'cache jobs wait until actual playback begins');
+    h.audio.readyState=4;h.audio.currentTime+=.3;h.timeupdate();
     assert.deepEqual(requests,preload?['https://example.test/b.mp3?v=1','https://example.test/a.mp3?v=1']:['https://example.test/a.mp3?v=1']);
   }
   console.log('PASS: next-song preload starts independently of a stalled current-song cache write; disabled preloading stays disabled; uncached playback proceeds.');

@@ -62,18 +62,18 @@ function stalled(){
   h.flushTimer(8000);assert.equal(h.requests.length,1);
   h=stalled();h.ctx.play(h.ctx.current,h.ctx.queue,true,true);
   h.ctx.play(h.ctx.get('b'),h.ctx.queue,false,true);
-  h.audio.currentTime=2;h.flushTimer(8000);assert.equal(h.requests.length,2);
+  h.metadata();h.audio.readyState=4;h.audio.paused=false;h.audio.currentTime=2;h.flushTimer(8000);assert.equal(h.requests.length,2);
   h=stalled();h.ctx.play(h.ctx.current,h.ctx.queue,true,true);
   h.ctx.navigator.audioSession={state:'interrupted'};
   h.flushTimer(8000);assert.equal(h.requests.length,1);assert.equal(h.ctx.playbackBlocked,true);
 
   // An unresolved promise must not reload audio that is already progressing.
   h=stalled();h.ctx.play(h.ctx.current,h.ctx.queue,true,true);
-  h.audio.currentTime=85;h.flushTimer(8000);assert.equal(h.requests.length,1);
+  h.audio.readyState=4;h.audio.paused=false;h.audio.currentTime=85;h.flushTimer(8000);assert.equal(h.requests.length,1);
 
   // A deliberate backwards seek invalidates the old startup position baseline.
   h=stalled();h.ctx.play(h.ctx.current,h.ctx.queue,true,true);
-  h.ctx.seekPlayback(10);h.audio.currentTime=12;
+  h.audio.readyState=4;h.audio.paused=false;h.ctx.seekPlayback(10);h.audio.currentTime=12;
   h.flushTimer(8000);assert.equal(h.requests.length,1,'backwards seek must not trigger a source reload');
 
   // AbortError without a newer pause gets the same bounded recovery.
@@ -81,7 +81,7 @@ function stalled(){
   h.requests[0].reject(Object.assign(Error('native start aborted'),{name:'AbortError'}));
   await settle();assert.equal(h.requests.length,2);
   h.metadata();h.audio.paused=false;h.requests[1].resolve();await promise;
-  assert.equal(h.audio.currentTime,83.25);assert.equal(h.ctx.pendingTrackId,null);
+  assert.equal(h.audio.currentTime,83.25);assert.equal(h.ctx.pendingTrackId,'a');h.audio.readyState=4;h.audio.currentTime+=.3;h.timeupdate();assert.equal(h.ctx.pendingTrackId,null);
 
   // A resolved native play promise with a frozen clock still needs recovery.
   h=stalled();promise=h.ctx.play(h.ctx.current,h.ctx.queue,true,true);
@@ -117,8 +117,8 @@ function stalled(){
   h.ctx.resumePlayback();await settle();assert.equal(h.ctx.current.id,'d');
   h=harness();h.loaded('a',83.25);h.audio.paused=true;h.ctx.handleAudioPause();
   let loads=0;h.audio.load=()=>{loads++;};
-  await h.ctx.resumePlayback();h.metadata();assert.equal(loads,1);assert.equal(h.audio.currentTime,83.25);
-  console.log('PASS: system play after end follows queue/inserts; native interruption reload preserves position.');
+  await h.ctx.resumePlayback();h.metadata();assert.equal(loads,0);assert.equal(h.audio.currentTime,83.25);
+  console.log('PASS: system play after end follows queue/inserts; native interruption resume preserves source and position.');
   console.log('PASS: resolved-but-frozen play, delayed ended, end/pause ordering, no early truncation, explicit pause, synchronous load/play handoff.');
   console.log('PASS: background visibility race, native play before rendering, bounded stalled/aborted start recovery, preserved position, pause/new-track/interruption cancellation.');
 })().catch(error=>{console.error(error);process.exitCode=1;});

@@ -16,12 +16,12 @@ function harness(){
     playbackHistory:[track.id],historyCursor:0,persistenceRequested:true,playerStatusText:'buffering',BUFFERING_STATUS:'buffering',
     preparedAudio:new Map(),localAudioUrl:null,navigator:{onLine:true,mediaSession:{setActionHandler:(name,fn)=>{registrations.push(name);handlers[name]=fn;}},
       audioSession:{state:'active',addEventListener:(name,fn)=>sessionEvents[name]=fn}},
-    canPlay:t=>!!t?.src,audioSource:t=>t.src,cancelPreload(){},status(t){ctx.playerStatusText=t;},renderCurrent(){},
+    advance(){ctx.advances=(ctx.advances||0)+1;},canPlay:t=>!!t?.src,audioSource:t=>t.src,cancelPreload(){},status(t){ctx.playerStatusText=t;},renderCurrent(){},
     setCurrent(t){ctx.current=t;},save(){},preloadNext(){},audioBudget:()=>0,releasePrepared(){},URL:{revokeObjectURL(){}},
     cachedAudioUrl(){throw Error('system action must not await a cache read');},
     $:id=>{if(!nodes.has(id))nodes.set(id,{hidden:true,style:{setProperty(){}},click(){throw Error('system action must not simulate a DOM click');}});return nodes.get(id);}};
   vm.createContext(ctx);
-  vm.runInContext(source.slice(source.indexOf('  function resetShuffle('),source.indexOf('  function advance(')),ctx);
+  vm.runInContext(source.slice(source.indexOf('  const playbackFlow='),source.indexOf('  function advance(')),ctx);
   vm.runInContext(source.slice(source.indexOf('  function registerMediaActions()'),source.indexOf("  document.addEventListener('visibilitychange'")),ctx);
   vm.runInContext(source.slice(source.indexOf("  navigator.audioSession?.addEventListener('statechange'"),source.indexOf("  audio.addEventListener('error'")),ctx);
   ctx.registerMediaActions();return {ctx,audio,handlers,requests,sessionEvents,registrations};
@@ -38,7 +38,7 @@ function harness(){
   assert.equal(positions.at(-1).position,0);
   buffering.requests[0].resolve();await starting;buffering.ctx.syncPlaybackState();
   assert.equal(buffering.ctx.navigator.mediaSession.playbackState,'paused','resolved play at readyState=1 is still buffering');
-  buffering.audio.readyState=4;buffering.audio.currentTime=.25;buffering.ctx.syncPlaybackState();
+  buffering.audio.readyState=4;buffering.audio.currentTime=.25;buffering.ctx.observePlaybackClock();buffering.ctx.syncPlaybackState();
   assert.equal(buffering.ctx.navigator.mediaSession.playbackState,'playing');
   assert.equal(positions.at(-1).position,.25);
   buffering.audio.currentTime=12.5;buffering.audio.readyState=2;buffering.ctx.syncPlaybackState();
@@ -68,9 +68,18 @@ function harness(){
   drag.ctx.pausePlayback();assert.equal(drag.ctx.navigator.mediaSession.playbackState,'paused','explicit pause still wins during seek');
   drag.audio.seeking=false;drag.ctx.syncPlaybackState();assert.equal(positionWrites,1);
 
+  // A continuously advancing native clock needs no repeated system writes.
+  const smooth=harness();smooth.ctx.pendingTrackId=null;smooth.audio.paused=false;
+  let clock=1000,writes=0;smooth.ctx.performance.now=()=>clock;
+  smooth.ctx.navigator.mediaSession.setPositionState=()=>writes++;
+  smooth.ctx.syncPlaybackState();assert.equal(writes,1);
+  for(let i=0;i<8;i++){clock+=250;smooth.audio.currentTime+=.25;smooth.ctx.syncPlaybackState();}
+  assert.equal(writes,1,'normal progression cannot keep resetting the system scrubber');
+  smooth.handlers.pause();assert.equal(writes,2,'pause still publishes the exact final position');
+
   // A blocked native player can claim playing without advancing its clock.
   let blocked=harness();blocked.ctx.playbackBlocked=true;blocked.ctx.pendingTrackId=null;
-  let blockedPlay=blocked.handlers.play();assert.equal(blocked.audio.reloads,1);
+  let blockedPlay=blocked.handlers.play();assert.equal(blocked.audio.reloads,undefined,'system resume must preserve a usable source');
   assert.equal(blocked.audio.currentTime,83.25);blocked.requests[0].resolve();await blockedPlay;
   // System scrubbing while reloading must not be discarded or resume playback.
   let seeking=harness();seeking.audio.duration=NaN;seeking.audio.readyState=0;
@@ -85,7 +94,7 @@ function harness(){
   let h=harness();let promise=h.handlers.play();
   assert.equal(h.requests.length,1,'stale pending flag cannot block system play');
   assert.equal(h.audio.currentTime,83.25);assert.equal(h.audio.src,'one.mp3');assert.equal(h.audio.reloads,undefined,'ordinary system resume should reuse audio');
-  h.requests[0].resolve();await promise;assert.equal(h.ctx.pendingTrackId,null);
+  h.requests[0].resolve();await promise;assert.equal(h.ctx.pendingTrackId,'one','a resolved promise alone cannot prove playback');h.audio.currentTime+=.3;h.ctx.observePlaybackClock();assert.equal(h.ctx.pendingTrackId,null);
   assert.equal(h.ctx.playbackHistory.length,1);
   h=harness();h.audio.paused=false;promise=h.handlers.play();
   assert.equal(h.requests.length,1,'system play is not a toggle even when paused is false');h.requests[0].resolve();await promise;
@@ -93,7 +102,7 @@ function harness(){
   assert.equal(h.ctx.pendingTrackId,null);assert.equal(h.ctx.navigator.mediaSession.playbackState,'paused');
   const resumed=h.handlers.play();h.requests[0].reject(Object.assign(Error('interrupted'),{name:'AbortError'}));await old;
   assert.equal(h.ctx.pendingTrackId,'one','old rejection cannot clear the new attempt');
-  h.requests[1].resolve();await resumed;assert.equal(h.ctx.playerStatusText,'');
+  h.requests[1].resolve();await resumed;h.audio.currentTime+=.3;h.ctx.observePlaybackClock();assert.equal(h.ctx.playerStatusText,'');
   h=harness();promise=h.handlers.play();h.handlers.pause();h.requests[0].resolve();await promise;
   assert.equal(h.audio.paused,true);assert.equal(h.ctx.pendingTrackId,null);
   h=harness();promise=h.handlers.play();const token=h.ctx.playToken;h.ctx.handleAudioPause();
@@ -103,7 +112,7 @@ function harness(){
   assert.equal(h.audio.paused,true);assert.equal(h.ctx.pendingTrackId,null);assert.equal(h.ctx.navigator.audioSession.type,'playback');
   h.ctx.navigator.audioSession.state='active';h.sessionEvents.statechange();assert.equal(h.requests.length,1,'no automatic focus stealing');
   h.requests[0].resolve();await promise;
-  delete h.ctx.navigator.audioSession;promise=h.handlers.play();assert.equal(h.audio.reloads,1,'explicit resume after interruption must reload synchronously');assert.equal(h.audio.currentTime,83.25);h.requests[1].resolve();await promise;
+  delete h.ctx.navigator.audioSession;promise=h.handlers.play();assert.equal(h.audio.reloads,undefined,'try interrupted source before a bounded reload');assert.equal(h.audio.currentTime,83.25);h.requests[1].resolve();await promise;
   h=harness();h.audio.paused=false;h.audio.currentTime=126.75;h.audio.paused=true;h.ctx.handleAudioPause();
   assert.equal(h.ctx.playbackBlocked,true,'耳机触发音频pause后保持暂停');
   assert.equal(h.ctx.pausedPosition.time,126.75);
