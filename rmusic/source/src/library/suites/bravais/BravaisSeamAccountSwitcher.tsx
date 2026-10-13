@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import React, { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion, useIsPresent } from 'framer-motion';
@@ -234,6 +235,7 @@ const BravaisSeamAccountSwitcher: React.FC<{
             closeBravaisHomePopover('accounts');
         };
         const onKeyDown = (event: globalThis.KeyboardEvent) => {
+        if (shouldIgnoreAppKeyboardShortcut(event)) return;
             if (event.key !== 'Escape' || event.defaultPrevented) return;
             event.preventDefault();
             closeBravaisHomePopover('accounts');

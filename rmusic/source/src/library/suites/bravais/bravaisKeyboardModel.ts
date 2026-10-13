@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import type { WallDirection } from '../../../components/wall/wallNavigation';
 
 // src/library/suites/bravais/bravaisKeyboardModel.ts
@@ -34,17 +35,10 @@ const ARROWS: Record<string, WallDirection> = {
 };
 
 export const resolveBravaisKey = (input: BravaisKeyInput): BravaisKeyAction | null => {
-    const { key, shiftKey, altKey, ctrlKey, metaKey, repeat } = input;
-    if (ctrlKey || metaKey) return null;
-    if (key === 'Enter') {
-        if (repeat) return null;
-        if (altKey) return { type: shiftKey ? 'open-artist' : 'open-album' };
-        return { type: shiftKey ? 'enqueue' : 'enter' };
-    }
-    if (altKey) return null;
+    if (shouldIgnoreAppKeyboardShortcut(input)) return null;
+    const { key, repeat } = input;
+    if (key === 'Enter') return repeat ? null : { type: 'enter' };
     if (key === 'Escape') return repeat ? null : { type: 'escape' };
-    if (key === 'Tab') return { type: 'tab', backwards: shiftKey };
-    if (shiftKey) return null;
     const direction = ARROWS[key];
     if (direction) return { type: 'move', direction };
     if (key === 'Home') return { type: 'first' };
@@ -92,9 +86,10 @@ export const resolveEscapeStep = ({
  * 搜索）不算。按键先到命令面板，它留下自己的 `:` 之后经过滤注册的 ownInput 交给缝（useBravaisSeamFilter）。
  */
 export const resolveBravaisTypingKey = (
-    input: Pick<BravaisKeyInput, 'key' | 'altKey' | 'ctrlKey' | 'metaKey'>,
+    input: Pick<BravaisKeyInput, 'key' | 'altKey' | 'ctrlKey' | 'metaKey'> & Partial<Pick<BravaisKeyInput, 'shiftKey'>>,
     reserved: readonly string[] = [],
 ): 'char' | 'ime' | null => {
+    if (shouldIgnoreAppKeyboardShortcut(input)) return null;
     const { key, altKey, ctrlKey, metaKey } = input;
     if (altKey || ctrlKey || metaKey) return null;
     if (key === 'Process' || key === 'Unidentified') return 'ime';

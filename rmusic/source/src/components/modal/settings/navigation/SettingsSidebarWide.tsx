@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../../utils/appCombinationShortcuts';
 import React, { useMemo, useState } from 'react';
 import { Search, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -37,6 +38,7 @@ export const SettingsSidebarWide: React.FC<SettingsSidebarWideProps> = ({
     );
 
     const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (shouldIgnoreAppKeyboardShortcut(event)) return;
         if (event.key === 'Enter' && search.firstHit) {
             event.preventDefault();
             const { sectionId, anchorId } = search.firstHit;

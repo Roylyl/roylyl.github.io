@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CheckSquare, ChevronDown, CircleCheck, CircleOff, ShieldAlert, ShieldCheck, ShieldQuestion, Square, TriangleAlert } from 'lucide-react';
@@ -149,6 +150,7 @@ export const ModListItem: React.FC<ModListItemProps> = ({
                 aria-expanded={expanded}
                 onClick={activate}
                 onKeyDown={(event) => {
+                        if (shouldIgnoreAppKeyboardShortcut(event)) return;
                     if (event.target !== event.currentTarget) return;
                     if (event.key === 'Enter' || event.key === ' ') {
                         event.preventDefault();

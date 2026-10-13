@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import { useEffect, useRef } from 'react';
 import { hasBlockingWindow } from '../../../utils/keyboardTargets';
 
@@ -40,6 +41,7 @@ export const useLibraryTuiHomePageKeys = (handlers: LibraryTuiHomePageKeys) => {
     useEffect(() => {
         if (!handlers.isActive) return;
         const handleKeyDown = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             const current = latest.current;
             if (!claimsKey(event) || current.isPromptOpen) return;
             if (event.key === 'Tab' && !event.ctrlKey && !event.altKey && !event.metaKey) {
@@ -92,6 +94,7 @@ export const useLibraryTuiDirectoryKeys = (handlers: LibraryTuiDirectoryKeys) =>
         if (!handlers.isActive) return;
 
         const handleKeyDown = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             const current = latest.current;
             if (!claimsKey(event)) return;
 
@@ -178,6 +181,7 @@ export const useLibraryTuiAccountListKeys = (handlers: LibraryTuiAccountListKeys
     useEffect(() => {
         if (!handlers.isActive) return;
         const handleKeyDown = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             const current = latest.current;
             if (!claimsKey(event)) return;
             if (event.ctrlKey || event.altKey || event.metaKey) return;

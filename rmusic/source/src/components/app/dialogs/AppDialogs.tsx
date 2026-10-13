@@ -31,6 +31,8 @@ const AppDialogs: React.FC<AppDialogsProps> = ({ model }) => {
                             initial={{ opacity: 0, y: -20, x: '-50%' }}
                             animate={{ opacity: 1, y: 30, x: '-50%' }}
                             exit={{ opacity: 0, y: -20, x: '-50%' }}
+                            data-rmusic-status-toast
+                            style={{ top: 'var(--rmusic-safe-top, 0px)', maxWidth: 'calc(100vw - 32px - var(--rmusic-safe-left, 0px) - var(--rmusic-safe-right, 0px))' }}
                             className={`fixed top-0 left-1/2 z-[210] px-6 py-3 backdrop-blur-md rounded-full font-medium text-sm shadow-xl flex items-center gap-3 ${statusToast.onAction || statusToast.onCancel ? 'pointer-events-auto' : 'pointer-events-none'} ${statusToast.isDaylight ? 'bg-white/70 text-zinc-800 border border-black/5' : 'bg-white/10 text-white'}`}
                         >
                             {statusToast.type === 'error'
@@ -38,7 +40,7 @@ const AppDialogs: React.FC<AppDialogsProps> = ({ model }) => {
                                 : statusToast.type === 'success'
                                     ? <CheckCircle2 size={18} className={statusToast.isDaylight ? 'text-green-600' : 'text-green-400'} />
                                     : <Sparkles size={18} className={statusToast.isDaylight ? 'text-blue-600' : 'text-blue-400'} />}
-                            <span>{statusToast.text}</span>
+                            <span className="min-w-0 break-words">{statusToast.text}</span>
                             {statusToast.onCancel && statusToast.cancelLabel && (
                                 <button
                                     type="button"

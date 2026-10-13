@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import React, { useEffect, useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, Loader2, Search, X } from 'lucide-react';
@@ -81,6 +82,7 @@ const SearchWorkspace: React.FC<SearchWorkspaceProps> = ({
     useEffect(() => {
         if (!isSearchOpen || hasCollection) return;
         const handleKeyDown = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             if (event.key === 'Escape') {
                 event.preventDefault();
                 onClose();

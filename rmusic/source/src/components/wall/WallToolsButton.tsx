@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 import { createContext, useContext, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { AnimatePresence, motion, useIsPresent, useTransform, type MotionStyle } from 'framer-motion';
 import { CircleHelp, Command, Layers3, Settings2, X } from 'lucide-react';
@@ -89,7 +90,7 @@ export function WallToolsSurface({ idPrefix, label, isDaylight, locate, destinat
     const tintEnabled = useLatticeSettingsStore(state => state.latticePosterTintEnabled);
     const handleToggleLatticePosterTint = useLatticeSettingsStore(state => state.handleToggleLatticePosterTint);
     const isWideLayout = useMediaQuery('(min-width: 640px)');
-    const bottomPx = usePlayerBottomBarBottomPx(isWideLayout ? 24 : 16);
+    const bottomPx = usePlayerBottomBarBottomPx(isWideLayout ? 24 : 124);
     // stack 的 max-height 要减掉按钮此刻的底距（随底栏抬升量变），经 CSS 变量交给样式。
     const bottomVar = useTransform(bottomPx, value => `${value}px`);
     const host = useWallToolsHost();
@@ -109,6 +110,7 @@ export function WallToolsSurface({ idPrefix, label, isDaylight, locate, destinat
             }
         };
         const handleKeyDown = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             if (event.key === 'Escape') {
                 // 面板里的东西（队列浮岛的拖拽、内联输入）已经用掉了这次 Esc：只撤那一步，面板不收。
                 if (event.defaultPrevented) return;

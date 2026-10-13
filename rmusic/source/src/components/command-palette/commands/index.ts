@@ -32,9 +32,9 @@ const assertUniqueOpenHotkeys = (commands: CommandPaletteCommand[]) => {
         if (!command.openHotkey) {
             return;
         }
-        const stroke = `${command.openHotkey.ctrl ? 'ctrl+' : ''}${command.openHotkey.key.toLowerCase()}`;
-        // These two open the palette itself; anything colliding with them would never fire.
-        if (stroke === 's' || stroke === 'ctrl+k') {
+        const stroke = command.openHotkey.key.toLowerCase();
+        // S opens the palette itself; a colliding command would never fire.
+        if (stroke === 's') {
             throw new Error(`[CommandPalette] Command "${command.id}" claims the palette's own open key`);
         }
         const owner = seen.get(stroke);
@@ -46,18 +46,8 @@ const assertUniqueOpenHotkeys = (commands: CommandPaletteCommand[]) => {
     return commands;
 };
 
-/**
- * The stroke a keydown event has to produce to reach a command, spelled the way the global
- * listener spells it. `ctrl` means the platform's primary modifier, so the caller resolves that
- * before looking up.
- *
- * `assertUniqueOpenHotkeys` above builds its own key deliberately without `alt` — that is the
- * collision rule, and it stays as strict as it is. This one is the *lookup* key and does include
- * `alt`, because the listener matches on it.
- */
-export const openHotkeyStroke = (stroke: { key: string; ctrl?: boolean; alt?: boolean }) => (
-    `${stroke.ctrl ? 'ctrl+' : ''}${stroke.alt ? 'alt+' : ''}${stroke.key.toLowerCase()}`
-);
+/** The unmodified key used by a command's opening shortcut. */
+export const openHotkeyStroke = (stroke: { key: string }) => stroke.key.toLowerCase();
 
 /**
  * Replaces a `COMMAND_PALETTE_COMMANDS.find(...)` that ran on **every keystroke anywhere in the

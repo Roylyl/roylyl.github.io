@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, ChevronDown, Copy, ExternalLink, Users } from 'lucide-react';
@@ -24,6 +25,7 @@ export const JoinCommunityButton: React.FC = () => {
             if (!containerRef.current?.contains(event.target as Node)) setIsOpen(false);
         };
         const closeOnEscape = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             if (event.key !== 'Escape') return;
             event.preventDefault();
             event.stopPropagation();

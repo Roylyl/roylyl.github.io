@@ -1,3 +1,4 @@
+import { isNativeMediaPlaybackPreferred } from '../nativeMediaPlayback';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { MutableRefObject } from 'react';
 import { PlayerState } from '../../types';
@@ -196,12 +197,14 @@ export function useAutomixDecks({
     currentSongKeyRef,
     coverUrl,
     loopMode,
-    isEnabled,
+    isEnabled: requestedEnabled,
     transition,
     onAdvanceTrack,
     onDeckPlayedOut,
     getLocalStemBytes,
 }: UseAutomixDecksParams) {
+    // Native iOS playback uses one persistent element and never changes audio-session owners.
+    const isEnabled = requestedEnabled && !isNativeMediaPlaybackPreferred();
     // Read here rather than passed in. Plain reads of the same store App.tsx was reading from, so
     // the values are identical within a render - this does not touch the advance ordering the note
     // further down describes.
@@ -515,6 +518,7 @@ export function useAutomixDecks({
     // equaliser and the analyser. One equaliser downstream of the mix keeps CPU flat and, more
     // importantly, stops the tone from stepping in the middle of a blend.
     const connectDecks = useCallback((context: AudioContext, output: AudioNode) => {
+        if (isNativeMediaPlaybackPreferred()) return false;
         (['A', 'B'] as const).forEach(deck => {
             const element = elementsRef.current[deck];
             if (!element || chainsRef.current[deck]) return;

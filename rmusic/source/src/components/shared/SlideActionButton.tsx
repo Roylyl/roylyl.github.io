@@ -51,7 +51,7 @@ export const SlideActionButton: React.FC<SlideActionButtonProps> = ({
     const trackEndIconRef = useRef<HTMLDivElement>(null);
     const trackFillRef = useRef<HTMLDivElement>(null);
     const supportsHover = typeof window !== 'undefined' && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-    const motionClass = showGuideLine || isDragging
+    const motionClass = showGuideLine || isDragging || !supportsHover
         ? 'translate-x-0 opacity-100'
         : supportsHover
             ? 'translate-x-1/2 opacity-60 group-hover:translate-x-0 group-hover:opacity-100 md:translate-x-0 md:opacity-100 md:hover:scale-105'

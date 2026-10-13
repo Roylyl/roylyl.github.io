@@ -21,7 +21,6 @@ export const queueCommand: CommandPaletteCommand = defineCommand({
     keywords: ['播放队列', '队列搜索'],
     icon: ListMusic,
     isAvailable: context => !context?.playback.isFmMode,
-    openHotkey: { key: 'p', ctrl: true },
     surface: queueSurface,
     syntax: QUEUE_SYNTAX_SPEC,
     placeholder: context => context.shared.t('commandPalette.previewQueueSearchEmpty', 'Type a song name, artist, album, or queue index'),

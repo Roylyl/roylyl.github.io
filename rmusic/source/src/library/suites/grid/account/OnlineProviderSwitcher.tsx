@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../../utils/appCombinationShortcuts';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ChevronRight, LogIn, LogOut, UserRound } from 'lucide-react';
 import { AnimatePresence, motion, useMotionValueEvent } from 'framer-motion';
@@ -131,6 +132,7 @@ const OnlineProviderSwitcher: React.FC<OnlineProviderSwitcherProps> = ({
             if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
         };
         const handleKeyDown = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             if (event.key === 'Escape') setOpen(false);
         };
         window.addEventListener('pointerdown', handlePointerDown);

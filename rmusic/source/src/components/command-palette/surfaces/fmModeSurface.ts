@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import { PERSONAL_FM_SCENE_CATEGORIES, getPersonalFmSceneEntry } from '../../../services/onlineMusic/fmModes';
 import { buildPersonalFmMatches, readPersonalFmOption } from '../commands/fmModeOptions';
 import type { CommandPaletteMatch } from '../types';
@@ -113,6 +114,7 @@ const navigateSections = (step: number, { matches, activeIndex, setActiveIndex }
 };
 
 const navigate = (event: KeyboardEvent, args: CommandSurfaceArgs) => {
+        if (shouldIgnoreAppKeyboardShortcut(event)) return false;
     const { matches, activeIndex, setActiveIndex } = args;
     if (matches.length === 0) {
         return false;

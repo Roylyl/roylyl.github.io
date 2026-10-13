@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import { WallTitle } from '../../wall/WallTitle';
 import { lazy, memo, Suspense, useMemo } from 'react';
 import { motion, type TransformProperties, type Variants } from 'framer-motion';
@@ -211,6 +212,7 @@ function LatticePoster({
     };
 
     const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
         if (event.target !== event.currentTarget) return;
         if (event.key === 'Enter') {
             event.preventDefault();

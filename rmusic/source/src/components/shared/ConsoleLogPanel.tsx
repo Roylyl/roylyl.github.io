@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 import React, { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 import {
@@ -108,7 +109,8 @@ const FilterMenu: React.FC<{
     useEffect(() => {
         if (!at) return;
         const close = () => setAt(null);
-        const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') close(); };
+        const onKey = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return; if (event.key === 'Escape') close(); };
         // A module list runs past its own height, so the menu scrolls too - and it is listening in
         // CAPTURE, which means its own wheel arrives here before the list has moved a pixel. Only a
         // scroll of something BEHIND the menu can take the button out from under it.

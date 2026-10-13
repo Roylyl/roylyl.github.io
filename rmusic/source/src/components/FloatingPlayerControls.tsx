@@ -1,7 +1,8 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../utils/appCombinationShortcuts';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Play, Pause } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward } from 'lucide-react';
 import { MotionValue } from 'framer-motion';
 import ProgressBar from './ProgressBar';
 import { PlayerState, LyricData, Theme } from '../types';
@@ -15,6 +16,7 @@ import { usePlayerBottomBarLayoutStore } from '../stores/usePlayerBottomBarLayou
 import { usePlayerChromeSettingsStore } from '../stores/usePlayerChromeSettingsStore';
 import { PLAYER_BOTTOM_BAR_BASE_OFFSET_PX, clampPlayerBottomBarOffset, resolvePlayerBottomBarMaxOffset } from '../utils/playerBottomBarLayout';
 import type { PlayerControlSlotActionId, PlayerControlSlotContext } from './floating-player/playerControlSlotActions';
+import { useMediaQuery } from '../hooks/useMediaQuery';
 
 export interface TrackNavigation {
     /** 当前曲目的稳定身份，用于识别「确实换歌了」；相邻两首同名时标题字符串不变，不能拿标题判断 */
@@ -120,6 +122,8 @@ const FloatingPlayerControls: React.FC<FloatingPlayerControlsProps> = ({
     onCommitBottomBarOffset,
 }) => {
     const { t } = useTranslation();
+    const isCompact = useMediaQuery('(max-width: 639px)');
+    const canHover = useMediaQuery('(hover: hover) and (pointer: fine)');
     // const isDaylight = theme?.name === 'Daylight Default'; // Deprecated, passed as prop
     const glassBgExpanded = isDaylight ? 'bg-white/60 border border-white/20 shadow-xl' : 'bg-black/40 border border-white/5';
     const glassBgCollapsed = isDaylight ? 'bg-white/40 border border-white/20 shadow-lg hover:bg-white/50' : 'bg-black/20 border border-white/5 hover:bg-black/30';
@@ -136,7 +140,7 @@ const FloatingPlayerControls: React.FC<FloatingPlayerControlsProps> = ({
     const expandTimeoutRef = useRef<number | null>(null);
     const collapseTimeoutRef = useRef<number | null>(null);
 
-    const bottomBarBottomPx = usePlayerBottomBarBottomPx();
+    const bottomBarBottomPx = usePlayerBottomBarBottomPx(isCompact ? 12 : PLAYER_BOTTOM_BAR_BASE_OFFSET_PX);
     const isPositioning = usePlayerBottomBarLayoutStore(state => state.isPositioning);
     const commitPositioning = usePlayerBottomBarLayoutStore(state => state.commitPositioning);
     const cancelPositioning = usePlayerBottomBarLayoutStore(state => state.cancelPositioning);
@@ -150,7 +154,7 @@ const FloatingPlayerControls: React.FC<FloatingPlayerControlsProps> = ({
 
     const canAutoExpand = canTogglePlay && duration > 0;
     // 定位模式强制展开：用户要看到的是最终形态的胶囊，而不是一条细进度条。
-    const showExpanded = isPositioning || isHovered || (canAutoExpand && playerState !== PlayerState.PLAYING && currentView !== 'home');
+    const showExpanded = !isCompact && (isPositioning || isHovered || (canAutoExpand && playerState !== PlayerState.PLAYING && currentView !== 'home'));
 
     // 上限依赖视口高度，窗口变矮时要跟着收，否则虚线框会画到屏幕外。
     useEffect(() => {
@@ -198,10 +202,10 @@ const FloatingPlayerControls: React.FC<FloatingPlayerControlsProps> = ({
     // 定位模式只在播放页的控制条上成立。离开播放页或把控制条整条隐藏后，
     // 拖手和退出按钮都不在场了，状态留着会把胶囊永久钉在展开且不可交互的样子上。
     useEffect(() => {
-        if (isPositioning && (currentView !== 'player' || hideControlBar)) {
+        if (isPositioning && (isCompact || currentView !== 'player' || hideControlBar)) {
             cancelPositioning();
         }
-    }, [cancelPositioning, currentView, hideControlBar, isPositioning]);
+    }, [cancelPositioning, currentView, hideControlBar, isCompact, isPositioning]);
 
     // 卸载时兜底：当前歌曲被清空会让整条控制条不再渲染，上面那个 effect 也就没机会跑，
     // 定位状态会残留成一个谁也退不出的模式。用 getState 读，避免把 cleanup 绑到回调身份上。
@@ -224,6 +228,7 @@ const FloatingPlayerControls: React.FC<FloatingPlayerControlsProps> = ({
         }
 
         const onKeyDown = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             if (event.key === 'Escape') {
                 event.preventDefault();
                 cancelPositioning();
@@ -273,6 +278,7 @@ const FloatingPlayerControls: React.FC<FloatingPlayerControlsProps> = ({
     }, []);
 
     const handleMouseEnter = () => {
+        if (isCompact || !canHover) return;
         if (collapseTimeoutRef.current !== null) {
             window.clearTimeout(collapseTimeoutRef.current);
             collapseTimeoutRef.current = null;
@@ -289,6 +295,7 @@ const FloatingPlayerControls: React.FC<FloatingPlayerControlsProps> = ({
     };
 
     const handleMouseLeave = () => {
+        if (isCompact || !canHover) return;
         if (expandTimeoutRef.current !== null) {
             window.clearTimeout(expandTimeoutRef.current);
             expandTimeoutRef.current = null;
@@ -329,8 +336,9 @@ const FloatingPlayerControls: React.FC<FloatingPlayerControlsProps> = ({
                 所以挂在这一层不会干扰居中。
             */}
             <motion.div
-                className={`absolute left-1/2 -translate-x-1/2 z-60 w-full flex justify-center pointer-events-none
-                    ${currentView === 'home'
+                data-rmusic-player-controls
+                className={`rmusic-floating-controls absolute left-1/2 -translate-x-1/2 z-60 w-full flex justify-center pointer-events-none
+                    ${isCompact ? 'px-3 max-w-full' : currentView === 'home'
                         ? 'max-w-[calc(100vw-120px)] md:max-w-[min(calc(32rem_+_var(--folium-player-bar-extra,0px)),calc(100vw-120px))]'
                         : 'max-w-[min(calc(32rem_+_var(--folium-player-bar-extra,0px)),100vw)] px-4'}`}
                 style={{ bottom: bottomBarBottomPx }}
@@ -359,29 +367,46 @@ const FloatingPlayerControls: React.FC<FloatingPlayerControlsProps> = ({
                     }}
                 >
                     <motion.div
-                        layout
+                        layout={!isCompact}
                         transition={{ layout: CONTROL_LAYOUT_SPRING }}
                         onClick={handleClick}
                         // 用原生 pointer 事件而不是 framer-motion 的 drag：位移已经由 playerBottomBarLiveOffset
                         // 经外层 lift 表达，再让 drag 往这个节点写一份 y 会叠加成两倍位移；
                         // 而且 dragConstraints 依赖的起始值放在 ref 里不会触发重渲染，读到的会是上一帧的。
                         data-ponder="player-bar"
+                        data-rmusic-player-bar
                         onPointerDown={handlePositionDragStart}
                         onPointerMove={handlePositionDragMove}
                         onPointerUp={handlePositionDragEnd}
                         onPointerCancel={handlePositionDragEnd}
                         style={{ touchAction: isPositioning ? 'none' : undefined }}
-                        className={`backdrop-blur-xl shadow-2xl overflow-hidden rounded-full relative transition-colors duration-300
+                        className={`backdrop-blur-xl shadow-2xl overflow-hidden ${isCompact ? 'rounded-2xl' : 'rounded-full'} relative transition-colors duration-300
                             ${isPositioning ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'}
-                            ${showExpanded ? `p-3 ${glassBgExpanded} w-full` : `px-4 py-2 ${glassBgCollapsed} ${COLLAPSED_WIDTH_CLASS}`}`}
+                            ${isCompact ? `p-2.5 ${glassBgExpanded} w-full` : showExpanded ? `p-3 ${glassBgExpanded} w-full` : `px-4 py-2 ${glassBgCollapsed} ${COLLAPSED_WIDTH_CLASS}`}`}
                     >
                         <motion.div
-                            layout
+                            layout={!isCompact}
                             transition={{ layout: CONTROL_LAYOUT_SPRING }}
                             // 定位模式下 seek 和所有按钮一起失效：这时胶囊是个被拖的物体，不是控件。
                             className={`w-full ${isPositioning ? 'pointer-events-none select-none' : ''}`}
                         >
-                            {showExpanded ? (
+                            {isCompact ? (
+                                <MobileView
+                                    currentSong={currentSong}
+                                    playerState={playerState}
+                                    currentTime={currentTime}
+                                    duration={duration}
+                                    canTogglePlay={canTogglePlay}
+                                    onSeek={onSeek}
+                                    onTogglePlay={onTogglePlay}
+                                    noTrackText={noTrackText}
+                                    primaryColor={primaryColor}
+                                    secondaryColor={secondaryColor}
+                                    trackColor={trackColor}
+                                    controlsDisabled={controlsDisabled}
+                                    trackNavigation={trackNavigation}
+                                />
+                            ) : showExpanded ? (
                                 <ExpandedView
                                     currentSong={currentSong}
                                     playerState={playerState}
@@ -420,7 +445,7 @@ const FloatingPlayerControls: React.FC<FloatingPlayerControlsProps> = ({
             </motion.div>
 
             <AnimatePresence>
-                {isPositioning && (
+                {isPositioning && !isCompact && (
                     <PlayerBottomBarPositioner
                         maxOffsetPx={maxOffsetPx}
                         accentColor={primaryColor}
@@ -450,6 +475,52 @@ const FloatingPlayerControls: React.FC<FloatingPlayerControlsProps> = ({
                 disabled={controlsDisabled}
             />
         </>
+    );
+};
+
+type MobileViewProps = Pick<ExpandedViewProps, 'currentSong' | 'playerState' | 'currentTime' | 'duration'
+    | 'canTogglePlay' | 'onSeek' | 'onTogglePlay' | 'noTrackText' | 'primaryColor' | 'secondaryColor'
+    | 'trackColor' | 'controlsDisabled' | 'trackNavigation'>;
+
+// Touch controls keep one compact shape while playing, paused and buffering.
+const MobileView: React.FC<MobileViewProps> = ({ currentSong, playerState, currentTime, duration,
+    canTogglePlay, onSeek, onTogglePlay, noTrackText, primaryColor, secondaryColor, trackColor,
+    controlsDisabled = false, trackNavigation }) => {
+    const { t } = useTranslation();
+    return (
+        <div className="rmusic-mobile-player w-full min-w-0">
+            <div className="flex items-center gap-2 min-w-0">
+                <div className="flex-1 min-w-0 truncate pl-1 text-xs font-semibold" style={{ color: primaryColor }}>
+                    {currentSong?.name || noTrackText}
+                </div>
+                <div className="flex shrink-0 items-center gap-1">
+                    <button type="button" aria-label={trackNavigation?.prevLabel || t('help.previousTrack')}
+                        disabled={controlsDisabled || !trackNavigation?.canPrev}
+                        className="flex h-10 w-10 items-center justify-center rounded-full touch-manipulation active:bg-current/10 disabled:opacity-25"
+                        onClick={event => { event.stopPropagation(); trackNavigation?.onPrev(); }} style={{ color: primaryColor }}>
+                        <SkipBack size={19} />
+                    </button>
+                    <button type="button" aria-label={t(playerState === PlayerState.PLAYING ? 'ui.pause' : 'ui.play')}
+                        disabled={controlsDisabled || !canTogglePlay}
+                        className="flex h-11 w-11 items-center justify-center rounded-full touch-manipulation active:opacity-75 disabled:opacity-25"
+                        onClick={event => { event.stopPropagation(); onTogglePlay(); }}
+                        style={{ backgroundColor: primaryColor, color: 'var(--bg-color)' }}>
+                        {playerState === PlayerState.PLAYING ? <Pause size={19} fill="currentColor" /> : <Play size={19} fill="currentColor" className="ml-0.5" />}
+                    </button>
+                    <button type="button" aria-label={trackNavigation?.nextLabel || t('help.nextTrack')}
+                        disabled={controlsDisabled || !trackNavigation?.canNext}
+                        className="flex h-10 w-10 items-center justify-center rounded-full touch-manipulation active:bg-current/10 disabled:opacity-25"
+                        onClick={event => { event.stopPropagation(); trackNavigation?.onNext(); }} style={{ color: primaryColor }}>
+                        <SkipForward size={19} />
+                    </button>
+                </div>
+            </div>
+            <div className="flex min-h-7 items-center px-1 pt-1">
+                <ProgressBar currentTime={currentTime} duration={duration} onSeek={onSeek}
+                    primaryColor={primaryColor} secondaryColor={secondaryColor} trackColor={trackColor}
+                    disabled={controlsDisabled} collapsed />
+            </div>
+        </div>
     );
 };
 

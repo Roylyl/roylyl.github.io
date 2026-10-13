@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import type { RefObject } from 'react';
 import { PlayerState } from '../types';
 import type { SongResult } from '../types';
@@ -9,6 +9,9 @@ import {
     isMediaSessionSourceReady,
     publishMediaSessionTrack,
 } from '../utils/mediaSessionSync';
+import { recordRmusicPlaybackEvent } from '../services/rmusicPlaybackDiagnostics';
+import { isNativeMediaPlaybackPreferred } from '../services/nativeMediaPlayback';
+import { selectCoverUrl, usePlaybackStore } from '../stores/usePlaybackStore';
 
 // Bridges Folia playback state to the browser Media Session API.
 type UseMediaSessionBridgeOptions = {
@@ -51,58 +54,71 @@ export const useMediaSessionBridge = ({
     mediaSessionNextRef,
     isNowPlayingControlDisabledRef,
 }: UseMediaSessionBridgeOptions) => {
+    const displayAudioReaderRef = useRef(getDisplayAudioElement);
+    displayAudioReaderRef.current = getDisplayAudioElement;
+    const artistLabelRef = useRef(unknownArtistLabel);
+    artistLabelRef.current = unknownArtistLabel;
+
     useEffect(() => {
         if (!('mediaSession' in navigator)) {
             return;
         }
 
         const mediaSession = navigator.mediaSession;
+        const unsupportedActions = new Set<MediaSessionAction>();
         const setActionHandlerSafely = (
             action: MediaSessionAction,
             handler: MediaSessionActionHandler | null
         ) => {
+            if (unsupportedActions.has(action)) return;
             try {
                 mediaSession.setActionHandler(action, handler);
             } catch (e) {
+                unsupportedActions.add(action);
+                recordRmusicPlaybackEvent('system-action-unavailable', action);
                 console.warn(`[MediaSession] Failed to bind ${action} handler`, e);
             }
         };
 
-        setActionHandlerSafely('play', async () => {
+        const play: MediaSessionActionHandler = () => {
+            recordRmusicPlaybackEvent('system-play');
             if (isNowPlayingControlDisabledRef.current || !audioRef.current) {
                 return;
             }
-
-            try {
-                await mediaSessionPlayRef.current();
-            } catch (e) {
-                console.error('MediaSession play failed', e);
-            }
-        });
-        setActionHandlerSafely('pause', () => {
+            // Call the transport before awaiting anything: this callback carries
+            // the system play gesture on iOS.
+            void mediaSessionPlayRef.current().catch(error => {
+                recordRmusicPlaybackEvent('system-play-failed', String(error));
+                console.error('MediaSession play failed', error);
+            });
+        };
+        const pause: MediaSessionActionHandler = () => {
+            recordRmusicPlaybackEvent('system-pause');
             if (isNowPlayingControlDisabledRef.current || !audioRef.current) {
                 return;
             }
-
             mediaSessionPauseRef.current();
-        });
-        setActionHandlerSafely('previoustrack', () => {
+        };
+        const previous: MediaSessionActionHandler = () => {
+            recordRmusicPlaybackEvent('system-previous');
             if (isNowPlayingControlDisabledRef.current) {
                 return;
             }
             mediaSessionPrevRef.current();
-        });
-        setActionHandlerSafely('nexttrack', () => {
+        };
+        const next: MediaSessionActionHandler = () => {
+            recordRmusicPlaybackEvent('system-next');
             if (isNowPlayingControlDisabledRef.current) {
                 return;
             }
-            void mediaSessionNextRef.current();
-        });
+            void Promise.resolve(mediaSessionNextRef.current()).catch(error => {
+                recordRmusicPlaybackEvent('system-next-failed', String(error));
+                console.error('MediaSession next track failed', error);
+            });
+        };
 
         // Music controls are track controls; leave the separate ten-second
         // actions disabled and keep absolute system scrubbing available.
-        setActionHandlerSafely('seekbackward', null);
-        setActionHandlerSafely('seekforward', null);
         let pendingSeek: {audio: HTMLAudioElement; source: string; time: number; applied?: boolean; appliedAt?: number; nativeSeek?: boolean} | null = null;
         const applyPendingSeek = () => {
             const target = pendingSeek;
@@ -131,20 +147,72 @@ export const useMediaSessionBridge = ({
                 }
             }
         };
-        setActionHandlerSafely('seekto', action => {
+        const seek: MediaSessionActionHandler = action => {
+            recordRmusicPlaybackEvent('system-seek', String(action.seekTime));
             if (isNowPlayingControlDisabledRef.current || !Number.isFinite(action.seekTime)) return;
-            const audio = getDisplayAudioElement?.() ?? audioRef.current;
+            const audio = displayAudioReaderRef.current?.() ?? audioRef.current;
             if (!audio) return;
             pendingSeek = {audio, source: audio.getAttribute('src') || '', time: action.seekTime!};
             applyPendingSeek();
-        });
+        };
+        const bindActions = () => {
+            setActionHandlerSafely('play', play);
+            setActionHandlerSafely('pause', pause);
+            setActionHandlerSafely('previoustrack', previous);
+            setActionHandlerSafely('nexttrack', next);
+            setActionHandlerSafely('seekto', seek);
+            setActionHandlerSafely('seekbackward', null);
+            setActionHandlerSafely('seekforward', null);
+        };
+        bindActions();
         const elements = Array.from(document.querySelectorAll<HTMLAudioElement>('audio'));
         for (const element of elements) {
             element.addEventListener('loadedmetadata', applyPendingSeek);
             element.addEventListener('canplay', applyPendingSeek);
             element.addEventListener('progress', applyPendingSeek);
             element.addEventListener('seeked', applyPendingSeek);
+            // Native audio has claimed the platform session now. Reassert track
+            // actions after a new source or an interruption changes its owner.
+            element.addEventListener('playing', bindActions);
         }
+        const lifecycle = (event: Event) => {
+            recordRmusicPlaybackEvent(event.type);
+            if (!document.hidden) bindActions();
+        };
+        window.addEventListener('pageshow', lifecycle);
+        document.addEventListener('visibilitychange', lifecycle);
+        const audioEvents = ['loadstart', 'play', 'playing', 'pause', 'ended', 'loadedmetadata', 'durationchange', 'waiting', 'stalled', 'seeking', 'seeked', 'error'];
+        const recordAudio = (event: Event) => {
+            if (event.target instanceof HTMLAudioElement) {
+                recordRmusicPlaybackEvent(`audio-${event.type}`, '', event.target);
+                if (isNativeMediaPlaybackPreferred() && event.target === audioRef.current) {
+                    // A locked page can receive ended/playing before React renders
+                    // the new track. Publish from the synchronous playback store.
+                    const state = usePlaybackStore.getState();
+                    const audio = event.target;
+                    if (state.currentSong && state.audioSrc
+                        && ['loadedmetadata', 'durationchange', 'playing', 'seeked'].includes(event.type)
+                        && !audio.seeking && isMediaSessionSourceReady(audio, state.audioSrc, document.baseURI)) {
+                        try {
+                            publishMediaSessionTrack(mediaSession, audio, {
+                                title: state.currentSong.name,
+                                artist: getSongArtistLabel(state.currentSong) || artistLabelRef.current,
+                                album: getSongAlbumLabel(state.currentSong),
+                                artworkUrl: getSupportedMediaSessionArtworkUrl(selectCoverUrl(state) || '', document.baseURI),
+                            });
+                        } catch (error) {
+                            console.warn('[MediaSession] Failed to publish native track', error);
+                        }
+                    }
+                    try {
+                        mediaSession.playbackState = !state.currentSong || isNowPlayingControlDisabledRef.current
+                            ? 'none'
+                            : !audio.paused && !audio.ended && audio.readyState >= 2 ? 'playing' : 'paused';
+                    } catch { /* Optional browser capability. */ }
+                }
+            }
+        };
+        for (const event of audioEvents) document.addEventListener(event, recordAudio, true);
 
         return () => {
             setActionHandlerSafely('play', null);
@@ -158,9 +226,13 @@ export const useMediaSessionBridge = ({
                 element.removeEventListener('canplay', applyPendingSeek);
                 element.removeEventListener('progress', applyPendingSeek);
                 element.removeEventListener('seeked', applyPendingSeek);
+                element.removeEventListener('playing', bindActions);
             }
+            window.removeEventListener('pageshow', lifecycle);
+            document.removeEventListener('visibilitychange', lifecycle);
+            for (const event of audioEvents) document.removeEventListener(event, recordAudio, true);
         };
-    }, [audioRef, getDisplayAudioElement, isNowPlayingControlDisabledRef, mediaSessionNextRef, mediaSessionPauseRef, mediaSessionPlayRef, mediaSessionPrevRef]);
+    }, [audioRef, isNowPlayingControlDisabledRef, mediaSessionNextRef, mediaSessionPauseRef, mediaSessionPlayRef, mediaSessionPrevRef]);
 
     useEffect(() => {
         if (!('mediaSession' in navigator)) {
@@ -168,8 +240,8 @@ export const useMediaSessionBridge = ({
         }
 
         if (!currentSong) {
+            try { navigator.mediaSession.setPositionState?.(); } catch { /* Optional API. */ }
             try {
-                navigator.mediaSession.setPositionState();
                 navigator.mediaSession.metadata = null;
             } catch (e) {
                 console.warn('[MediaSession] Failed to clear metadata', e);
@@ -238,7 +310,7 @@ export const useMediaSessionBridge = ({
         const publishSeekPosition = () => {
             if (disposed || audio.seeking || !isMediaSessionSourceReady(audio, audioSrc, document.baseURI)) return;
             const position = createMediaSessionPositionState(audio);
-            if (position) { try { navigator.mediaSession.setPositionState(position); } catch {} }
+            if (position) { try { navigator.mediaSession.setPositionState?.(position); } catch {} }
         };
         audio.addEventListener('seeked', publishSeekPosition);
         publish();
@@ -259,14 +331,29 @@ export const useMediaSessionBridge = ({
             return;
         }
 
-        try {
-            navigator.mediaSession.playbackState = isNowPlayingStageActive
-                ? 'none'
-                : currentSong
-                    ? (playerState === PlayerState.PLAYING ? 'playing' : 'paused')
-                    : 'none';
-        } catch (e) {
-            console.warn('[MediaSession] Failed to update playback state', e);
+        const syncPlaybackState = () => {
+            const audio = displayAudioReaderRef.current?.() ?? audioRef.current;
+            const song = isNativeMediaPlaybackPreferred() ? usePlaybackStore.getState().currentSong : currentSong;
+            try {
+                navigator.mediaSession.playbackState = isNowPlayingStageActive || !song
+                    ? 'none'
+                    : audio && !audio.paused && !audio.ended && audio.readyState >= 2
+                        ? 'playing'
+                        : 'paused';
+            } catch (error) {
+                console.warn('[MediaSession] Failed to update playback state', error);
+            }
+        };
+        const elements = Array.from(document.querySelectorAll<HTMLAudioElement>('audio'));
+        const events = ['playing', 'pause', 'ended', 'waiting', 'emptied'];
+        for (const audio of elements) {
+            for (const event of events) audio.addEventListener(event, syncPlaybackState);
         }
-    }, [currentSong, isNowPlayingStageActive, playerState]);
+        syncPlaybackState();
+        return () => {
+            for (const audio of elements) {
+                for (const event of events) audio.removeEventListener(event, syncPlaybackState);
+            }
+        };
+    }, [audioRef, currentSong, isNowPlayingStageActive, playerState]);
 };

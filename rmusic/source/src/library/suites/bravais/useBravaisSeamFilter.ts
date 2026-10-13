@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import { useEffect, useRef } from 'react';
 import type { LibraryQueryPort } from '../../core/contracts/session';
 import { useCommittedQuery } from '../../core/bindings/useCommittedQuery';
@@ -40,6 +41,7 @@ export const openBravaisFilter = () => {
 
 /** 墙上的一下打字：交给缝里的输入位（见文件头）。返回 false 时按键原样放行。 */
 const takeBravaisFilterKey = (event: KeyboardEvent, port: LibraryQueryPort, reserved: readonly string[]): boolean => {
+        if (shouldIgnoreAppKeyboardShortcut(event)) return false;
     const kind = resolveBravaisTypingKey(event, reserved);
     if (!kind || hasBlockingWindow()) return false;
     setBravaisFilterEditing(true);

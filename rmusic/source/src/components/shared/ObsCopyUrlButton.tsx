@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Check, ChevronDown, Copy } from 'lucide-react';
@@ -52,7 +53,8 @@ export const ObsCopyUrlButton: React.FC<ObsCopyUrlButtonProps> = ({ onCopy, copi
             if (containerRef.current?.contains(target) || menuRef.current?.contains(target)) return;
             setOpen(false);
         };
-        const onKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+        const onKeyDown = (e: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(e)) return; if (e.key === 'Escape') setOpen(false); };
         // The trigger sits in a scrollable modal, so keep the fixed-position menu pinned to it.
         const reposition = () => measure();
         document.addEventListener('mousedown', onDocMouseDown);

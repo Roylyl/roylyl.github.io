@@ -21,9 +21,9 @@ import { getPlaybackSourceRef } from '../utils/appPlaybackGuards';
 import { canSaveQueueAsLocalPlaylist } from '../utils/queueReorder';
 import { resolveLikeAvailability } from '../utils/playerLikeAvailability';
 import { usePlayerBottomBarBottomPx } from '../hooks/usePlayerBottomBarBottomPx';
+import { useMediaQuery } from '../hooks/useMediaQuery';
 import { getSizedCoverUrl } from '../utils/coverUrl';
 import { openAddToPlaylist, useAddToPlaylistStore } from '../stores/useAddToPlaylistStore';
-import { usePlayerPanelTabShortcut } from '../hooks/usePlayerPanelTabShortcut';
 import { FOLIUM_PANEL_TAB_PREFIX, FoliumPanelTabBody, useFoliumPanelTabs } from '../mods/folium/registries/playerPanelTabs';
 import { countRender } from '../dev/renderCount';
 
@@ -249,7 +249,9 @@ const UnifiedPanel: React.FC<UnifiedPanelProps> = ({
     const isLocal = currentSong && !isNavidrome && (((currentSong as any).isLocal === true) || Boolean((currentSong as any).localRef?.songId));
     const playbackSourceRef = currentSong ? getPlaybackSourceRef(currentSong) : null;
     const isOnline = playbackSourceRef?.kind === 'online';
+    const isCompact = useMediaQuery('(max-width: 639px)');
     const bottomBarBottomPx = usePlayerBottomBarBottomPx();
+    const toggleBottomPx = usePlayerBottomBarBottomPx(isCompact ? 124 : 32);
     const panelMaxHeight = useTransform(
         bottomBarBottomPx,
         bottom => `calc(100dvh - ${bottom + 64}px)`,
@@ -294,13 +296,6 @@ const UnifiedPanel: React.FC<UnifiedPanelProps> = ({
         }
     }, [currentTabExists, currentTab, onTabChange]);
 
-    usePlayerPanelTabShortcut({
-        isOpen,
-        currentTab,
-        availableTabs: tabs.map(tab => tab.id),
-        onTabChange,
-    });
-
     // Theme Helper
     // const isDaylight = theme.name === 'Daylight Default'; // Deprecated
     const isAI = bgMode === 'ai'; // AI themes usually dark
@@ -315,7 +310,7 @@ const UnifiedPanel: React.FC<UnifiedPanelProps> = ({
     const tabSwitcherBg = isDaylight ? 'bg-black/5' : 'bg-white/5';
     const canSlideOpenCommandPalette = !isOpen && Boolean(onOpenCommandPalette);
     const isGuideLineVisible = canSlideOpenCommandPalette && (showGuideLine || isPanelGuideHotspotActive);
-    const toggleButtonMotionClass = (isOpen || isGuideLineVisible || isDragging)
+    const toggleButtonMotionClass = (isCompact || isOpen || isGuideLineVisible || isDragging)
         ? 'translate-x-0 opacity-100'
         : supportsHover
             ? 'translate-x-1/2 opacity-60 group-hover:translate-x-0 group-hover:opacity-100 md:translate-x-0 md:opacity-100 md:hover:scale-105'
@@ -963,7 +958,7 @@ const UnifiedPanel: React.FC<UnifiedPanelProps> = ({
                         }
                         transition={{ duration: 0.24, ease: 'easeOut' }}
                         data-testid="panel-toggle"
-                        style={{ bottom: bottomBarBottomPx }}
+                        style={{ bottom: toggleBottomPx, right: isCompact ? 'var(--rmusic-safe-right, 0px)' : undefined }}
                         className="pointer-events-auto fixed right-0 z-[60] pr-4 md:pr-8 group w-20 flex justify-end"
                         onMouseEnter={handleToggleButtonMouseEnter}
                         onMouseLeave={handleToggleButtonMouseLeave}

@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { motion } from 'framer-motion';
 import { List, useListRef } from 'react-window';
@@ -128,36 +129,33 @@ export function WallToolsQueueIsland({ id, host, trailsPanel = false }: { id: st
     });
     const { drag, beginDrag, ghostRef, cancel: cancelDrag, isDragging } = reorder;
 
-    /** 行上的按键：Enter 播放、↑↓ 移焦、Alt+↑↓ 挪一位、Delete 移除；用掉的都 preventDefault。 */
+    /** 行上的单键：Enter播放、方向键移焦、Delete移除。 */
     const handleRowKeyDown = useCallback((index: number, event: ReactKeyboardEvent<HTMLButtonElement>) => {
+        if (shouldIgnoreAppKeyboardShortcut(event)) return;
         if (event.nativeEvent.isComposing || event.ctrlKey || event.metaKey) return;
         const { playQueue: queue, host: currentHost, readOnly: locked } = latest.current;
-        const { key, altKey, shiftKey } = event;
-        if (key === 'Enter' && !altKey && !shiftKey) {
+        const { key } = event;
+        if (key === 'Enter') {
             event.preventDefault();
             const song = queue[index];
             if (song) currentHost.playQueueSong(song);
             return;
         }
-        if ((key === 'ArrowUp' || key === 'ArrowDown') && !shiftKey) {
+        if (key === 'ArrowUp' || key === 'ArrowDown') {
             event.preventDefault();
             const target = index + (key === 'ArrowUp' ? -1 : 1);
             if (target < 0 || target >= queue.length) return;
-            if (altKey) {
-                if (locked) return;
-                moveSong(index, target);
-            }
             focusRow(target);
             return;
         }
         if (key === 'Delete') {
             // 不管能不能删都消费掉（只读、当前行也一样），免得落到 bravais 的批量移除。
             event.preventDefault();
-            if (altKey || shiftKey || locked || isPlayingRow(index)) return;
+            if (locked || isPlayingRow(index)) return;
             currentHost.removeQueueSong(index);
             focusRow(Math.min(index, queue.length - 2));
         }
-    }, [focusRow, isPlayingRow, moveSong]);
+    }, [focusRow, isPlayingRow]);
 
     const actions = useMemo<QueueIslandRowActions>(() => ({
         play: index => {
@@ -235,6 +233,7 @@ export function WallToolsQueueIsland({ id, host, trailsPanel = false }: { id: st
     useEffect(() => {
         if (!dragging) return undefined;
         const handleKeyDown = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             if (event.key !== 'Escape' || event.isComposing || !isDragging()) return;
             cancelDrag();
             event.preventDefault();
@@ -256,6 +255,7 @@ export function WallToolsQueueIsland({ id, host, trailsPanel = false }: { id: st
             data-queue-readonly={readOnly || undefined}
             style={{ height: queueIslandHeight(count) }}
             onKeyDown={event => {
+                        if (shouldIgnoreAppKeyboardShortcut(event)) return;
                 // Delete 在浮岛里一律消费（行上的按键处理之外：悬停动作按钮、头部按钮、只读时），文字输入框里照常删字。
                 if (event.key === 'Delete' && !isTextEntryTarget(event.target)) event.preventDefault();
             }}

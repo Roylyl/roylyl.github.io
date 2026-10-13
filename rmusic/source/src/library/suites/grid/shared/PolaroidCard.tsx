@@ -173,7 +173,8 @@ export const PolaroidCard = React.memo<PolaroidCardProps>(
 
             return (
                 <div
-                    className="relative rounded-xl overflow-hidden border shadow-lg hover:shadow-2xl transition-shadow duration-300 theme-polaroid-card"
+                    data-focused={isFocused || undefined}
+                    className="rmusic-polaroid-card relative rounded-xl overflow-hidden border shadow-lg hover:shadow-2xl transition-shadow duration-300 theme-polaroid-card"
                     style={{ width: dynamicWidth, height: dynamicHeight }}
                     onClick={handleCardClick}
                 >
@@ -214,7 +215,7 @@ export const PolaroidCard = React.memo<PolaroidCardProps>(
                             </div>
                         )}
 
-                        <div className="flex items-end justify-between gap-2 pt-0.5 w-full">
+                        <div className="rmusic-polaroid-footer flex items-end justify-between gap-2 pt-0.5 w-full">
                             <div className="flex flex-col min-w-0 flex-1">
                                 {mode === 'tracks' && item.rawTrack && (
                                     <>
@@ -250,7 +251,8 @@ export const PolaroidCard = React.memo<PolaroidCardProps>(
 
         return (
             <div
-                className="rounded-xl p-3 flex flex-col items-center border transition-shadow duration-300 shadow-lg hover:shadow-2xl theme-polaroid-card"
+                data-focused={isFocused || undefined}
+                className="rmusic-polaroid-card rounded-xl p-3 flex flex-col items-center border transition-shadow duration-300 shadow-lg hover:shadow-2xl theme-polaroid-card"
                 style={{
                     width: dynamicWidth,
                     minHeight: dynamicHeight,
@@ -300,7 +302,7 @@ export const PolaroidCard = React.memo<PolaroidCardProps>(
                         )}
                     </div>
 
-                    <div className="flex items-end justify-between mt-auto pt-1.5 w-full">
+                    <div className="rmusic-polaroid-footer flex items-end justify-between mt-auto pt-1.5 w-full">
                         {/* Left: Clickable Album name & Duration */}
                         <div className="flex flex-col min-w-0 flex-1 pr-2">
                             {mode === 'tracks' && item.rawTrack && (

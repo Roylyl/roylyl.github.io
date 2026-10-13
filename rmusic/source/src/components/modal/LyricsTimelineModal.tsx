@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 import React, { useMemo, useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, MotionValue, useMotionValueEvent } from 'framer-motion';
 import { X } from 'lucide-react';
@@ -77,6 +78,7 @@ const LyricsTimelineModal: React.FC<LyricsTimelineModalProps> = ({
         if (!isOpen) return undefined;
 
         const handleKeyDown = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             if (event.key !== 'Escape' || event.repeat) return;
             // The command palette can open above the timeline; its Escape is its own.
             const target = event.target;

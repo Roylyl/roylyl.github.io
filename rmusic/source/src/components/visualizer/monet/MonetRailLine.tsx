@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import React from 'react';
 import { motion, MotionValue } from 'framer-motion';
 import { type Theme, type Line } from '../../../types';
@@ -62,6 +63,7 @@ export const MonetRailLine: React.FC<{
             tabIndex={canSeek ? 0 : undefined}
             onClick={canSeek ? handleClickSeek : undefined}
             onKeyDown={canSeek ? (event) => {
+        if (shouldIgnoreAppKeyboardShortcut(event)) return;
                 if (event.key === 'Enter' || event.key === ' ') {
                     event.preventDefault();
                     handleSeek(event);

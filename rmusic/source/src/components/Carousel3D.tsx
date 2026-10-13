@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../utils/appCombinationShortcuts';
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, useTransform, animate, AnimatePresence } from 'framer-motion';
 import { Loader2, Disc, Map as MapIcon, X } from 'lucide-react';
@@ -230,6 +231,7 @@ const Carousel3D: React.FC<Carousel3DProps> = ({
         const THROTTLE_MS = 100;
 
         const handleKeyDown = (e: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(e)) return;
             if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
             
             if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {

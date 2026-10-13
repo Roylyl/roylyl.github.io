@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -49,6 +50,7 @@ const LibraryTuiPrompt: React.FC<LibraryTuiPromptProps> = ({ request, pending, a
 
     // Enter / Escape 归提示本身：截住冒泡，window 上的 TUI 按键与命令面板都看不到。
     const handleKeyDown = (event: React.KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
         if (event.key === 'Escape') {
             event.preventDefault();
             event.stopPropagation();

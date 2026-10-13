@@ -7,7 +7,6 @@ import { useShallow } from 'zustand/react/shallow';
 import { SongResult, LocalSong, LocalPlaylist, LocalLibraryGroup, Theme, type StatusMessage } from '../../../../types';
 import LocalGrid3DView from './LocalGrid3DView';
 import NavidromeGrid3DView from './NavidromeGrid3DView';
-import { useGrid3DTabKeys } from './useGrid3DTabKeys';
 import DesktopGrid3DSurface from './DesktopGrid3DSurface';
 import OnlineProviderSwitcher from '../account/OnlineProviderSwitcher';
 import OnlineProviderConnectPanel from '../account/OnlineProviderConnectPanel';
@@ -304,22 +303,13 @@ export const Grid3D: React.FC<Grid3DProps> = (props) => {
         });
     };
 
-    // Tab / Shift+Tab 在可用页签之间循环，切完把焦点交回海报轨道，和点胶囊一样。
-    useGrid3DTabKeys({
-        isActive: isInteractive,
-        onCycleTab: delta => {
-            const next = cycleIndex(homeTabs, homeTabs.findIndex(tab => tab.key === homeViewTab), delta, tab => !tab.disabledReason);
-            if (next < 0 || homeTabs[next].key === homeViewTab) return;
-            setHomeViewTab(homeTabs[next].key);
-            focusActiveSlider();
-        },
-    });
 
     return (
         <div
             ref={gridRootRef}
             data-ponder-page-scope="grid-page"
-            className={`relative w-full h-full flex flex-col font-sans overflow-hidden ${mainBg} pointer-events-auto backdrop-blur-sm ${bottomPadding}`}
+            data-has-player={Boolean(currentTrack)}
+            className={`rmusic-grid-home relative w-full h-full flex flex-col font-sans overflow-hidden ${mainBg} pointer-events-auto backdrop-blur-sm ${bottomPadding}`}
         >
 
             {/* Main Header Container (Fades out when sliding/interacting) */}

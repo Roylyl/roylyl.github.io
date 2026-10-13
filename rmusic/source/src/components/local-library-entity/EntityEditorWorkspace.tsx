@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Check, GitMerge, Pencil, Plus, Scissors, Sparkles } from 'lucide-react';
@@ -210,6 +211,7 @@ export const EntityEditorWorkspace = ({
                             }
                         }}
                         onKeyDown={event => {
+                        if (shouldIgnoreAppKeyboardShortcut(event)) return;
                             if (event.key !== 'Enter') return;
                             event.preventDefault();
                             if (splitMode && entity.kind === 'artist') addArtistSplitTarget();

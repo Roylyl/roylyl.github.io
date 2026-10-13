@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 // src/components/app/lattice/useWallKeyboardFocus.ts
 
 import {
@@ -110,6 +111,7 @@ export const useWallKeyboardFocus = ({
     }, [geometry, getViewportCenter, instances, metrics, panTo, rendered, setFocused, tiles.length]);
 
     const handleKeyDown = useCallback((event: KeyboardEvent<HTMLDivElement>) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
         if (event.altKey || event.ctrlKey || event.metaKey) return;
 
         if (event.key === 'Escape') {

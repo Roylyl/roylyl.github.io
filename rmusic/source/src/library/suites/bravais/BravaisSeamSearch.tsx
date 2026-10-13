@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import React, { useEffect, useRef, type FormEvent, type KeyboardEvent } from 'react';
 import { Search, X } from 'lucide-react';
 import type { BravaisLayer } from './bravaisLayer';
@@ -27,6 +28,7 @@ const BravaisSeamSearch: React.FC<{ layer: BravaisLayer }> = ({ layer }) => {
         close();
     };
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
         if (event.key !== 'Escape' || event.nativeEvent.isComposing) return;
         event.preventDefault();
         event.stopPropagation();

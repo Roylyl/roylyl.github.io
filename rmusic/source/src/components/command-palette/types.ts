@@ -23,7 +23,6 @@ import type { CommandPlatform } from './availability';
 import type { CommandPaletteSurface } from './surfaces/types';
 import type { CommandSyntaxSpec } from './syntax/types';
 import type { PlaybackEntryView } from '../../stores/usePlaybackEntryViewStore';
-import type { PonderHintVisibility } from '../../types/ponder';
 import type { LibraryWallLook } from '../../utils/libraryWallLook';
 import type { LibraryWallSeamStyle } from '../../utils/libraryWallSeamStyle';
 
@@ -69,10 +68,8 @@ export type CommandPaletteCommand = {
     isAvailable?: (context?: CommandPaletteContext) => boolean;
     /** Kept out of match results, the all-commands list, and the pinned-command picker. */
     hidden?: boolean;
-    /** Global shortcut that opens the palette straight into this command. `ctrl` means the
-     *  platform's primary modifier — Ctrl on Windows/Linux, Cmd on macOS. `alt` is legal but
-     *  unclaimed: the listener's own shortcut lives on Alt, and checks itself against these. */
-    openHotkey?: { key: string; ctrl?: boolean; alt?: boolean };
+    /** An unmodified key that opens this command. Browser modifier chords are reserved. */
+    openHotkey?: { key: string };
     /** Vim-style key sequence that runs this command from execute mode. Omit for anything
      *  dangerous, irreversible, or needing confirmation. Commands available together must stay
      *  prefix-free; mutually exclusive surface scopes may reuse a key. */
@@ -258,10 +255,7 @@ export type CommandPaletteSettingsContext = {
     /** Lyrics / blur on the visualizer that shows through the bravais wall: flip the stored values. */
     toggleLibraryWallBackdropLyrics: () => void;
     toggleLibraryWallBackdropBlur: () => void;
-    ponderHintVisibility: PonderHintVisibility;
-    setPonderHintVisibility: (visibility: PonderHintVisibility) => void;
     /** 触屏上那颗思索按钮显不显示。它是触屏唯一的入口，所以关掉是一个明确的选择。 */
-    togglePonderTouchButton: () => void;
     toggleRememberHomeCardPosition: () => void;
     startPlayerBottomBarPositioning: () => void;
     canStartPlayerBottomBarPositioning: boolean;

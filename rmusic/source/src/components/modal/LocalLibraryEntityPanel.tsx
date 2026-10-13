@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, CheckCircle2, X } from 'lucide-react';
@@ -76,6 +77,7 @@ export const LocalLibraryEntityPanel = ({
         if (event.target === event.currentTarget) onClose();
       }}
       onKeyDown={event => {
+                        if (shouldIgnoreAppKeyboardShortcut(event)) return;
         if (event.key === 'Escape') onClose();
       }}
     >

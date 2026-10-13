@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../utils/appCombinationShortcuts';
 import { useCallback, useEffect } from 'react';
 import type React from 'react';
 import type { MotionValue } from 'framer-motion';
@@ -205,30 +206,8 @@ export function usePlaybackInteractionBridge({
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             if (isTextEntryTarget(event.target)) {
-                return;
-            }
-
-            // Both chords below open their window by toggling a boolean, so both have to refuse a
-            // held key: auto-repeat fires around thirty times a second, and a toggle driven by that
-            // lands open or closed on the parity of how long the keys were down. The Escape handler
-            // further down already refuses repeats, for its own reason.
-            //
-            // Not gated on dev: the packaged desktop build has no DevTools to fall back on - the
-            // window is frameless, so there is no menu to toggle them from and they only open
-            // automatically under ELECTRON_DEV. This chord is the only console it has.
-            if (event.altKey && event.shiftKey && !event.repeat && effectiveKeyCode(event) === 'KeyD') {
-                event.preventDefault();
-                setIsDevDebugOverlayVisible(prev => !prev);
-                return;
-            }
-
-            // Its own window rather than a tab of the one above: the two are read together - a heap
-            // that is flat while the working set climbs is the whole diagnosis - and a tab makes
-            // that comparison impossible.
-            if (event.altKey && event.shiftKey && !event.repeat && effectiveKeyCode(event) === 'KeyM') {
-                event.preventDefault();
-                setIsMemoryMonitorVisible(prev => !prev);
                 return;
             }
 
@@ -261,21 +240,6 @@ export function usePlaybackInteractionBridge({
                     }
                     break;
                 case 'ArrowLeft':
-                    const isPrevTrackKey = isMac 
-                        ? (event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey)
-                        : (event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey);
-
-                    if (isPrevTrackKey) {
-                        if (currentSong) {
-                            event.preventDefault();
-                            if (isNowPlayingStageActive) {
-                                return;
-                            }
-                            handlePrevTrack();
-                        }
-                        return;
-                    }
-
                     if (currentView !== 'player') return;
                     event.preventDefault();
                     if (isNowPlayingStageActive) {
@@ -296,21 +260,6 @@ export function usePlaybackInteractionBridge({
                     }
                     break;
                 case 'ArrowRight':
-                    const isNextTrackKey = isMac 
-                        ? (event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey)
-                        : (event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey);
-
-                    if (isNextTrackKey) {
-                        if (currentSong) {
-                            event.preventDefault();
-                            if (isNowPlayingStageActive) {
-                                return;
-                            }
-                            void handleNextTrack();
-                        }
-                        return;
-                    }
-
                     if (currentView !== 'player') return;
                     event.preventDefault();
                     if (isNowPlayingStageActive) {

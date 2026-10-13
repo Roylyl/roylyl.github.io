@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { Theme } from '../../../types';
 import { useAutomixSettingsStore } from '../../../stores/useAutomixSettingsStore';
 import { useAudioSettingsStore } from '../../../stores/useAudioSettingsStore';
+import { isNativeMediaPlaybackPreferred } from '../../../services/nativeMediaPlayback';
 
 // src/components/panelTab/controls/VolumeRow.tsx
 // 单行音量：静音、滑杆、百分比、均衡器入口挤在同一行，省掉原来单独占一行的标题。
@@ -95,6 +96,7 @@ const VolumeRow: React.FC<VolumeRowProps> = ({
                 {Math.round(sliderVolume * 100)}%
             </span>
 
+            {!isNativeMediaPlaybackPreferred() && <>
             <button
                 type="button"
                 data-ponder="audio-equalizer"
@@ -118,6 +120,7 @@ const VolumeRow: React.FC<VolumeRowProps> = ({
             >
                 <Blend size={14} />
             </button>
+            </>}
         </div>
     );
 };

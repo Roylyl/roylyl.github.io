@@ -6,7 +6,6 @@ import WallToolsButton from '../../../components/wall/WallToolsButton';
 import type { WallToolsEntry, WallToolsQuickAction } from '../../../components/wall/WallToolsRows';
 import { useLibraryWallLookStore } from '../../../stores/useLibraryWallLookStore';
 import { usePlaybackStore } from '../../../stores/usePlaybackStore';
-import { PRIMARY_MODIFIER_LABEL } from '../../../utils/platform';
 import type { LibraryWallLook } from '../../../utils/libraryWallLook';
 import { BRAVAIS_HELP_ROWS } from './bravaisHelp';
 import { nextWallLook } from './bravaisLook';
@@ -72,7 +71,6 @@ const BravaisStageChrome: React.FC<BravaisStageChromeProps> = ({
         id: 'open-lattice',
         icon: PanelsTopLeft,
         label: t('libraryBravais.toolsLattice'),
-        kbd: `${PRIMARY_MODIFIER_LABEL} + B`,
         disabled: isFmMode,
         status: isFmMode ? t('status.latticeUnavailableInFm') : undefined,
         onSelect: onOpenLattice,
@@ -108,10 +106,10 @@ const BravaisStageChrome: React.FC<BravaisStageChromeProps> = ({
                 locate={locate}
                 destination={destination}
                 entries={entries}
-                help={BRAVAIS_HELP_ROWS.map(row => (
+                help={BRAVAIS_HELP_ROWS.filter(row => !['enqueue', 'lattice', 'commands'].includes(row.id)).map(row => (
                     <li key={row.id} data-bravais-help={row.id}>
                         <span>{t(row.labelKey)}</span>
-                        <kbd>{row.kbd(PRIMARY_MODIFIER_LABEL)}</kbd>
+                        <kbd>{row.kbd('')}</kbd>
                     </li>
                 ))}
             />

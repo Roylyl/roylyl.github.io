@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../../utils/appCombinationShortcuts';
 import React, { useCallback, useEffect, useMemo, useRef, useState, useDeferredValue } from 'react';
 import { motion, useMotionValue, animate, AnimatePresence, useDragControls } from 'framer-motion';
 import { Check, ChevronLeft, Disc, Eye, EyeOff, ListFilter, X } from 'lucide-react';
@@ -832,6 +833,7 @@ export const GridMap: React.FC<GridMapProps> = ({
         if (!isInteractive) return;
 
         const handleKeyDown = (e: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(e)) return;
             const target = e.target;
             if (
                 target instanceof HTMLElement
@@ -930,6 +932,7 @@ export const GridMap: React.FC<GridMapProps> = ({
         if (!isInteractive) return;
 
         const handleEscape = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             const target = event.target;
             if (
                 target instanceof HTMLInputElement ||
@@ -982,7 +985,7 @@ export const GridMap: React.FC<GridMapProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[110] overflow-hidden select-none"
+            className="rmusic-safe-viewport fixed inset-0 z-[110] overflow-hidden select-none"
             style={{
                 backgroundColor: isDaylight ? 'rgba(250, 249, 246, 0.95)' : 'rgba(9, 9, 11, 0.95)',
                 color: 'var(--text-primary)',
@@ -990,7 +993,7 @@ export const GridMap: React.FC<GridMapProps> = ({
             }}
         >
             {/* Top Floating Glass Header */}
-            <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-6 py-5 z-[70] bg-gradient-to-b from-black/10 to-transparent">
+            <div className="rmusic-safe-top-header absolute top-0 left-0 right-0 flex items-center justify-between px-6 py-5 z-[70] bg-gradient-to-b from-black/10 to-transparent">
                 <button
                     onClick={onBack}
                     className="w-10 h-10 rounded-full flex items-center justify-center transition-all pointer-events-auto shadow-lg hover:scale-105 active:scale-95"

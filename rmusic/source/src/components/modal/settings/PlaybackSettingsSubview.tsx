@@ -15,6 +15,7 @@ import { useLyricSettingsStore } from '../../../stores/useLyricSettingsStore';
 import { useAudioSettingsStore } from '../../../stores/useAudioSettingsStore';
 import { useOnlineProviderAccountStore } from '../../../stores/useOnlineProviderAccountStore';
 import { isNeteaseScrobbleReady } from '../../../services/onlineMusic/playbackReportGate';
+import { isNativeMediaPlaybackPreferred } from '../../../services/nativeMediaPlayback';
 
 // src/components/modal/settings/PlaybackSettingsSubview.tsx
 // Playback behavior and output-device settings extracted from the global settings modal.
@@ -47,6 +48,7 @@ const PlaybackSettingsSubview: React.FC<PlaybackSettingsSubviewProps> = ({
     utilityGhostButtonClass,
 }) => {
     const { t } = useTranslation();
+    const supportsAudioProcessing = !isNativeMediaPlaybackPreferred();
     const {
         audioOutputDeviceId,
         enableTranscodeFallback,
@@ -224,13 +226,13 @@ const PlaybackSettingsSubview: React.FC<PlaybackSettingsSubviewProps> = ({
 
             
 
-            <TransitionSettingsSection
+            {supportsAudioProcessing && <TransitionSettingsSection
                 isDaylight={isDaylight}
                 settingsCardClass={settingsCardClass}
                 theme={theme}
-            />
+            />}
 
-            <SettingsAnchor anchorId="replayGainSettings" label={t('options.replayGainSettings')}>
+            {supportsAudioProcessing && <SettingsAnchor anchorId="replayGainSettings" label={t('options.replayGainSettings')}>
                 <SettingsSectionHeading icon={AudioLines} label={t('options.replayGainSettings')} />
                 <div className={`p-4 rounded-xl border space-y-4 ${settingsCardClass}`}>
                     <div className="space-y-1">
@@ -259,7 +261,7 @@ const PlaybackSettingsSubview: React.FC<PlaybackSettingsSubviewProps> = ({
                         ))}
                     </div>
                 </div>
-            </SettingsAnchor>
+            </SettingsAnchor>}
 
             <SettingsAnchor anchorId="lyrics" label={t('options.lyrics')}>
                 <SettingsSectionHeading icon={Settings2} label={t('options.lyrics')} />
@@ -314,7 +316,7 @@ const PlaybackSettingsSubview: React.FC<PlaybackSettingsSubviewProps> = ({
             <SettingsAnchor anchorId="audioOutputSettings" label={t('options.audioOutputSettings')}>
                 <SettingsSectionHeading icon={Monitor} label={t('options.audioOutputSettings')} />
                 <div className={`p-4 rounded-xl border space-y-4 ${settingsCardClass}`}>
-                    <div className="flex items-start justify-between gap-3 border-b border-current/10 pb-4">
+                    {supportsAudioProcessing && <div className="flex items-start justify-between gap-3 border-b border-current/10 pb-4">
                         <div className="space-y-1">
                             <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
                                 {t('options.playbackFade')}
@@ -324,7 +326,7 @@ const PlaybackSettingsSubview: React.FC<PlaybackSettingsSubviewProps> = ({
                             </div>
                         </div>
                         {renderToggle(playbackFadeEnabled, () => onTogglePlaybackFade(!playbackFadeEnabled))}
-                    </div>
+                    </div>}
                     {window.electron?.requestTranscodeFallback && (
                         <div className="flex items-start justify-between gap-3 border-b border-current/10 pb-4">
                             <div className="space-y-1">

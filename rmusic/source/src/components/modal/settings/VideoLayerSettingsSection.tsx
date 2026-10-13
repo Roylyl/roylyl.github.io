@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/react/shallow';
@@ -160,6 +161,7 @@ const VideoLayerSettingsSection: React.FC<VideoLayerSettingsSectionProps> = ({
                     onChange={event => setUrlDraft(event.target.value)}
                     onBlur={() => actions.setUrl(urlDraft)}
                     onKeyDown={(event) => {
+        if (shouldIgnoreAppKeyboardShortcut(event)) return;
                         if (event.key === 'Enter') actions.setUrl(urlDraft);
                     }}
                     className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-xs focus:outline-none focus:border-white/30 transition-colors font-mono"

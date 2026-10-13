@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import { useEffect, useRef } from 'react';
 import { hasBlockingWindow, isTextEntryTarget } from '../../../utils/keyboardTargets';
 import { resolveBravaisKey } from './bravaisKeyboardModel';
@@ -21,6 +22,7 @@ export const useBravaisKeyboard = (
     useEffect(() => {
         if (!active) return;
         const handleKeyDown = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             if (event.defaultPrevented || event.isComposing || hasBlockingWindow()) return;
             const action = resolveBravaisKey(event) ?? resolveBravaisHomeKey(event);
             if (!action) return;

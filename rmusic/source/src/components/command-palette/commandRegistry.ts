@@ -1,3 +1,4 @@
+import { isNativeMediaPlaybackPreferred } from '../../services/nativeMediaPlayback';
 import { ALL_COMMAND_PALETTE_COMMANDS } from './commands';
 import { matchesCommandPlatform, matchesCommandScope } from './availability';
 import { assertExecuteShortcutsArePrefixFree } from './executeShortcuts';
@@ -54,6 +55,12 @@ export const setSuiteChromeCommands = (commands: readonly CommandPaletteCommand[
     installedSuiteChromeCommands = [...commands];
 };
 
+const NATIVE_UNAVAILABLE_AUDIO_COMMANDS = new Set([
+    'playback-equalizer', 'settings-transition', 'automix-toggle',
+    'transition-mode-crossfade', 'transition-mode-automix', 'transition-performance-toggle',
+    'playback-replaygain-off', 'playback-replaygain-track', 'playback-replaygain-album',
+]);
+
 // Availability is declared on each command: `platform` gates the environment, `scope` gates the
 // surroundings, `isAvailable` gates the current state, and `hidden` keeps mode-carrier commands out
 // of every listing. `hidden` is about listing only, so key-driven entry points check enablement
@@ -62,7 +69,8 @@ export const isCommandPaletteCommandEnabled = (
     command: CommandPaletteCommand,
     context?: CommandPaletteContext,
 ) => (
-    matchesCommandPlatform(command.platform)
+    (!isNativeMediaPlaybackPreferred() || !NATIVE_UNAVAILABLE_AUDIO_COMMANDS.has(command.id))
+    && matchesCommandPlatform(command.platform)
     && matchesCommandScope(command.scope, context)
     && (command.isAvailable?.(context) ?? true)
 );

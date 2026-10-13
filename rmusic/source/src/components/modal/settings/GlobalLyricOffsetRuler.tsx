@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
 // src/components/modal/settings/GlobalLyricOffsetRuler.tsx
@@ -125,6 +126,7 @@ const GlobalLyricOffsetRuler: React.FC<GlobalLyricOffsetRulerProps> = ({
     };
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (shouldIgnoreAppKeyboardShortcut(event)) return;
         const step = event.shiftKey ? KEY_COARSE_STEP_MS : KEY_STEP_MS;
         const keyed: Record<string, number | undefined> = {
             ArrowLeft: valueMs - step,

@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import React, { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -137,6 +138,7 @@ export const BravaisSeamCollectionMenu: React.FC<{
 
     // 菜单开着时 Esc 先收起它（preventDefault 让墙的 Esc 阶梯跳过这次按键）。
     const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
         if (event.key !== 'Escape' || !isOpen) return;
         event.preventDefault();
         setIsOpen(false);

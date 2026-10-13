@@ -84,7 +84,13 @@ export const publishMediaSessionTrack = (
         return false;
     }
 
-    mediaSession.setPositionState(positionState);
+    // Safari versions expose different parts of Media Session. A missing or
+    // rejected position API must not prevent the title and artwork from updating.
+    try {
+        mediaSession.setPositionState?.(positionState);
+    } catch {
+        // Metadata remains useful when the browser cannot publish a timeline.
+    }
     const artworkUrl = getSupportedMediaSessionArtworkUrl(track.artworkUrl);
     mediaSession.metadata = createMetadata({
         title: track.title,

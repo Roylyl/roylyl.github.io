@@ -2,7 +2,6 @@ import { Crosshair, Focus, House } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useLatticeControlsStore } from '../../../stores/useLatticeControlsStore';
 import { useLatticeSettingsStore } from '../../../stores/useLatticeSettingsStore';
-import { PRIMARY_MODIFIER_LABEL } from '../../../utils/platform';
 import WallToolsButton from '../../wall/WallToolsButton';
 import type { WallToolsEntry, WallToolsQuickAction } from '../../wall/WallToolsRows';
 
@@ -65,10 +64,6 @@ export default function LatticeFocusButton({ isDaylight, onGoHome }: { isDayligh
                     <li>
                         <span>{t('home.latticeHelpCommands')}</span>
                         <kbd>S</kbd>
-                    </li>
-                    <li>
-                        <span>{t('home.latticeHelpOpen')}</span>
-                        <kbd>{PRIMARY_MODIFIER_LABEL} + B</kbd>
                     </li>
                 </>
             )}

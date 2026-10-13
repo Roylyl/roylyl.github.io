@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import ThemedDialog from './ThemedDialog';
@@ -92,6 +93,7 @@ const TextInputDialog: React.FC<TextInputDialogProps> = ({
                 value={value}
                 onChange={(event) => setValue(event.target.value)}
                 onKeyDown={(event) => {
+                        if (shouldIgnoreAppKeyboardShortcut(event)) return;
                     if (event.key === 'Enter') {
                         event.preventDefault();
                         void handleConfirm();

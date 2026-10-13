@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { selectDisplayPlayerState, usePlaybackStore } from '../stores/usePlaybackStore';
 
 // src/hooks/useTransportCommandRefs.ts
@@ -38,29 +38,14 @@ export const useTransportCommandRefs = ({
     const taskbarHasTrackRef = useRef(Boolean(currentSong));
     const taskbarPlayerStateRef = useRef(displayPlayerState);
 
-    useEffect(() => {
-        mediaSessionPlayRef.current = resumePlayback;
-    }, [resumePlayback]);
-
-    useEffect(() => {
-        mediaSessionPauseRef.current = pausePlayback;
-    }, [pausePlayback]);
-
-    useEffect(() => {
-        mediaSessionPrevRef.current = handlePrevTrack;
-    }, [handlePrevTrack]);
-
-    useEffect(() => {
-        mediaSessionNextRef.current = handleNextTrack;
-    }, [handleNextTrack]);
-
-    useEffect(() => {
-        taskbarHasTrackRef.current = Boolean(currentSong);
-    }, [currentSong]);
-
-    useEffect(() => {
-        taskbarPlayerStateRef.current = displayPlayerState;
-    }, [displayPlayerState]);
+    // System controls can fire before passive effects run, especially after a background
+    // track change. Update the callbacks with the render that produced their metadata.
+    mediaSessionPlayRef.current = resumePlayback;
+    mediaSessionPauseRef.current = pausePlayback;
+    mediaSessionPrevRef.current = handlePrevTrack;
+    mediaSessionNextRef.current = handleNextTrack;
+    taskbarHasTrackRef.current = Boolean(currentSong);
+    taskbarPlayerStateRef.current = displayPlayerState;
 
     // Refs are stable, so the container is built once.
     return useMemo(() => ({

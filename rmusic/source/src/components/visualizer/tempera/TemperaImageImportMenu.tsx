@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import React, { useEffect, useRef, useState } from 'react';
 import { ChevronDown, Plus, Replace, Upload } from 'lucide-react';
 import type { TFunction } from 'i18next';
@@ -36,6 +37,7 @@ const TemperaImageImportMenu: React.FC<TemperaImageImportMenuProps> = ({
             if (!rootRef.current?.contains(event.target as Node)) setIsOpen(false);
         };
         const closeOnEscape = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             if (event.key !== 'Escape') return;
             event.preventDefault();
             event.stopPropagation();

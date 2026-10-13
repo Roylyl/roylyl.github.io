@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 import { useCallback, useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from 'react';
 import { Lock, Save, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -103,6 +104,7 @@ export function WallToolsQueueIslandHeader({ host, count, readOnly, canSave, ann
     useEffect(() => {
         if (!naming && !clearPending) return undefined;
         const handleKeyDown = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             if (event.key !== 'Escape' || event.isComposing || event.defaultPrevented || isDragging()) return;
             if (naming) stopNaming();
             else stopClearPending();
@@ -133,6 +135,7 @@ export function WallToolsQueueIslandHeader({ host, count, readOnly, canSave, ann
                     placeholder={t('localMusic.enterPlaylistName')}
                     onChange={event => setDraftName(event.currentTarget.value)}
                     onKeyDown={event => {
+                        if (shouldIgnoreAppKeyboardShortcut(event)) return;
                         if (event.key !== 'Enter' || event.nativeEvent.isComposing) return;
                         event.preventDefault();
                         void submitName();

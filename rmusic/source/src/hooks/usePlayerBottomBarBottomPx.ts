@@ -4,6 +4,7 @@ import { playerBottomBarLiveOffset } from '../stores/motionSignals';
 import { usePlayerChromeSettingsStore } from '../stores/usePlayerChromeSettingsStore';
 import { useIsPlayerBottomBarHost } from '../components/floating-player/PlayerBottomBarLayoutContext';
 import { useMediaQuery } from './useMediaQuery';
+import { useSafeAreaInsets } from './useSafeAreaInsets';
 import {
     PLAYER_BOTTOM_BAR_BASE_OFFSET_PX,
     resolvePlayerBottomComponentBottomPx,
@@ -19,12 +20,14 @@ import {
  */
 export const usePlayerBottomBarBottomPx = (
     componentBaseBottomPx = PLAYER_BOTTOM_BAR_BASE_OFFSET_PX,
-): MotionValue<number> => (
-    useTransform(
+): MotionValue<number> => {
+    const { bottom } = useSafeAreaInsets();
+    const isCompact = useMediaQuery('(max-width: 639px)');
+    return useTransform(
         playerBottomBarLiveOffset,
-        value => resolvePlayerBottomComponentBottomPx(value, componentBaseBottomPx),
-    )
-);
+        value => (isCompact ? componentBaseBottomPx : resolvePlayerBottomComponentBottomPx(value, componentBaseBottomPx)) + bottom,
+    );
+};
 
 /** 原来的 `bottom-28 sm:bottom-6`，即 sm 断点上下各自的底距。 */
 const SIDE_PANEL_BASE_BOTTOM_PX = { wide: 24, narrow: 112 } as const;
@@ -57,6 +60,8 @@ const SUBTITLE_PRESENCE_SPRING = { stiffness: 280, damping: 28 } as const;
  * - 跟随基线抬高要跟手，直接读共享信号，不经过 spring，否则会落后于其他组件。
  */
 export const usePlayerSubtitleBottomPx = (isPlayerChromeHidden: boolean): MotionValue<number> => {
+    const { bottom } = useSafeAreaInsets();
+    const isCompact = useMediaQuery('(max-width: 639px)');
     const isBottomBarHost = useIsPlayerBottomBarHost();
     const isControlBarHidden = usePlayerChromeSettingsStore(state => state.hidePlayerProgressBar);
     // 底栏被整条关掉只对播放页成立；预览里那个全局开关和它无关。
@@ -70,9 +75,9 @@ export const usePlayerSubtitleBottomPx = (isPlayerChromeHidden: boolean): Motion
 
     return useTransform(
         [controlBarPresence, playerBottomBarLiveOffset],
-        ([presence, offset]: number[]) => resolvePlayerSubtitleBottomFromPresence(
-            isBottomBarHost ? offset : PLAYER_BOTTOM_BAR_BASE_OFFSET_PX,
-            presence,
-        ),
+        ([presence, offset]: number[]) => (isCompact && isBottomBarHost
+            ? 24 + presence * 88
+            : resolvePlayerSubtitleBottomFromPresence(isBottomBarHost ? offset : PLAYER_BOTTOM_BAR_BASE_OFFSET_PX, presence))
+            + (isBottomBarHost ? bottom : 0),
     );
 };

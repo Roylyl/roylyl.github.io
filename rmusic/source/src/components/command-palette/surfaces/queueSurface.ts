@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import { getQueueSongMatchesFromEvaluation } from '../queueSongMatches';
 import { evaluateQueueForPalette } from '../queueEvaluation';
 import { replaceQueueAction, replaceQueueFacet } from '../queueQuery';
@@ -87,6 +88,7 @@ export const queueSurface: CommandPaletteSurface = {
         return false;
     },
     onKeyDown: (event, { context, query, setQuery }) => {
+        if (shouldIgnoreAppKeyboardShortcut(event)) return false;
         if (event.key !== 'Tab') {
             return false;
         }

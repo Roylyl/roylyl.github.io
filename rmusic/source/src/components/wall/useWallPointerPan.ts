@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 // src/components/wall/useWallPointerPan.ts
 
 import { animate } from 'framer-motion';
@@ -211,6 +212,7 @@ export const useWallPointerPan = ({
         const cancel = () => { pointerRef.current = null; interrupt(); };
         // 只按修饰键（按住 Shift 横向滚动时 Shift 会自动重复 keydown）不算键盘输入，不打断平滑滚动。
         const onKeyDown = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             if (event.key === 'Shift' || event.key === 'Control' || event.key === 'Alt' || event.key === 'Meta') return;
             cancel();
         };

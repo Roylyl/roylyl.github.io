@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { isCommandPaletteCommandEnabled, rankCommands, COMMAND_PALETTE_COMMANDS } from './commandRegistry';
 import { OPEN_HOTKEY_INDEX, openHotkeyStroke } from './commands';
@@ -8,11 +9,9 @@ import { readCommandFrequencyState, recordCommandUse, type CommandFrequencyState
 import type { CommandPaletteContext, CommandPaletteCommand, CommandPaletteMatch } from './types';
 import { resolvePinnedCommandSlots } from './pinnedCommandPreferences';
 import { FILTER_VIEW_COMMAND_ID } from './commands/filterViewCommand';
-import { isPrimaryModifierPressed, isSecondaryModifierPressed } from '../../utils/platform';
 import { useSettingsModalStore } from '../../stores/useSettingsModalStore';
 import { useAppViewStore } from '../../stores/useAppViewStore';
 import { useInteractionSettingsStore } from '../../stores/useInteractionSettingsStore';
-import { resolveCustomShortcutCommand } from './customShortcut';
 
 // src/components/command-palette/useCommandPalette.ts
 import { effectiveKeyCode, isTextEntryTarget } from '../../utils/keyboardTargets';
@@ -56,13 +55,6 @@ export const useCommandPalette = ({
     // Opt-in: `s` normally goes to the filter like any other letter, and the listener who wants it
     // back for the command list has to say so.
     const paletteHotkeyOnFilteringSurface = useInteractionSettingsStore(state => state.gridCommandPaletteHotkey);
-    const customShortcutLetter = useInteractionSettingsStore(state => state.customShortcutLetter);
-    const customShortcutCommandId = useInteractionSettingsStore(state => state.customShortcutCommandId);
-    const customShortcutCommand = useMemo(() => resolveCustomShortcutCommand(
-        customShortcutLetter,
-        customShortcutCommandId,
-        COMMAND_PALETTE_COMMANDS,
-    ), [customShortcutLetter, customShortcutCommandId]);
     const [isOpen, setIsOpen] = useState(false);
     const [query, setQuery] = useState('');
     const [matchQuery, setMatchQuery] = useState('');
@@ -484,43 +476,7 @@ export const useCommandPalette = ({
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
-            // Ordered by who has the stronger claim on the keystroke, not by how the palette is
-            // built. A modifier shortcut can never be mistaken for input, so it goes first; a
-            // surface that reads bare characters outranks every modifier-free palette key, or the
-            // same press would do two things at once.
-
-            // The listener's own shortcut. First, like the other modifier entries, and resolved
-            // through the same function the settings picker uses — a binding the picker would
-            // refuse cannot fire from a value left in storage.
-            if (customShortcutCommand
-                && event.altKey
-                && !isPrimaryModifierPressed(event)
-                && !isSecondaryModifierPressed(event)
-                && !event.shiftKey
-                && event.key.toLowerCase() === customShortcutLetter
-                && isCommandPaletteCommandEnabled(customShortcutCommand, context)
-            ) {
-                if (isBlocked) {
-                    return;
-                }
-
-                event.preventDefault();
-                invokeCommand(customShortcutCommand);
-                return;
-            }
-
-            // Works everywhere, because it carries a modifier.
-            // Software-injected shortcuts may provide the key without a physical key code.
-            if ((effectiveKeyCode(event) === 'KeyK' || event.key.toLowerCase() === 'k') && isPrimaryModifierPressed(event) && !event.altKey && !event.shiftKey && !isSecondaryModifierPressed(event)) {
-                if (isBlocked) {
-                    return;
-                }
-
-                event.preventDefault();
-                open();
-                return;
-            }
-
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             // A surface that reads typed characters gets them, whatever they are. This is the home
             // grids' type-to-filter, except that the palette now holds the input — which is what
             // lets one command, one box and one keyword list serve all three of them.
@@ -575,28 +531,14 @@ export const useCommandPalette = ({
                 }
             }
 
-            // Commands declare their own entry shortcut; the palette just dispatches them.
-            // `ctrl` in a declaration means the platform's primary modifier, so the same entry is
-            // Ctrl+P on Windows/Linux and Cmd+P on macOS. Availability is honoured here too, or a
-            // hotkey would still reach a command the current state has withdrawn — the queue's
-            // ctrl+p during Personal FM, say.
-            //
-            // This handler is attached to `window`, so it saw every keystroke in the entire app
-            // and used to answer them by scanning all 125 commands and calling
-            // isCommandPaletteCommandEnabled on each. The declared strokes are fixed at module
-            // load; only availability is dynamic, so look the stroke up and check that one.
-            const stroke = openHotkeyStroke({
-                key: event.key,
-                ctrl: isPrimaryModifierPressed(event),
-                alt: event.altKey,
-            });
-            const strokeCommand = isSecondaryModifierPressed(event) ? undefined : OPEN_HOTKEY_INDEX.get(stroke);
+            // Only unmodified command entry keys reach this dispatcher. Browser and
+            // system combinations return at the start of the event handler.
+            const strokeCommand = OPEN_HOTKEY_INDEX.get(openHotkeyStroke({ key: event.key }));
             const hotkeyCommand = strokeCommand && isCommandPaletteCommandEnabled(strokeCommand, context)
                 ? strokeCommand
                 : undefined;
             if (hotkeyCommand) {
-                const needsIdleFocus = !hotkeyCommand.openHotkey?.ctrl;
-                if (isBlocked || (needsIdleFocus && !ownsBareKeys) || (needsIdleFocus && isTextEntryTarget(event.target))) {
+                if (isBlocked || !ownsBareKeys || isTextEntryTarget(event.target)) {
                     return;
                 }
 
@@ -624,7 +566,7 @@ export const useCommandPalette = ({
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [context, customShortcutCommand, customShortcutLetter, filterCommand, invokeCommand, isBlocked, isOpen, open, openCommand, ownsBareKeys, paletteHotkeyOnFilteringSurface]);
+    }, [context, filterCommand, invokeCommand, isBlocked, isOpen, open, openCommand, ownsBareKeys, paletteHotkeyOnFilteringSurface]);
 
     return {
         activeIndex,

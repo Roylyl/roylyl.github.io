@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -26,6 +27,7 @@ const ReleaseNotesDialog: React.FC<ReleaseNotesDialogProps> = ({ isOpen, isDayli
     useEffect(() => {
         if (!isOpen) return;
         const handleKeyDown = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             if (event.key !== 'Escape' || event.repeat || event.isComposing) return;
             event.preventDefault();
             event.stopPropagation();

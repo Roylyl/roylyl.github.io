@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft, CircleHelp, Command, CornerDownLeft, Loader2, Search, X } from 'lucide-react';
@@ -281,6 +282,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({
         }
 
         const handleKeyDown = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             if (event.key === 'Escape') {
                 event.preventDefault();
                 if (isShowingAllCommands) {

@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import React, { useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -167,6 +168,7 @@ const ThemeParkContentPanel: React.FC<ThemeParkContentPanelProps> = ({
                             setIconError(null);
                         }}
                         onKeyDown={(event) => {
+                        if (shouldIgnoreAppKeyboardShortcut(event)) return;
                             if (event.key === 'Enter') {
                                 event.preventDefault();
                                 void handleAddIcon();

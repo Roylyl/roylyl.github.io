@@ -1,6 +1,7 @@
+import { isNativeMediaPlaybackPreferred, playNativeMedia, setNativeMediaSource } from '../services/nativeMediaPlayback';
 import { RMUSIC_SERVER } from '../services/rmusicCatalog';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
+import type { Dispatch, MutableRefObject, RefObject, SetStateAction } from 'react';
 import type { MotionValue } from 'framer-motion';
 import { LyricParserFactory } from '../utils/lyrics/LyricParserFactory';
 import { getFromCacheWithMigration, getLocalSong, getLocalSongs, removeFromCache, saveLocalSong, saveToCache } from '../services/db';
@@ -85,6 +86,7 @@ const isBlobObjectUrl = (url: string | null | undefined): url is string => (
 );
 
 type UseLibraryPlaybackControllerParams = {
+    audioRef: RefObject<HTMLAudioElement | null>;
     likedSongIds: Set<MediaId>;
     userId?: MediaId;
     setLyrics: (nextLyrics: LyricData | null) => void;
@@ -105,6 +107,7 @@ type UseLibraryPlaybackControllerParams = {
 
 // Owns local and Navidrome playback helpers so App.tsx can stay focused on assembly.
 export function useLibraryPlaybackController({
+    audioRef,
     likedSongIds,
     userId,
     setLyrics,
@@ -747,6 +750,33 @@ export function useLibraryPlaybackController({
             setIsLyricsLoading(false);
             setPlayerState(PlayerState.IDLE);
             setStatusMsg(null);
+            const nativeAudio = isNativeMediaPlaybackPreferred() ? audioRef.current : null;
+            if (nativeAudio) {
+                // Preserve both the native audio session and the current system gesture. The
+                // source and play request land now, before lyrics, IndexedDB or React effects.
+                shouldAutoPlayRef.current = false;
+                const sameSource = nativeAudio.getAttribute('src') === streamUrl;
+                nativeAudio.loop = useAudioSettingsStore.getState().loopMode === 'one';
+                setNativeMediaSource(nativeAudio, streamUrl);
+                if (sameSource && nativeAudio.readyState > 0) nativeAudio.currentTime = 0;
+                const isCurrentSource = () => audioRef.current === nativeAudio
+                    && currentSongRef.current === unifiedSongKey
+                    && usePlaybackStore.getState().audioSrc === streamUrl;
+                void playNativeMedia(nativeAudio).then(() => {
+                    if (isCurrentSource() && !nativeAudio.paused && !nativeAudio.ended) {
+                        setPlayerState(PlayerState.PLAYING);
+                    }
+                }).catch((error: unknown) => {
+                    if (!isCurrentSource()) return;
+                    const errorName = error instanceof Error ? error.name : '';
+                    if (errorName === 'AbortError') return;
+                    if (errorName === 'NotAllowedError') {
+                        setPlayerState(PlayerState.PAUSED);
+                        setStatusMsg({ type: 'info', text: t('status.clickToPlay') });
+                    }
+                    // Native media error events retain the existing retry/skip presentation.
+                });
+            }
             if (shouldNavigateToPlayer) navigateToPlaybackView();
             void persistLastPlaybackCache(unifiedSong, finalQueue).catch(error => {
                 console.warn('[R music] Playback persistence failed', error);
@@ -970,6 +1000,7 @@ export function useLibraryPlaybackController({
             setIsLyricsLoading(false);
         }
     }, [
+        audioRef,
         currentSongRef,
         currentTime,
         interruptStagePlaybackForMainTransition,

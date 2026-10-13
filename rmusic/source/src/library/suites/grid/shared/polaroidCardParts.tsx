@@ -185,7 +185,7 @@ export const PolaroidCardActions: React.FC<{
     playbackMark?: GridPlaybackMark | null;
     t: any;
 }> = ({ mode, isEditMode, isUnavailable, onSelect, onAddQueue, track, playbackMark = null, t }) => (
-    <div className="flex items-center gap-1.5 shrink-0">
+    <div className="rmusic-grid-card-actions flex items-center gap-1.5 shrink-0">
         {mode === 'tracks' && !isEditMode && (
             <button
                 onClick={(e) => {

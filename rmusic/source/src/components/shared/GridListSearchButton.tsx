@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { openCommandFilter, openCommandPalette } from '../../stores/useAppViewStore';
 import { useInteractionSettingsStore } from '../../stores/useInteractionSettingsStore';
 import { usePlayerBottomBarBottomPx } from '../../hooks/usePlayerBottomBarBottomPx';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
+import { usePlaybackStore } from '../../stores/usePlaybackStore';
 import { SlideActionButton } from './SlideActionButton';
 
 // Player-style grid action button: click for the list, or slide left to reveal search.
@@ -33,7 +35,9 @@ export const GridListSearchButton: React.FC<GridListSearchButtonProps> = ({
     const { t } = useTranslation();
     const slideTarget = useInteractionSettingsStore(state => state.gridActionButtonSlideTarget);
     const opensPalette = slideTarget === 'command-palette';
-    const bottomBarBottomPx = usePlayerBottomBarBottomPx();
+    const isCompact = useMediaQuery('(max-width: 639px)');
+    const hasTrack = usePlaybackStore(state => Boolean(state.currentSong));
+    const bottomBarBottomPx = usePlayerBottomBarBottomPx(isCompact && hasTrack ? 124 : 32);
     // 所在的网格层已经在退场时才挂上（打开集合后马上关掉，曲目在退场开始之后才到）就不渲染：
     // 父层退场中途才挂上的带 exit 的 motion 元素，framer 会把它登记为「退场未完成」却不再给它播退场，
     // 宿主的 AnimatePresence 于是等不到完成，透明的整屏网格层卸不掉、挡住首页。挂上时在场的照常随父层淡出；
@@ -50,7 +54,7 @@ export const GridListSearchButton: React.FC<GridListSearchButtonProps> = ({
             exit={{ opacity: 0, x: 20, y: 12, scale: 0.92 }}
             transition={{ duration: 0.24, ease: 'easeOut' }}
             data-testid="grid-list-search-button"
-            style={{ bottom: bottomBarBottomPx }}
+            style={{ bottom: bottomBarBottomPx, right: 'var(--rmusic-safe-right, 0px)' }}
             className="pointer-events-auto fixed right-0 z-[60] pr-4 md:pr-8 group w-20 flex justify-end"
         >
             <SlideActionButton

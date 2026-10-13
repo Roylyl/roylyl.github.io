@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import { useEffect, useMemo, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { MotionValue } from 'framer-motion';
@@ -84,26 +85,6 @@ export default function Lattice({
     const overlaysOff = handoffFlip && handoffRole === 'in' && handoffPhase === 'closing';
     const grainOff = overlaysOff || (handoffFlip && handoffRole === 'out' && handoffPhase !== 'waiting' && handoffSession?.seeThrough === true);
 
-    useEffect(() => {
-        const handleKeyDown = (event: KeyboardEvent) => {
-            // 别处已经用掉的按键（defaultPrevented）与正在打字的输入框（例如工具面板队列浮岛的歌单名输入）里不接 Ctrl+B。
-            if (event.defaultPrevented
-                || isTextEntryTarget(event.target)
-                || event.repeat
-                || event.key.toLowerCase() !== 'b'
-                || !isPrimaryModifierPressed(event)
-                || isSecondaryModifierPressed(event)
-                || event.altKey
-                || event.shiftKey
-            ) return;
-
-            event.preventDefault();
-            onBack();
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [onBack]);
 
     // App rebuilds these on every render of its own, and the wall hands them to every poster on
     // screen. Given a permanent identity here they stop being a reason for those posters to render.

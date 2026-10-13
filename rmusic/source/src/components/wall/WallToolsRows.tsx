@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 import { useRef, useState, type CSSProperties, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -84,6 +85,7 @@ export type WallToolsQuickAction = {
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
 /** 取到百分之一，免得 0.1 + 0.05 一类的浮点尾巴进了存储。 */
 const roundPercent = (value: number) => Math.round(value * 100) / 100;
+const visibleKeyHint = (value?: string): string | undefined => value && !/\b(?:ctrl|cmd|command|control|alt|option|shift)\b|[⌘⌥⇧]/i.test(value) ? value : undefined;
 
 /** 滑条一行（kind: 'slider'）。拖动中的值留在本地（只预览），松手 / 失焦才提交，免得每一帧都写偏好、重渲染应用。 */
 function WallToolsSliderRow({ entry }: { entry: Extract<WallToolsEntry, { kind: 'slider' }> }) {
@@ -102,6 +104,7 @@ function WallToolsSliderRow({ entry }: { entry: Extract<WallToolsEntry, { kind: 
     };
 
     const handleKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
+        if (shouldIgnoreAppKeyboardShortcut(event)) return;
         if (event.altKey || event.ctrlKey || event.metaKey) return;
         const deltas: Record<string, number> = {
             ArrowUp: step, ArrowRight: step, ArrowDown: -step, ArrowLeft: -step, PageUp: step * 2, PageDown: -step * 2,
@@ -166,7 +169,7 @@ export function WallToolsQuickRow({ actions, onDone }: { actions: readonly WallT
         <div role="group" className="lattice-tools-quick">
             {actions.map(action => {
                 const Icon = action.icon;
-                const tooltip = [action.label, action.status, action.kbd].filter(Boolean).join(' · ');
+                const tooltip = [action.label, action.status, visibleKeyHint(action.kbd)].filter(Boolean).join(' · ');
                 return (
                     <button
                         key={action.id}
@@ -236,7 +239,7 @@ export function WallToolsRow({ entry, onDone }: { entry: WallToolsEntry; onDone:
             <Icon aria-hidden="true" />
             <span>{entry.label}</span>
             {entry.value !== undefined && <span className="lattice-tools-value">{entry.value}</span>}
-            {entry.kbd !== undefined && (entry.kbdHidden ? <kbd aria-hidden="true">{entry.kbd}</kbd> : <kbd>{entry.kbd}</kbd>)}
+            {visibleKeyHint(entry.kbd) !== undefined && (entry.kbdHidden ? <kbd aria-hidden="true">{entry.kbd}</kbd> : <kbd>{entry.kbd}</kbd>)}
         </button>
     );
 }

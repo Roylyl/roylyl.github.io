@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { ChevronLeft, Heart, Lock, LockOpen, Pause, Pin, PinOff, Play, Repeat, Repeat1, RepeatOff, SkipBack, SkipForward, Video, MirrorRectangular, X, Check, Sliders, Palette } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -786,6 +787,7 @@ const RemoteControlApp: React.FC = () => {
                                                             }
                                                         }}
                                                         onKeyUp={(event) => {
+                        if (shouldIgnoreAppKeyboardShortcut(event)) return;
                                                             if (event.key === 'Enter' && pendingSeek !== null) {
                                                                 isDraggingRef.current = false;
                                                                 lastSeekTimeRef.current = Date.now();

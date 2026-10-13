@@ -1,0 +1,1 @@
+export{di as getNavidromeConfig,hi as navidromeApi}from"./bootstrap-BF8jM5xV.js";

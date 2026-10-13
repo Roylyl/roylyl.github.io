@@ -1,3 +1,6 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
+import { copyRmusicPlaybackDiagnostics } from '../../services/rmusicPlaybackDiagnostics';
+import { setStatusMessage } from '../../stores/useStatusMessageStore';
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { MotionValue } from 'framer-motion';
@@ -29,7 +32,6 @@ import InteractionSettingsSubview from './settings/InteractionSettingsSubview';
 import StorageSettingsSection from './settings/StorageSettingsSection';
 import { AiHelpPromptModal } from './AiHelpPromptModal';
 import SettingsHelpActions from './SettingsHelpActions';
-import { openPonderNavigation } from '../../services/ponder/pagePonderTarget';
 import ReleaseNotesDialog from './ReleaseNotesDialog';
 import { JoinCommunityButton } from '../shared/JoinCommunityButton';
 import { copyTextToClipboard } from '../../utils/clipboard';
@@ -56,8 +58,6 @@ import type { SongResult } from '../../types';
 import type { ThemeCacheSongKey } from '../../services/themeCache';
 import type { ThemeGenerationSource } from '../../services/themePreferences';
 import { isMacPlatform as isMac } from '../../utils/platform';
-import { HELP_TAB_PRIMARY_SHORTCUTS } from './userGuideContent';
-import { openCurrentPagePonder } from '../../services/ponder/pagePonderTarget';
 import { selectVisualizerSettingsSnapshot, useVisualizerSettingsStore } from '../../stores/useVisualizerSettingsStore';
 import { selectVisualizerAssetSnapshot, useVisualizerAssetStore } from '../../stores/useVisualizerAssetStore';
 import { selectLyricSettingsSnapshot, useLyricSettingsStore } from '../../stores/useLyricSettingsStore';
@@ -1134,6 +1134,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             if (event.key === 'Escape') {
                 event.preventDefault();
                 event.stopPropagation();
@@ -1431,6 +1432,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                                 </div>
                                 <p className="text-sm leading-relaxed opacity-60">支持专辑与歌手浏览、曲库搜索、播放队列、随机播放和动态歌词。音频通过浏览器原生播放器播放。</p>
                                 <div className="flex flex-wrap gap-3 text-sm">
+                                    <button type="button" className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
+                                        onClick={async () => {
+                                            const copied = await copyRmusicPlaybackDiagnostics();
+                                            setStatusMessage({ type: copied ? 'success' : 'error', text: copied ? '播放诊断已复制' : '复制失败，请重试' });
+                                        }}>复制播放诊断</button>
                                     <a href="https://github.com/Roylyl/roylyl.github.io/tree/main/rmusic/source" target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors">R music源码</a>
                                     <a href="https://github.com/Roylyl/Music" target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors">音乐仓库</a>
                                 </div>

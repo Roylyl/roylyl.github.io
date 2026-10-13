@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import type { BravaisKeyInput } from './bravaisKeyboardModel';
 
 // src/library/suites/bravais/bravaisHomeKeys.ts
@@ -17,19 +18,13 @@ export type BravaisHomeKeyAction =
     | { type: 'batch-remove' };
 
 export const resolveBravaisHomeKey = (input: BravaisKeyInput): BravaisHomeKeyAction | null => {
-    const { key, shiftKey, altKey, ctrlKey, metaKey, repeat } = input;
-    if (repeat || altKey) return null;
-    const command = ctrlKey || metaKey;
-    if (key === 'F6' && !command) return { type: 'cycle-tab', delta: shiftKey ? -1 : 1 };
-    if (command) {
-        if (key === 'Enter') return { type: 'batch-play', enqueue: shiftKey };
-        if (!shiftKey && (key === 'a' || key === 'A')) return { type: 'batch-select-all' };
-        return null;
-    }
+    if (shouldIgnoreAppKeyboardShortcut(input)) return null;
+    const { key, repeat } = input;
+    if (repeat) return null;
+    if (key === 'F6') return { type: 'cycle-tab', delta: 1 };
     // `/`：首页缝里的全局搜索框（「搜索在线平台」）。首页的过滤注册把 `/` 声明为保留键（批量模式除外），命令面板不把它
     // 当过滤字符交给缝；批量模式下处理器不接，它照常是过滤字符。
     if (key === '/') return { type: 'open-search' };
-    if (shiftKey) return null;
     if (key === 'Insert') return { type: 'batch-toggle' };
     if (key === 'Delete') return { type: 'batch-remove' };
     return null;

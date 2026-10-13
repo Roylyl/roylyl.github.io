@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import React, { useEffect, useRef, type FormEvent, type KeyboardEvent } from 'react';
 import { Loader2, Plus } from 'lucide-react';
 import type { BravaisSeamForm } from './bravaisSeamModels';
@@ -34,6 +35,7 @@ const FormInput: React.FC<{
         if (!pending) onSubmit(inputRef.current?.value ?? '');
     };
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
         if (event.key !== 'Escape' || event.nativeEvent.isComposing) return;
         event.preventDefault();
         event.stopPropagation();

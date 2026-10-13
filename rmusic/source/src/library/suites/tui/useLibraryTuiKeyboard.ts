@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import { useEffect, useRef } from 'react';
 import { hasBlockingWindow } from '../../../utils/keyboardTargets';
 
@@ -48,6 +49,7 @@ export const useLibraryTuiKeyboard = (handlers: LibraryTuiKeyboardHandlers) => {
         if (!handlers.isActive) return;
 
         const handleKeyDown = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             const current = latest.current;
             if (isEditableTarget(event.target) || hasBlockingWindow()) return;
 

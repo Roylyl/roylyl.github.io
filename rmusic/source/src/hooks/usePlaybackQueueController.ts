@@ -948,6 +948,10 @@ export function usePlaybackQueueController({
 
     const handleNextTrack = useCallback(async (options?: NextTrackOptions) => {
         if (isNowPlayingStageActive) return;
+        // Native ended/system actions can arrive while React's background rendering is idle.
+        // Queue advancement must follow the track committed synchronously to the store.
+        const { currentSong, playQueue, isFmMode } = usePlaybackStore.getState();
+        const { loopMode } = useAudioSettingsStore.getState();
 
         const stopAtQueueEnd = () => {
             if (audioRef.current) {
@@ -1021,6 +1025,8 @@ export function usePlaybackQueueController({
 
     const handlePrevTrack = useCallback(() => {
         if (isNowPlayingStageActive) return;
+        const { currentSong, playQueue, isFmMode } = usePlaybackStore.getState();
+        const { loopMode } = useAudioSettingsStore.getState();
         if (!currentSong || playQueue.length === 0) return;
 
         // Same as handleNextTrack, and more visibly wrong without it: stepping back from the track

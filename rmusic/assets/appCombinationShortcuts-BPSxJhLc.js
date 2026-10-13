@@ -1,0 +1,1 @@
+var e=e=>!!(e.ctrlKey||e.metaKey||e.altKey||e.shiftKey),t=t=>e(t)||t.key===`Tab`||!!t.isComposing;export{t};

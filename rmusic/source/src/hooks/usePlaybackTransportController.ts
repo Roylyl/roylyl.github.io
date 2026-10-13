@@ -1,3 +1,4 @@
+import { isNativeMediaPlaybackPreferred, playNativeMedia } from '../services/nativeMediaPlayback';
 import { useCallback, useEffect, useRef } from 'react';
 import type { Dispatch, MutableRefObject, RefObject, SetStateAction } from 'react';
 import { PlayerState } from '../types';
@@ -116,8 +117,30 @@ export function usePlaybackTransportController({
         // decision follows the latest transport intent, including a later resume.
         const shouldAutoplay = () => wantsPlayback.current && isSameSource();
 
+        if (isNativeMediaPlaybackPreferred()) {
+            // Resume the loaded native source in the system action's own turn. Rebuilding
+            // a graph/source or awaiting network work here loses iOS's playback activation.
+            syncOutputGain(getTargetPlaybackVolume(), 0);
+            try {
+                await playNativeMedia(audio);
+                if (!isCurrent() || !wantsPlayback.current || audio.paused || audio.ended) return;
+                setPlayerState(PlayerState.PLAYING);
+                setStatusMsg(prev => (isPlaybackFailureStatus(prev) ? null : prev));
+            } catch (error) {
+                if (!isCurrent() || !wantsPlayback.current) return;
+                const errorName = error instanceof Error ? error.name : '';
+                if (errorName === 'AbortError') return;
+                setPlayerState(PlayerState.PAUSED);
+                setStatusMsg(prev => (isPlaybackFailureStatus(prev) ? prev : {
+                    type: errorName === 'NotAllowedError' ? 'info' : 'error',
+                    text: t(errorName === 'NotAllowedError' ? 'status.clickToPlay' : 'status.playbackError'),
+                }));
+            }
+            return;
+        }
+
         setupAudioAnalyzer();
-        if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
+        if (audioContextRef.current && audioContextRef.current.state !== 'running' && audioContextRef.current.state !== 'closed') {
             try {
                 await audioContextRef.current.resume();
             } catch (error) {

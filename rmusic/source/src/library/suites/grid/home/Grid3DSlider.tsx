@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../../utils/appCombinationShortcuts';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Disc } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -663,6 +664,7 @@ export const Grid3DSlider: React.FC<Grid3DSliderProps> = ({
         if (!isInteractive) return;
 
         const handleKeyDown = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             const target = event.target;
             if (
                 target instanceof HTMLElement

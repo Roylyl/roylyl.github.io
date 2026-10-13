@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 import React, { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, Loader2, Music, Search, X } from 'lucide-react';
@@ -219,6 +220,7 @@ const OnlineLyricMatchModal: React.FC<OnlineLyricMatchModalProps> = ({ song, onC
                                     value={searchQuery}
                                     onChange={event => setSearchQuery(event.target.value)}
                                     onKeyDown={event => {
+                        if (shouldIgnoreAppKeyboardShortcut(event)) return;
                                         if (event.key === 'Enter') {
                                             void handleSearch();
                                         }

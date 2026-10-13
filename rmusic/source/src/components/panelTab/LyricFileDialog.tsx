@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import type { LucideIcon } from 'lucide-react';
@@ -48,6 +49,7 @@ const LyricFileDialog: React.FC<LyricFileDialogProps> = ({
     useEffect(() => {
         if (!isOpen) return undefined;
         const handleKeyDown = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             if (event.key !== 'Escape') return;
             event.preventDefault();
             event.stopPropagation();

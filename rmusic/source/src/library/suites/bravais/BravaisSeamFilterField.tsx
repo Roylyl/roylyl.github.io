@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import React, { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ListFilter, X } from 'lucide-react';
@@ -54,6 +55,7 @@ const BravaisSeamFilterField: React.FC<{ filter: BravaisSeamFilter; variant?: 's
     };
 
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
         if (event.nativeEvent.isComposing || event.altKey || event.ctrlKey || event.metaKey) return;
         if (event.key === 'Escape') {
             event.preventDefault();

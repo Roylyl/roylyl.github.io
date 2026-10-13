@@ -1,3 +1,4 @@
+import { isNativeMediaPlaybackPreferred, playNativeMedia, setNativeMediaSource } from '../services/nativeMediaPlayback';
 import { useCallback, useEffect, useRef } from 'react';
 import type { MutableRefObject, RefObject } from 'react';
 import { PlayerState } from '../types';
@@ -135,7 +136,7 @@ export function usePlaybackAudioBridge({
     const setupAudioAnalyzer = useCallback(() => {
         // The context is the sentinel, not the source node: a deck that failed to connect must
         // not let this run twice, because createMediaElementSource throws on a second call.
-        if (!audioRef.current || audioContextRef.current) return;
+        if (isNativeMediaPlaybackPreferred() || !audioRef.current || audioContextRef.current) return;
         try {
             const AudioContextClass = window.AudioContext || (window as Window & typeof globalThis & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
             const ctx = new AudioContextClass();
@@ -235,7 +236,17 @@ export function usePlaybackAudioBridge({
             return;
         }
 
-        if (audioSrc && previousAudioSrcRef.current && previousAudioSrcRef.current !== audioSrc) {
+        if (isNativeMediaPlaybackPreferred()) {
+            if (audioSrc !== usePlaybackStore.getState().audioSrc) return;
+            // The click/ended path may already have committed this source and called play().
+            // React does not render a src prop on iOS, so never reload that same request here.
+            if (audioSrc) setNativeMediaSource(audioElement, audioSrc);
+            else if (audioElement.hasAttribute('src')) {
+                audioElement.pause();
+                audioElement.removeAttribute('src');
+                audioElement.load();
+            }
+        } else if (audioSrc && previousAudioSrcRef.current && previousAudioSrcRef.current !== audioSrc) {
             audioElement.pause();
             audioElement.load();
         }
@@ -245,6 +256,7 @@ export function usePlaybackAudioBridge({
 
     useEffect(() => {
         if (audioSrc && audioRef.current) {
+            if (isNativeMediaPlaybackPreferred() && audioSrc !== usePlaybackStore.getState().audioSrc) return;
             // `audioRef` and `audioSrc` describe the same track almost always - but not while a
             // blend is being armed. Automix repoints the ref at the incoming deck the instant it
             // arms, and `audioSrc` keeps naming the OUTGOING track until playSong has resolved the
@@ -295,10 +307,16 @@ export function usePlaybackAudioBridge({
                 }
 
                 syncOutputGain(getTargetPlaybackVolume(), 0);
-                const playPromise = audioRef.current.play();
+                const playingElement = audioRef.current;
+                const isCurrentPlaySource = () => audioRef.current === playingElement
+                    && usePlaybackStore.getState().audioSrc === audioSrc;
+                const playPromise = isNativeMediaPlaybackPreferred()
+                    ? playNativeMedia(playingElement)
+                    : playingElement.play();
                 if (playPromise !== undefined) {
                     playPromise
                         .then(() => {
+                            if (!isCurrentPlaySource() || playingElement.paused || playingElement.ended) return;
                             setPlayerState(PlayerState.PLAYING);
                             setupAudioAnalyzer();
                             // Playback has really started. The transport hands a refreshed source (its TTL
@@ -308,6 +326,7 @@ export function usePlaybackAudioBridge({
                             setStatusMsg(prev => (isPlaybackFailureStatus(prev) ? null : prev));
                         })
                         .catch(error => {
+                            if (!isCurrentPlaySource()) return;
                             if (audioRef.current && !audioRef.current.paused && !audioRef.current.ended) {
                                 setPlayerState(PlayerState.PLAYING);
                                 return;

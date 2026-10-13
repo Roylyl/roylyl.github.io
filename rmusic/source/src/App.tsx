@@ -1,3 +1,4 @@
+import { isNativeMediaPlaybackPreferred } from './services/nativeMediaPlayback';
 import { useState, useRef, useEffect, useCallback, useMemo, lazy, Suspense } from 'react';
 import { AnimatePresence, motion, useMotionValueEvent } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -17,7 +18,6 @@ import AppDialogs from './components/app/dialogs/AppDialogs';
 import { useSettingsDialogModel } from './components/app/dialogs/useSettingsDialogModel';
 import AppOverlays from './components/app/overlays/AppOverlays';
 import AutomixModelReminder from './components/modal/AutomixModelReminder';
-import PonderHost from './components/ponder/PonderHost';
 // Lazy so animejs (~38KB gz) stays out of the bootstrap chunk: this overlay only ever draws when the
 // animation switch is on AND the mode is automix, both off by default, so it is mounted only then.
 const AutomixTransitionAnimation = lazy(() => import('./components/app/overlays/AutomixTransitionAnimation'));
@@ -940,6 +940,7 @@ export default function App() {
         handleAutoMatchBestLyricForCurrentSong,
         handleLike,
     } = useLibraryPlaybackController({
+        audioRef,
         likedSongIds,
         userId: user?.id,
         setLyrics,
@@ -2433,7 +2434,7 @@ export default function App() {
         <audio
             key={deck}
             ref={register}
-            src={automix.deckSrc(deck)}
+            src={isNativeMediaPlaybackPreferred() ? undefined : automix.deckSrc(deck)}
             preload="auto"
             crossOrigin="anonymous"
             loop={effectiveLoopMode === 'one' && automix.activeDeck === deck}
@@ -2463,15 +2464,17 @@ export default function App() {
                 }
             }}
             onPlay={(e) => {
+                if (e.currentTarget.paused) return;
                 if (!automix.isActiveDeck(e.currentTarget)) return;
                 shouldAutoPlay.current = false;
                 // The same split onTimeUpdate, onSeeked and onLoadedMetadata all make, and the two
                 // handlers that were missing it: while the picture is held this deck is the track
                 // ARRIVING, so its position belongs to a song whose title nobody can see yet.
                 if (!isShowingTail) currentTime.set(e.currentTarget.currentTime);
-                setPlayerState(PlayerState.PLAYING);
+                if (!isNativeMediaPlaybackPreferred()) setPlayerState(PlayerState.PLAYING);
             }}
             onPlaying={(e) => {
+                if (e.currentTarget.paused || e.currentTarget.ended) return;
                 if (!automix.isActiveDeck(e.currentTarget)) return;
                 shouldAutoPlay.current = false;
                 if (!isShowingTail) currentTime.set(e.currentTarget.currentTime);
@@ -2484,6 +2487,7 @@ export default function App() {
                 automix.handleActiveDeckPlaying();
             }}
             onPause={(e) => {
+                if (!e.currentTarget.paused) return;
                 // A pause that flushing a fade-out made, while a new song is already being set up:
                 // the transport state and play intent belong to that song now.
                 if (consumeProgrammaticPause(e.currentTarget)) return;
@@ -2563,15 +2567,19 @@ export default function App() {
             //     }
             // }}
             onEnded={(e) => {
+                if (!e.currentTarget.ended) return;
                 // A track finishing in the background has already handed the queue over.
                 if (!automix.isActiveDeck(e.currentTarget)) {
                     automix.handleTailEnded();
                     return;
                 }
 
-                // Cache if playing fully
-                if (audioSrc && !audioSrc.startsWith('blob:') && currentSong && !isStagePlaybackSong(currentSong)) {
-                    cacheSongAssets();
+                // Read the outgoing track at event time; a background native advance may
+                // have played several tracks since this React event closure was rendered.
+                const endedPlayback = usePlaybackStore.getState();
+                if (endedPlayback.audioSrc && !endedPlayback.audioSrc.startsWith('blob:')
+                    && endedPlayback.currentSong && !isStagePlaybackSong(endedPlayback.currentSong)) {
+                    void cacheSongAssetsFor(endedPlayback.currentSong, endedPlayback.audioSrc);
                 }
 
                 // The track ran out while a pause was still fading: finish that pause instead of
@@ -2699,7 +2707,7 @@ export default function App() {
             }}
             audioElement={<>
                 {renderAudioDeck('A', automix.registerDeckA)}
-                {renderAudioDeck('B', automix.registerDeckB)}
+                {!isNativeMediaPlaybackPreferred() && renderAudioDeck('B', automix.registerDeckB)}
             </>}
         >
 
@@ -2838,10 +2846,6 @@ export default function App() {
             {/* Same arrangement, same reason. Mounted here rather than beside either of the two
                 switches that can open it, so that both reach the same one. */}
             <AutomixModelReminder isDaylight={isDaylight} />
-
-            {/* 思索教程。常驻的只有悬停探测和提示胶囊；教程层自己走 React.lazy，
-                animejs 不进 bootstrap chunk。 */}
-            <PonderHost theme={theme} isDaylight={isDaylight} />
 
             {currentView === 'player' && !showLyricMatchModal && (
                 <PlayerPanel model={playerPanelModel} />

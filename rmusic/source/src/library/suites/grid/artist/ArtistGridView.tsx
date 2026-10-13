@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../../utils/appCombinationShortcuts';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useMotionValue, animate, AnimatePresence, useDragControls, useIsPresent } from 'framer-motion';
 import { ChevronLeft, Disc, ListPlus, Loader2, RefreshCw } from 'lucide-react';
@@ -466,6 +467,7 @@ const ArtistGridView: React.FC<ArtistGridViewProps> = ({
         // Typing itself is the palette's now; what stays here is the Escape ladder, which is about
         // this grid's own panels and has nothing to do with the filter box.
         const handleEscape = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             const target = event.target;
             if (
                 target instanceof HTMLInputElement ||
@@ -838,6 +840,7 @@ const ArtistGridView: React.FC<ArtistGridViewProps> = ({
         if (!isInteractive) return;
 
         const handleKeyDown = (e: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(e)) return;
             const target = e.target;
             if (
                 target instanceof HTMLElement
@@ -1226,7 +1229,7 @@ const ArtistGridView: React.FC<ArtistGridViewProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex flex-col font-sans select-none overflow-hidden"
+            className="rmusic-safe-viewport fixed inset-0 z-50 flex flex-col font-sans select-none overflow-hidden"
             style={{ color: 'var(--text-primary)', backgroundColor: 'var(--bg-color)' }}
         >
             {/* 把「我是当前这层网格」写在根节点上：移形换影的测量只在这个子树里找落点，
@@ -1247,7 +1250,7 @@ const ArtistGridView: React.FC<ArtistGridViewProps> = ({
             )}
 
             {/* Header Area */}
-            <div className="absolute top-0 left-0 p-6 z-30 flex items-center gap-4">
+            <div className="rmusic-safe-header-left absolute top-0 left-0 p-6 z-30 flex items-center gap-4">
                 <button
                     // 返回按钮表示看完了（onDone）：宿主清掉浏览会话、让每套 suite 忘掉布局记录，再返回
                     // （Escape 与浏览器后退保留）。P4.5 起这条语义在宿主，不在这里清。
@@ -1280,7 +1283,7 @@ const ArtistGridView: React.FC<ArtistGridViewProps> = ({
                     setShowSidePanel(false);
                     setShowCutInPanel(current => !current);
                 }}
-                className="group/grid-title absolute left-1/2 top-5 -translate-x-1/2 z-[70] text-center flex flex-col items-center select-none cursor-pointer hover:scale-[1.01] active:scale-98 transition-all px-5 py-2 rounded-2xl backdrop-blur-md"
+                className="rmusic-safe-heading group/grid-title absolute left-1/2 top-5 -translate-x-1/2 z-[70] text-center flex flex-col items-center select-none cursor-pointer hover:scale-[1.01] active:scale-98 transition-all px-5 py-2 rounded-2xl backdrop-blur-md"
                 style={{
                     backgroundColor: 'color-mix(in srgb, var(--bg-color) 20%, transparent)',
                     color: 'var(--text-primary)',
@@ -1321,7 +1324,7 @@ const ArtistGridView: React.FC<ArtistGridViewProps> = ({
                         if (loadError) artistActions.reload();
                         else if (backgroundLoadFailed) artistActions.retryAlbums();
                     }}
-                    className="absolute right-6 top-5 z-[70] flex items-center gap-2 rounded-full px-3 py-2 text-xs backdrop-blur-md"
+                    className="rmusic-safe-top-right absolute right-6 top-5 z-[70] flex items-center gap-2 rounded-full px-3 py-2 text-xs backdrop-blur-md"
                     style={{ backgroundColor: 'color-mix(in srgb, var(--bg-color) 65%, transparent)' }}
                     title={t('playlist.loading')}
                 >

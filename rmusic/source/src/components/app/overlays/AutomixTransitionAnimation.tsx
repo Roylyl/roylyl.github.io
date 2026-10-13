@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { animate, createTimeline, svg, type JSAnimation, type Timeline } from 'animejs';
 import type { Theme } from '../../../types';
@@ -160,7 +161,10 @@ const AutomixTransitionAnimation: React.FC<AutomixTransitionAnimationProps> = ({
     // any less busy.
     useEffect(() => {
         if (!cue) return;
-        const onKey = () => dismiss();
+        const onKey = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
+            dismiss();
+        };
         const onMouse = (event: MouseEvent) => {
             if (event.button === 0) dismiss();
         };

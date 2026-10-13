@@ -31,7 +31,7 @@ App.tsx
   -> AppOverlays（搜索、浮动控制、debug）
   -> PlayerPanel（UnifiedPanel 的 app-level model）
   -> AppDialogs（设置、歌词匹配、替代歌曲、toast 等）
-  -> CommandPalette / ThemeQuickEditorHost / UserGuideModal
+  -> CommandPalette / ThemeQuickEditorHost
 ```
 
 `App.tsx` 是历史大型编排文件。新功能优先放到下列相邻目录，通过 model/builder、hook、store 或 service 接入，不要继续复制大段 JSX、请求和副作用。

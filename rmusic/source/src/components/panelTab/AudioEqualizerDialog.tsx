@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Power, RotateCcw } from 'lucide-react';
@@ -19,6 +20,8 @@ import AudioEffectGrid from './equalizer/AudioEffectGrid';
 import EqualizerBandGrid from './equalizer/EqualizerBandGrid';
 import { buildEqualizerStyles } from './equalizer/equalizerStyles';
 import { useAudioSettingsStore } from '../../stores/useAudioSettingsStore';
+import { isNativeMediaPlaybackPreferred } from '../../services/nativeMediaPlayback';
+import { setStatusMessage } from '../../stores/useStatusMessageStore';
 
 // src/components/panelTab/AudioEqualizerDialog.tsx
 // Provides the compact audio processing editor (ten EQ bands plus the effect chain) opened from the controls tab.
@@ -38,6 +41,13 @@ const AudioEqualizerDialog: React.FC<AudioEqualizerDialogProps> = ({ isDaylight,
     const commitSettings = useAudioSettingsStore(state => state.handleSetAudioEqualizerSettings);
     const [draft, setDraft] = useState<AudioEqualizerSettings>(settings);
     const draftRef = useRef(draft);
+    const usesNativePlayback = isNativeMediaPlaybackPreferred();
+    useEffect(() => {
+        if (usesNativePlayback && isOpen) {
+            setStatusMessage({ type: 'info', text: '当前设备使用原生音频播放，不支持网页均衡器和混音。' });
+            close();
+        }
+    }, [usesNativePlayback, isOpen, close]);
 
     const updateDraft = (next: AudioEqualizerSettings) => {
         draftRef.current = next;
@@ -60,6 +70,7 @@ const AudioEqualizerDialog: React.FC<AudioEqualizerDialogProps> = ({ isDaylight,
         if (!isOpen) return;
 
         const handleKeyDown = (event: KeyboardEvent) => {
+            if (shouldIgnoreAppKeyboardShortcut(event)) return;
             if (event.key !== 'Escape') return;
             event.preventDefault();
             event.stopPropagation();
@@ -137,7 +148,7 @@ const AudioEqualizerDialog: React.FC<AudioEqualizerDialogProps> = ({ isDaylight,
     const commitDraft = () => commitSettings(draftRef.current);
     const canResetCustomSlot = isAudioEqualizerCustomSlotId(draft.preset);
 
-    if (typeof document === 'undefined') {
+    if (typeof document === 'undefined' || usesNativePlayback) {
         return null;
     }
 

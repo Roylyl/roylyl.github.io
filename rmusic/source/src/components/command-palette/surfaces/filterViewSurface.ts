@@ -1,3 +1,4 @@
+import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
 import { isGridFilterSyntaxAvailable, parseGridFilterQuery } from '../gridFilterQuery';
 import type { CommandPaletteSurface } from './types';
 
@@ -51,6 +52,7 @@ export const filterViewSurface: CommandPaletteSurface = {
     // press from reaching the wall's own arrow handling as a second step. The palette already skips keys that
     // are part of an IME composition before asking the surface.
     onKeyDown: (event, { context }) => {
+        if (shouldIgnoreAppKeyboardShortcut(event)) return false;
         if (event.key !== 'ArrowDown' || event.shiftKey || event.altKey || event.ctrlKey || event.metaKey) return false;
         if (!context.scope.filter?.focusResults?.()) return false;
         event.stopPropagation();
