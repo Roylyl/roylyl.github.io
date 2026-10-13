@@ -30,21 +30,24 @@ body {
 }
 
 :root {
+  --rmusic-viewport-height: 100dvh;
+  --rmusic-viewport-gap: 0px;
   --rmusic-safe-top: env(safe-area-inset-top, 0px);
   --rmusic-safe-right: env(safe-area-inset-right, 0px);
   --rmusic-safe-bottom: env(safe-area-inset-bottom, 0px);
   --rmusic-safe-left: env(safe-area-inset-left, 0px);
+  --rmusic-bottom-inset: max(var(--rmusic-safe-bottom), var(--rmusic-viewport-gap));
 }
 
-html, body, #root { width: 100%; height: 100%; min-height: 0; margin: 0; }
-html { background-color: var(--rmusic-page-bg, #09090b); overflow: hidden; overscroll-behavior: none; }
-.rmusic-app-shell, .rmusic-safe-viewport { height: 100%; height: 100dvh; }
+html, body, #root { width: 100%; height: 100vh; height: var(--rmusic-viewport-height); min-height: 0; margin: 0; }
+html { background-color: var(--rmusic-page-bg, #09090b); overflow: hidden; overscroll-behavior: none; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+.rmusic-app-shell, .rmusic-safe-viewport { height: var(--rmusic-viewport-height); }
 
-/* WebKit's installed-app viewport units can omit the safe-area height. The
-   standalone layout uses the full viewport; only controls consume the insets. */
-@media (display-mode: standalone) {
-  .rmusic-app-shell, .rmusic-safe-viewport { height: 100vh; }
-}
+/* navigator.standalone also covers iOS launches where the display-mode media
+   query does not match. Fixed root layers can clip to the shorter viewport. */
+html[data-rmusic-standalone="true"] { --rmusic-viewport-height: 100vh; }
+html[data-rmusic-standalone="true"] .rmusic-app-shell { position: relative; inset: auto; }
+html[data-rmusic-standalone="true"] .rmusic-safe-viewport { position: absolute; bottom: auto; }
 
 @media (max-width: 639px) {
   .rmusic-safe-back, .lattice-back {
@@ -61,7 +64,7 @@ html { background-color: var(--rmusic-page-bg, #09090b); overflow: hidden; overs
   .rmusic-safe-top-header > button:first-child, .rmusic-safe-top-header > div:last-child { flex-shrink: 0; }
   .rmusic-safe-viewport .theme-glass-panel { top: calc(86px + var(--rmusic-safe-top)); left: calc(16px + var(--rmusic-safe-left)); max-width: calc(100vw - 32px - var(--rmusic-safe-left) - var(--rmusic-safe-right)); }
   .rmusic-grid-home { padding-top: var(--rmusic-safe-top); padding-inline: var(--rmusic-safe-left) var(--rmusic-safe-right); }
-  .rmusic-grid-home[data-has-player="true"] { padding-bottom: calc(112px + var(--rmusic-safe-bottom)); }
+  .rmusic-grid-home[data-has-player="true"] { padding-bottom: calc(112px + var(--rmusic-bottom-inset)); }
   .rmusic-floating-controls { z-index: 130; max-width: calc(100vw - var(--rmusic-safe-left) - var(--rmusic-safe-right)); left: calc(50% + (var(--rmusic-safe-left) - var(--rmusic-safe-right)) / 2); }
   .rmusic-mobile-player [data-folium-part="progress.root"] { gap: 9px; }
   .rmusic-mobile-player [data-folium-part="progress.track"] input { top: -11px; height: 28px; touch-action: none; }

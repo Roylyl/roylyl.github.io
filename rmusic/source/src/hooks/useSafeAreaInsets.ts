@@ -16,8 +16,9 @@ const measure = () => {
         document.documentElement.append(probe);
     }
     const style = getComputedStyle(probe);
+    const gap = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--rmusic-viewport-gap')) || 0;
     const next = { top: parseFloat(style.paddingTop) || 0, right: parseFloat(style.paddingRight) || 0,
-        bottom: parseFloat(style.paddingBottom) || 0, left: parseFloat(style.paddingLeft) || 0 };
+        bottom: Math.max(parseFloat(style.paddingBottom) || 0, gap), left: parseFloat(style.paddingLeft) || 0 };
     if (Object.keys(next).some(key => next[key as keyof SafeAreaInsets] !== snapshot[key as keyof SafeAreaInsets])) snapshot = next;
     return snapshot;
 };
@@ -30,6 +31,7 @@ const subscribe = (listener: () => void) => {
         window.addEventListener('orientationchange', notify);
         window.addEventListener('pageshow', notify);
         document.addEventListener('visibilitychange', notify);
+        document.addEventListener('rmusic-viewportchange', notify);
         // Re-read after mounting: iOS may publish the installed-app insets after
         // the first render, and returning from another app need not resize it.
         notify();
@@ -42,6 +44,7 @@ const subscribe = (listener: () => void) => {
             window.removeEventListener('orientationchange', notify);
             window.removeEventListener('pageshow', notify);
             document.removeEventListener('visibilitychange', notify);
+            document.removeEventListener('rmusic-viewportchange', notify);
         }
     };
 };

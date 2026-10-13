@@ -16,10 +16,12 @@ import { useLibrarySuiteStore } from './library/core/state/useLibrarySuiteStore'
 import { usePlaybackEntryViewStore } from './stores/usePlaybackEntryViewStore';
 import { useStageSettingsStore } from './stores/useStageSettingsStore';
 import './stores/useMotionSettingsStore';
+import { installRmusicViewport } from './services/rmusicViewport';
 
 // R music keeps Folia's Web UI, visualizers and native audio transport. Its only
 // remote library is Roylyl/Music, so no desktop or account service is booted here.
 installNativeDragGuard();
+installRmusicViewport();
 installLibrarySuiteChromeCommands();
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('R music could not find the application root');

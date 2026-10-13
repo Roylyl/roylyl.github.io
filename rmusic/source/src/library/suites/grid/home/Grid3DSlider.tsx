@@ -1,5 +1,5 @@
 import { shouldIgnoreAppKeyboardShortcut } from '../../../../utils/appCombinationShortcuts';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Disc } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { formatGridMapFolderTitle } from '../../../../utils/gridMapFolderPath';
@@ -230,6 +230,10 @@ export const Grid3DSlider: React.FC<Grid3DSliderProps> = ({
 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+    const captionRef = useRef<HTMLDivElement>(null);
+    const focusedCardRef = useRef<HTMLDivElement>(null);
+    const [captionHeight, setCaptionHeight] = useState(80);
+    const [cardExtraHeight, setCardExtraHeight] = useState(96);
     const onFocusedIndexChangeRef = useRef(onFocusedIndexChange);
     const focusedIndexRef = useRef(focusedIndex);
     const lastInternalFocusRef = useRef<number | null>(null);
@@ -266,34 +270,6 @@ export const Grid3DSlider: React.FC<Grid3DSliderProps> = ({
         onFocusedIndexChangeRef.current = onFocusedIndexChange;
     }, [onFocusedIndexChange]);
 
-    useEffect(() => {
-        const element = containerRef.current;
-        if (!element) return;
-
-        const updateContainerSize = () => {
-            const nextWidth = element.clientWidth;
-            const nextHeight = element.clientHeight;
-
-            setContainerSize((prev) => (
-                prev.width === nextWidth && prev.height === nextHeight
-                    ? prev
-                    : { width: nextWidth, height: nextHeight }
-            ));
-        };
-
-        updateContainerSize();
-
-        if (typeof ResizeObserver === 'undefined') {
-            window.addEventListener('resize', updateContainerSize);
-            return () => window.removeEventListener('resize', updateContainerSize);
-        }
-
-        const observer = new ResizeObserver(updateContainerSize);
-        observer.observe(element);
-
-        return () => observer.disconnect();
-    }, []);
-
     const isDesktopWidth = containerSize.width >= 768;
     const isNarrowLayout = containerSize.width > 0 && containerSize.width < 768;
     const isShortLayout = containerSize.height > 0 && containerSize.height < (hasFloatingPlayer ? 420 : 380);
@@ -307,13 +283,61 @@ export const Grid3DSlider: React.FC<Grid3DSliderProps> = ({
         && containerSize.width >= 2000
         && containerSize.height >= (hasFloatingPlayer ? 780 : 720);
 
-    const coverSize = useCompactMetrics
+    const desktopCoverSize = useCompactMetrics
         ? (isDesktopWidth ? 208 : 192)
         : (isDesktopWidth ? (isUltraDesktop ? 360 : isLargeDesktop ? 312 : 218) : 224);
+    const peakCardScale = grid3dCardStyle === 'image' ? 1.25 : 1.2;
+    const effectiveCardExtraHeight = grid3dCardStyle === 'image' ? 0 : cardExtraHeight;
+    const effectiveCaptionHeight = !isLoading && items.length > 0 ? captionHeight : 0;
+    // The mobile toolbar occupies real space. Fit the scaled card and its caption
+    // into the slider's remaining height instead of using viewport-sized padding.
+    const mobileCardViewportHeight = Math.max(0, containerSize.height - effectiveCaptionHeight);
+    // The focused card also rises by 6px before scaling. Leave enough room for
+    // that lift so its painted edge stays clear of the classification controls.
+    const mobileCardVerticalSpace = 48;
+    const coverSize = isNarrowLayout
+        ? Math.max(48, Math.min(
+            192,
+            containerSize.width - 64,
+            Math.floor((mobileCardViewportHeight - mobileCardVerticalSpace) / peakCardScale - effectiveCardExtraHeight),
+        ))
+        : desktopCoverSize;
+    const mobileScrollHeight = Math.ceil((coverSize + effectiveCardExtraHeight) * peakCardScale + mobileCardVerticalSpace);
+    const needsVerticalScroll = isNarrowLayout && mobileScrollHeight + effectiveCaptionHeight > containerSize.height;
     const edgePadding = Math.max(0, (containerSize.width - coverSize) / 2);
 
     const safeFocusedIndex = clampFocusedIndex(focusedIndex, items.length);
     const itemsSignature = useMemo(() => getGrid3DItemsSignature(items), [items]);
+
+    useLayoutEffect(() => {
+        const element = containerRef.current;
+        if (!element) return;
+
+        const updateMetrics = () => {
+            const nextWidth = element.clientWidth;
+            const nextHeight = element.clientHeight;
+            setContainerSize(prev => prev.width === nextWidth && prev.height === nextHeight
+                ? prev : { width: nextWidth, height: nextHeight });
+            setCaptionHeight(captionRef.current?.offsetHeight ?? 0);
+            if (focusedCardRef.current) {
+                // Read both dimensions from the same committed DOM. Mixing a
+                // newly rendered size with the previous DOM creates a feedback
+                // loop that repeatedly grows and shrinks the mobile card.
+                setCardExtraHeight(Math.max(0, focusedCardRef.current.offsetHeight - focusedCardRef.current.offsetWidth));
+            }
+        };
+
+        updateMetrics();
+        if (typeof ResizeObserver === 'undefined') {
+            window.addEventListener('resize', updateMetrics);
+            return () => window.removeEventListener('resize', updateMetrics);
+        }
+        const observer = new ResizeObserver(updateMetrics);
+        observer.observe(element);
+        if (captionRef.current) observer.observe(captionRef.current);
+        if (focusedCardRef.current) observer.observe(focusedCardRef.current);
+        return () => observer.disconnect();
+    }, [grid3dCardStyle, isLoading, itemsSignature, safeFocusedIndex]);
 
     const loadedIndices = useMemo(() => {
         const indexes = new Set<number>();
@@ -758,7 +782,7 @@ export const Grid3DSlider: React.FC<Grid3DSliderProps> = ({
     const focusedSecondaryText = focusedItem ? getGrid3DSliderSecondaryText(focusedItem) : '';
 
     return (
-        <div ref={containerRef} className="w-full flex-1 flex flex-col justify-center relative min-h-0 select-none">
+        <div ref={containerRef} data-rmusic-home-slider className={`w-full flex-1 flex flex-col relative min-h-0 select-none ${needsVerticalScroll ? 'justify-start overflow-y-auto' : 'justify-center'}`}>
             <div
                 ref={scrollContainerRef}
                 data-grid3d-slider
@@ -771,7 +795,7 @@ export const Grid3DSlider: React.FC<Grid3DSliderProps> = ({
                 className={`w-full flex items-center overflow-x-auto overflow-y-hidden py-24 custom-scrollbar focus:outline-none ${
                     isInteractive ? 'cursor-grab active:cursor-grabbing' : 'cursor-default'
                 }`}
-                style={{ scrollbarWidth: 'none' }}
+                style={{ scrollbarWidth: 'none', ...(isNarrowLayout ? { height: mobileScrollHeight, paddingBlock: 0, flexShrink: 0 } : {}) }}
             >
                 <div className="flex" style={{ paddingInline: edgePadding }}>
                     {isLoading ? (
@@ -816,6 +840,7 @@ export const Grid3DSlider: React.FC<Grid3DSliderProps> = ({
                             return (
                                 <div
                                     key={item.id}
+                                    ref={isFocused ? focusedCardRef : undefined}
                                     data-grid3d-index={index}
                                     className="shrink-0 cursor-pointer pointer-events-auto select-none"
                                     style={{ marginRight: index < items.length - 1 ? GRID3D_CARD_GAP : 0 }}
@@ -890,14 +915,16 @@ export const Grid3DSlider: React.FC<Grid3DSliderProps> = ({
 
             {!isLoading && focusedItem && (
                 <div
+                    ref={captionRef}
+                    data-rmusic-home-caption
                     className={`relative shrink-0 text-center z-10 px-8 pointer-events-none ${
-                        hasFloatingPlayer ? 'pt-6 md:pt-8 pb-0 -mb-4 md:-mb-6' : 'pt-5 md:pt-6 pb-4'
+                        isNarrowLayout ? 'pt-3 pb-2' : hasFloatingPlayer ? 'pt-6 md:pt-8 pb-0 -mb-4 md:-mb-6' : 'pt-5 md:pt-6 pb-4'
                     }`}
                 >
-                    <h3 className="font-bold text-2xl truncate max-w-xl mx-auto" style={{ color: 'var(--text-primary)' }}>
+                    <h3 className={`font-bold max-w-xl mx-auto ${isNarrowLayout ? 'text-xl break-words' : 'text-2xl truncate'}`} style={{ color: 'var(--text-primary)' }}>
                         {focusedDisplayName}
                     </h3>
-                    <p className="text-xs opacity-50 font-mono mt-1" style={{ color: 'var(--text-secondary)' }}>
+                    <p className={`text-xs opacity-50 font-mono mt-1 ${isNarrowLayout ? 'break-words' : ''}`} style={{ color: 'var(--text-secondary)' }}>
                         {focusedItem.trackCount !== undefined ? `${focusedItem.trackCount}${/^[\u3400-\u9fff]/.test(t('playlist.tracks')) ? '' : ' '}${t('playlist.tracks') || 'songs'}` : ''}
                         {focusedSecondaryText ? ` • ${focusedSecondaryText}` : ''}
                     </p>

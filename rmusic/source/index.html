@@ -36,9 +36,15 @@
     <link rel="shortcut icon" href="/rmusic/favicon.ico?v=3" />
     <link rel="apple-touch-icon" sizes="180x180" href="/rmusic/icons/apple-touch-icon.png?v=3" />
     <title>R music</title>
+    <script>
+      if (navigator.standalone || matchMedia('(display-mode: standalone)').matches) {
+        document.documentElement.dataset.rmusicStandalone = 'true';
+      }
+    </script>
     <script src="/rmusic/runtime-config.js"></script>
     <style>
       html, body { background:#09090b; }
+      html[data-rmusic-standalone="true"], html[data-rmusic-standalone="true"] body { height:100vh; }
       #app-splash { position:fixed; inset:0; z-index:2147483647; display:grid; place-items:center; background:#09090b; color:#f1f7f5; opacity:1; transition:opacity 320ms ease; pointer-events:none; }
       #app-splash.is-hiding { opacity:0; }
       .app-splash-inner { display:flex; flex-direction:column; align-items:center; gap:20px; opacity:0; animation:splash-in 400ms ease 180ms forwards; }

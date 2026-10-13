@@ -1,6 +1,6 @@
 import { usePlaybackStore } from '../stores/usePlaybackStore';
 
-const revision = '20261013-layout-2';
+const revision = '20261013-layout-3';
 const events: Record<string, unknown>[] = [];
 const limit = 100;
 
@@ -52,6 +52,11 @@ export const getRmusicPlaybackDiagnostics = () => {
                 offsetTop: visualViewport!.offsetTop, scale: visualViewport!.scale,
             } : null,
             shell: shell ? { top: shell.top, bottom: shell.bottom, height: shell.height } : null,
+            rootMode: document.documentElement.dataset.rmusicStandalone,
+            canvasHeight: getComputedStyle(document.documentElement).getPropertyValue('--rmusic-viewport-height').trim(),
+            viewportGap: getComputedStyle(document.documentElement).getPropertyValue('--rmusic-viewport-gap').trim(),
+            screen: { width: screen.width, height: screen.height },
+            bodyHeight: document.body.getBoundingClientRect().height,
             safeArea: insets ? { top: insets.paddingTop, bottom: insets.paddingBottom, left: insets.paddingLeft, right: insets.paddingRight } : null,
             background: getComputedStyle(document.documentElement).backgroundColor,
         },

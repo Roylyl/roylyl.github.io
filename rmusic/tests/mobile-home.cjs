@@ -21,7 +21,7 @@ const track = catalog.tracks.find(t => t.artist === 'Beyond' && t.album === '惊
 assert.ok(track);
 const safe = { top: 59, bottom: 34, left: 0, right: 0 };
 const searchOnly = process.argv.includes('--search-only');
-const report = { base, checks: [], failures: [], runs: [], errors: [], limits: 'Chromium with iPhone user agent, touch and real CSS env safe-area overrides. Chromium does not emulate native standalone display-mode; the existing standalone CSS media rule is activated through a stylesheet fixture. Viewport shrinking is a resize simulation, not physical iPhone, Safari/WebKit or keyboard proof.' };
+const report = { base, checks: [], failures: [], runs: [], errors: [], limits: 'Chromium with iPhone user agent, touch and real CSS env safe-area overrides. Standalone uses a navigator.standalone fixture while native CSS display-mode remains browser. Viewport shrinking is a resize simulation, not physical iPhone, Safari/WebKit or keyboard proof.' };
 async function check(name, action) {
   try { await action(); report.checks.push(name); console.log('PASS: ' + name); }
   catch (error) { report.failures.push({ name, error: error.stack }); console.log('FAIL: ' + name + ': ' + error.message); }
@@ -57,7 +57,7 @@ async function viewportGeometry(page, mode, width) {
       bottomCovered: [1, innerWidth / 2, innerWidth - 1].every(x => shell.contains(document.elementFromPoint(x, innerHeight - 1))),
       overflow: document.documentElement.scrollWidth > innerWidth,
       statusBar: document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')?.content,
-      nativeStandalone: window.__homeQA.nativeStandalone, standaloneCSSFixture: window.__homeQA.standaloneCSSFixture,
+      nativeStandalone: window.__homeQA.nativeStandalone, standaloneRoot: document.documentElement.dataset.rmusicStandalone,
       touch: navigator.maxTouchPoints };
   });
   report.runs.push({ mode, width, layout });
@@ -68,8 +68,7 @@ async function viewportGeometry(page, mode, width) {
   assert.ok(Math.abs(layout.shell.height - layout.viewport.height) <= 1 && layout.shell.bottom >= layout.viewport.height - .5, 'Shell does not cover full viewport');
   assert.ok(layout.bottomCovered, 'Bottom edge is outside the shell');
   assert.equal(layout.bodyBackground, layout.shellBackground); assert.equal(layout.htmlBackground, layout.shellBackground);
-  if (mode === 'standalone') assert.ok(layout.standaloneCSSFixture > 0, 'Existing standalone CSS branch was not activated');
-  else assert.equal(layout.standaloneCSSFixture, 0);
+  assert.equal(layout.standaloneRoot, String(mode === 'standalone'), 'Installed-app runtime detection is incorrect');
 }
 async function headerActions(page) {
   const header = page.locator('[data-rmusic-home-header]');
@@ -122,7 +121,7 @@ async function run() {
     for (const mode of ['browser', 'standalone']) for (const width of [390, 320]) {
       const context = await browser.newContext({ viewport: { width, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 1, locale: 'zh-CN', colorScheme: 'dark', serviceWorkers: 'block', userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1' });
       await context.addInitScript(mode => {
-        window.__homeQA = { nativeStandalone: matchMedia('(display-mode: standalone)').matches, standaloneCSSFixture: 0 };
+        window.__homeQA = { nativeStandalone: matchMedia('(display-mode: standalone)').matches };
         if (mode === 'standalone') Object.defineProperty(navigator, 'standalone', { configurable: true, get: () => true });
       }, mode);
       const page = await context.newPage(); page.setDefaultTimeout(8000);
@@ -131,13 +130,6 @@ async function run() {
       try {
         await page.goto(base, { waitUntil: 'domcontentloaded' }); await page.locator('#app-splash').waitFor({ state: 'hidden' });
         await page.locator('[data-rmusic-home-header]').waitFor({ state: 'visible' });
-        if (mode === 'standalone') await page.evaluate(() => {
-          const activate = rules => { for (const rule of rules) {
-            if (rule instanceof CSSMediaRule && /display-mode\s*:\s*standalone/.test(rule.conditionText)) { rule.media.mediaText = 'all'; window.__homeQA.standaloneCSSFixture++; }
-            if (rule.cssRules) activate(rule.cssRules);
-          } };
-          for (const sheet of document.styleSheets) { try { activate(sheet.cssRules); } catch {} }
-        });
         await page.locator('[data-rmusic-home-controls] [role="tab"]').first().waitFor({ state: 'visible' });
         await page.waitForTimeout(150);
         if (!searchOnly) {

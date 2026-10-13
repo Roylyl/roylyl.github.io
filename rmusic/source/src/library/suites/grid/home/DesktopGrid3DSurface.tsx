@@ -147,7 +147,7 @@ export const DesktopGrid3DSurface: React.FC<DesktopGrid3DSurfaceProps> = ({
                 types) sits right under the header's view capsule, the library actions on the right
                 under the search box. The row itself lets clicks through to the grid; only the
                 controls take them. */}
-            <div data-rmusic-home-controls className="pointer-events-none absolute inset-x-0 top-2 z-10">
+            <div data-rmusic-home-controls className="pointer-events-none relative shrink-0 py-2 md:py-0 md:absolute md:inset-x-0 md:top-2 z-10">
                 <div className="mx-auto grid w-full max-w-7xl grid-cols-[minmax(0,1fr)_auto] md:grid-cols-[1fr_auto_1fr] items-center gap-2 md:gap-3 px-4 md:px-8">
                     <div className="hidden md:block" />
                     <div className="pointer-events-auto flex min-w-0 justify-start md:justify-center overflow-x-auto md:overflow-visible [scrollbar-width:none]">

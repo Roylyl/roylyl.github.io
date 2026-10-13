@@ -36,9 +36,14 @@
     <link rel="shortcut icon" href="/rmusic/favicon.ico?v=3" />
     <link rel="apple-touch-icon" sizes="180x180" href="/rmusic/icons/apple-touch-icon.png?v=3" />
     <title>R music</title>
+    <script>
+      if (navigator.standalone || matchMedia('(display-mode: standalone)').matches) {
+        document.documentElement.dataset.rmusicStandalone = 'true';
+      }
+    </script>
     <script src="/rmusic/runtime-config.js"></script>
-    <style>html,body{background:#09090b}#app-splash{z-index:2147483647;color:#f1f7f5;opacity:1;pointer-events:none;background:#09090b;place-items:center;transition:opacity .32s;display:grid;position:fixed;inset:0}#app-splash.is-hiding{opacity:0}.app-splash-inner{opacity:0;flex-direction:column;align-items:center;gap:20px;animation:.4s .18s forwards splash-in;display:flex}.app-splash-icon{width:clamp(88px,20vw,124px);height:auto}.app-splash-title{letter-spacing:-.04em;font:600 clamp(26px,7vw,38px)/1.15 system-ui,-apple-system,sans-serif}.app-splash-wave{align-items:center;gap:5px;height:18px;display:flex}.app-splash-wave span{background:#8be5c4;border-radius:3px;width:3px;height:100%;animation:1s ease-in-out infinite alternate splash-wave;transform:scaleY(.3)}.app-splash-wave span:nth-child(2n){animation-delay:-.4s}.app-splash-wave span:nth-child(3n){animation-delay:-.7s}@keyframes splash-in{to{opacity:1}}@keyframes splash-wave{to{transform:scaleY(1)}}@media (prefers-reduced-motion:reduce){.app-splash-inner{opacity:1;animation:none}.app-splash-wave span{animation:none}}</style>
-    <script type="module" crossorigin src="/rmusic/assets/index-DJ1ZMgTC.js"></script>
+    <style>html,body{background:#09090b}html[data-rmusic-standalone=true],html[data-rmusic-standalone=true] body{height:100vh}#app-splash{z-index:2147483647;color:#f1f7f5;opacity:1;pointer-events:none;background:#09090b;place-items:center;transition:opacity .32s;display:grid;position:fixed;inset:0}#app-splash.is-hiding{opacity:0}.app-splash-inner{opacity:0;flex-direction:column;align-items:center;gap:20px;animation:.4s .18s forwards splash-in;display:flex}.app-splash-icon{width:clamp(88px,20vw,124px);height:auto}.app-splash-title{letter-spacing:-.04em;font:600 clamp(26px,7vw,38px)/1.15 system-ui,-apple-system,sans-serif}.app-splash-wave{align-items:center;gap:5px;height:18px;display:flex}.app-splash-wave span{background:#8be5c4;border-radius:3px;width:3px;height:100%;animation:1s ease-in-out infinite alternate splash-wave;transform:scaleY(.3)}.app-splash-wave span:nth-child(2n){animation-delay:-.4s}.app-splash-wave span:nth-child(3n){animation-delay:-.7s}@keyframes splash-in{to{opacity:1}}@keyframes splash-wave{to{transform:scaleY(1)}}@media (prefers-reduced-motion:reduce){.app-splash-inner{opacity:1;animation:none}.app-splash-wave span{animation:none}}</style>
+    <script type="module" crossorigin src="/rmusic/assets/index-BfHxWRIx.js"></script>
     <link rel="modulepreload" crossorigin href="/rmusic/assets/rolldown-runtime-hePW80VL.js">
     <link rel="modulepreload" crossorigin href="/rmusic/assets/icons-BWntrYEN.js">
   <link rel="manifest" href="/rmusic/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/rmusic/registerSW.js"></script></head>
