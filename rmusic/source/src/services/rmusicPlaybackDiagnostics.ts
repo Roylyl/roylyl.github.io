@@ -1,6 +1,6 @@
 import { usePlaybackStore } from '../stores/usePlaybackStore';
 
-const revision = '20261013-native-1';
+const revision = '20261013-layout-2';
 const events: Record<string, unknown>[] = [];
 const limit = 100;
 
@@ -36,12 +36,28 @@ export const recordRmusicPlaybackEvent = (
     }
 };
 
-export const getRmusicPlaybackDiagnostics = () => JSON.stringify({
-    version: revision, browser: navigator.userAgent,
-    standalone: Boolean((navigator as AudioSessionNavigator).standalone)
-        || matchMedia('(display-mode: standalone)').matches,
-    eventOrder: 'newest-first', events: [...events].reverse(),
-}, null, 2);
+export const getRmusicPlaybackDiagnostics = () => {
+    const shell = document.querySelector('.rmusic-app-shell')?.getBoundingClientRect();
+    const probe = document.querySelector('[data-rmusic-safe-area-probe]');
+    const insets = probe ? getComputedStyle(probe) : null;
+    return JSON.stringify({
+        version: revision, browser: navigator.userAgent,
+        standalone: Boolean((navigator as AudioSessionNavigator).standalone)
+            || matchMedia('(display-mode: standalone)').matches,
+        layout: {
+            window: { width: innerWidth, height: innerHeight },
+            document: { width: document.documentElement.clientWidth, height: document.documentElement.clientHeight },
+            visualViewport: window.visualViewport ? {
+                width: visualViewport!.width, height: visualViewport!.height,
+                offsetTop: visualViewport!.offsetTop, scale: visualViewport!.scale,
+            } : null,
+            shell: shell ? { top: shell.top, bottom: shell.bottom, height: shell.height } : null,
+            safeArea: insets ? { top: insets.paddingTop, bottom: insets.paddingBottom, left: insets.paddingLeft, right: insets.paddingRight } : null,
+            background: getComputedStyle(document.documentElement).backgroundColor,
+        },
+        eventOrder: 'newest-first', events: [...events].reverse(),
+    }, null, 2);
+};
 
 export const copyRmusicPlaybackDiagnostics = async (): Promise<boolean> => {
     const content = getRmusicPlaybackDiagnostics();

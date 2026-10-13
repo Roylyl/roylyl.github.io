@@ -46,6 +46,16 @@ const AppShell: React.FC<AppShellProps> = ({
     const hasFullscreenTitlebarButton = isElectronWindow && !hideFullscreenButton;
 
     useEffect(() => {
+        if (isElectronWindow) return;
+        const background = (appStyle as Record<string, unknown>)['--bg-color'];
+        if (typeof background !== 'string') return;
+        // Safari paints the document canvas around a standalone app's viewport.
+        // Give that canvas the same theme as the shell instead of a black band.
+        document.documentElement.style.setProperty('--rmusic-page-bg', background);
+        return () => { document.documentElement.style.removeProperty('--rmusic-page-bg'); };
+    }, [appStyle, isElectronWindow]);
+
+    useEffect(() => {
         if (!useCustomWindowRadius || !window.electron?.isWindowMaximized) {
             setIsWindowMaximized(false);
             return;

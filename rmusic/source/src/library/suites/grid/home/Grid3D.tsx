@@ -312,8 +312,8 @@ export const Grid3D: React.FC<Grid3DProps> = (props) => {
             className={`rmusic-grid-home relative w-full h-full flex flex-col font-sans overflow-hidden ${mainBg} pointer-events-auto backdrop-blur-sm ${bottomPadding}`}
         >
 
-            {/* Main Header Container (Fades out when sliding/interacting) */}
-            <div className="transition-opacity duration-300 ease-in-out z-20 opacity-100 select-none">
+            {/* Keep the header above the slider and reserve its full touch targets. */}
+            <header data-rmusic-home-header className="relative shrink-0 z-20 opacity-100 select-none pointer-events-auto">
                 <div className="grid grid-cols-1 md:grid-cols-3 items-center w-full max-w-7xl mx-auto p-4 md:p-8 gap-y-4 md:gap-y-0">
                     {/* Left title and settings */}
                     <div className="flex items-center justify-start order-1 md:order-none">
@@ -322,8 +322,10 @@ export const Grid3D: React.FC<Grid3DProps> = (props) => {
                             R music
                         </h1>
                         <button
+                            type="button"
                             onClick={() => onOpenSettings?.('options')}
-                            className={`relative flex items-center gap-1.5 p-2 rounded-full hover:bg-white/10 transition-all ml-2 md:ml-4 ${showUpdateIndicator
+                            aria-label={t('ui.options')}
+                            className={`relative flex min-h-11 min-w-11 md:min-h-0 md:min-w-0 shrink-0 items-center justify-center gap-1.5 p-2 rounded-full hover:bg-white/10 active:bg-white/10 transition-all ml-2 md:ml-4 touch-manipulation ${showUpdateIndicator
                                     ? 'opacity-90 hover:opacity-100'
                                     : 'opacity-40 hover:opacity-100'
                                 }`}
@@ -341,7 +343,7 @@ export const Grid3D: React.FC<Grid3DProps> = (props) => {
                             target="_blank" rel="noopener noreferrer"
                             title="R music源码 · 基于Folia"
                             aria-label="查看R music源码"
-                            className="ml-2 px-2 py-1 rounded-full text-xs whitespace-nowrap shrink-0 opacity-45 hover:opacity-100 transition-opacity"
+                            className="ml-2 inline-flex min-h-11 md:min-h-0 items-center px-2 py-1 rounded-full text-xs whitespace-nowrap shrink-0 opacity-45 hover:opacity-100 transition-opacity touch-manipulation"
                         >源码</a>
                         {scanProgress?.active && (
                             <div
@@ -473,12 +475,15 @@ export const Grid3D: React.FC<Grid3DProps> = (props) => {
                     <div className="flex justify-end order-2 md:order-none">
                         <form onSubmit={handleSearch} className="relative w-full md:w-56 transition-all focus-within:md:w-72">
                             {isSearchingActive ? (
-                                <Loader2 className="absolute left-3 top-1/2 w-4 h-4 animate-spin opacity-40 -mt-2" />
+                                <Loader2 className="pointer-events-none absolute left-3 top-1/2 w-4 h-4 animate-spin opacity-40 -mt-2" />
                             ) : (
-                                <Search
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 opacity-40 w-4 h-4 cursor-pointer hover:opacity-100 transition-opacity"
-                                    onClick={() => handleSearch()}
-                                />
+                                <button
+                                    type="submit"
+                                    aria-label={t('libraryBravaisHome.searchSubmit')}
+                                    className="absolute left-0 top-1/2 -translate-y-1/2 flex h-11 w-11 md:h-9 md:w-9 items-center justify-center rounded-full opacity-50 hover:opacity-100 active:opacity-100 transition-opacity touch-manipulation"
+                                >
+                                    <Search className="pointer-events-none w-4 h-4" />
+                                </button>
                             )}
                             <input
                                 ref={searchInputRef}
@@ -486,13 +491,13 @@ export const Grid3D: React.FC<Grid3DProps> = (props) => {
                                 placeholder={homeViewTab === 'local' ? t('home.searchLocal') : homeViewTab === 'navidrome' ? t('home.searchNavidrome') : t('home.searchDatabase')}
                                 value={searchQuery}
                                 onChange={e => setSearchQuery(e.target.value)}
-                                className={`w-full ${inputBg} border border-white/10 rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-white/20 transition-all placeholder:text-current placeholder:opacity-40 select-text`}
+                                className={`w-full min-h-11 md:min-h-0 ${inputBg} border border-white/10 rounded-full py-2 pl-11 md:pl-10 pr-4 text-base md:text-sm focus:outline-none focus:border-white/20 transition-all placeholder:text-current placeholder:opacity-40 select-text`}
                                 style={{ color: 'var(--text-primary)' }}
                             />
                         </form>
                     </div>
                 </div>
-            </div>
+            </header>
 
             {/* Desktop Canvas Surface */}
             <div className="flex-1 min-h-0 flex flex-col items-center justify-center relative">

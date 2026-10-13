@@ -12,6 +12,7 @@ const measure = () => {
         probe = document.createElement('div');
         probe.style.cssText = 'position:fixed;visibility:hidden;pointer-events:none;width:0;height:0;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px);';
         probe.setAttribute('aria-hidden', 'true');
+        probe.dataset.rmusicSafeAreaProbe = '';
         document.documentElement.append(probe);
     }
     const style = getComputedStyle(probe);
@@ -27,6 +28,11 @@ const subscribe = (listener: () => void) => {
         window.addEventListener('resize', notify);
         window.visualViewport?.addEventListener('resize', notify);
         window.addEventListener('orientationchange', notify);
+        window.addEventListener('pageshow', notify);
+        document.addEventListener('visibilitychange', notify);
+        // Re-read after mounting: iOS may publish the installed-app insets after
+        // the first render, and returning from another app need not resize it.
+        notify();
     }
     return () => {
         listeners.delete(listener);
@@ -34,9 +40,11 @@ const subscribe = (listener: () => void) => {
             window.removeEventListener('resize', notify);
             window.visualViewport?.removeEventListener('resize', notify);
             window.removeEventListener('orientationchange', notify);
+            window.removeEventListener('pageshow', notify);
+            document.removeEventListener('visibilitychange', notify);
         }
     };
 };
 
-const read = () => probe ? snapshot : measure();
+const read = () => measure();
 export const useSafeAreaInsets = (): SafeAreaInsets => useSyncExternalStore(subscribe, read, () => zeroInsets);

@@ -44,7 +44,7 @@ export const GridViewTabs: React.FC<GridViewTabsProps> = ({ tabs, isDaylight, on
     const chrome = gridChromeClassesFor(isDaylight);
 
     return (
-        <div className={`pointer-events-auto flex h-7 items-center rounded-full p-0.5 backdrop-blur-md ${chrome.pill}`}>
+        <div className={`pointer-events-auto shrink-0 flex h-12 md:h-7 items-center rounded-full p-0.5 backdrop-blur-md ${chrome.pill}`}>
             {onOpenMap && (
                 <button
                     type="button"
@@ -52,7 +52,7 @@ export const GridViewTabs: React.FC<GridViewTabsProps> = ({ tabs, isDaylight, on
                         event.currentTarget.blur();
                         onOpenMap();
                     }}
-                    className={`flex h-6 items-center gap-1.5 rounded-full px-3 text-xs font-medium transition-colors ${chrome.softText}`}
+                    className={`flex h-11 md:h-6 items-center gap-1.5 rounded-full px-3 text-xs font-medium transition-colors touch-manipulation ${chrome.softText}`}
                 >
                     {mapIcon}
                     <span className="whitespace-nowrap">{mapLabel}</span>
@@ -79,15 +79,15 @@ export const GridViewTabs: React.FC<GridViewTabsProps> = ({ tabs, isDaylight, on
                                 onClick={() => {
                                     if (!tab.active) tab.onClick();
                                 }}
-                                className={`relative flex h-6 items-center gap-1.5 rounded-full text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-35 ${
-                                    showLabel ? 'px-3' : 'w-7 justify-center'
+                                className={`relative flex h-11 md:h-6 items-center gap-1.5 rounded-full text-xs font-medium transition-colors touch-manipulation disabled:cursor-not-allowed disabled:opacity-35 ${
+                                    showLabel ? 'px-3' : 'w-11 md:w-7 justify-center'
                                 } ${tab.active ? chrome.strongText : chrome.softText}`}
                             >
                                 {tab.active && (
                                     <motion.span
                                         layoutId={highlightId}
                                         transition={transition}
-                                        className={`absolute inset-0 rounded-full ${chrome.activePill}`}
+                                        className={`pointer-events-none absolute inset-0 rounded-full ${chrome.activePill}`}
                                     />
                                 )}
                                 {tab.icon && <span className="relative flex shrink-0 items-center">{tab.icon}</span>}
