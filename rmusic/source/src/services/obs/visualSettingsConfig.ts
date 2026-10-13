@@ -5,7 +5,6 @@ import { useVisualizerSettingsStore } from '../../stores/useVisualizerSettingsSt
 import { useVisualizerAssetStore } from '../../stores/useVisualizerAssetStore';
 import { useTypographySettingsStore } from '../../stores/useTypographySettingsStore';
 import { useThemeSettingsStore } from '../../stores/useThemeSettingsStore';
-import { useStageSettingsStore } from '../../stores/useStageSettingsStore';
 import { useLibraryWallLookStore } from '../../stores/useLibraryWallLookStore';
 
 // src/services/obs/visualSettingsConfig.ts
@@ -13,7 +12,6 @@ import { useLibraryWallLookStore } from '../../stores/useLibraryWallLookStore';
 // the import/export "copy config" and the OBS URL builder stay in sync from a single field list.
 
 export function buildVisualSettingsConfig(): Record<string, unknown> {
-  const storeStageSettings = useStageSettingsStore.getState();
   const storeThemeSettings = useThemeSettingsStore.getState();
   const storeTypographySettings = useTypographySettingsStore.getState();
   const storeVisualizer = useVisualizerSettingsStore.getState();
@@ -92,9 +90,6 @@ export function buildVisualSettingsConfig(): Record<string, unknown> {
     // The now playing card. Not a visualizer setting, but it is chrome the listener sees over the
     // same picture, and all three legs are needed together: the mode alone restores a card that
     // hides after someone else's timeout, and on a page the importer never asked for.
-    stageTrackPillMode: storeStageSettings.stageTrackPillMode,
-    stageTrackPillTimeoutSec: storeStageSettings.stageTrackPillTimeoutSec,
-    stageTrackPillOnHome: storeStageSettings.stageTrackPillOnHome,
     // The bravais wall's collection stack edges (a tile look, so it travels with a shared look by the
     // settings rule). The wall's transparency and windows per block deliberately stay out — the user
     // decided so; see useLibraryWallLookStore.

@@ -2,14 +2,14 @@ import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShort
 import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import type { LucideIcon } from 'lucide-react';
-import { ChevronRight, FileJson, FileText, PackageOpen, Upload } from 'lucide-react';
+import { ChevronRight, FileJson, FileText, Upload } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import ThemedDialog from '../shared/ThemedDialog';
 import type { LyricExportFormat } from '../../services/lyricExport/types';
 
 // src/components/panelTab/LyricFileDialog.tsx
 // The lyric file dialog behind the panel's import / export button: import a file, export this song
-// as .fia or .lrc, or hand off to the batch export page. Presentational: the button owns the state
+// as .fia or .lrc. Presentational: the button owns the state
 // and the actions.
 //
 // Portalled to <body>: the panel root has a backdrop filter, which would otherwise turn the
@@ -28,7 +28,6 @@ type LyricFileDialogProps = {
     canExportCurrent: boolean;
     isExporting: boolean;
     onExportCurrent: (format: LyricExportFormat) => void;
-    onOpenBatchExport: () => void;
 };
 
 const LyricFileDialog: React.FC<LyricFileDialogProps> = ({
@@ -39,7 +38,6 @@ const LyricFileDialog: React.FC<LyricFileDialogProps> = ({
     canExportCurrent,
     isExporting,
     onExportCurrent,
-    onOpenBatchExport,
 }) => {
     const { t } = useTranslation();
     const inputRef = useRef<HTMLInputElement>(null);
@@ -145,7 +143,6 @@ const LyricFileDialog: React.FC<LyricFileDialogProps> = ({
                     )}
                 </section>
 
-                {renderRow(PackageOpen, t('lyricFile.batchTitle'), t('lyricFile.batchDesc'), onOpenBatchExport, true)}
             </div>
         </ThemedDialog>
     ), document.body);

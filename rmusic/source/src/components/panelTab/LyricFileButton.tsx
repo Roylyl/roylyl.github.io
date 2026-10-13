@@ -4,11 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { usePlaybackStore } from '../../stores/usePlaybackStore';
 import { useLyricSettingsStore } from '../../stores/useLyricSettingsStore';
 import { setStatusMessage } from '../../stores/useStatusMessageStore';
-import { openCommandPaletteCommand, setIsPanelOpen } from '../../stores/useAppViewStore';
 import { exportCurrentSongLyrics } from '../../services/lyricExport/currentSongExport';
 import type { LyricExportFormat } from '../../services/lyricExport/types';
 import { hasExportableLyrics } from '../../utils/lyrics/exportableLyrics';
-import { LYRIC_EXPORT_COMMAND_ID } from '../command-palette/commands/lyricExportCommands';
 import LyricFileDialog from './LyricFileDialog';
 
 // src/components/panelTab/LyricFileButton.tsx
@@ -65,14 +63,6 @@ const LyricFileButton: React.FC<LyricFileButtonProps> = ({ buttonClassName, isDa
         }
     };
 
-    const openBatchExport = () => {
-        close();
-        openCommandPaletteCommand(LYRIC_EXPORT_COMMAND_ID);
-        // Same hand-off as the segmentation toggle in AppearanceSection: the palette takes over,
-        // so the panel underneath gets out of the way.
-        setIsPanelOpen(false);
-    };
-
     return (
         <>
             <button
@@ -94,7 +84,6 @@ const LyricFileButton: React.FC<LyricFileButtonProps> = ({ buttonClassName, isDa
                 canExportCurrent={canExportCurrent}
                 isExporting={isExporting}
                 onExportCurrent={format => void exportCurrent(format)}
-                onOpenBatchExport={openBatchExport}
             />
         </>
     );

@@ -3,7 +3,6 @@ import FloatingPlayerControls from '../../FloatingPlayerControls';
 import SearchWorkspace from '../search/SearchWorkspace';
 import DevDebugOverlay from '../../DevDebugOverlay';
 import MemoryMonitorWindow from '../../debug/MemoryMonitorWindow';
-import NowPlayingToast from './NowPlayingToast';
 import type { AppOverlaysModel } from './buildAppOverlaysModel';
 import { countRender } from '../../../dev/renderCount';
 import { useLatticeControlsStore } from '../../../stores/useLatticeControlsStore';
@@ -31,7 +30,6 @@ const AppOverlays: React.FC<AppOverlaysProps> = ({ model }) => {
         debugOverlay,
         memoryMonitor,
         floatingControls,
-        nowPlayingToast,
     } = model;
     // The player panel stays open in preferences when leaving the player, but
     // its host is only mounted on that page. Browsing must retain its transport.
@@ -51,8 +49,6 @@ const AppOverlays: React.FC<AppOverlaysProps> = ({ model }) => {
                 && (floatingControls.currentView !== 'lattice' || !isCurrentSongPosterVisible)
                 && <FloatingPlayerControls {...floatingControls} />}
 
-            {nowPlayingToast && !(isCompact && (settingsOpen || panelIsVisible || floatingControls))
-                && <NowPlayingToast {...nowPlayingToast} />}
         </>
     );
 };

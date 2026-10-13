@@ -4,11 +4,9 @@ import { useAppViewStore } from '../../../stores/useAppViewStore';
 import { useAppChromeStore } from '../../../stores/useAppChromeStore';
 import { useSearchNavigationStore } from '../../../stores/useSearchNavigationStore';
 import { useThemeSettingsStore } from '../../../stores/useThemeSettingsStore';
-import { useStageSettingsStore } from '../../../stores/useStageSettingsStore';
 import { usePlayerChromeSettingsStore } from '../../../stores/usePlayerChromeSettingsStore';
 import { useTranslation } from 'react-i18next';
 import {
-    selectDisplayCoverUrl,
     selectDisplayDuration,
     selectDisplayLyrics,
     selectDisplayPlayerState,
@@ -38,8 +36,6 @@ export const useAppOverlaysModel = (deps: AppOverlaysDeps): AppOverlaysModel => 
     const isMemoryMonitorVisible = useAppChromeStore(state => state.isMemoryMonitorVisible);
     const isSearchOpen = useSearchNavigationStore(state => state.isSearchOpen);
     const isDaylight = useThemeSettingsStore(state => state.isDaylight);
-    const stageTrackPillMode = useStageSettingsStore(state => state.stageTrackPillMode);
-    const stageTrackPillTimeoutSec = useStageSettingsStore(state => state.stageTrackPillTimeoutSec);
     const playerControlSlotPrimary = usePlayerChromeSettingsStore(state => state.playerControlSlotPrimary);
     const playerControlSlotSecondary = usePlayerChromeSettingsStore(state => state.playerControlSlotSecondary);
     const handleSetPlayerBottomBarOffset = usePlayerChromeSettingsStore(state => state.handleSetPlayerBottomBarOffset);
@@ -47,11 +43,9 @@ export const useAppOverlaysModel = (deps: AppOverlaysDeps): AppOverlaysModel => 
     const playQueue = usePlaybackStore(state => state.playQueue);
     const isFmMode = usePlaybackStore(state => state.isFmMode);
     const activePlaybackContext = usePlaybackStore(state => state.activePlaybackContext);
-    // The held picture, not the live one: a blend keeps song, lyrics, duration and cover describing
-    // the same track for its whole length. See the note on `coverUrl` above.
+    // Keep the displayed song, lyrics and duration on the outgoing track during a blend.
     const displaySong = usePlaybackStore(selectDisplaySong);
     const displayLyrics = usePlaybackStore(selectDisplayLyrics);
-    const displayCoverUrl = usePlaybackStore(selectDisplayCoverUrl);
     const displayDuration = usePlaybackStore(selectDisplayDuration);
     const displayPlayerState = usePlaybackStore(selectDisplayPlayerState);
     const playerControlSlotContext = useMemo(() => ({
@@ -98,15 +92,9 @@ export const useAppOverlaysModel = (deps: AppOverlaysDeps): AppOverlaysModel => 
         isPlayerChromeHidden,
         playQueue,
         isFmMode,
-        coverUrl: displayCoverUrl,
-        stageTrackPillMode,
-        stageTrackPillTimeoutSec,
         noTrackText: t('ui.noTrack'),
         prevTrackLabel: t('ui.previousTrack'),
         nextTrackLabel: t('ui.nextTrack'),
-        stageTrackPillOpenPlayerLabel: t('ui.stageTrackPillOpenPlayer'),
-        stageTrackPillOpenSongCardLabel: t('ui.stageTrackPillOpenSongCard'),
-        stageTrackPillFocusLatticeLabel: t('home.latticeFocusCurrent'),
         playerControlSlotPrimary,
         playerControlSlotSecondary,
         playerControlSlotContext,
@@ -131,9 +119,6 @@ export const useAppOverlaysModel = (deps: AppOverlaysDeps): AppOverlaysModel => 
         isPlayerChromeHidden,
         playQueue,
         isFmMode,
-        displayCoverUrl,
-        stageTrackPillMode,
-        stageTrackPillTimeoutSec,
         playerControlSlotPrimary,
         playerControlSlotSecondary,
         playerControlSlotContext,

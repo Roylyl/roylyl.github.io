@@ -1,0 +1,1 @@
+export{Kr as matchLyrics}from"./bootstrap-8nh-r26y.js";

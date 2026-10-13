@@ -5,7 +5,6 @@ import {
     Check,
     DiscAlbum,
     Folder,
-    FoldHorizontal,
     History,
     LayoutGrid,
     ListFilter,
@@ -166,74 +165,22 @@ const HomeSeamSections: React.FC<{
     );
 };
 
-/**
- * 直达入口（特殊集合，fb11）：并排的几列竖排文字按钮，显示种类的短名（`names`），全名在 aria-label / title；`rule` 时上面
- * 一道分隔线（与二级切换隔开）。`measure` 是测量副本（span，不可聚焦、不进无障碍树）。
- */
-const HomeSeamShortcuts: React.FC<{
-    shortcuts: readonly BravaisHomeShortcut[];
-    label?: string;
-    rule: boolean;
-    onOpen?: (shortcut: BravaisHomeShortcut) => void;
-    measure?: boolean;
-}> = ({ shortcuts, label, rule, onOpen, measure = false }) => {
-    const { t } = useTranslation();
-    const name = (shortcut: BravaisHomeShortcut) => t(`libraryBravaisHome.special.${shortcut.special}`);
-    return (
-        <div className="bravais-seam-shortcuts-wrap">
-            {rule && <span className="bravais-seam-shortcuts-rule" aria-hidden />}
-            <div className="bravais-seam-shortcuts" role={measure ? undefined : 'group'} aria-label={measure ? undefined : label}
-                data-bravais-shortcuts={measure ? undefined : ''}>
-                {shortcuts.map(shortcut => (measure ? (
-                    <span key={shortcut.special} className="bravais-seam-shortcut"><span className="is-label">{name(shortcut)}</span></span>
-                ) : (
-                    <button
-                        key={shortcut.special}
-                        type="button"
-                        className="bravais-seam-shortcut"
-                        data-bravais-seam-action={`shortcut-${shortcut.special}`}
-                        data-bravais-shortcut={shortcut.special}
-                        aria-label={shortcut.label}
-                        title={shortcut.label}
-                        onClick={() => (onOpen ? onOpen(shortcut) : shortcut.open())}
-                    >
-                        <span className="is-label" aria-hidden>{name(shortcut)}</span>
-                    </button>
-                )))}
-            </div>
-        </div>
-    );
-};
-
-/**
- * 页头：标题与竖排页签（真按钮），或它的全名测量副本（span，不可聚焦、不进无障碍树）。`lead` 是页签那一列旁边的
- * 东西（折叠按钮；测量副本里是同尺寸的占位）：单独一行，排在页签列上面（窄缝与书脊一样）。
- * fb2 第二轮（用户看了截图）：「书库」改成页头最上面一行小字（横排），不再与页签列并排占一大块；折叠按钮紧挨在它
- * 下面单独一行（第三轮：不与第一个页签并排），再下面是页签列。空间不够时先隐藏这行标题（`hideTitle`：视觉隐藏，
- * 读屏仍读得到；折叠按钮那一行不隐藏，两份测量副本里都有它），再不够才把页签缩成一个字。
- */
+// Home navigation tabs and their sizing copy.
 const HomeSeamHead: React.FC<{
-    title: string;
-    hideTitle: boolean;
     tabs: readonly BravaisSeamTab[];
     shorts: readonly string[] | null;
-    lead: React.ReactNode;
     onSelectTab?: (key: string) => void;
     measure?: boolean;
-}> = ({ title, hideTitle, tabs, shorts, lead, onSelectTab, measure = false }) => {
+}> = ({ tabs, shorts, onSelectTab, measure = false }) => {
     return (
         <div className="bravais-seam-home-head">
-            <div className={`bravais-seam-home-title${hideTitle ? ' is-hidden' : ''}`} data-bravais-home-title={measure ? undefined : hideTitle ? 'hidden' : 'shown'}>
-                {title}
-            </div>
             <div className="bravais-seam-home-side">
-                {lead}
                 {tabs.length > 0 && (measure ? (
                     <div className="bravais-seam-tabs">
                         {tabs.map(tab => <span key={tab.key} className="bravais-seam-home-tab">{tab.label}</span>)}
                     </div>
                 ) : (
-                    <div className={`bravais-seam-tabs${shorts ? ' is-short' : ''}`} role="tablist" aria-label={title} aria-orientation="vertical">
+                    <div className={`bravais-seam-tabs${shorts ? ' is-short' : ''}`} role="tablist" aria-orientation="vertical">
                         {tabs.map((tab, index) => (
                             <button
                                 key={tab.key}
@@ -264,13 +211,12 @@ const BravaisSeamHome: React.FC<{
     setLevel: (level: BravaisSeamLevel) => void;
     /** stage 的直达入口打开（墙上找得到那张卡就以它为起点磁贴）。 */
     openShortcut?: (shortcut: BravaisHomeShortcut) => void;
-}> = ({ layer, compact, setLevel, openShortcut }) => {
+}> = ({ layer, compact, setLevel }) => {
     const { t } = useTranslation();
     const { seam } = layer;
     const home = seam.home;
     const tabs = seam.tabs ?? [];
     const sections = home?.sections && home.sections.length > 0 ? home.sections : null;
-    const shortcuts = home?.shortcuts && home.shortcuts.length > 0 ? home.shortcuts : null;
     const navRef = useRef<HTMLDivElement>(null);
     const headRef = useRef<HTMLDivElement>(null);
     const middleRef = useRef<HTMLDivElement>(null);
@@ -287,7 +233,7 @@ const BravaisSeamHome: React.FC<{
     const { level, overflowing } = fit;
     const short = level === 'short';
     // 直达入口放得下就在中段，否则挪进「⋯」菜单（先于二级切换让位）。
-    const shortcutsInColumn = shortcuts !== null && fit.shortcuts;
+
     const labelsKey = tabs.map(tab => tab.label).join('\u0000');
     const shortLabels = useMemo(() => abbreviateSeamTabLabels(labelsKey.split('\u0000')), [labelsKey]);
     // 元数据行：平时是来源（在线平台名 / 本地 / Navidrome），本地导入 / 重扫时换成扫描进度。
@@ -298,22 +244,16 @@ const BravaisSeamHome: React.FC<{
     const filterEditing = useBravaisUiStore(state => state.filterEditing);
     const meta = home?.scan ? <motion.div key="scan" className="bravais-seam-scan" data-bravais-scan {...reveal}>{home.scan}</motion.div> : null;
     // 缩减级别变了（标题隐藏、页签缩成一个字、入口挪进 / 挪出菜单）：页头与切换位淡入新的样子，不硬切。
-    useBravaisSeamFade(`${level}|${shortcutsInColumn}`, headRef, slotRef, jumpsRef);
+    useBravaisSeamFade(level, headRef, slotRef, jumpsRef);
     const expand = () => setLevel('full');
-    const foldButton = (
-        <button type="button" className="bravais-seam-icon" data-bravais-seam-action="hide" onClick={() => setLevel('hidden')}
-            aria-label={t('libraryBravais.seamFold')} title={t('libraryBravais.seamFold')}>
-            <FoldHorizontal aria-hidden />
-        </button>
-    );
     return (
         <div className={`bravais-seam-home${compact ? ' is-compact' : ''}${short ? ' has-short-tabs' : ''}`} data-bravais-home-seam
-            data-bravais-home-fit={level} data-bravais-home-shortcuts={shortcuts ? (shortcutsInColumn ? 'column' : 'menu') : undefined}>
+            data-bravais-home-fit={level}>
             <div ref={navRef} className={`bravais-seam-home-nav${overflowing ? ' is-overflowing' : ''}`}>
                 <div className="bravais-seam-home-nav-content">
                     <div ref={headRef}>
-                        <HomeSeamHead title={seam.title} hideTitle={level !== 'titled'} tabs={tabs} shorts={short ? shortLabels : null}
-                            lead={foldButton} onSelectTab={seam.onSelectTab} />
+                        <HomeSeamHead tabs={tabs} shorts={short ? shortLabels : null}
+                            onSelectTab={seam.onSelectTab} />
                     </div>
                     {/* fb3：中段在页头与工具格之间的剩余空间里竖直居中。 */}
                     <div ref={middleRef} className="bravais-seam-home-middle">
@@ -340,9 +280,6 @@ const BravaisSeamHome: React.FC<{
                         </div>
                         {/* fb11：直达入口贴在中段底部（上面的内容在剩下的空间里居中）。 */}
                         <div ref={jumpsRef} className="bravais-seam-home-jumps" data-bravais-home-jumps>
-                            {shortcuts && shortcutsInColumn && (
-                                <HomeSeamShortcuts shortcuts={shortcuts} label={home?.shortcutsLabel} rule={Boolean(sections)} onOpen={openShortcut} />
-                            )}
                         </div>
                     </div>
                 </div>
@@ -350,12 +287,10 @@ const BravaisSeamHome: React.FC<{
             {/* 全名页头的测量副本：与页头同宽、绝对定位不占位（useBravaisSeamTabsFit 量它）。
                 fb2 第二轮：两份——带标题的全名页头、不带标题的全名页头。fb3：再加一份全名二级切换（容器常在）。 */}
             <div ref={titledHeadRef} className="bravais-seam-home-measure" aria-hidden>
-                <HomeSeamHead title={seam.title} hideTitle={false} tabs={tabs} shorts={null} measure
-                    lead={<span className="bravais-seam-icon" />} />
+                <HomeSeamHead tabs={tabs} shorts={null} measure />
             </div>
             <div ref={bareHeadRef} className="bravais-seam-home-measure" aria-hidden>
-                <HomeSeamHead title={seam.title} hideTitle tabs={tabs} shorts={null} measure
-                    lead={<span className="bravais-seam-icon" />} />
+                <HomeSeamHead tabs={tabs} shorts={null} measure />
             </div>
             {/* 全名二级切换的测量副本；直达入口一列的测量副本（fb11：入口贴在中段底部，单独量）。 */}
             <div ref={fullSlotRef} className="bravais-seam-home-measure" aria-hidden>
@@ -366,7 +301,6 @@ const BravaisSeamHome: React.FC<{
                 )}
             </div>
             <div ref={jumpsMeasureRef} className="bravais-seam-home-measure" aria-hidden>
-                {shortcuts && <HomeSeamShortcuts shortcuts={shortcuts} rule={Boolean(sections)} measure />}
             </div>
             <AnimatePresence initial={false}>
                 {seam.filter && !compact && (filterEditing || seam.filter.query) && (
@@ -385,7 +319,7 @@ const BravaisSeamHome: React.FC<{
             {home?.account && <BravaisSeamAccountSlot account={home.account} compact={compact} onExpand={expand} />}
             {home && (
                 <BravaisSeamHomeTools home={home} compact={compact} onExpand={expand}
-                    menuShortcuts={shortcuts && !shortcutsInColumn ? shortcuts : null} onOpenShortcut={openShortcut} />
+                    />
             )}
             {compact && (
                 <button type="button" className="bravais-seam-icon" data-bravais-seam-action="expand" onClick={expand}

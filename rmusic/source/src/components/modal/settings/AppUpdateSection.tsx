@@ -50,13 +50,25 @@ export default function AppUpdateSection({ cardClass }: { cardClass: string }) {
         const onUpdateFound = () => { void inspect(); };
         void (async () => {
             try {
-                registration = 'serviceWorker' in navigator
-                    ? await navigator.serviceWorker.getRegistration(import.meta.env.BASE_URL) : undefined;
+                if (!window.isSecureContext || !('serviceWorker' in navigator) || import.meta.env.DEV) {
+                    if (!cancelled) setStatus('unavailable');
+                    return;
+                }
+                const scope = new URL(import.meta.env.BASE_URL, window.location.origin);
+                registration = await navigator.serviceWorker.getRegistration(scope.href);
                 if (cancelled) return;
-                if (!registration) { setStatus('unavailable'); return; }
+                // The load-event registration may not have run yet, or site data was cleared.
+                // Register our own scope instead of treating a missing registration as unsupported.
+                if (!registration || registration.scope !== scope.href) {
+                    registration = await navigator.serviceWorker.register(new URL('sw.js', scope).href, {
+                        scope: scope.href,
+                        updateViaCache: 'none',
+                    });
+                }
+                if (cancelled) return;
                 registration.addEventListener('updatefound', onUpdateFound);
                 // A previously downloaded update remains installable even while offline.
-                if (!registration.waiting) await registration.update();
+                if (!registration.waiting && !registration.installing) await registration.update();
                 await inspect();
             } catch {
                 if (!cancelled) setStatus('failed');

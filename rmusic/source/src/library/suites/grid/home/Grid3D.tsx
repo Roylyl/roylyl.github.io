@@ -581,7 +581,7 @@ export const Grid3D: React.FC<Grid3DProps> = (props) => {
                             overview={homeResources.navidromeOverview}
                             directoryKey={directoryKey}
                             declaredHomeActions={declaredActions}
-                            onOpenSettings={() => onOpenSettings?.('help')}
+                            onOpenSettings={() => onOpenSettings?.('options')}
                             onOpenGridView={onOpenGridView}
                         />
                     </div>

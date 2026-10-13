@@ -1,1 +1,0 @@
-import{t as e}from"./react-oUpq6a5g.js";var t=e(e=>({message:null,setMessage:t=>e(e=>({message:typeof t==`function`?t(e.message):t}))})),n=e=>{t.getState().setMessage(e)},r=()=>t(e=>e.message);export{r as n,n as t};

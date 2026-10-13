@@ -1,15 +1,12 @@
 import AppUpdateSection from './AppUpdateSection';
 import React from 'react';
-import { AudioWaveform, Command, Database, Disc3, Download, FolderOpen, HardDrive, Layers, Loader2, Pencil, PlayCircle, Trash2 } from 'lucide-react';
+import { AudioWaveform, Command, Database, Disc3, FolderOpen, HardDrive, Layers, Loader2, Pencil, PlayCircle, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { Theme } from '../../../types';
 
 import { CustomSelect } from '../../shared/CustomSelect';
 import { SettingsAnchor } from './navigation/SettingsAnchorContext';
 import SettingsSectionHeading from './navigation/SettingsSectionHeading';
-import { openCommandPaletteCommand } from '../../../stores/useAppViewStore';
-import { closeSettings } from '../../../stores/useSettingsModalStore';
-import { LYRIC_EXPORT_COMMAND_ID } from '../../command-palette/commands/lyricExportCommands';
 
 // src/components/modal/settings/StorageSettingsSection.tsx
 // Shared storage and media cache settings used by the main options page and storage subview.
@@ -114,21 +111,6 @@ const StorageSettingsSection: React.FC<StorageSettingsSectionProps> = ({
                                 </div>
                             </div>
                             <div className="flex items-center gap-1">
-                                {item.id === 'lyrics' && (
-                                    <button
-                                        type="button"
-                                        data-ponder-lyric-export-settings-entry
-                                        onClick={() => {
-                                            openCommandPaletteCommand(LYRIC_EXPORT_COMMAND_ID);
-                                            closeSettings();
-                                        }}
-                                        className="p-2 hover:bg-white/10 rounded-lg opacity-60 hover:opacity-100 transition-all"
-                                        title={t('lyricExport.settingsEntry')}
-                                        aria-label={t('lyricExport.settingsEntry')}
-                                    >
-                                        <Download size={16} />
-                                    </button>
-                                )}
                                 <button
                                     onClick={() => onClear(item.id)}
                                     disabled={isCleaning === item.id}

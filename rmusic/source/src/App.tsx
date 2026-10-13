@@ -1,7 +1,7 @@
 import { CurrentQueuePanel } from './components/shared/CurrentQueuePanel';
 import { isNativeMediaPlaybackPreferred } from './services/nativeMediaPlayback';
 import { useState, useRef, useEffect, useCallback, useMemo, lazy, Suspense } from 'react';
-import { AnimatePresence, motion, useMotionValueEvent } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 import VisualizerRenderer from './components/visualizer/VisualizerRenderer';
@@ -49,9 +49,6 @@ import { createOnlineRecoveryController } from './components/app/playback/create
 import { handleOnlineMediaFailure } from './components/app/playback/handleOnlineMediaFailure';
 import { persistPlaybackCache } from './components/app/playback/persistPlaybackCache';
 import { useAppOverlaysModel } from './components/app/overlays/useAppOverlaysModel';
-import { resolveNextUpTrack } from './components/app/overlays/now-playing-toast/resolveNextUpTrack';
-import { shouldShowNowPlayingToast } from './components/app/overlays/now-playing-toast/nowPlayingToastVisibility';
-import { isWallLibrarySuite, useActiveLibrarySuiteId } from './library/app/librarySuiteChoice';
 import {
     createSearchAlbumCollection,
     createSearchArtistCollection,
@@ -65,7 +62,6 @@ import type { MediaId, OnlineProviderId } from './types/onlineMusic';
 import { resolveSongCatalogRef } from './services/onlineMusic/catalogRefs';
 import { omni } from './services/onlineMusic/omni';
 import { consumeProgrammaticPause, playbackFade } from './services/playbackFade';
-import { getSongArtistLabel, getSongCoverUrl } from './services/onlineMusic/songMetadata';
 import { useAppNavigation } from './hooks/useAppNavigation';
 import { useNeteaseLibrary } from './hooks/useNeteaseLibrary';
 import { useKugouLibrary } from './hooks/useKugouLibrary';
@@ -111,7 +107,7 @@ import { useOnlineSongMetadataHydration } from './hooks/useOnlineSongMetadataHyd
 import { resolveCommandPaletteSearchSource, useSearchNavigationStore } from './stores/useSearchNavigationStore';
 import { useOnlineProviderAccountStore } from './stores/useOnlineProviderAccountStore';
 import { useShallow } from 'zustand/react/shallow';
-import { clampMediaVolume, toSafeRemoteUrl } from './utils/appPlaybackHelpers';
+import { clampMediaVolume } from './utils/appPlaybackHelpers';
 import { getPlaybackSongKey, isLocalPlaybackSong, isNavidromePlaybackSong, isStagePlaybackSong } from './utils/appPlaybackGuards';
 import { readLyricOffset, writeLyricOffset } from './utils/lyrics/lyricOffsetMemory';
 import { FALLBACK_AI_DUAL_THEME } from './services/themeSanitizer';
@@ -165,8 +161,6 @@ const DEV_DEBUG_SHORTCUT_LABEL = 'Alt+Shift+D';
 const ONLINE_AUDIO_URL_TTL_MS = 1200 * 1000;
 const ONLINE_AUDIO_URL_REFRESH_BUFFER_MS = 60 * 1000;
 const LOCAL_TAIL_DECODE_ERROR_TOLERANCE_SEC = 3;
-/** How many seconds before a track ends the now playing card previews the queue's next track. */
-const NEXT_UP_LEAD_SEC = 5;
 
 export default function App() {
     countRender('App');
@@ -232,14 +226,12 @@ export default function App() {
     const {
   isPanelOpen,
   setIsPanelOpen,
-  setPanelTab,
   isHomeFullyHidden,
   setIsHomeFullyHidden
 } = useAppViewStore(useShallow(state => ({
   isPanelOpen: state.isPanelOpen,
   setIsPanelOpen: state.setIsPanelOpen,
   panelTab: state.panelTab,
-  setPanelTab: state.setPanelTab,
   isHomeFullyHidden: state.isHomeFullyHidden,
   setIsHomeFullyHidden: state.setIsHomeFullyHidden
 })));
@@ -411,8 +403,6 @@ export default function App() {
         wallpaperMode,
     } = useDesktopSettingsStore(useShallow(selectDesktopSettingsSnapshot));
     const {
-        stageTrackPillMode,
-        stageTrackPillOnHome,
     } = useStageSettingsStore(useShallow(selectStageSettingsSnapshot));
     const {
         sleepTimerEnabled,
@@ -1243,95 +1233,6 @@ export default function App() {
         // the user tunes in Lab settings, and re-running this effect on it would fight the panel value.
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [displaySong?.id, lyricCurrentTime]);
-
-    /**
-     * The now playing card is allowed on screen right now.
-     *
-     * One definition for two readers - the overlay model, which mounts the card, and the track-end
-     * countdown below, which is only worth running while something can show its result. The lyrics
-     * player and Lattice pages always allow it; the home page is opt-in, and that opt-in is the
-     * whole rule: how the app arrived at the home page does not enter into it, so a cold start that
-     * lands there and a walk back from another page behave the same.
-     */
-    const activeLibrarySuiteId = useActiveLibrarySuiteId();
-    const stageTrackPillOnScreen = shouldShowNowPlayingToast({
-        mode: stageTrackPillMode,
-        view: currentView,
-        showOnHome: stageTrackPillOnHome,
-        // bravais 的墙与 Lattice 同类：卡片在墙上常在，不看「在首页显示」（2026-10-10）。
-        homeIsWall: isWallLibrarySuite(activeLibrarySuiteId),
-    });
-
-    /**
-     * Open the right-hand panel on its song card - what clicking the now playing card does once you
-     * are already on the lyrics page. Same two calls the command palette's "Panel: cover" makes, so
-     * the card and the command land in the same place.
-     */
-    const openSongCardPanel = useCallback(() => {
-        setPanelTab('cover');
-        setIsPanelOpen(true);
-    }, []);
-
-    /**
-     * The queue track a plain track-end would advance to, or null when nothing resolvable.
-     * Mirrors handleNextTrack's index rules so the preview is always the track that will actually play.
-     */
-    const nextUpTrack = useMemo(() => resolveNextUpTrack({
-        playQueue,
-        song: currentSong,
-        loopMode: effectiveLoopMode,
-        isFmMode,
-        isStageActive: isNowPlayingStageActive,
-        fallbackToQueueHead: true,
-    }), [playQueue, currentSong, effectiveLoopMode, isFmMode, isNowPlayingStageActive]);
-
-    /**
-     * The track a running blend is bringing in: the queue successor of the DISPLAYED song.
-     * The displayed picture is frozen on the outgoing track for the whole blend, while currentSong
-     * advances asynchronously at the arm — reading the successor of the displayed song is correct
-     * from the first frame and stays correct until settle. No queue-head fallback here: mid-blend a
-     * song missing from the queue means the queue moved under the blend, and guessing would announce
-     * a track that is not arriving.
-     */
-    const blendNextUpTrack = useMemo(() => (isShowingTail ? resolveNextUpTrack({
-        playQueue,
-        song: displaySong,
-        loopMode: effectiveLoopMode,
-        isFmMode,
-        isStageActive: isNowPlayingStageActive,
-    }) : null), [isShowingTail, displaySong, playQueue, effectiveLoopMode, isFmMode, isNowPlayingStageActive]);
-
-    /** True while the card previews the next track (plain track-end countdown, not the blend). */
-    const [countdownActive, setCountdownActive] = useState(false);
-    useMotionValueEvent(currentTime, 'change', (time) => {
-        const shouldPreview = stageTrackPillOnScreen
-            && nextUpTrack !== null
-            && Number.isFinite(displayDuration)
-            && displayDuration > 0
-            && displayDuration - time > 0
-            && displayDuration - time <= NEXT_UP_LEAD_SEC;
-        setCountdownActive(prev => (prev === shouldPreview ? prev : shouldPreview));
-    });
-
-    /**
-     * The track the card shows while announcing a switch.
-     * During a blend the arriving track comes from the queue successor of the displayed
-     * (outgoing) song — never from currentSong, which lags the arm by a few async frames and
-     * briefly made the card announce the OUTGOING song as "next".
-     */
-    const stageNextUpTrack = isShowingTail ? blendNextUpTrack : nextUpTrack;
-    const stageNextUp = useMemo(() => {
-        if (stageTrackPillMode === 'never' || !stageNextUpTrack) return null;
-        return {
-            title: stageNextUpTrack.name || '',
-            artist: getSongArtistLabel(stageNextUpTrack) || null,
-            // Same sanitising every other cover in the app goes through (see createCoverUrlResolver):
-            // upgrades the http: covers netease/kugou still hand out - blocked as mixed content in the
-            // packaged window - and keeps only the first of a comma-joined multi-value.
-            coverUrl: toSafeRemoteUrl(getSongCoverUrl(stageNextUpTrack)) ?? null,
-        };
-    }, [stageTrackPillMode, stageNextUpTrack]);
-    const stageIsNextUp = stageNextUp !== null && (isShowingTail || countdownActive);
 
     // The duration normally arrives on `loadedmetadata`, which fires when an element is given a
     // source. A warmed deck breaks that: it is handed the next track seconds early, fires the event
@@ -2327,7 +2228,6 @@ export default function App() {
         stageLyricsClockRef,
         togglePlay,
         toggleLoop,
-        navigateToPlayer,
         navigateFromPlayerCapsule,
         shouldHidePlayerProgressBar,
         onSeekMainAudio: seekMainAudio,
@@ -2340,10 +2240,6 @@ export default function App() {
         isDisplaySongLiked: commandPaletteContext.playback.isSongLiked,
         invokeCommandById: commandPalette.invokeCommandById,
         canInvokeCommandById: commandPalette.canInvokeCommandById,
-        stageNextUp,
-        stageIsNextUp,
-        stageTrackPillOnScreen,
-        openSongCardPanel,
     });
     const settingsDialog = useSettingsDialogModel({
         themeController,

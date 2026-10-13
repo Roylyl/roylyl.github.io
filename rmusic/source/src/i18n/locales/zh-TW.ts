@@ -584,7 +584,6 @@ export default {
     "latticePosterTintPlaceholder": "使用下方控件調整疊層",
     "gridViewCardsPlaceholder": "使用下方控件調整網格卡片",
     "reduceMotionPlaceholder": "使用下方控件調整動態效果",
-    "lyricExportPlaceholder": "在下方選擇要導出的內容",
     "sleepTimerSetPreview": "啟動{{minutes}}分鐘睡眠定時",
     "sleepTimerOffPreview": "按回車取消睡眠定時",
     "sleepTimerUnknownOption": "未知選項 --{{option}}",
@@ -794,10 +793,7 @@ export default {
         "title": "立即同步",
         "description": "同步AI主題"
       },
-      "export-lyric-cache": {
-        "title": "導出歌詞緩存",
-        "description": "把本機所有歌詞打包成 .fia和增強型LRC的zip"
-      },
+
       "export-current-lyrics-fia": {
         "title": "導出當前歌詞為 .fia",
         "description": "以R music無損格式保存這首歌的歌詞，含你保存的分詞"
@@ -1564,10 +1560,6 @@ export default {
     "noTrack": "無音軌",
     "previousTrack": "上一首",
     "nextTrack": "下一首",
-    "stageTrackPillNext": "接下來播放",
-    "stageTrackPillNow": "正在播放",
-    "stageTrackPillOpenPlayer": "打開播放頁",
-    "stageTrackPillOpenSongCard": "展開歌曲卡片",
     "loopingOn": "循環開啟",
     "loopOff": "循環關閉",
     "toggleBackground": "切換背景",
@@ -2292,6 +2284,8 @@ export default {
     "lyricMatchPriorityDesc": "在多個歌詞源都存在高置信度匹配時，優先選擇該歌詞源的結果。"
   },
   "options": {
+    "about": "關於",
+    "aboutDesc": "應用資訊、原始碼與授權條款",
     "refresh": "刷新",
     "cacheDetails": "緩存詳情",
     "settingsGroupAppearance": "外觀",
@@ -2670,14 +2664,6 @@ export default {
     "autoHidePlayerChromeDesc": "開啟後，自動隱藏播放頁的進度條和右側按鈕。",
     "autoHideCursorWithPlayerChrome": "同時隱藏鼠標指針",
     "autoHideCursorWithPlayerChromeDesc": "控制欄收起後鼠標指針一起消失，移動鼠標即可喚回。關閉後只隱藏控制欄，保留指針。",
-    "stageTrackPill": "歌曲信息卡片",
-    "stageTrackPillDesc": "播放器和播放隊列左下角的正在播放卡片：顯示一段時間後自動隱藏，或保持常駐/隱藏。",
-    "stageTrackPillMode_auto": "限時顯示",
-    "stageTrackPillMode_always": "常駐顯示",
-    "stageTrackPillMode_never": "不顯示",
-    "stageTrackPillOnHome": "在首頁顯示",
-    "stageTrackPillOnHomeDesc": "關閉時仍在播放器和播放隊列顯示；開啟後也會在首頁顯示。資料庫界面是Bravais時，牆上始終顯示。",
-    "stageTrackPillTimeout": "顯示時長",
     "disableVisualizerVignette": "禁用暗角",
     "disableVisualizerVignetteDesc": "關閉幾何背景自帶的邊緣暗角，建議配合透明背景使用。",
     "latticeSettings": "拼貼牆外觀",

@@ -14,7 +14,7 @@ import type { SettingsAnchorId } from '../components/modal/settings/navigation/s
 
 export type SettingsModalInitialTab = 'help' | 'options';
 
-export type SettingsSubviewId = 'appearance' | 'general' | 'playback' | 'integration' | 'storage' | 'desktop' | 'mods' | 'lab' | 'visualizer' | 'themePark' | 'lyricFilter' | 'globalLyricOffset';
+export type SettingsSubviewId = 'about' | 'appearance' | 'general' | 'playback' | 'integration' | 'storage' | 'desktop' | 'mods' | 'lab' | 'visualizer' | 'themePark' | 'lyricFilter' | 'globalLyricOffset';
 
 /** 歌词动画调参台的四页。列成数组是为了让「思索」的设置直达在单测里能核对 section 真实存在。 */
 export const VISUALIZER_SETTINGS_SECTIONS = ['common', 'background', 'visualizer', 'subtitle'] as const;
@@ -63,7 +63,7 @@ export const useSettingsModalStore = create<SettingsModalUiState>((set, get) => 
     isSubSettingsViewOpen: false,
     settingsModalState: {
         isOpen: false,
-        initialTab: 'help',
+        initialTab: 'options',
         initialSubview: null,
         initialVisualizerSection: null,
         initialAnchor: null,
@@ -78,7 +78,7 @@ export const useSettingsModalStore = create<SettingsModalUiState>((set, get) => 
     },
     setIsUserGuideModalOpen: (isOpen) => set({ isUserGuideModalOpen: isOpen }),
     setIsSubSettingsViewOpen: (open) => set({ isSubSettingsViewOpen: open }),
-    openSettings: (initialTab = 'help', initialSubview = null, initialVisualizerSection = null, initialAnchorId = null) => set({
+    openSettings: (initialTab = 'options', initialSubview = null, initialVisualizerSection = null, initialAnchorId = null) => set({
         settingsModalState: {
             isOpen: true,
             initialTab,

@@ -153,7 +153,7 @@ const hasElectronBridge = () => typeof window !== 'undefined' && Boolean((window
 
 const SettingsModal: React.FC<SettingsModalProps> = ({
   onClose,
-  initialTab = 'help',
+  initialTab = 'options',
   initialSubview = null,
   initialVisualizerSection = null,
   initialAnchor = null,
@@ -226,12 +226,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         handleToggleOpenPlayerOnLaunch: onToggleOpenPlayerOnLaunch,
     } = useDesktopSettingsStore(useShallow(selectDesktopSettingsSnapshot));
     const {
-        stageTrackPillMode,
-        stageTrackPillTimeoutSec,
-        stageTrackPillOnHome,
-        handleSetStageTrackPillMode: onChangeStageTrackPillMode,
-        handleSetStageTrackPillTimeoutSec: onChangeStageTrackPillTimeoutSec,
-        handleToggleStageTrackPillOnHome: onToggleStageTrackPillOnHome,
     } = useStageSettingsStore(useShallow(selectStageSettingsSnapshot));
     const {
   useCoverColorBg,
@@ -384,13 +378,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         isLoadingMonetPortraitImage,
     } = useVisualizerAssetStore(useShallow(selectVisualizerAssetSnapshot));
     const setIsSubSettingsViewOpen = useSettingsModalStore(state => state.setIsSubSettingsViewOpen);
-    const [activeTab, setActiveTab] = useState<'help' | 'options'>(initialTab);
-    const [tabDirection, setTabDirection] = useState<'left' | 'right'>('right');
-    const handleTabChange = (tab: 'help' | 'options') => {
-        setTabDirection(tab === 'options' ? 'left' : 'right');
-        setActiveTab(tab);
-    };
-    // A bare open (no subview, no anchor) restores the last section the user entered; any named target wins.
+    // Settings opens on appearance; explicit section links select their destination.
     const [activeSettingsSection, setActiveSettingsSection] = useState<SettingsSectionId>(() => resolveInitialSettingsSection({
         initialSubview,
         hasInitialAnchor: initialAnchor !== null,
@@ -420,7 +408,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     const shouldCloseModalOnSubviewBack = initialSubview !== null;
 
     useEffect(() => {
-        setActiveTab(initialTab);
         setShowVisPlayground(initialSubview === 'visualizer');
         setShowThemePark(initialSubview === 'themePark');
         setShowGlobalLyricOffset(initialSubview === 'globalLyricOffset');
@@ -434,7 +421,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                 writeLastSettingsSection(targetSection, { isElectron: hasElectronBridge() });
             }
         } else {
-            setActiveSettingsSection(prev => prev || 'appearance');
+            setActiveSettingsSection(initialTab === 'help' ? 'about' : 'appearance');
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [initialSubview, initialTab]);
@@ -856,10 +843,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     };
 
     useEffect(() => {
-        if (activeTab === 'options') {
-            fetchCacheUsage();
-        }
-    }, [activeTab]);
+        fetchCacheUsage();
+    }, []);
 
     const handleClear = async (category: 'playlist' | 'lyrics' | 'cover' | 'media' | 'analysis') => {
         setIsCleaning(category);
@@ -932,21 +917,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         animate: { opacity: 1, y: 0, scale: 1 },
         exit: { opacity: 0, y: 16, scale: 0.985 },
     };
-    const tabVariants = {
-        enter: (direction: 'left' | 'right') => ({
-            x: direction === 'right' ? 60 : -60,
-            opacity: 0,
-        }),
-        center: {
-            x: 0,
-            opacity: 1,
-        },
-        exit: (direction: 'left' | 'right') => ({
-            x: direction === 'right' ? -60 : 60,
-            opacity: 0,
-        }),
-    };
-
     const handleOverlayMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
         if (event.target === event.currentTarget) {
             overlayMouseDownTargetsRef.current.add(event.currentTarget);
@@ -1099,7 +1069,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             exit={{ opacity: 0 }}
             transition={shellTransition}
             data-folia-keyboard-window="true"
-            data-ponder-page-scope={activeTab === 'help' ? 'help-page' : 'settings-page'}
+            data-ponder-page-scope="settings-page"
             className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-8 sm:px-5 sm:py-12"
             style={{ backgroundColor: overlayBackground }}
             onMouseDown={handleOverlayMouseDown}
@@ -1108,7 +1078,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             <motion.div
                 {...panelMotion}
                 transition={shellTransition}
-                className={`${glassBg} border ${borderColor} p-6 md:p-8 rounded-3xl ${activeTab === 'options' ? 'w-full md:max-w-4xl md:w-[900px] h-[90vh] md:h-[85vh]' : 'w-full md:max-w-lg'} relative shadow-2xl overflow-hidden flex flex-col max-h-[90vh] transition-all duration-300`}
+                className={`${glassBg} border ${borderColor} p-6 md:p-8 rounded-3xl w-full md:max-w-4xl md:w-[900px] h-[90vh] md:h-[85vh] relative shadow-2xl overflow-hidden flex flex-col max-h-[90vh] transition-all duration-300`}
                 onClick={(event) => event.stopPropagation()}
             >
                 {/* Decorative background blobs */}
@@ -1131,76 +1101,15 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                     <X size={20} />
                 </button>
 
-                {/* Header / Tabs */}
-                <div className="relative shrink-0 z-10 mb-6 select-none">
-                    <div className="flex items-center gap-6">
-                        <button
-                            onClick={() => handleTabChange('help')}
-                            className={`relative text-2xl font-bold transition-colors pb-2 ${activeTab === 'help' ? 'opacity-100' : 'opacity-40 hover:opacity-80'}`}
-                            style={{ color: 'var(--text-primary)' }}
-                        >
-                            {t('help.title') || "Help"}
-                            {activeTab === 'help' && (
-                                <motion.div
-                                    className="absolute bottom-0 left-0 right-0 h-[3px] rounded-full"
-                                    style={{ backgroundColor: theme?.accentColor || (isDaylight ? '#18181b' : '#f4f4f5') }}
-                                    initial={{ opacity: 0, scaleX: 0.65 }}
-                                    animate={{ opacity: 1, scaleX: 1 }}
-                                    transition={{ duration: 0.18, ease: 'easeOut' }}
-                                />
-                            )}
-                        </button>
-                        <button
-                            onClick={() => handleTabChange('options')}
-                            className={`relative text-2xl font-bold transition-colors pb-2 ${activeTab === 'options' ? 'opacity-100' : 'opacity-40 hover:opacity-80'}`}
-                            style={{ color: 'var(--text-primary)' }}
-                        >
-                            {t('ui.options') || "Options"}
-                            {activeTab === 'options' && (
-                                <motion.div
-                                    className="absolute bottom-0 left-0 right-0 h-[3px] rounded-full"
-                                    style={{ backgroundColor: theme?.accentColor || (isDaylight ? '#18181b' : '#f4f4f5') }}
-                                    initial={{ opacity: 0, scaleX: 0.65 }}
-                                    animate={{ opacity: 1, scaleX: 1 }}
-                                    transition={{ duration: 0.18, ease: 'easeOut' }}
-                                />
-                            )}
-                        </button>
-                    </div>
-                </div>
+                <h1 className="text-2xl font-bold mb-6 shrink-0" style={{ color: 'var(--text-primary)' }}>{t('ui.options')}</h1>
 
                 <div className="flex-1 min-h-0 flex flex-col overflow-hidden relative z-10">
                     <AnimatePresence mode="popLayout" initial={false}>
-                        {activeTab === 'help' ? (
-                            <motion.div key="help-tab" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                                className="space-y-5 select-text flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-2 pb-4">
-                                <div className="space-y-2">
-                                    <h2 className="text-3xl font-semibold tracking-tight">R music</h2>
-                                    <p className="text-sm leading-relaxed opacity-70">Roylyl的个人音乐播放器，曲库、专辑封面和标准化歌词来自Roylyl/Music。</p>
-                                </div>
-                                <p className="text-sm leading-relaxed opacity-60">支持专辑与歌手浏览、曲库搜索、播放队列、随机播放和动态歌词。音频通过浏览器原生播放器播放。</p>
-                                <div className="flex flex-wrap gap-3 text-sm">
-                                    <button type="button" className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
-                                        onClick={async () => {
-                                            const copied = await copyRmusicPlaybackDiagnostics();
-                                            setStatusMessage({ type: copied ? 'success' : 'error', text: copied ? '播放诊断已复制' : '复制失败，请重试' });
-                                        }}>复制播放诊断</button>
-                                    <a href="https://github.com/Roylyl/roylyl.github.io/tree/main/rmusic/source" target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors">R music源码</a>
-                                    <a href="https://github.com/Roylyl/Music" target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors">音乐仓库</a>
-                                </div>
-                                <div className="pt-5 border-t border-white/10 text-xs leading-relaxed opacity-55 space-y-2">
-                                    <p>本播放器使用<a href="https://github.com/chthollyphile/folia-major" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Folia的Web前端源码</a>，由Roylyl适配个人曲库。</p>
-                                    <p>Folia及本衍生前端遵循AGPL-3.0许可。<a href="https://github.com/Roylyl/roylyl.github.io/blob/main/rmusic/source/LICENSE" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">查看许可证</a></p>
-                                </div>
-                            </motion.div>
-                        ) : (
                             <motion.div
                                 key="options-tab"
-                                custom={tabDirection}
-                                variants={tabVariants}
-                                initial="enter"
-                                animate="center"
-                                exit="exit"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
                                 transition={shellTransition}
                                 className="flex flex-col md:flex-row gap-4 md:gap-6 h-full"
                             >
@@ -1231,6 +1140,26 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                                         utilityGhostButtonClass={utilityGhostButtonClass}
                                     />
                                     <div className="space-y-8">
+                                        {activeSettingsSection === 'about' && (<div className="space-y-5 select-text">
+                                <div className="space-y-2">
+                                    <h2 className="text-3xl font-semibold tracking-tight">R music</h2>
+                                    <p className="text-sm leading-relaxed opacity-70">Roylyl的个人音乐播放器，曲库、专辑封面和标准化歌词来自Roylyl/Music。</p>
+                                </div>
+                                <p className="text-sm leading-relaxed opacity-60">支持专辑与歌手浏览、曲库搜索、播放队列、随机播放和动态歌词。音频通过浏览器原生播放器播放。</p>
+                                <div className="flex flex-wrap gap-3 text-sm">
+                                    <button type="button" className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
+                                        onClick={async () => {
+                                            const copied = await copyRmusicPlaybackDiagnostics();
+                                            setStatusMessage({ type: copied ? 'success' : 'error', text: copied ? '播放诊断已复制' : '复制失败，请重试' });
+                                        }}>复制播放诊断</button>
+                                    <a href="https://github.com/Roylyl/roylyl.github.io/tree/main/rmusic/source" target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors">R music源码</a>
+                                    <a href="https://github.com/Roylyl/Music" target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors">音乐仓库</a>
+                                </div>
+                                <div className="pt-5 border-t border-white/10 text-xs leading-relaxed opacity-55 space-y-2">
+                                    <p>本播放器使用<a href="https://github.com/chthollyphile/folia-major" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Folia的Web前端源码</a>，由Roylyl适配个人曲库。</p>
+                                    <p>Folia及本衍生前端遵循AGPL-3.0许可。<a href="https://github.com/Roylyl/roylyl.github.io/blob/main/rmusic/source/LICENSE" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">查看许可证</a></p>
+                                </div>
+                                        </div>)}
                                         {activeSettingsSection === 'appearance' && (
                                             <AppearanceSettingsSubview
                                                 accentOutlineColor={accentOutlineColor}
@@ -1262,12 +1191,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                                                 toggleOffBackgroundClass={toggleOffBackgroundClass}
                                                 autoHidePlayerChrome={autoHidePlayerChrome}
                                                 autoHideCursorWithPlayerChrome={autoHideCursorWithPlayerChrome}
-                                                stageTrackPillMode={stageTrackPillMode}
-                                                stageTrackPillTimeoutSec={stageTrackPillTimeoutSec}
-                                                stageTrackPillOnHome={stageTrackPillOnHome}
-                                                onChangeStageTrackPillMode={onChangeStageTrackPillMode}
-                                                onChangeStageTrackPillTimeoutSec={onChangeStageTrackPillTimeoutSec}
-                                                onToggleStageTrackPillOnHome={onToggleStageTrackPillOnHome}
                                                 utilityGhostButtonClass={utilityGhostButtonClass}
                                                 aiTheme={aiTheme}
                                                 customTheme={customTheme}
@@ -1462,8 +1385,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                                 </div>
                                 </SettingsAnchorProvider>
                             </motion.div>
-
-                        )}
                     </AnimatePresence>
                 </div>
 

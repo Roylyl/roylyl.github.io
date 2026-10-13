@@ -1,9 +1,10 @@
 import type { LucideIcon } from "lucide-react";
-import { Database, Languages, PlayCircle, Sparkles } from "lucide-react";
+import { Info, Database, Languages, PlayCircle, Sparkles } from "lucide-react";
 // src/components/modal/settings/navigation/settingsNavModel.ts
 // Single source of truth for the options-tab sections: sidebar order, grouping, titles and descriptions.
 
 export type SettingsSectionId =
+    | 'about'
     | 'appearance'
     | 'general'
     | 'playback'
@@ -56,6 +57,7 @@ export const SETTINGS_NAV_GROUP_SPECS: GroupSpec[] = [{
         { id: 'general', icon: Languages, labelKey: 'options.generalSettings', descriptionKey: 'options.generalSettingsDesc' },
         { id: 'playback', icon: PlayCircle, labelKey: 'options.playbackSettings', descriptionKey: 'options.playbackSettingsPanelDesc' },
         { id: 'storage', icon: Database, labelKey: 'options.storageSettings', descriptionKey: 'options.storageSettingsPanelDesc' },
+        { id: 'about', icon: Info, labelKey: 'options.about', descriptionKey: 'options.aboutDesc' },
     ],
 }];
 

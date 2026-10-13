@@ -42,12 +42,6 @@ type AppearanceSettingsSubviewProps = {
     toggleOffBackgroundClass: string;
     autoHidePlayerChrome: boolean;
     autoHideCursorWithPlayerChrome: boolean;
-    stageTrackPillMode: 'auto' | 'always' | 'never';
-    stageTrackPillTimeoutSec: number;
-    stageTrackPillOnHome: boolean;
-    onChangeStageTrackPillMode: (mode: 'auto' | 'always' | 'never') => void;
-    onChangeStageTrackPillTimeoutSec: (sec: number) => void;
-    onToggleStageTrackPillOnHome: (enable: boolean) => void;
     utilityGhostButtonClass: string;
     aiTheme?: DualTheme | null;
     customTheme?: DualTheme | null;

@@ -11,7 +11,6 @@ export const SETTINGS_ANCHOR_DEFINITIONS = {
     // AppearanceSettingsSubview
     lyricsRenderer: { section: 'appearance', labelKey: 'options.lyricsRenderer' },
     themePresets: { section: 'appearance', labelKey: 'options.themePresets' },
-    stageTrackPill: { section: 'appearance', labelKey: 'options.stageTrackPill' },
     grid3dCardStyle: { section: 'appearance', labelKey: 'options.grid3dCardStyle' },
     gridViewCardSettings: { section: 'appearance', labelKey: 'options.gridViewCardSettings' },
 

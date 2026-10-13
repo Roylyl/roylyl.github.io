@@ -1,0 +1,1 @@
+export{ri as getNavidromeConfig,si as navidromeApi}from"./bootstrap-8nh-r26y.js";

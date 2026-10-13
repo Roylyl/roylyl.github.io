@@ -1,0 +1,1 @@
+var e=/[<>:"/\\|?*\u0000-\u001F]/g,t=/^(con|prn|aux|nul|com[1-9]|lpt[1-9])(\..*)?$/i,n=(n,r=`download`)=>{let i=n.replace(e,`_`).replace(/\s+/g,` `).trim().replace(/[. ]+$/,``);return i?t.test(i)?`_${i}`:i:r},r=(e=new Date)=>{let t=`${e.getMonth()+1}`.padStart(2,`0`),n=`${e.getDate()}`.padStart(2,`0`);return`${e.getFullYear()}-${t}-${n}`};export{n,r as t};

@@ -1,18 +1,15 @@
-import { FileJson, FileText, PackageOpen } from 'lucide-react';
+import { FileJson, FileText } from 'lucide-react';
 import { defineCommand } from '../commandFactories';
-import { lyricExportSurface } from '../surfaces/lyricExportSurface';
 import type { CommandPaletteCommand, CommandPaletteContext } from '../types';
 import type { LyricExportFormat } from '../../../services/lyricExport/types';
 import { hasExportableLyrics } from '../../../utils/lyrics/exportableLyrics';
 
 // src/components/command-palette/commands/lyricExportCommands.ts
-// Lyric export from the palette: the batch export surface, and the song on screen in either format.
+// Export the current song lyrics in either format.
 //
 // The export services are imported on demand: they reach the cache database and the provider
 // registry, which the node-environment registry tests must not have to load.
 
-/** Shared with the player panel's lyric file dialog and the storage settings button, which open this surface directly. */
-export const LYRIC_EXPORT_COMMAND_ID = 'export-lyric-cache';
 
 const hasLyricsOnScreen = (context?: CommandPaletteContext) => (
     context ? Boolean(context.shared.currentSong) && hasExportableLyrics(context.shared.lyrics) : true
@@ -46,20 +43,6 @@ const exportCurrent = async (format: LyricExportFormat, context: CommandPaletteC
 };
 
 export const lyricExportCommands: CommandPaletteCommand[] = [
-    defineCommand({
-        id: LYRIC_EXPORT_COMMAND_ID,
-        group: 'settings',
-        title: 'Export cached lyrics',
-        description: 'Save every lyric on this device as .fia and enhanced LRC in one zip',
-        // No bare `fia`: this command takes input, and `fia` would be a space-separated prefix of the
-        // `fia file` keyword below, so typing that would land here instead.
-        keywords: ['lyric export', 'export lyrics', 'batch export', 'lyrics backup', 'fia zip', '导出歌词', '批量导出歌词', '歌词备份'],
-        icon: PackageOpen,
-        requiresInput: true,
-        surface: lyricExportSurface,
-        placeholder: context => context.shared.t('commandPalette.lyricExportPlaceholder', 'Choose what to export below'),
-        execute: () => false,
-    }),
     defineCommand({
         id: 'export-current-lyrics-fia',
         group: 'settings',
