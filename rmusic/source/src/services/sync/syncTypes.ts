@@ -66,7 +66,6 @@ export type SyncedVisualSettings = {
     urlBackgroundList?: unknown[];
     urlBackgroundSelectedId?: string | null;
     homeLayoutStyle?: 'carousel' | 'grid';
-    grid3dCardStyle?: 'image' | 'card';
 };
 
 export type SyncedSettingsRecord = {

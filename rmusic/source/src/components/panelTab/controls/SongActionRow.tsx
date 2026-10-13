@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, Repeat, Repeat1, RepeatOff, Sparkle, Sparkles } from 'lucide-react';
+import { Heart, Repeat, Repeat1, RepeatOff, Shuffle, Sparkle, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { ThemeSourceModel } from '../../../hooks/themeControllerState';
 
@@ -7,7 +7,7 @@ import type { ThemeSourceModel } from '../../../hooks/themeControllerState';
 // 当前歌曲的三个动作：循环、喜欢、生成 AI 主题。面板里唯一一排大触控目标，保持原样。
 
 interface SongActionRowProps {
-    loopMode: 'off' | 'all' | 'one';
+    loopMode: 'off' | 'all' | 'one' | 'shuffle';
     /** Receives the click so the handler can stop it from reaching the panel container. */
     onToggleLoop: (event?: React.MouseEvent) => void;
     loopToggleDisabled: boolean;
@@ -39,7 +39,7 @@ const SongActionRow: React.FC<SongActionRowProps> = ({
     const { t } = useTranslation();
     const loopButtonBg = isDaylight ? 'bg-black/5 hover:bg-zinc-300/85' : 'bg-white/5 hover:bg-white/10';
     const buttonBg = isDaylight ? 'bg-black/5 hover:bg-black/10' : 'bg-white/5 hover:bg-white/10';
-    const loopTitle = loopMode === 'off' ? t('player.loopOff') : loopMode === 'one' ? t('player.loopOne') : t('player.loopAll');
+    const loopTitle = loopMode === 'shuffle' ? t('player.loopShuffle') : loopMode === 'one' ? t('player.loopOne') : t('player.loopAll');
     const generateThemeTitle = isGeneratingTheme ? t('ui.generatingTheme') : t('ui.generateAITheme');
 
     return (
@@ -53,7 +53,7 @@ const SongActionRow: React.FC<SongActionRowProps> = ({
                 aria-label={loopTitle}
                 className={`h-12 rounded-xl flex items-center justify-center transition-colors ${loopButtonBg} ${loopToggleDisabled ? 'opacity-35 cursor-not-allowed' : ''}`}
             >
-                {loopMode === 'off' ? <RepeatOff size={20} /> : loopMode === 'one' ? <Repeat1 size={20} /> : <Repeat size={20} />}
+                {loopMode === 'shuffle' ? <Shuffle size={20} /> : loopMode === 'one' ? <Repeat1 size={20} /> : <Repeat size={20} />}
             </button>
 
             <button

@@ -43,7 +43,6 @@ import PlaylistSelectionDialog from '../../../../components/shared/PlaylistSelec
 import TextInputDialog from '../../../../components/shared/TextInputDialog';
 import ConfirmDialog from '../../../../components/shared/ConfirmDialog';
 import { SidePanelList, TrackListItem } from '../../../../components/shared/SidePanelList';
-import { GridListSearchButton } from '../../../../components/shared/GridListSearchButton';
 import { LocalTrackSortDirectionButton, LocalTrackSortMenu } from '../../../../components/shared/LocalTrackSortMenu';
 import { CustomSelect } from '../../../../components/shared/CustomSelect';
 import { deriveProgressiveLoadingState } from '../shared/progressiveGrid';
@@ -1948,17 +1947,6 @@ export const GridView: React.FC<GridViewProps> = ({
                 isDaylight={isDaylight}
             />
 
-            {/* Bottom Right Floating Button */}
-            {mode === 'tracks' && displayTracks.length > 0 && (
-                <GridListSearchButton
-                    isDaylight={isDaylight}
-                    accentColor={theme.accentColor}
-                    listTitle={t('playlist.viewTracks')}
-                    searchTitle={t('home.gridSearchPlaceholder')}
-                    onOpenList={() => setShowSidePanel(true)}
-                />
-            )}
-
             {/* Tracks Cut-in Side Panel */}
             {mode === 'tracks' && (
                 <SidePanelList
@@ -1966,7 +1954,7 @@ export const GridView: React.FC<GridViewProps> = ({
                     onClose={() => setShowSidePanel(false)}
                     title={collectionName || title}
                     items={displayTracks}
-                    itemHeight={60}
+                    itemHeight={76}
                     isDaylight={isDaylight}
                     focusedIndex={focusedIndex}
                     hideTitle={supportsLocalTrackSorting}

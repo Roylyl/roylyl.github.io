@@ -71,7 +71,6 @@ export const buildSyncedVisualSettings = (state: SyncableSettingsState): SyncedV
     urlBackgroundList: state.urlBackgroundList,
     urlBackgroundSelectedId: state.urlBackgroundSelectedId,
     homeLayoutStyle: state.homeLayoutStyle,
-    grid3dCardStyle: state.grid3dCardStyle,
 });
 
 export const buildSyncedSettingsRecord = (
@@ -138,5 +137,4 @@ export const applySyncedVisualSettings = (
     if (settings.urlBackgroundList !== undefined) state.handleSetUrlBackgroundList(settings.urlBackgroundList as Parameters<SyncableSettingsState['handleSetUrlBackgroundList']>[0]);
     if (settings.urlBackgroundSelectedId !== undefined) state.handleSetUrlBackgroundSelectedId(settings.urlBackgroundSelectedId);
     if (settings.homeLayoutStyle !== undefined) state.handleSetHomeLayoutStyle(settings.homeLayoutStyle);
-    if (settings.grid3dCardStyle !== undefined) state.handleSetGrid3dCardStyle(settings.grid3dCardStyle);
 };

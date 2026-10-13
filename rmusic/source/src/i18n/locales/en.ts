@@ -3201,6 +3201,7 @@ export default {
     "unlike": "Unlike",
     "loopOff": "Loop off",
     "loopAll": "Loop all",
+    "loopShuffle": "Shuffle",
     "loopOne": "Loop one",
     "unknownArtist": "Unknown Artist",
     "unknownAlbum": "Unknown Album",
@@ -3702,6 +3703,7 @@ export default {
     "videoExport": "Video export",
     "loopOff": "Loop off",
     "loopAll": "Loop all",
+    "loopShuffle": "Shuffle",
     "loopOne": "Loop one",
   },
   "aiHelp": {

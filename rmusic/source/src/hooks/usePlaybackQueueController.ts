@@ -337,7 +337,7 @@ export function usePlaybackQueueController({
             }
         }
 
-        if (loopMode === 'all' && queue.length > 1) {
+        if ((loopMode === 'all' || loopMode === 'shuffle') && queue.length > 1) {
             for (let index = 0; index < currentIndex; index += 1) {
                 const candidate = queue[index];
                 if (isQueueSongPlayable(candidate)) {
@@ -1004,11 +1004,14 @@ export function usePlaybackQueueController({
 
         let nextIndex = -1;
 
-        if (currentIndex >= 0 && currentIndex < playQueue.length - 1) {
+        if (loopMode === 'shuffle' && playQueue.length > 0) {
+            const candidates = playQueue.map((_, index) => index).filter(index => index !== currentIndex);
+            nextIndex = candidates.length ? candidates[Math.floor(Math.random() * candidates.length)] : 0;
+        } else if (currentIndex >= 0 && currentIndex < playQueue.length - 1) {
             nextIndex = currentIndex + 1;
         } else if (currentIndex < 0 && playQueue.length > 0) {
             nextIndex = 0;
-        } else if (loopMode === 'all') {
+        } else if ((loopMode === 'all' || loopMode === 'shuffle')) {
             nextIndex = 0;
         }
 
@@ -1040,7 +1043,7 @@ export function usePlaybackQueueController({
 
         if (currentIndex > 0) {
             prevIndex = currentIndex - 1;
-        } else if (loopMode === 'all') {
+        } else if ((loopMode === 'all' || loopMode === 'shuffle')) {
             prevIndex = playQueue.length - 1;
         }
 
@@ -1072,7 +1075,7 @@ export function usePlaybackQueueController({
             : -1;
         const hasNextTrack = currentIndex >= 0 && (
             currentIndex < playQueue.length - 1 ||
-            (loopMode === 'all' && playQueue.length > 1)
+            ((loopMode === 'all' || loopMode === 'shuffle') && playQueue.length > 1)
         );
 
         if (failure) {
@@ -1137,11 +1140,11 @@ export function usePlaybackQueueController({
             playerState,
             positionMs: Math.max(0, Math.floor(audioCurrentTimeSec * 1000)),
             durationMs: fallbackDurationMs,
-            canGoPrevious: hasCurrentSong && (queueCurrentIndex > 0 || (loopMode === 'all' && hasQueueNeighbors)),
+            canGoPrevious: hasCurrentSong && (queueCurrentIndex > 0 || ((loopMode === 'all' || loopMode === 'shuffle') && hasQueueNeighbors)),
             canGoNext: hasCurrentSong && (
                 isFmMode
                 || queueCurrentIndex >= 0 && queueCurrentIndex < nextQueue.length - 1
-                || (loopMode === 'all' && hasQueueNeighbors)
+                || ((loopMode === 'all' || loopMode === 'shuffle') && hasQueueNeighbors)
             ),
             coverUrl: getProviderSongMetadata(nextCurrentSong).coverUrl || null,
         });

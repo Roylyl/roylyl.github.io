@@ -1,5 +1,5 @@
-import { Boxes, Command, Database, FlaskConical, Gauge, Languages, PlayCircle, Server, Sparkles, Terminal, type LucideIcon } from 'lucide-react';
-import { SETTINGS_ANCHOR_DEFINITIONS, type SettingsAnchorId } from './settingsAnchorModel';
+import type { LucideIcon } from "lucide-react";
+import { Database, Languages, PlayCircle, Sparkles } from "lucide-react";
 // src/components/modal/settings/navigation/settingsNavModel.ts
 // Single source of truth for the options-tab sections: sidebar order, grouping, titles and descriptions.
 
@@ -19,12 +19,6 @@ export interface SettingsNavItem {
     icon: LucideIcon;
     label: string;
     description: string;
-    anchors: SettingsNavAnchor[];
-}
-
-export interface SettingsNavAnchor {
-    id: SettingsAnchorId;
-    label: string;
 }
 
 export interface SettingsNavGroup {
@@ -54,78 +48,28 @@ interface GroupSpec {
  * Sidebar grouping. Section order matches the flat list this replaced, so the desktop grouping is
  * purely additive and the narrow chip strip keeps its existing sequence.
  */
-export const SETTINGS_NAV_GROUP_SPECS: GroupSpec[] = [
-    {
-        id: 'appearance',
-        labelKey: 'options.settingsGroupAppearance',
-        sections: [
-            { id: 'appearance', icon: Sparkles, labelKey: 'options.visualSettings', descriptionKey: 'options.visualSettingsPanelDesc' },
-            { id: 'general', icon: Languages, labelKey: 'options.generalSettings', descriptionKey: 'options.generalSettingsDesc' },
-        ],
-    },
-    {
-        // Named for what the group is about rather than for its first section: it now holds how the
-        // listener drives the app as well as how the app plays.
-        id: 'controls',
-        labelKey: 'options.settingsGroupControls',
-        sections: [
-            { id: 'playback', icon: PlayCircle, labelKey: 'options.playbackSettings', descriptionKey: 'options.playbackSettingsPanelDesc' },
-        ],
-    },
-    {
-        id: 'connections',
-        labelKey: 'options.settingsGroupConnections',
-        sections: [
-            { id: 'integration', icon: Server, labelKey: 'options.integrationSettings', descriptionKey: 'options.integrationSettingsDesc' },
-            { id: 'storage', icon: Database, labelKey: 'options.storageSettings', descriptionKey: 'options.storageSettingsPanelDesc' },
-        ],
-    },
-    {
-        id: 'system',
-        labelKey: 'options.settingsGroupSystem',
-        sections: [
-            { id: 'desktop', icon: Command, labelKey: 'options.desktopSettings', descriptionKey: 'options.desktopSettingsPanelDesc', electronOnly: true },
-            // The loader only exists in the desktop main process; on web there is nothing to switch on.
-            { id: 'mods', icon: Boxes, labelKey: 'options.modSettings', descriptionKey: 'options.modSettingsDesc', electronOnly: true },
-            { id: 'lab', icon: FlaskConical, labelKey: 'options.labSettings', descriptionKey: 'options.labSettingsDesc' },
-            { id: 'developer', icon: Terminal, labelKey: 'options.developerSettings', descriptionKey: 'options.developerSettingsDesc' },
-        ],
-    },
-];
+export const SETTINGS_NAV_GROUP_SPECS: GroupSpec[] = [{
+    id: 'settings',
+    labelKey: 'options.settings',
+    sections: [
+        { id: 'appearance', icon: Sparkles, labelKey: 'options.visualSettings', descriptionKey: 'options.visualSettingsPanelDesc' },
+        { id: 'general', icon: Languages, labelKey: 'options.generalSettings', descriptionKey: 'options.generalSettingsDesc' },
+        { id: 'playback', icon: PlayCircle, labelKey: 'options.playbackSettings', descriptionKey: 'options.playbackSettingsPanelDesc' },
+        { id: 'storage', icon: Database, labelKey: 'options.storageSettings', descriptionKey: 'options.storageSettingsPanelDesc' },
+    ],
+}];
 
-/**
- * Resolves the grouping into translated nav items, dropping desktop-only sections (and groups left empty) on web.
- * An anchor that marks itself `requiresLibrarySuiteChoice` is listed only when `hasLibrarySuiteChoice` is set,
- * because its section renders nothing while a single library suite is available. Likewise `requiresBravaisSuite`
- * is listed only while the active library suite is bravais (`isBravaisSuiteActive`).
- */
-export const buildSettingsNavGroups = (
-    t: Translate,
-    options: { isElectron: boolean; hasLibrarySuiteChoice?: boolean; isBravaisSuiteActive?: boolean },
-): SettingsNavGroup[] => (
-    SETTINGS_NAV_GROUP_SPECS
-        .map(group => ({
-            id: group.id,
-            label: t(group.labelKey),
-            items: group.sections
-                .filter(section => (!section.electronOnly || options.isElectron) && !['integration', 'lab', 'developer'].includes(section.id))
-                .map(section => ({
-                    id: section.id,
-                    icon: section.icon,
-                    label: t(section.labelKey),
-                    description: t(section.descriptionKey),
-                    anchors: (Object.entries(SETTINGS_ANCHOR_DEFINITIONS) as [SettingsAnchorId, typeof SETTINGS_ANCHOR_DEFINITIONS[SettingsAnchorId]][])
-                        .filter(([id, definition]) => (
-                            definition.section === section.id
-                            && !['homeTabsVisibility', 'stageTrackPill', 'r2Sync', 'scrobbleSettings'].includes(id)
-                            && (!('electronOnly' in definition) || !definition.electronOnly || options.isElectron)
-                            && (!('requiresLibrarySuiteChoice' in definition) || !definition.requiresLibrarySuiteChoice || Boolean(options.hasLibrarySuiteChoice))
-                            && (!('requiresBravaisSuite' in definition) || !definition.requiresBravaisSuite || Boolean(options.isBravaisSuiteActive))
-                        ))
-                        .map(([id, definition]) => ({ id, label: t(definition.labelKey) })),
-                })),
-        }))
-        .filter(group => group.items.length > 0)
+export const buildSettingsNavGroups = (t: Translate): SettingsNavGroup[] => (
+    SETTINGS_NAV_GROUP_SPECS.map(group => ({
+        id: group.id,
+        label: '',
+        items: group.sections.map(section => ({
+            id: section.id,
+            icon: section.icon,
+            label: t(section.labelKey),
+            description: t(section.descriptionKey),
+        })),
+    }))
 );
 
 export const flattenSettingsNavItems = (groups: SettingsNavGroup[]): SettingsNavItem[] => (

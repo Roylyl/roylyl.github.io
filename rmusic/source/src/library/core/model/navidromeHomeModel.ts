@@ -140,14 +140,8 @@ export const resolveNavidromeCollectionType = (
     return 'playlist';
 };
 
-/** Navidrome 页签右上角的刷新（读取中禁用）。 */
-export const resolveNavidromeHomeActions = (isLoading: boolean): LibraryHomeListAction[] => [{
-    id: 'refresh',
-    labelKey: 'options.audioOutputRefresh',
-    fallbackLabel: 'Refresh',
-    pending: isLoading,
-    disabled: isLoading,
-}];
+// Updates are available in settings instead of the home toolbar.
+export const resolveNavidromeHomeActions = (_isLoading: boolean): LibraryHomeListAction[] => [];
 
 export const EMPTY_NAVIDROME_HOME_DATA: LibraryNavidromeHomeData = Object.freeze({
     albums: [],

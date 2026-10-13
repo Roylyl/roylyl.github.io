@@ -1,6 +1,6 @@
 import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 import React, { useEffect, useMemo, useState, useRef } from 'react';
-import { ChevronLeft, Heart, Lock, LockOpen, Pause, Pin, PinOff, Play, Repeat, Repeat1, RepeatOff, SkipBack, SkipForward, Video, MirrorRectangular, X, Check, Sliders, Palette } from 'lucide-react';
+import { ChevronLeft, Heart, Lock, LockOpen, Pause, Pin, PinOff, Play, Repeat, Repeat1, RepeatOff, Shuffle, SkipBack, SkipForward, Video, MirrorRectangular, X, Check, Sliders, Palette } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PlayerState } from '../../types';
 import RemoteVideoExportPanel from './RemoteVideoExportPanel';
@@ -862,13 +862,13 @@ const RemoteControlApp: React.FC = () => {
                                                                     </button>
                                                                     <button
                                                                         type="button"
-                                                                        title={snapshot.loopMode === 'off' ? t('remote.loopOff') : snapshot.loopMode === 'one' ? t('remote.loopOne') : t('remote.loopAll')}
+                                                                        title={snapshot.loopMode === 'shuffle' ? t('player.loopShuffle') : snapshot.loopMode === 'one' ? t('remote.loopOne') : t('remote.loopAll')}
                                                                         aria-pressed={snapshot.loopMode !== 'off'}
                                                                         disabled={primaryDisabled}
                                                                         onClick={() => sendCommand({ type: 'cycle-loop-mode' })}
                                                                         className={`${secondaryButtonBase} ml-2 ${snapshot.loopMode !== 'off' ? secondaryActiveClass : secondaryIdleClass}`}
                                                                     >
-                                                                        {snapshot.loopMode === 'off' ? <RepeatOff size={15} strokeWidth={2} /> : snapshot.loopMode === 'one' ? <Repeat1 size={15} strokeWidth={2} /> : <Repeat size={15} strokeWidth={2} />}
+                                                                        {snapshot.loopMode === 'shuffle' ? <Shuffle size={15} strokeWidth={2} /> : snapshot.loopMode === 'one' ? <Repeat1 size={15} strokeWidth={2} /> : <Repeat size={15} strokeWidth={2} />}
                                                                     </button>
                                                                 </div>
 

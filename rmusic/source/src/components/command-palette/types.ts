@@ -260,10 +260,6 @@ export type CommandPaletteSettingsContext = {
     startPlayerBottomBarPositioning: () => void;
     canStartPlayerBottomBarPositioning: boolean;
     toggleAlwaysShowPlayerBackButton: () => void;
-    toggleGridViewFullBleedCover: () => void;
-    toggleGridViewSquareCards: () => void;
-    /** A getter: the full-bleed toggle it gates on flips with nothing re-rendering the context. */
-    canUseGridViewSquareCards: () => boolean;
     toggleLatticeVignette: () => void;
     /** Motion reduction for the queue collage, the surface issue #370 was filed about. */
     toggleReduceLatticeMotion: () => void;

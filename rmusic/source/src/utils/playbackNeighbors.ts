@@ -28,7 +28,7 @@ const blockedNeighbor = (): PlaybackNeighbor => ({ canGo: false, key: null, titl
 type ResolvePlaybackNeighborsParams = {
     playQueue: SongResult[];
     currentSong: SongResult | null;
-    loopMode: 'off' | 'all' | 'one';
+    loopMode: 'off' | 'all' | 'one' | 'shuffle';
     isFmMode: boolean;
     isStageActive: boolean;
     /**

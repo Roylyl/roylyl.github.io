@@ -104,7 +104,7 @@ export function SidePanelList<T>({
                     exit={{ opacity: 0, x: 60, scale: 0.95 }}
                     transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                     data-testid="side-panel-list"
-                    className="absolute right-6 top-24 w-80 max-w-[calc(100vw-3rem)] rounded-3xl z-[80] flex flex-col p-6 shadow-2xl border backdrop-blur-2xl pointer-events-auto theme-glass-panel"
+                    className="absolute right-6 top-24 w-[480px] max-w-[calc(100vw-3rem)] rounded-3xl z-[80] flex flex-col p-6 shadow-2xl border backdrop-blur-2xl pointer-events-auto theme-glass-panel"
                     style={{
                         bottom: bottomBarBottomPx,
                         boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2)',
@@ -125,6 +125,7 @@ export function SidePanelList<T>({
                             {headerActions}
                             <button
                                 onClick={onClose}
+                                aria-label={t('common.close', '关闭')}
                                 className="p-1.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
                             >
                                 <X size={18} />
@@ -203,7 +204,7 @@ export const TrackListItem = React.memo<{
                 </div>
                 <div className="flex flex-col min-w-0 flex-1 justify-center">
                     <div className="flex min-w-0 items-baseline gap-1.5 leading-tight">
-                        <span className="text-sm font-semibold truncate">{track.name}</span>
+                        <span className="text-sm font-semibold line-clamp-2 break-words">{track.name}</span>
                         {albumTrackLabel && (
                             <span className="shrink-0 text-[10px] font-medium tabular-nums opacity-45">
                                 {albumTrackLabel}
@@ -275,7 +276,7 @@ export const CollectionListItem = React.memo<{
                     )}
                 </div>
                 <div className="flex flex-col min-w-0 flex-1 justify-center">
-                    <div className="text-sm font-semibold truncate leading-tight">{item.name}</div>
+                    <div className="text-sm font-semibold line-clamp-2 break-words leading-tight">{item.name}</div>
                     {item.description && (
                         <div className="text-[10px] opacity-60 truncate leading-tight mt-0.5">{item.description}</div>
                     )}

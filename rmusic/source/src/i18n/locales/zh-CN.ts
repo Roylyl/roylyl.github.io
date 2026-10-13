@@ -3200,6 +3200,7 @@ export default {
     "unlike": "取消收藏",
     "loopOff": "关闭循环",
     "loopAll": "列表循环",
+    "loopShuffle": "随机播放",
     "loopOne": "单曲循环",
     "unknownArtist": "未知歌手",
     "unknownAlbum": "未知专辑",
@@ -3701,6 +3702,7 @@ export default {
     "videoExport": "视频导出",
     "loopOff": "关闭循环",
     "loopAll": "列表循环",
+    "loopShuffle": "随机播放",
     "loopOne": "单曲循环",
   },
   "aiHelp": {

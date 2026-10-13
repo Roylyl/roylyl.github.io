@@ -24,7 +24,7 @@ export default defineConfig({
     }},
     commandPinyinPlugin(), icuFoliaDataPlugin(), react(),
     VitePWA({
-      registerType: 'autoUpdate', includeAssets: ['icon.svg', 'favicon.ico', 'icons/*.png', 'share-cover.png'], scope: '/rmusic/',
+      registerType: 'prompt', includeAssets: ['icon.svg', 'favicon.ico', 'icons/*.png', 'share-cover.png'], scope: '/rmusic/',
       manifest: {
         id: '/rmusic/', name: 'R music', short_name: 'R music', description: '个人音乐库与沉浸式歌词播放器',
         start_url: '/rmusic/', scope: '/rmusic/', theme_color: '#0c171d', background_color: '#09090b', display: 'standalone',

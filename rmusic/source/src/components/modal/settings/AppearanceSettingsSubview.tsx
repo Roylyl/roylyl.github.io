@@ -1,7 +1,7 @@
 import { selectWebObsSource } from '../../../services/obs/webObsTarget';
 import RmusicThemeSelector from '../../shared/RmusicThemeSelector';
 import React from 'react';
-import { Monitor, Palette, Settings2, LayoutGrid, PanelsTopLeft, Images, ChevronRight, AlertTriangle, KeyRound, Music2 } from 'lucide-react';
+import { Monitor, Palette, Settings2, PanelsTopLeft, ChevronRight, AlertTriangle, KeyRound, Music2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/react/shallow';
 import {
@@ -12,12 +12,10 @@ import {
 } from '../../../types';
 import { ObsCopyCssButton } from '../../shared/ObsCopyCssButton';
 import { ObsCopyUrlButton } from '../../shared/ObsCopyUrlButton';
-import GridViewSettingsSection from './GridViewSettingsSection';
 import NowPlayingCardSettingsSection from './NowPlayingCardSettingsSection';
 import { isThemeGenerationSource, type ThemeGenerationSource } from '../../../services/themePreferences';
 import { SettingsAnchor } from './navigation/SettingsAnchorContext';
 import SettingsSectionHeading from './navigation/SettingsSectionHeading';
-import { settingsDividerClassFor } from './settingsCardClasses';
 import { usePlayerChromeSettingsStore } from '../../../stores/usePlayerChromeSettingsStore';
 import { useStageSettingsStore } from '../../../stores/useStageSettingsStore';
 import { useLibraryWallLookStore } from '../../../stores/useLibraryWallLookStore';
@@ -65,8 +63,6 @@ type AppearanceSettingsSubviewProps = {
     onChangeStageTrackPillTimeoutSec: (sec: number) => void;
     onToggleStageTrackPillOnHome: (enable: boolean) => void;
     utilityGhostButtonClass: string;
-    grid3dCardStyle: 'image' | 'card';
-    onChangeGrid3dCardStyle: (style: 'image' | 'card') => void;
     aiTheme?: DualTheme | null;
     customTheme?: DualTheme | null;
 };
@@ -114,8 +110,6 @@ const AppearanceSettingsSubview: React.FC<AppearanceSettingsSubviewProps> = ({
     stageTrackPillOnHome,
     onToggleStageTrackPillOnHome,
     utilityGhostButtonClass,
-    grid3dCardStyle,
-    onChangeGrid3dCardStyle,
     aiTheme,
     customTheme,
 }) => {
@@ -254,51 +248,9 @@ const AppearanceSettingsSubview: React.FC<AppearanceSettingsSubviewProps> = ({
             {/* Section 3: Now playing card */}
             
 
-            {/* Section 4: Grid card style */}
-            <SettingsAnchor anchorId="grid3dCardStyle" label={t('options.grid3dCardStyle')}>
-                <SettingsSectionHeading icon={LayoutGrid} label={t('options.grid3dCardStyle')} />
-                <div className={`p-4 rounded-xl border space-y-4 ${settingsCardClass}`}>
-                    <div className="space-y-1">
-                        <div className="text-sm font-medium flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-                            {t('options.grid3dCardStyle')}
-                        </div>
-                        <div className="text-xs opacity-50 max-w-[360px]" style={{ color: 'var(--text-secondary)' }}>
-                            {t('options.grid3dCardStyleDesc')}
-                        </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                        <button
-                            onClick={() => onChangeGrid3dCardStyle('image')}
-                            className="flex flex-col items-center gap-2 p-3 rounded-lg border transition-all"
-                            style={getAccentOptionStyle(grid3dCardStyle === 'image')}
-                        >
-                            <span className="text-xs font-semibold" style={{ color: 'var(--text-primary)' }}>
-                                {t('options.grid3dCardStyleImage')}
-                            </span>
-                        </button>
-                        <button
-                            onClick={() => onChangeGrid3dCardStyle('card')}
-                            className="flex flex-col items-center gap-2 p-3 rounded-lg border transition-all"
-                            style={getAccentOptionStyle(grid3dCardStyle === 'card')}
-                        >
-                            <span className="text-xs font-semibold" style={{ color: 'var(--text-primary)' }}>
-                                {t('options.grid3dCardStyleCard')}
-                            </span>
-                        </button>
-                    </div>
-                </div>
-            </SettingsAnchor>
 
-            {/* Section 6: Folia card grid, sitting with the poster wall it shares its look with. */}
-            <SettingsAnchor anchorId="gridViewCardSettings" label={t('options.gridViewCardSettings')}>
-                <SettingsSectionHeading icon={Images} label={t('options.gridViewCardSettings')} />
-                <GridViewSettingsSection
-                    settingsCardClass={settingsCardClass}
-                    settingsDividerClass={settingsDividerClassFor(isDaylight)}
-                    toggleOffBackgroundClass={toggleOffBackgroundClass}
-                    theme={theme}
-                />
-            </SettingsAnchor>
+
+
 
 
         </div>

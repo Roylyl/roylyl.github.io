@@ -20,20 +20,10 @@ const readStoredHomeLayoutStyle = (): 'carousel' | 'grid' => {
     return 'grid';
 };
 
-const readStoredGrid3dCardStyle = (): 'image' | 'card' => {
-    if (typeof window === 'undefined') {
-        return 'card';
-    }
-
-    const saved = localStorage.getItem('grid3d_card_style');
-    return saved === 'image' ? 'image' : 'card';
-};
-
 export type HomeLayoutSettingsState = {
     rememberHomeCardPosition: boolean;
     handleToggleRememberHomeCardPosition: (remember: boolean) => void;
     grid3dCardStyle: 'image' | 'card';
-    handleSetGrid3dCardStyle: (style: 'image' | 'card') => void;
     homeLayoutStyle: 'carousel' | 'grid';
     showHomeTabPlaylist: boolean;
     showHomeTabRadio: boolean;
@@ -54,15 +44,7 @@ export const useHomeLayoutSettingsStore = create<HomeLayoutSettingsState>((set, 
     handleToggleRememberHomeCardPosition: () => {
         set({ rememberHomeCardPosition: true });
     },
-    grid3dCardStyle: readStoredGrid3dCardStyle(),
-    handleSetGrid3dCardStyle: (style) => {
-        set({ grid3dCardStyle: style });
-        if (typeof window !== 'undefined') localStorage.setItem('grid3d_card_style', style);
-        setStatusMessage({
-            type: 'info',
-            text: i18n.t('notifications.' + (style === 'image' ? 'cardStyleImage' : 'cardStyleCard')),
-        });
-    },
+    grid3dCardStyle: 'image',
     homeLayoutStyle: readStoredHomeLayoutStyle(),
     showHomeTabPlaylist: getStoredBoolean('show_home_tab_playlist', true),
     showHomeTabRadio: getStoredBoolean('show_home_tab_radio', true),
@@ -104,7 +86,6 @@ export const selectHomeLayoutSettingsSnapshot = (state: HomeLayoutSettingsState)
     rememberHomeCardPosition: state.rememberHomeCardPosition,
     handleToggleRememberHomeCardPosition: state.handleToggleRememberHomeCardPosition,
     grid3dCardStyle: state.grid3dCardStyle,
-    handleSetGrid3dCardStyle: state.handleSetGrid3dCardStyle,
     homeLayoutStyle: state.homeLayoutStyle,
     showHomeTabPlaylist: state.showHomeTabPlaylist,
     showHomeTabRadio: state.showHomeTabRadio,

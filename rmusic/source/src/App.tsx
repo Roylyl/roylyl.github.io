@@ -1,3 +1,4 @@
+import { CurrentQueuePanel } from './components/shared/CurrentQueuePanel';
 import { isNativeMediaPlaybackPreferred } from './services/nativeMediaPlayback';
 import { useState, useRef, useEffect, useCallback, useMemo, lazy, Suspense } from 'react';
 import { AnimatePresence, motion, useMotionValueEvent } from 'framer-motion';
@@ -2850,6 +2851,8 @@ export default function App() {
             {currentView === 'player' && !showLyricMatchModal && (
                 <PlayerPanel model={playerPanelModel} />
             )}
+
+            <CurrentQueuePanel queue={playQueue} currentSong={currentSong} onPlay={playSong} isDaylight={isDaylight} />
 
             <ThemeQuickEditorHost onSaveAiTheme={saveEditedAiDualTheme} onSaveCustomTheme={saveCustomDualTheme} />
 

@@ -1,60 +1,81 @@
+import { useCallback } from 'react';
+import React from "react";
+import type { MotionValue } from "framer-motion";
+import { DualTheme } from "../../types";
+import { StageStatus } from "../../types";
+import { StageSource } from "../../types";
+import { Theme } from "../../types";
+import { ThemeMode } from "../../types";
+import type { NowPlayingConnectionStatus } from "../../types";
+import type { ReplayGainMode } from "../../types";
+import { NavidromeConfig } from "../../types/navidrome";
+import type { LyricFilterDraft } from "./LyricFilterSettingsModal";
+import type { PlayerCapConnectionStatus } from "../../types/playerCap";
+import type { LyricData } from "../../types";
+import type { SettingsModalState } from "../../stores/useSettingsModalStore";
+import type { SettingsSubviewId } from "../../stores/useSettingsModalStore";
+import type { VisualizerSettingsSection } from "../../stores/useSettingsModalStore";
+import type { ObsBrowserSourceStatus } from "../../types/obsBrowserSource";
+import type { LyricApiStatus } from "../../types/lyricApi";
+import type { SongResult } from "../../types";
+import type { ThemeCacheSongKey } from "../../services/themeCache";
+import type { ThemeGenerationSource } from "../../services/themePreferences";
 import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 import { copyRmusicPlaybackDiagnostics } from '../../services/rmusicPlaybackDiagnostics';
 import { setStatusMessage } from '../../stores/useStatusMessageStore';
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from "react";
 import { AnimatePresence, motion } from 'framer-motion';
-import type { MotionValue } from 'framer-motion';
-import { X, Keyboard, Loader2, Check, AlertCircle, ChevronLeft, Download, ExternalLink, CircleHelp } from 'lucide-react';
+
+import { X, Loader2, Check, AlertCircle, ChevronLeft, Download, ExternalLink } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { getCacheUsageByCategory, clearCacheByCategory, clearAllData } from '../../services/db';
-import { DualTheme, StageStatus, StageSource, Theme, ThemeMode, type CadenzaTuning, type CappellaEmojiImage, type CappellaTuning, type FumeTuning, type NowPlayingConnectionStatus, type PartitaTuning, type ReplayGainMode, type TiltTuning, type StoredCustomLyricsFont, type VisualizerMode } from '../../types';
-import { getNavidromeConfig, saveNavidromeConfig, clearNavidromeConfig, hashPassword, navidromeApi, isNavidromeEnabled, setNavidromeEnabled, getCachedNavidromeServerProfile, refreshNavidromeServerProfile, getNavidromeConfigOrigin, dismissNavidromeServerPreset } from '../../services/navidromeService';
+
+import { getNavidromeConfig, saveNavidromeConfig, clearNavidromeConfig, hashPassword, navidromeApi, setNavidromeEnabled, getCachedNavidromeServerProfile, refreshNavidromeServerProfile, getNavidromeConfigOrigin, dismissNavidromeServerPreset } from "../../services/navidromeService";
 import { fetchNavidromeServerPreset, markNavidromeConfigAsPresetIfMatching, restoreNavidromeServerPreset } from '../../services/navidromeServerPreset';
-import { NavidromeConfig, NavidromeServerProfile } from '../../types/navidrome';
+import { NavidromeServerProfile } from "../../types/navidrome";
 import VisPlayground from '../visualizer/VisPlayground';
 import { VISUALIZER_REGISTRY, getVisualizerModeLabel } from '../visualizer/registry';
 import ThemePark from './ThemePark';
-import type { LyricFilterDraft } from './LyricFilterSettingsModal';
+
 import GlobalLyricOffsetModal from './settings/GlobalLyricOffsetModal';
 import { settingsCardClassFor, settingsToggleOffClassFor } from './settings/settingsCardClasses';
 import AppearanceSettingsSubview from './settings/AppearanceSettingsSubview';
 import DesktopSettingsSubview from './settings/DesktopSettingsSubview';
 import GeneralSettingsSubview from './settings/GeneralSettingsSubview';
 import IntegrationSettingsSubview from './settings/IntegrationSettingsSubview';
-import type { PlayerCapConnectionStatus } from '../../types/playerCap';
+
 import LabSettingsModal from './settings/LabSettingsModal';
 import ModsSettingsSubview from './settings/ModsSettingsSubview';
 import DeveloperSettingsSubview from './settings/DeveloperSettingsSubview';
 import PlaybackSettingsSubview from './settings/PlaybackSettingsSubview';
 import StorageSettingsSection from './settings/StorageSettingsSection';
 import { AiHelpPromptModal } from './AiHelpPromptModal';
-import SettingsHelpActions from './SettingsHelpActions';
+
 import ReleaseNotesDialog from './ReleaseNotesDialog';
-import { JoinCommunityButton } from '../shared/JoinCommunityButton';
+
 import { copyTextToClipboard } from '../../utils/clipboard';
 import { BUILD_KIND_TAGS, getBuildKind } from '../../utils/buildProvenance';
 import meowImageUrl from '../../../build/miao.png';
-import type { LyricData } from '../../types';
-import { type SettingsModalState, type SettingsSubviewId, type VisualizerSettingsSection } from '../../stores/useSettingsModalStore';
+
+
 import { SettingsAnchorProvider, useSettingsAnchorList, useSettingsAnchorStore } from './settings/navigation/SettingsAnchorContext';
 import SettingsSidebarChips from './settings/navigation/SettingsSidebarChips';
 import SettingsSidebarWide from './settings/navigation/SettingsSidebarWide';
-import { settingsAnchorSubview } from './settings/navigation/settingsAnchorModel';
+
 import SettingsSectionHeader from './settings/SettingsSectionHeader';
 import { buildSettingsNavGroups, findSettingsNavItem, type SettingsSectionId } from './settings/navigation/settingsNavModel';
 import { isSettingsSectionSubview, resolveInitialSettingsSection, sectionForSettingsSubview, writeLastSettingsSection } from './settings/navigation/settingsLastSection';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
-import { useSettingsScrollSpy } from '../../hooks/useSettingsScrollSpy';
-import { useReducedMotionFor } from '../../hooks/useReducedMotionFor';
+
 import { useSettingsInitialAnchor } from '../../hooks/useSettingsInitialAnchor';
 import { useShallow } from 'zustand/react/shallow';
-import type { ObsBrowserSourceStatus } from '../../types/obsBrowserSource';
+
 import { getWebAiProvider } from '../../services/runtimeConfig';
-import type { LyricApiStatus } from '../../types/lyricApi';
-import type { SongResult } from '../../types';
-import type { ThemeCacheSongKey } from '../../services/themeCache';
-import type { ThemeGenerationSource } from '../../services/themePreferences';
-import { isMacPlatform as isMac } from '../../utils/platform';
+
+
+
+
+
 import { selectVisualizerSettingsSnapshot, useVisualizerSettingsStore } from '../../stores/useVisualizerSettingsStore';
 import { selectVisualizerAssetSnapshot, useVisualizerAssetStore } from '../../stores/useVisualizerAssetStore';
 import { selectLyricSettingsSnapshot, useLyricSettingsStore } from '../../stores/useLyricSettingsStore';
@@ -67,8 +88,8 @@ import { useSettingsModalStore } from '../../stores/useSettingsModalStore';
 import { selectAudioSettingsSnapshot, useAudioSettingsStore } from '../../stores/useAudioSettingsStore';
 import { selectHomeLayoutSettingsSnapshot, useHomeLayoutSettingsStore } from '../../stores/useHomeLayoutSettingsStore';
 import { setNavidromeEnabledState, useLibraryStore } from '../../stores/useLibraryStore';
-import { hasLibrarySuiteChoice } from '../../library/registry';
-import { useIsBravaisLibraryActive } from '../../library/app/bravaisLibraryActive';
+
+
 
 const DEFAULT_OPENAI_TEMPERATURE = '0.7';
 const AUR_PACKAGE_URL = 'https://aur.archlinux.org/packages/folia-major-bin';
@@ -198,8 +219,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     // Track the press origin per overlay so nested subview backdrops do not overwrite each other.
     const overlayMouseDownTargetsRef = useRef(new WeakSet<HTMLDivElement>());
     const {
-        grid3dCardStyle,
-        handleSetGrid3dCardStyle: onChangeGrid3dCardStyle,
     } = useHomeLayoutSettingsStore(useShallow(selectHomeLayoutSettingsSnapshot));
     const {
         enableMediaCache,
@@ -1308,19 +1327,18 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     );
     const canEnableAutoUpdate = Boolean(electronSettings.ENABLE_UPDATE_CHECK && updateStatus?.autoUpdateSupported);
 
-    const isBravaisSuiteActive = useIsBravaisLibraryActive();
     const settingsNavGroups = useMemo(
-        () => buildSettingsNavGroups(t, { isElectron, hasLibrarySuiteChoice: hasLibrarySuiteChoice(), isBravaisSuiteActive }),
-        [t, isElectron, isBravaisSuiteActive],
+        () => buildSettingsNavGroups(t),
+        [t],
     );
     const activeSettingsNavItem = findSettingsNavItem(settingsNavGroups, activeSettingsSection);
-    const prefersReducedMotion = useReducedMotionFor('settingsScroll');
-    const { activeAnchorId, scrollToAnchor } = useSettingsScrollSpy({
-        containerRef: contentScrollRef,
-        anchors: settingsAnchors,
-        enabled: isWideSettingsLayout && activeTab === 'options',
-        reducedMotion: prefersReducedMotion,
-    });
+    const scrollToAnchor = useCallback((anchorId: string) => {
+        const container = contentScrollRef.current;
+        const node = settingsAnchors.find(anchor => anchor.id === anchorId)?.node as HTMLElement | undefined;
+        if (!container || !node) return;
+        const top = node.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop;
+        container.scrollTo({ top: Math.max(0, top - 12), behavior: 'smooth' });
+    }, [settingsAnchors]);
 
     // Switching section swaps the whole column; keeping the old offset would land mid-content and
     // leave the table of contents highlighting a section that is no longer on screen.
@@ -1455,16 +1473,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                                         groups={settingsNavGroups}
                                         activeSectionId={activeSettingsSection}
                                         onSelectSection={handleSelectSettingsSection}
-                                        activeAnchorId={activeAnchorId}
-                                        onSelectAnchor={(sectionId, anchorId) => {
-                                            if (sectionId === activeSettingsSection) {
-                                                scrollToAnchor(anchorId);
-                                                return;
-                                            }
-                                            useSettingsModalStore.getState().openSettings('options', settingsAnchorSubview(anchorId), null, anchorId);
-                                        }}
                                         isDaylight={isDaylight}
-                                        theme={theme}
                                     />
                                 ) : (
                                     <SettingsSidebarChips
@@ -1525,8 +1534,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                                                 onChangeStageTrackPillTimeoutSec={onChangeStageTrackPillTimeoutSec}
                                                 onToggleStageTrackPillOnHome={onToggleStageTrackPillOnHome}
                                                 utilityGhostButtonClass={utilityGhostButtonClass}
-                                                grid3dCardStyle={grid3dCardStyle}
-                                                onChangeGrid3dCardStyle={onChangeGrid3dCardStyle}
                                                 aiTheme={aiTheme}
                                                 customTheme={customTheme}
                                             />

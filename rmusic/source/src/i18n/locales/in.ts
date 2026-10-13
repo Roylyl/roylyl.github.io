@@ -3088,6 +3088,7 @@ export default {
     "unlike": "Batal Suka",
     "loopOff": "Ulangi Mati",
     "loopAll": "Ulangi Semua",
+    "loopShuffle": "Acak",
     "loopOne": "Ulangi Satu",
     "unknownArtist": "Artis Tidak Dikenal",
     "unknownAlbum": "Album Tidak Dikenal"
@@ -3587,6 +3588,7 @@ export default {
     "videoExport": "Ekspor video",
     "loopOff": "Ulangi Mati",
     "loopAll": "Ulangi Semua",
+    "loopShuffle": "Acak",
     "loopOne": "Ulangi Satu"
   },
   "aiHelp": {

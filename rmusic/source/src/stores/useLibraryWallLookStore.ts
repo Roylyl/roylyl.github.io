@@ -1,65 +1,6 @@
 import { create } from 'zustand';
-import {
-    clampLibraryWallWindowsPerBlock,
-    normalizeLibraryWallLook,
-    type LibraryWallLook,
-} from '../utils/libraryWallLook';
-import { normalizeLibraryWallSeamStyle, type LibraryWallSeamStyle } from '../utils/libraryWallSeamStyle';
-
-// src/stores/useLibraryWallLookStore.ts
-// bravais 资料库界面的墙面偏好：「透光」档位 look（实色 / 部分透明 / 全透明，默认实色）与部分透明时每块的窗数
-// windowsPerBlock（1–6，默认 3）；集合磁贴的叠页边开关 collectionStackEdges（默认开，设计稿 §7.7）；
-// 信息条（缝）的材质：始终透明 seamClear（默认开，用户定 2026-10-09）与实色模式的预设 seamStyle（默认主题纸色，透明开着时不生效）；
-// 透出的播放页画面（backdrop）要不要画歌词文字 backdropLyrics、要不要模糊 backdropBlur（都默认关，§11「墙后的画面」）。
-// 放在 app 层而不是 suite 里，因为设置 UI（components/modal/settings）不能 import suite；bravais 的 stage 读这里。
-// 只在 bravais 是生效 suite 时才有界面入口（library/app/bravaisLibraryActive；界面设置的「Bravais」分组）。
-//
-// @note look 与 windowsPerBlock 是用户明确决定「不进外观配置导入导出」的视觉偏好（2026-10-06）。不要按
-// settings-feature-integration「视觉设置必须进 buildCurrentConfig / compressConfig / decompressConfig / validKeys /
-// handleImportConfig」的规则把它们补进短码或 JSON，也不进同步的视觉设置快照。
-// collectionStackEdges 没有这样的用户决定，按规则进了外观配置的导入导出（visualSettingsConfig、appearanceCodec 的 bse、
-// 导入确认的「资料库墙」组）；不进同步快照（同步只覆盖播放页的视觉设置）。
-// seamClear / seamStyle / backdropLyrics / backdropBlur 同样没有用户例外，按规则进外观配置导入导出（libraryWallSeamClear /
-// libraryWallSeamStyle / libraryWallBackdropLyrics / libraryWallBackdropBlur，短码 lwsc / lwss / lwbl / lwbb），同样不进同步快照。
-//
-// 存储读写都包 try/catch：存储不可用（隐私模式、配额满）时本次会话照常用内存里的值。
-// 读到非法档位回默认档，读到越界或非数字的窗数钳制 / 回默认（规则在 utils/libraryWallLook）。
-
-const LIBRARY_WALL_LOOK_KEY = 'library_wall_look';
-const LIBRARY_WALL_WINDOWS_PER_BLOCK_KEY = 'library_wall_windows_per_block';
-const LIBRARY_WALL_STACK_EDGES_KEY = 'library_wall_stack_edges';
-const LIBRARY_WALL_SEAM_CLEAR_KEY = 'library_wall_seam_clear';
-const LIBRARY_WALL_SEAM_STYLE_KEY = 'library_wall_seam_style';
-const LIBRARY_WALL_BACKDROP_LYRICS_KEY = 'library_wall_backdrop_lyrics';
-const LIBRARY_WALL_BACKDROP_BLUR_KEY = 'library_wall_backdrop_blur';
-
-const readStored = (key: string): string | null => {
-    if (typeof window === 'undefined') return null;
-    try {
-        return localStorage.getItem(key);
-    } catch {
-        return null;
-    }
-};
-
-const writeStored = (key: string, value: string) => {
-    if (typeof window === 'undefined') return;
-    try {
-        localStorage.setItem(key, value);
-    } catch {
-        // Keep the value for this session when storage is unavailable.
-    }
-};
-
-const readStoredLook = (): LibraryWallLook => normalizeLibraryWallLook(readStored(LIBRARY_WALL_LOOK_KEY));
-const readStoredWindowsPerBlock = (): number => clampLibraryWallWindowsPerBlock(readStored(LIBRARY_WALL_WINDOWS_PER_BLOCK_KEY));
-/** 默认开；只认 'false' 为关（读不到、非法值都按默认）。 */
-const readStoredStackEdges = (): boolean => readStored(LIBRARY_WALL_STACK_EDGES_KEY) !== 'false';
-/** 默认关的开关：只认 'true' 为开。 */
-const readStoredFlag = (key: string): boolean => readStored(key) === 'true';
-/** 信息条始终透明：默认开（用户定，2026-10-09）；只认 'false' 为关。 */
-const readStoredSeamClear = (): boolean => readStored(LIBRARY_WALL_SEAM_CLEAR_KEY) !== 'false';
-const readStoredSeamStyle = (): LibraryWallSeamStyle => normalizeLibraryWallSeamStyle(readStored(LIBRARY_WALL_SEAM_STYLE_KEY));
+import type { LibraryWallLook } from '../utils/libraryWallLook';
+import type { LibraryWallSeamStyle } from '../utils/libraryWallSeamStyle';
 
 const readAll = () => ({
     look: 'solid' as LibraryWallLook,
@@ -100,12 +41,6 @@ export type LibraryWallLookState = {
     setBackdropBlur: (enabled: boolean) => void;
     /** 从存储重新读一遍（存储被别处改写、或测试模拟重启时用）。 */
     hydrate: () => void;
-};
-
-const writeFlag = (key: string, enabled: boolean): boolean => {
-    const value = Boolean(enabled);
-    writeStored(key, String(value));
-    return value;
 };
 
 // Fixed R music wall appearance; older saved preferences cannot override it.
