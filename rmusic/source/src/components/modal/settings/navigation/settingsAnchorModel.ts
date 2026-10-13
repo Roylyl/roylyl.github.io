@@ -13,7 +13,6 @@ export const SETTINGS_ANCHOR_DEFINITIONS = {
     themePresets: { section: 'appearance', labelKey: 'options.themePresets' },
     stageTrackPill: { section: 'appearance', labelKey: 'options.stageTrackPill' },
     grid3dCardStyle: { section: 'appearance', labelKey: 'options.grid3dCardStyle' },
-    latticeSettings: { section: 'appearance', labelKey: 'options.latticeSettings' },
     gridViewCardSettings: { section: 'appearance', labelKey: 'options.gridViewCardSettings' },
 
     // GeneralSettingsSubview (PinnedCommandSettings renders inside it)
@@ -23,7 +22,6 @@ export const SETTINGS_ANCHOR_DEFINITIONS = {
     // Rendered only when more than one library suite is available (hasLibrarySuiteChoice).
     librarySuite: { section: 'general', labelKey: 'options.librarySuite', requiresLibrarySuiteChoice: true },
     // bravais 独有的设置（透光、每块窗数、集合叠页边）：只在生效 suite 是 bravais 时渲染（isBravaisLibraryActive）。
-    bravaisSettings: { section: 'general', labelKey: 'options.bravaisSettings', requiresBravaisSuite: true },
 
     // PlaybackSettingsSubview
     scrobbleSettings: { section: 'playback', labelKey: 'options.scrobbleSettings' },
@@ -51,9 +49,6 @@ export const SETTINGS_ANCHOR_DEFINITIONS = {
     updateCheck: { section: 'desktop', labelKey: 'options.updateCheck', electronOnly: true },
     electronSettings: { section: 'desktop', labelKey: 'options.electronSettings', electronOnly: true },
 
-    // GraphicsSettingsSubview
-    graphicsPerformance: { section: 'graphics', labelKey: 'options.labPerformanceSection' },
-    graphicsMotion: { section: 'graphics', labelKey: 'options.reduceMotionSection' },
 
     // ModsSettingsSubview
     modSystem: { section: 'mods', labelKey: 'options.enableModSystem', electronOnly: true },

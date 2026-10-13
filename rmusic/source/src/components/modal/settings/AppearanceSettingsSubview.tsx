@@ -12,7 +12,6 @@ import {
 } from '../../../types';
 import { ObsCopyCssButton } from '../../shared/ObsCopyCssButton';
 import { ObsCopyUrlButton } from '../../shared/ObsCopyUrlButton';
-import LatticeSettingsSection from './LatticeSettingsSection';
 import GridViewSettingsSection from './GridViewSettingsSection';
 import NowPlayingCardSettingsSection from './NowPlayingCardSettingsSection';
 import { isThemeGenerationSource, type ThemeGenerationSource } from '../../../services/themePreferences';
@@ -288,17 +287,6 @@ const AppearanceSettingsSubview: React.FC<AppearanceSettingsSubviewProps> = ({
                         </button>
                     </div>
                 </div>
-            </SettingsAnchor>
-
-            {/* Section 5: Tile wall appearance (queue collage + bravais library wall) */}
-            <SettingsAnchor anchorId="latticeSettings" label={t('options.latticeSettings')}>
-                <SettingsSectionHeading icon={PanelsTopLeft} label={t('options.latticeSettings')} />
-                <LatticeSettingsSection
-                    settingsCardClass={settingsCardClass}
-                    toggleOffBackgroundClass={toggleOffBackgroundClass}
-                    isDaylight={isDaylight}
-                    theme={theme}
-                />
             </SettingsAnchor>
 
             {/* Section 6: Folia card grid, sitting with the poster wall it shares its look with. */}

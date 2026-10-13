@@ -444,7 +444,7 @@ const VisPlayground: React.FC<VisPlaygroundProps> = ({
     const [draftSonnetTuning, setDraftSonnetTuning] = useState<SonnetTuning>(sonnetTuning);
     const [draftTemperaTuning, setDraftTemperaTuning] = useState<TemperaTuning>(temperaTuning);
     const [draftLumiereTuning, setDraftLumiereTuning] = useState<LumiereTuning>(lumiereTuning);
-    const [activeEditSection, setActiveEditSection] = useState<VisPlaygroundEditSection>(initialEditSection);
+    const [activeEditSection, setActiveEditSection] = useState<VisPlaygroundEditSection>('visualizer');
     const fontListRef = React.useRef<HTMLDivElement>(null);
     const fontVirtualListRef = useListRef(null);
     const fontUploadInputRef = React.useRef<HTMLInputElement>(null);
@@ -611,7 +611,7 @@ const VisPlayground: React.FC<VisPlaygroundProps> = ({
     useEffect(() => { setDraftSonnetTuning(sonnetTuning); }, [sonnetTuning]);
     useEffect(() => { setDraftTemperaTuning(temperaTuning); }, [temperaTuning]);
     useEffect(() => { setDraftLumiereTuning(lumiereTuning); }, [lumiereTuning]);
-    useEffect(() => { setActiveEditSection(initialEditSection); }, [initialEditSection]);
+    useEffect(() => { setActiveEditSection('visualizer'); }, [initialEditSection]);
 
     useVisPlaygroundPreviewPlayback({
         audioPower,
@@ -1225,12 +1225,7 @@ const VisPlayground: React.FC<VisPlaygroundProps> = ({
                                 seed={getVisualizerScopedSeed(visualizerMode, 'vis-playground')}
                             />
                         </div>
-                        <VisPlaygroundPreviewHotspots
-                            activeSection={activeEditSection}
-                            onSectionChange={setActiveEditSection}
-                            theme={previewTheme}
-                            labels={hotspotLabels}
-                        />
+
                         <button
                             type="button"
                             onClick={(event) => {

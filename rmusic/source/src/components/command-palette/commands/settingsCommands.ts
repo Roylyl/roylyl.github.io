@@ -9,7 +9,6 @@ import { lyricExportCommands } from './lyricExportCommands';
 import { Gauge, Images, Layers3, Library } from 'lucide-react';
 import { latticePosterTintSurface } from '../surfaces/latticePosterTintSurface';
 import { gridViewCardsSurface } from '../surfaces/gridViewCardsSurface';
-import { reduceMotionSurface } from '../surfaces/reduceMotionSurface';
 import { librarySuitePickerSurface } from '../surfaces/librarySuitePickerSurface';
 import { libraryWallLookCommands } from './libraryWallLookCommands';
 
@@ -304,7 +303,6 @@ export const settingsCommands: CommandPaletteCommand[] = [
             return true;
         },
     },
-    createSettingsCommand('settings-graphics', 'Graphics settings', 'Open static mode, frame rate cap, Linux glow fix and reduced motion', ['graphics', 'performance', 'frame rate', 'fps', 'rendering', '图形', '图形设置', '性能', '帧率', '渲染'], 'options', 'graphics'),
     createSettingsCommand('settings-mods', 'Mod settings', 'Open the mod system switch and the installed mods', ['mod manager', 'mod system', 'plugins', '模组设置', '模组系统', '插件'], 'options', 'mods', { platform: ['electron'] }),
     createSettingsCommand('settings-lab', 'Lab settings', 'Open experimental settings', ['lab', 'experimental', '实验', '实验室'], 'options', 'lab'),
     createSettingsCommand('settings-global-lyric-offset', 'Global timing offset', 'Calibrate lyric timing against Bluetooth or device audio latency', ['lyric delay', 'audio latency', 'bluetooth delay', 'sync lyrics', '全局时间偏移', '歌词延迟', '音画同步', '蓝牙延迟'], 'options', 'globalLyricOffset'),
@@ -349,23 +347,6 @@ export const settingsCommands: CommandPaletteCommand[] = [
         placeholder: context => context.shared.t('commandPalette.latticePosterTintPlaceholder', 'Adjust the controls below'),
         execute: () => false,
     }),
-    defineCommand({
-        id: 'settings-reduce-motion',
-        group: 'settings',
-        title: 'Reduce motion',
-        description: 'Turn down the animation on each surface that has one, or follow the system setting',
-        keywords: ['reduced motion', 'animation', 'disable animation', 'motion', 'accessibility motion',
-            '降低动态效果', '减少动画', '关闭动画', '动效', '动画效果', '动态效果'],
-        icon: Gauge,
-        requiresInput: true,
-        surface: reduceMotionSurface,
-        placeholder: context => context.shared.t('commandPalette.reduceMotionPlaceholder', 'Adjust the controls below'),
-        execute: () => false,
-    }),
-    // The queue collage is the surface #370 was filed about, so it gets a direct toggle as well as
-    // a row on the panel above: the listener who lost its animation should not have to find it.
-    createToggleCommand('settings-toggle-reduce-lattice-motion', 'settings', 'Reduce queue collage motion', 'Turn the queue collage expansion, camera flight and entrance wave down to instant', ['reduce lattice motion', 'lattice animation', 'queue collage animation', 'collage motion', 'poster wall animation', '队列拼贴动画', '拼贴动效', '降低拼贴动态效果', '海报墙动画'], context => context.settings.toggleReduceLatticeMotion()),
-    createToggleCommand('settings-toggle-follow-system-reduced-motion', 'settings', 'Follow system reduced motion', 'Toggle whether the system animation setting is allowed to reduce motion in the app', ['system animation setting', 'os reduced motion', 'system motion preference', '跟随系统动画设置', '跟随系统减少动画', '系统动效偏好'], context => context.settings.toggleFollowSystemReducedMotion()),
     createToggleCommand('settings-toggle-track-switch-buttons', 'settings', 'Always show track switch arrows', 'Toggle whether the progress bar track switch arrows stay visible beside the title', ['track switch buttons', 'previous next arrows', 'progress bar arrows', 'song switch buttons', '切歌箭头', '切换箭头', '始终显示切歌按钮', '进度条切歌按钮', '上一首下一首按钮', 'jinduting qiege', 'sysqgan'], context => context.settings.toggleAlwaysShowTrackSwitchButtons()),
     createToggleCommand('settings-toggle-main-window-titlebar', 'settings', 'Always show window control buttons', 'Toggle whether the main window control buttons stay visible', ['always show window controls', 'window control buttons', 'always show titlebar', 'main window titlebar', 'titlebar', '标题栏', '控制按钮', '始终显示标题栏', '始终显示控制按钮', '主窗口标题栏', 'kongzhi annniu', 'bt', 'zckbt'], context => context.settings.toggleAlwaysShowMainWindowTitlebar()),
     createToggleCommand('settings-toggle-fullscreen-titlebar-button', 'settings', 'Toggle fullscreen button visibility', 'Show or hide the fullscreen button in the desktop window controls', ['fullscreen button', 'titlebar fullscreen', 'window fullscreen button', 'show fullscreen control', 'hide fullscreen button', 'fullscreen button visibility', '全屏按钮', '标题栏全屏按钮', '显示全屏按钮', '隐藏全屏按钮', '窗口全屏控制', 'quanping annniu', 'biaotilan quanping'], context => context.settings.toggleHideFullscreenButton(), { platform: ['electron'] }),

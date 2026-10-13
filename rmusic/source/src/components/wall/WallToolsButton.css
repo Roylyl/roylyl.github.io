@@ -327,9 +327,7 @@
     50% { opacity: 0.35; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .lattice-tools-quick-action.is-busy svg { animation: none; }
-}
+
 
 /* 滑条一行（音量）：左侧图标（可点：静音）、轨道、右侧数值，一块浅底。 */
 .lattice-tools-slider {

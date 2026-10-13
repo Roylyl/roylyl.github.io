@@ -112,11 +112,11 @@ export type VisualizerSettingsState = {
 };
 
 export const useVisualizerSettingsStore = create<VisualizerSettingsState>((set, get) => ({
-    disableVisualizerVignette: getStoredBoolean('disable_visualizer_vignette', false),
-    disableVisualizerGeometricBackground: getStoredBoolean('disable_visualizer_geometric_background', false),
-    backgroundOpacity: readStoredBackgroundOpacity(),
+    disableVisualizerVignette: true,
+    disableVisualizerGeometricBackground: true,
+    backgroundOpacity: 0,
     visualizerOpacity: readStoredVisualizerOpacity(),
-    visualizerBackgroundMode: readStoredVisualizerBackgroundMode(),
+    visualizerBackgroundMode: 'common',
     urlBackgroundList: readStoredUrlBackgroundList(),
     urlBackgroundSelectedId: readStoredUrlBackgroundSelectedId(),
     visualizerFrameRate: readStoredVisualizerFrameRate(),
@@ -140,28 +140,9 @@ export const useVisualizerSettingsStore = create<VisualizerSettingsState>((set, 
     sonnetTuning: readStoredSonnetTuning(),
     temperaTuning: readStoredTemperaTuning(),
     lumiereTuning: readStoredLumiereTuning(),
-    handleToggleDisableVisualizerVignette: (disable) => {
-        setStoredBoolean('disable_visualizer_vignette', disable);
-        set({ disableVisualizerVignette: disable });
-        setStatusMessage({
-            type: 'info',
-            text: i18n.t('notifications.' + (disable ? 'vignetteOff' : 'vignetteOn')),
-        });
-    },
-    handleToggleDisableVisualizerGeometricBackground: (disable) => {
-        setStoredBoolean('disable_visualizer_geometric_background', disable);
-        set({ disableVisualizerGeometricBackground: disable });
-        setStatusMessage({
-            type: 'info',
-            text: i18n.t('notifications.' + (disable ? 'geometricBgHidden' : 'geometricBgShown')),
-        });
-    },
-    handleSetBackgroundOpacity: (opacity) => {
-        if (typeof window !== 'undefined') {
-            localStorage.setItem('background_opacity', String(opacity));
-        }
-        set({ backgroundOpacity: opacity });
-    },
+    handleToggleDisableVisualizerVignette: () => set({ disableVisualizerVignette: true }),
+    handleToggleDisableVisualizerGeometricBackground: () => set({ disableVisualizerGeometricBackground: true }),
+    handleSetBackgroundOpacity: () => set({ backgroundOpacity: 0 }),
     handleSetVisualizerOpacity: (opacity) => {
         const next = Math.min(1, Math.max(0.2, opacity));
         if (typeof window !== 'undefined') {
@@ -169,18 +150,8 @@ export const useVisualizerSettingsStore = create<VisualizerSettingsState>((set, 
         }
         set({ visualizerOpacity: next });
     },
-    handleSetVisualizerBackgroundMode: (mode) => {
-        if (typeof window !== 'undefined') {
-            localStorage.setItem('visualizer_background_mode', mode);
-        }
-        set({ visualizerBackgroundMode: mode });
-    },
-    handleResetVisualizerBackgroundMode: () => {
-        if (typeof window !== 'undefined') {
-            localStorage.removeItem('visualizer_background_mode');
-        }
-        set({ visualizerBackgroundMode: null });
-    },
+    handleSetVisualizerBackgroundMode: () => set({ visualizerBackgroundMode: 'common' }),
+    handleResetVisualizerBackgroundMode: () => set({ visualizerBackgroundMode: 'common' }),
     handleAddUrlBackgroundItem: (item) => {
         const sanitized = sanitizeUrlBackgroundItem(item);
         if (!sanitized) return;

@@ -275,3 +275,8 @@ html[data-click-through='active'] body .click-through-interactive * {
   max-width: 5rem;
   opacity: 1;
 }
+
+/* R music uses one font stack throughout the interface. */
+html, body, button, input, select, textarea, #root * {
+  font-family: "Microsoft YaHei", "微软雅黑", "PingFang SC", "Noto Sans CJK SC", sans-serif !important;
+}

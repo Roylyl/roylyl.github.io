@@ -62,13 +62,13 @@ const readStoredSeamClear = (): boolean => readStored(LIBRARY_WALL_SEAM_CLEAR_KE
 const readStoredSeamStyle = (): LibraryWallSeamStyle => normalizeLibraryWallSeamStyle(readStored(LIBRARY_WALL_SEAM_STYLE_KEY));
 
 const readAll = () => ({
-    look: readStoredLook(),
-    windowsPerBlock: readStoredWindowsPerBlock(),
-    collectionStackEdges: readStoredStackEdges(),
-    seamClear: readStoredSeamClear(),
-    seamStyle: readStoredSeamStyle(),
-    backdropLyrics: readStoredFlag(LIBRARY_WALL_BACKDROP_LYRICS_KEY),
-    backdropBlur: readStoredFlag(LIBRARY_WALL_BACKDROP_BLUR_KEY),
+    look: 'solid' as LibraryWallLook,
+    windowsPerBlock: 3,
+    collectionStackEdges: true,
+    seamClear: true,
+    seamStyle: 'paper' as LibraryWallSeamStyle,
+    backdropLyrics: true,
+    backdropBlur: true,
 });
 
 export type LibraryWallLookState = {
@@ -108,30 +108,15 @@ const writeFlag = (key: string, enabled: boolean): boolean => {
     return value;
 };
 
+// Fixed R music wall appearance; older saved preferences cannot override it.
 export const useLibraryWallLookStore = create<LibraryWallLookState>(set => ({
     ...readAll(),
-    setLook: (look) => {
-        const normalized = normalizeLibraryWallLook(look);
-        writeStored(LIBRARY_WALL_LOOK_KEY, normalized);
-        set({ look: normalized });
-    },
-    setWindowsPerBlock: (windowsPerBlock) => {
-        const clamped = clampLibraryWallWindowsPerBlock(windowsPerBlock);
-        writeStored(LIBRARY_WALL_WINDOWS_PER_BLOCK_KEY, String(clamped));
-        set({ windowsPerBlock: clamped });
-    },
-    setCollectionStackEdges: (enabled) => {
-        const value = Boolean(enabled);
-        writeStored(LIBRARY_WALL_STACK_EDGES_KEY, String(value));
-        set({ collectionStackEdges: value });
-    },
-    setSeamClear: enabled => set({ seamClear: writeFlag(LIBRARY_WALL_SEAM_CLEAR_KEY, enabled) }),
-    setSeamStyle: (style) => {
-        const normalized = normalizeLibraryWallSeamStyle(style);
-        writeStored(LIBRARY_WALL_SEAM_STYLE_KEY, normalized);
-        set({ seamStyle: normalized });
-    },
-    setBackdropLyrics: enabled => set({ backdropLyrics: writeFlag(LIBRARY_WALL_BACKDROP_LYRICS_KEY, enabled) }),
-    setBackdropBlur: enabled => set({ backdropBlur: writeFlag(LIBRARY_WALL_BACKDROP_BLUR_KEY, enabled) }),
+    setLook: () => set(readAll()),
+    setWindowsPerBlock: () => set(readAll()),
+    setCollectionStackEdges: () => set(readAll()),
+    setSeamClear: () => set(readAll()),
+    setSeamStyle: () => set(readAll()),
+    setBackdropLyrics: () => set(readAll()),
+    setBackdropBlur: () => set(readAll()),
     hydrate: () => set(readAll()),
 }));

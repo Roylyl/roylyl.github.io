@@ -278,4 +278,5 @@ const VisualizerHarmonyOverlay: React.FC<VisualizerHarmonyOverlayProps> = ({
     );
 };
 
-export default VisualizerHarmonyOverlay;
+// Harmony subtitles are disabled in R music.
+export default (() => null) as typeof VisualizerHarmonyOverlay;

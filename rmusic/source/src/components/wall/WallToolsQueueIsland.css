@@ -186,9 +186,7 @@
 .lattice-tools.is-daylight .lattice-tools-island-row.is-dragging.is-current { background: rgb(0 0 0 / 7%); }
 .lattice-tools-island-row.is-drag-source { visibility: hidden; }
 
-@media (prefers-reduced-motion: reduce) {
-    .lattice-tools-island-row.is-dragging { transition: none; }
-}
+
 
 .lattice-tools-island-handle {
     display: grid;

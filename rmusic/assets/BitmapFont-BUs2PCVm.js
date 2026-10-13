@@ -1,1 +1,0 @@
-export{BitmapFont}from"./lib-B45BNT1f.js";

@@ -63,7 +63,7 @@ const readSystemPreference = () => (
 
 const readStoredSurfaces = (): Record<MotionSurfaceId, boolean> => (
     Object.fromEntries(
-        MOTION_SURFACE_IDS.map(surface => [surface, getStoredBoolean(SURFACE_STORAGE_KEYS[surface], false)]),
+        MOTION_SURFACE_IDS.map(surface => [surface, false]),
     ) as Record<MotionSurfaceId, boolean>
 );
 
@@ -82,18 +82,18 @@ export type MotionSettingsState = {
 
 export const useMotionSettingsStore = create<MotionSettingsState>(set => ({
     reducedMotionSurfaces: readStoredSurfaces(),
-    followSystemReducedMotion: getStoredBoolean(FOLLOW_SYSTEM_KEY, false),
-    systemPrefersReducedMotion: readSystemPreference(),
+    followSystemReducedMotion: false,
+    systemPrefersReducedMotion: false,
 
     handleToggleReducedMotionSurface: (surface, enabled) => {
-        set(state => ({ reducedMotionSurfaces: { ...state.reducedMotionSurfaces, [surface]: enabled } }));
-        setStoredBoolean(SURFACE_STORAGE_KEYS[surface], enabled);
+        set(state => ({ reducedMotionSurfaces: { ...state.reducedMotionSurfaces, [surface]: false } }));
+        setStoredBoolean(SURFACE_STORAGE_KEYS[surface], false);
     },
     handleToggleFollowSystemReducedMotion: (enabled) => {
-        set({ followSystemReducedMotion: enabled });
-        setStoredBoolean(FOLLOW_SYSTEM_KEY, enabled);
+        set({ followSystemReducedMotion: false });
+        setStoredBoolean(FOLLOW_SYSTEM_KEY, false);
     },
-    setSystemPrefersReducedMotion: (matches) => set({ systemPrefersReducedMotion: matches }),
+    setSystemPrefersReducedMotion: (matches) => set({ systemPrefersReducedMotion: false }),
 }));
 
 /**
@@ -104,10 +104,7 @@ export const useMotionSettingsStore = create<MotionSettingsState>(set => ({
 export const resolveReducedMotion = (
     state: Pick<MotionSettingsState, 'reducedMotionSurfaces' | 'followSystemReducedMotion' | 'systemPrefersReducedMotion'>,
     surface: MotionSurfaceId,
-): boolean => (
-    state.reducedMotionSurfaces[surface]
-    || (state.followSystemReducedMotion && state.systemPrefersReducedMotion)
-);
+): boolean => false;
 
 /** 当前处于降级状态的面，拼成 `data-reduce-motion` 用的空格分隔串。空串表示全部完整播放。 */
 export const selectReducedSurfaceList = (
@@ -134,15 +131,6 @@ const syncMotionSurfaceAttribute = (state: MotionSettingsState): void => {
 export const readReducedMotion = (surface: MotionSurfaceId): boolean => (
     resolveReducedMotion(useMotionSettingsStore.getState(), surface)
 );
-
-// 系统偏好只需要一份监听。挂在模块级而不是某个组件里：它跟任何一棵子树的生命周期都无关，
-// 而且 CSS 属性同步也要在没有组件挂载的时候读到正确的值。
-if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
-    const query = window.matchMedia(SYSTEM_REDUCED_MOTION_QUERY);
-    query.addEventListener('change', event => {
-        useMotionSettingsStore.getState().setSystemPrefersReducedMotion(event.matches);
-    });
-}
 
 // 属性同步同样挂在模块级，而不是某个根组件的 effect 里：bootstrap 按 URL 挂的是主窗口、远程控制窗口
 // 或 OBS 源之一，远程窗口的进度辉光也读这个属性，只在 App 里同步的话它永远拿不到。import 时先写一次，

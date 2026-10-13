@@ -79,19 +79,12 @@ export const useThemeSettingsStore = create<ThemeSettingsState>((set, get) => ({
         setStoredBoolean('default_theme_daylight', daylight);
         set({ appearanceMode: mode, followSystemTheme: follow, isDaylight: daylight });
     },
-    useCoverColorBg: getStoredBoolean('use_cover_color_bg', false),
+    useCoverColorBg: true,
     staticMode: getStoredBoolean('static_mode', false),
     disableHomeDynamicBackground: readStoredDisableHomeDynamicBackground(),
     followSystemTheme: initialFollowSystemTheme,
     isDaylight: initialDaylight,
-    handleToggleCoverColorBg: (enable) => {
-        setStoredBoolean('use_cover_color_bg', enable);
-        set({ useCoverColorBg: enable });
-        setStatusMessage({
-            type: 'info',
-            text: i18n.t('notifications.' + (enable ? 'coverColorAdded' : 'coverColorDefault')),
-        });
-    },
+    handleToggleCoverColorBg: () => set({ useCoverColorBg: true }),
     handleToggleStaticMode: (enable) => {
         setStoredBoolean('static_mode', enable);
         set({ staticMode: enable });

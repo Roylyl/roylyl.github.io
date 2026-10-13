@@ -76,18 +76,7 @@ const BravaisStageChrome: React.FC<BravaisStageChromeProps> = ({
         onSelect: onOpenLattice,
     } : undefined;
 
-    const entries = useCallback((): WallToolsEntry[] => [
-        { kind: 'heading', id: 'appearance', label: t('libraryBravais.toolsAppearance') },
-        {
-            kind: 'action',
-            id: 'wall-look',
-            icon: Blinds,
-            label: t('options.libraryWallLook'),
-            value: t(LOOK_LABEL_KEYS[look]),
-            keepOpen: true,
-            onSelect: () => setLook(nextWallLook(look)),
-        },
-    ], [look, setLook, t]);
+    const entries = useCallback((): WallToolsEntry[] => [], []);
 
     return (
         <>

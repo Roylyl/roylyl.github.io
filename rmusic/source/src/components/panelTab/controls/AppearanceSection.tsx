@@ -183,19 +183,7 @@ const AppearanceSection: React.FC<AppearanceSectionProps> = ({
                     )}
                 />
 
-                <ModeStepperRow<VisualizerBackgroundMode>
-                    value={resolvedBackgroundMode}
-                    options={backgroundOptions}
-                    onSelect={setVisualizerBackgroundMode}
-                    onStep={stepBackgroundMode}
-                    renderGlyph={mode => <BackgroundModeGlyph mode={mode} />}
-                    ariaLabel={t('options.visualizerBackgroundMode')}
-                    moreLabel={t('ui.moreSettings')}
-                    onOpenMore={openBackgroundSettings}
-                    isDaylight={isDaylight}
-                    primaryColor={theme.primaryColor}
-                    trailing={backgroundQuickControls}
-                />
+
             </div>
 
             <div className="pt-1">

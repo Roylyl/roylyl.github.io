@@ -19,9 +19,13 @@ const UNAVAILABLE_RMUSIC_COMMANDS = new Set([
     'panel-account', 'panel-local', 'panel-onlineLyrics',
     'theme-source-ai', 'theme-generate-current', 'sync-now',
     'settings-obs-copy-css',
+    'settings-toggle-lattice-vignette', 'lattice-poster-tint',
+    'settings-toggle-bottom-subtitle-overlay', 'settings-cycle-subtitle-content-mode',
+    'settings-toggle-subtitle-background',
+
 ]);
 export const COMMAND_PALETTE_COMMANDS: CommandPaletteCommand[] = ALL_COMMAND_PALETTE_COMMANDS
-    .filter(command => !UNAVAILABLE_RMUSIC_COMMANDS.has(command.id));
+    .filter(command => !UNAVAILABLE_RMUSIC_COMMANDS.has(command.id) && !command.id.startsWith('background-'));
 
 // The suite chrome slice currently in the list (see setSuiteChromeCommands).
 let installedSuiteChromeCommands: readonly CommandPaletteCommand[] = [];

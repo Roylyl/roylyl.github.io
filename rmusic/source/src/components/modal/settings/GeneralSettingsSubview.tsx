@@ -7,7 +7,6 @@ import type { AppLanguagePreference } from '../../../i18n/config';
 import { CustomSelect } from '../../shared/CustomSelect';
 import PlaybackEntryViewSection from './PlaybackEntryViewSection';
 import LibrarySuiteSection from './LibrarySuiteSection';
-import BravaisSettingsSection from './BravaisSettingsSection';
 import { SettingsAnchor } from './navigation/SettingsAnchorContext';
 import SettingsSectionHeading from './navigation/SettingsSectionHeading';
 import { settingsDividerClassFor } from './settingsCardClasses';
@@ -128,11 +127,7 @@ const GeneralSettingsSubview: React.FC<GeneralSettingsSubviewProps> = ({
                 theme={theme}
             />
 
-            <BravaisSettingsSection
-                isDaylight={isDaylight}
-                settingsCardClass={settingsCardClass}
-                theme={theme}
-            />
+
 
 
         </div>

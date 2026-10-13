@@ -145,15 +145,6 @@ export function WallToolsSurface({ idPrefix, label, isDaylight, locate, destinat
         ? [resolveSlot(locate), common.shuffle, common.theme, common.queue, resolveSlot(destination), common.openPlayer]
             .filter((action): action is WallToolsQuickAction => action !== null)
         : [];
-    // 叠色开关两边都有（颜色与强度的细调仍在设置页与命令面板）。
-    const tintRow: WallToolsEntry = {
-        kind: 'toggle',
-        id: 'poster-tint',
-        icon: Layers3,
-        label: t('options.latticePosterTint'),
-        checked: tintEnabled,
-        onToggle: handleToggleLatticePosterTint,
-    };
 
     return (
         <motion.div
@@ -179,7 +170,6 @@ export function WallToolsSurface({ idPrefix, label, isDaylight, locate, destinat
                             {quick.length > 0 && <WallToolsQuickRow actions={quick} onDone={close} />}
                             <WallToolsRow entry={common.volume} onDone={close} />
                             {rows.map(entry => <WallToolsRow key={entry.id} entry={entry} onDone={close} />)}
-                            <WallToolsRow entry={tintRow} onDone={close} />
                             <div className="lattice-tools-help-section" role="none">
                                 <button
                                     type="button"

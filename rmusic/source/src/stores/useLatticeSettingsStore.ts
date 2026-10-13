@@ -50,17 +50,17 @@ export type LatticeSettingsState = {
 };
 
 export const useLatticeSettingsStore = create<LatticeSettingsState>(set => ({
-    latticeVignette: getStoredBoolean(LATTICE_VIGNETTE_KEY, true),
+    latticeVignette: true,
     autoFocusOnSongChange: getStoredBoolean(LATTICE_AUTO_FOCUS_ON_SONG_CHANGE_KEY, true),
     latticeLightsOn: getStoredBoolean(LATTICE_LIGHTS_ON_KEY, true),
-    latticePosterTintEnabled: getStoredBoolean(LATTICE_POSTER_TINT_ENABLED_KEY, true),
+    latticePosterTintEnabled: false,
     latticePosterTintUseCustomColor: getStoredBoolean(LATTICE_POSTER_TINT_USE_CUSTOM_COLOR_KEY, false),
     latticePosterTintColor: normalizePosterTintColor(getStoredString(LATTICE_POSTER_TINT_COLOR_KEY, DEFAULT_POSTER_TINT_COLOR)),
     latticePosterTintIntensity: getStoredPosterTintIntensity(),
     wallToolsQueueIslandOpen: getStoredBoolean(WALL_TOOLS_QUEUE_ISLAND_OPEN_KEY, false),
-    handleToggleLatticeVignette: (enabled) => {
-        set({ latticeVignette: enabled });
-        setStoredBoolean(LATTICE_VIGNETTE_KEY, enabled);
+    handleToggleLatticeVignette: () => {
+        set({ latticeVignette: true });
+        setStoredBoolean(LATTICE_VIGNETTE_KEY, true);
     },
     handleToggleAutoFocusOnSongChange: (enabled) => {
         set({ autoFocusOnSongChange: enabled });
@@ -70,9 +70,9 @@ export const useLatticeSettingsStore = create<LatticeSettingsState>(set => ({
         set({ latticeLightsOn: enabled });
         setStoredBoolean(LATTICE_LIGHTS_ON_KEY, enabled);
     },
-    handleToggleLatticePosterTint: (enabled) => {
-        set({ latticePosterTintEnabled: enabled });
-        setStoredBoolean(LATTICE_POSTER_TINT_ENABLED_KEY, enabled);
+    handleToggleLatticePosterTint: () => {
+        set({ latticePosterTintEnabled: false });
+        setStoredBoolean(LATTICE_POSTER_TINT_ENABLED_KEY, false);
     },
     handleToggleLatticePosterTintCustomColor: (enabled) => {
         set({ latticePosterTintUseCustomColor: enabled });

@@ -218,4 +218,5 @@ const VisualizerSubtitleOverlay: React.FC<VisualizerSubtitleOverlayProps> = ({
     );
 };
 
-export default VisualizerSubtitleOverlay;
+// Subtitle overlays are disabled in R music, including standalone renderer previews.
+export default (() => null) as React.FC<VisualizerSubtitleOverlayProps>;

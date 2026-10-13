@@ -96,24 +96,7 @@ export const getBuiltinThemeFontStack = (fontStyle: Theme['fontStyle']) => {
     return BUILTIN_FONT_STACKS[fontStyle] ?? BUILTIN_FONT_STACKS.sans;
 };
 
-export const resolveThemeFontStack = (theme: Pick<Theme, 'fontStyle' | 'fontFamily' | 'fontFamilyStack'>) => {
-    const fallbackStack = getBuiltinThemeFontStack(theme.fontStyle);
-    const customFontStack = buildCustomFontFamilyStack(theme);
+export const RMUSIC_FONT_STACK = '"Microsoft YaHei", "微软雅黑", "PingFang SC", "Noto Sans CJK SC", sans-serif';
 
-    if (customFontStack.length === 0) {
-        return fallbackStack;
-    }
-
-    return `${customFontStack.join(', ')}, ${fallbackStack}`;
-};
-
-export const resolveThemeTranslationFontStack = (theme: Pick<Theme, 'fontStyle' | 'fontFamily' | 'fontFamilyStack'>) => {
-    const fallbackStack = TRANSLATION_FONT_STACKS[theme.fontStyle] ?? TRANSLATION_FONT_STACKS.sans;
-    const customFontStack = buildCustomFontFamilyStack(theme);
-
-    if (customFontStack.length === 0) {
-        return fallbackStack;
-    }
-
-    return `${customFontStack.join(', ')}, ${fallbackStack}`;
-};
+export const resolveThemeFontStack = (_theme: Pick<Theme, 'fontStyle' | 'fontFamily' | 'fontFamilyStack'>) => RMUSIC_FONT_STACK;
+export const resolveThemeTranslationFontStack = (_theme: Pick<Theme, 'fontStyle' | 'fontFamily' | 'fontFamilyStack'>) => RMUSIC_FONT_STACK;

@@ -229,18 +229,18 @@ export type TypographySettingsState = {
 };
 
 export const useTypographySettingsStore = create<TypographySettingsState>((set, get) => ({
-    hidePlayerTranslationSubtitle: getStoredBoolean('hide_player_translation_subtitle', false),
-    showSubtitleTranslation: readStoredSubtitleContentMode() !== 'none',
-    subtitleContentMode: readStoredSubtitleContentMode(),
+    hidePlayerTranslationSubtitle: true,
+    showSubtitleTranslation: false,
+    subtitleContentMode: 'none',
     subtitleOverlayOpacity: readStoredSubtitleOverlayOpacity(),
     subtitleOverlayBackground: getStoredBoolean(SUBTITLE_OVERLAY_BACKGROUND_STORAGE_KEY, true),
     subtitleUpcomingLyricsBlur: getStoredBoolean(SUBTITLE_UPCOMING_LYRICS_BLUR_STORAGE_KEY, true),
-    showHarmonySubtitle: getStoredBoolean(SHOW_HARMONY_SUBTITLE_STORAGE_KEY, true),
+    showHarmonySubtitle: false,
     harmonySubtitleBackground: getStoredBoolean(HARMONY_SUBTITLE_BACKGROUND_STORAGE_KEY, true),
-    lyricsFontStyle: readStoredLyricsFontStyle(),
-    lyricsFontScale: readStoredFontScale('lyrics_font_scale'),
-    lyricsFontWeight: readStoredFontWeight(LYRICS_FONT_WEIGHT_STORAGE_KEY),
-    lyricsCustomFont: readStoredCustomLyricsFont(),
+    lyricsFontStyle: 'sans',
+    lyricsFontScale: 1,
+    lyricsFontWeight: null,
+    lyricsCustomFont: null,
     lyricsFontFallbackFamilies: readStoredFontFamilyStack(LYRICS_FONT_FALLBACK_FAMILIES_STORAGE_KEY),
     subtitleFontInheritsLyrics: getStoredBoolean(SUBTITLE_FONT_INHERITS_LYRICS_STORAGE_KEY, true),
     subtitleFontScale: readStoredFontScale(SUBTITLE_FONT_SCALE_STORAGE_KEY),
@@ -255,45 +255,10 @@ export const useTypographySettingsStore = create<TypographySettingsState>((set, 
         set({ lyricsCustomFont: null });
         setStatusMessage(message);
     },
-    handleToggleHidePlayerTranslationSubtitle: (enable) => {
-        setStoredBoolean('hide_player_translation_subtitle', enable);
-        set({ hidePlayerTranslationSubtitle: enable });
-        setStatusMessage({
-            type: 'info',
-            text: i18n.t('notifications.' + (enable ? 'subtitleHidden' : 'subtitleShown')),
-        });
-    },
-    handleToggleShowSubtitleTranslation: (enable) => {
-        setStoredBoolean(SHOW_SUBTITLE_TRANSLATION_STORAGE_KEY, enable);
-        const subtitleContentMode: SubtitleContentMode = enable ? 'translation' : 'none';
-        if (typeof window !== 'undefined') {
-            localStorage.setItem(SUBTITLE_CONTENT_MODE_STORAGE_KEY, subtitleContentMode);
-        }
-        set({ showSubtitleTranslation: enable, subtitleContentMode });
-        setStatusMessage({
-            type: 'info',
-            text: i18n.t('notifications.' + (enable ? 'translationShown' : 'translationHidden')),
-        });
-    },
-    handleSetSubtitleContentMode: (subtitleContentMode) => {
-        if (typeof window !== 'undefined') {
-            localStorage.setItem(SUBTITLE_CONTENT_MODE_STORAGE_KEY, subtitleContentMode);
-        }
-        const showSubtitleTranslation = subtitleContentMode !== 'none';
-        setStoredBoolean(SHOW_SUBTITLE_TRANSLATION_STORAGE_KEY, showSubtitleTranslation);
-        set({ subtitleContentMode, showSubtitleTranslation });
-        setStatusMessage({
-            type: 'info',
-            text: i18n.t(`notifications.subtitleMode.${subtitleContentMode}`),
-        });
-    },
-    handleSetSubtitleOverlayOpacity: (opacity) => {
-        const next = Math.min(1, Math.max(0.2, opacity));
-        if (typeof window !== 'undefined') {
-            localStorage.setItem(SUBTITLE_OVERLAY_OPACITY_STORAGE_KEY, String(next));
-        }
-        set({ subtitleOverlayOpacity: next });
-    },
+    handleToggleHidePlayerTranslationSubtitle: () => set({ hidePlayerTranslationSubtitle: true }),
+    handleToggleShowSubtitleTranslation: () => set({ showSubtitleTranslation: false, subtitleContentMode: 'none' }),
+    handleSetSubtitleContentMode: () => set({ showSubtitleTranslation: false, subtitleContentMode: 'none' }),
+    handleSetSubtitleOverlayOpacity: () => set({ subtitleOverlayOpacity: 0 }),
     handleToggleSubtitleOverlayBackground: (enabled) => {
         setStoredBoolean(SUBTITLE_OVERLAY_BACKGROUND_STORAGE_KEY, enabled);
         set({ subtitleOverlayBackground: enabled });
@@ -302,10 +267,7 @@ export const useTypographySettingsStore = create<TypographySettingsState>((set, 
         setStoredBoolean(SUBTITLE_UPCOMING_LYRICS_BLUR_STORAGE_KEY, enabled);
         set({ subtitleUpcomingLyricsBlur: enabled });
     },
-    handleToggleShowHarmonySubtitle: (enabled) => {
-        setStoredBoolean(SHOW_HARMONY_SUBTITLE_STORAGE_KEY, enabled);
-        set({ showHarmonySubtitle: enabled });
-    },
+    handleToggleShowHarmonySubtitle: () => set({ showHarmonySubtitle: false }),
     handleToggleHarmonySubtitleBackground: (enabled) => {
         setStoredBoolean(HARMONY_SUBTITLE_BACKGROUND_STORAGE_KEY, enabled);
         set({ harmonySubtitleBackground: enabled });
