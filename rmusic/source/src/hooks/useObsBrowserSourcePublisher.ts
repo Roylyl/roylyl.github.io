@@ -1,29 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { MotionValue } from 'framer-motion';
-import type {
-    AudioBands,
-    CappellaAvatarImage,
-    CappellaEmojiImage,
-    CappellaTuning,
-    CadenzaTuning,
-    ClassicTuning,
-    CladdaghTuning,
-    DioramaTuning,
-    FumeTuning,
-    LyricData,
-    MonetBackgroundImage,
-    MonetPortraitImage,
-    MonetTuning,
-    PartitaTuning,
-    PlaybackContext,
-    PlayerState,
-    SongResult,
-    StageSource,
-    SubtitleContentMode,
-    Theme,
-    TiltTuning,
-    VisualizerMode,
-} from '../types';
+
+import type { CappellaAvatarImage, CappellaEmojiImage, MonetBackgroundImage, MonetPortraitImage, SongResult, StageSource, Theme } from '../types';
 import type {
     ObsBrowserSourceAudio,
     ObsBrowserSourceClock,
@@ -42,8 +19,7 @@ import {
 } from '../utils/obsBrowserSource';
 import type { TemperaLayerImage } from '../types';
 import { loadTemperaLayerImageBlobs } from '../services/temperaLayerImages';
-import type { VisualizerTuningBundle } from '../components/visualizer/tuningRegistry';
-import type { VisualizerBackgroundConfig } from '../components/visualizer/backgrounds/definition';
+
 import { getSongAlbumLabel, getSongArtistLabel } from '../services/onlineMusic/songMetadata';
 import { usePlaybackStore } from '../stores/usePlaybackStore';
 import { useThemeSettingsStore } from '../stores/useThemeSettingsStore';
@@ -63,7 +39,6 @@ const OBS_AUDIO_INTERVAL_MS = 50;
 const OBS_CLOCK_JUMP_THRESHOLD_SEC = 0.35;
 const OBS_CLOCK_JUMP_MIN_INTERVAL_MS = 80;
 type UseObsBrowserSourcePublisherOptions = {
-
 
     isElectronWindow: boolean;
     stageSource: StageSource | null;

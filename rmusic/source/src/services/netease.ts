@@ -1,4 +1,4 @@
-import { NeteaseUser, NeteasePlaylist, NoCopyrightRecommendation, SongPrivilege, SongResult } from "../types";
+import { NoCopyrightRecommendation, SongPrivilege, SongResult } from "../types";
 import { readProviderSessionValue, removeProviderSessionValue, writeProviderSessionValue } from './onlineMusic/providerStorage';
 import type { PersonalFmRequestOptions } from '../types/onlineMusic';
 import {
@@ -132,7 +132,7 @@ const fetchWithCreds = async (endpoint: string, options: RequestInit = {}) => {
   }
 
   // Note: For Vercel hosted APIs, we rely on the `cookie` query param if cross-site cookies are blocked,
-  // or `credentials: 'include'` if the server allows it. 
+  // or `credentials: 'include'` if the server allows it.
 
   const storedCookie = readProviderSessionValue('netease', 'cookie', ['netease_cookie']);
 

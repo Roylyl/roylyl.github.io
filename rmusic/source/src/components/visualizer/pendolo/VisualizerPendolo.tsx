@@ -46,25 +46,22 @@ const clampScrollSteps = (steps: number) => {
  */
 const VisualizerPendolo: React.FC<VisualizerSharedProps> = (props) => {
     const {
-        currentTime,
-        currentLineIndex,
-        lines,
-        theme,
-        audioBands,
-        audioPower,
-        showText = true,
-        showSubtitleTranslation = true,
-        subtitleContentMode = 'translation',
-        pendoloTuning = DEFAULT_PENDOLO_TUNING,
-        onLyricLineSeek,
-        lyricsFontScale = 1,
-        subtitleTheme,
-        subtitleOverlayOpacity,
-        subtitleOverlayBackground,
-        subtitleFontScale,
-        isPlayerChromeHidden = false,
-        hideTranslationSubtitle = false,
-    } = props;
+  currentTime,
+  currentLineIndex,
+  lines,
+  theme,
+  audioBands,
+  audioPower,
+  showText = true,
+  showSubtitleTranslation = true,
+  subtitleContentMode = 'translation',
+  pendoloTuning = DEFAULT_PENDOLO_TUNING,
+  onLyricLineSeek,
+  lyricsFontScale = 1,
+  subtitleTheme,
+  subtitleFontScale,
+  hideTranslationSubtitle = false
+} = props;
 
     const [viewportSize, setViewportSize] = useState({
         width: typeof window !== 'undefined' ? window.innerWidth : 1920,

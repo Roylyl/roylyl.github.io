@@ -1,4 +1,3 @@
-import React from 'react';
 import UrlBackgroundLayer from './UrlBackgroundLayer';
 import { UrlBackgroundSettingsCard } from './UrlBackgroundSettingsCard';
 import { defineVisualizerBackground } from '../definition';

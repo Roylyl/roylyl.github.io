@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import type React from 'react';
+
 import type { RefObject } from 'react';
-import type { MotionValue } from 'framer-motion';
+
 import { PlayerState } from '../types';
-import type { SongResult, LyricData } from '../types';
+import type { SongResult } from '../types';
 import type {
     PlayerChromeVisibilityMode,
     RemoteControlCommand,
@@ -120,7 +120,7 @@ export const useElectronPlaybackBridge = ({
     // Read here rather than passed in: all store fields or a module-level motion signal.
     const setIsTitlebarRevealed = useAppChromeStore(state => state.setIsTitlebarRevealed);
     const isPlayerChromeHidden = useAppChromeStore(state => state.isPlayerChromeHidden);
-    const setIsPlayerChromeHidden = useAppChromeStore(state => state.setIsPlayerChromeHidden);
+
     const showTransparentWindowBorder = useAppChromeStore(state => state.showTransparentWindowBorder);
     const setShowTransparentWindowBorder = useAppChromeStore(state => state.setShowTransparentWindowBorder);
     const mainWindowClickThroughEnabled = useAppChromeStore(state => state.isMainWindowClickThroughEnabled);

@@ -1,13 +1,12 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { DEFAULT_CLASSIC_TUNING, AudioBands, type ClassicTuning } from '../../../types';
+import { DEFAULT_CLASSIC_TUNING, type ClassicTuning } from '../../../types';
 import { getLineRenderEndTime } from '../../../utils/lyrics/renderHints';
 import { useVisualizerRuntime } from '../runtime';
 import { type VisualizerSharedProps } from '../definition';
 import VisualizerShell from '../VisualizerShell';
-import VisualizerSubtitleOverlay from '../VisualizerSubtitleOverlay';
-import { resolveSubtitleFontSizes } from '../subtitleFontSizes';
+
 import { buildPostLyricLayoutUnits, buildDisplayWordsFromLayoutUnits } from '../../../utils/lyrics/cjkSemanticLayout';
 import { resolveThemeFontStack, resolveThemeFontWeight } from '../../../utils/fontStacks';
 import { resolveWordColor } from '../wordColoring';
@@ -56,7 +55,6 @@ const resolveClassicTuning = (tuning?: ClassicTuning): ClassicTuning => ({
 });
 
 // Helper to determine if text contains CJK characters
-const isCJK = (text: string) => /[\u4e00-\u9fa5\u3040-\u30ff\uac00-\ud7af]/.test(text);
 
 let classicMeasureCanvas: HTMLCanvasElement | null = null;
 
@@ -80,37 +78,26 @@ const measureWordWidth = (text: string, pxSize: number, fontStack: string, fontW
 
 const Visualizer: React.FC<VisualizerProps> = (props) => {
     const {
-        currentTime,
-        currentLineIndex,
-        lines,
-        theme,
-        subtitleTheme,
-        audioPower,
-        audioBands,
-        showText = true,
-        lyricsFontScale = 1,
-        subtitleFontScale = 1,
-        subtitleOverlayOpacity,
-        subtitleOverlayBackground,
-        subtitleUpcomingLyricsBlur,
-        isPlayerChromeHidden = false,
-        hideTranslationSubtitle = false,
-        showSubtitleTranslation = true,
-        subtitleContentMode,
-        classicTuning,
-    } = props;
+  currentTime,
+  currentLineIndex,
+  lines,
+  theme,
+  audioPower,
+  audioBands,
+  showText = true,
+  lyricsFontScale = 1,
+  classicTuning
+} = props;
     const { t } = useTranslation();
     const resolvedClassicTuning = useMemo(() => resolveClassicTuning(classicTuning), [classicTuning]);
     const {
-        activeLine,
-        recentCompletedLine,
-        nextLines,
-    } = useVisualizerRuntime({
-        currentTime,
-        currentLineIndex,
-        lines,
-        getLineEndTime: getLineRenderEndTime,
-    });
+  activeLine
+} = useVisualizerRuntime({
+  currentTime,
+  currentLineIndex,
+  lines,
+  getLineEndTime: getLineRenderEndTime
+});
     const activeLineRenderProfile = activeLine ? resolveGlowWordRenderProfile(activeLine) : null;
     const activeWordRenderProfile = activeLineRenderProfile ?? (activeLine ? resolveGlowWordRenderProfile(activeLine) : null);
     const activeLineContainerMotion = getGlowWordLineContainerMotion(activeLineRenderProfile);
@@ -138,7 +125,6 @@ const Visualizer: React.FC<VisualizerProps> = (props) => {
 
     const mainFontSize = `clamp(${(2.25 * lyricsFontScale).toFixed(3)}rem, ${(6 * lyricsFontScale).toFixed(3)}vw, ${(4.5 * lyricsFontScale).toFixed(3)}rem)`;
     const emptyFontSize = `clamp(${(1.5 * lyricsFontScale).toFixed(3)}rem, ${(3.5 * lyricsFontScale).toFixed(3)}vw, ${(2.25 * lyricsFontScale).toFixed(3)}rem)`;
-    const { translationFontSize, upcomingFontSize } = resolveSubtitleFontSizes(lyricsFontScale);
 
     // Generate a stable random layout configuration for the current line.
     // Use the line start time as seed so the same lyric does not reshuffle every rerender.
@@ -363,24 +349,6 @@ const Visualizer: React.FC<VisualizerProps> = (props) => {
                 </AnimatePresence>
             </motion.div>
 
-            <VisualizerSubtitleOverlay
-                showText={showText}
-                activeLine={activeLine}
-                recentCompletedLine={recentCompletedLine}
-                nextLines={nextLines}
-                theme={theme}
-                subtitleTheme={subtitleTheme}
-                translationFontSize={translationFontSize}
-                upcomingFontSize={upcomingFontSize}
-                subtitleOverlayOpacity={subtitleOverlayOpacity}
-                subtitleOverlayBackground={subtitleOverlayBackground}
-                subtitleUpcomingLyricsBlur={subtitleUpcomingLyricsBlur}
-                subtitleFontScale={subtitleFontScale}
-                isPlayerChromeHidden={isPlayerChromeHidden}
-                hideTranslationSubtitle={hideTranslationSubtitle}
-                showSubtitleTranslation={showSubtitleTranslation}
-                subtitleContentMode={subtitleContentMode}
-            />
         </VisualizerShell>
     );
 };

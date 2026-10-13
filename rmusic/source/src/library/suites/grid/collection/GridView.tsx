@@ -1,15 +1,13 @@
 import { shouldIgnoreAppKeyboardShortcut } from '../../../../utils/appCombinationShortcuts';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useMotionValue, animate, AnimatePresence, useDragControls, useIsPresent } from 'framer-motion';
-import { ChevronLeft, Disc, Download, Play, Plus, Loader2, Heart, ListPlus, Pencil, RefreshCw, Trash2, Star, Tags } from 'lucide-react';
+import { ChevronLeft, Disc, Download, Play, Plus, Loader2, ListPlus, Pencil, RefreshCw, Trash2, Star, Tags } from 'lucide-react';
 import GridPanelToggleIndicator from '../shared/GridPanelToggleIndicator';
 import { useTranslation } from 'react-i18next';
 import { SongResult, type LocalSong, type StatusMessage, Theme, type UnifiedSong } from '../../../../types';
 import { isSongUnavailable } from '../../../../services/onlineMusic/songAvailability';
-import { formatSongName } from '../../../../utils/songNameFormatter';
 import { getSizedCoverUrl } from '../../../../utils/coverUrl';
-import { getSongCoverUrl } from '../../../../services/onlineMusic/songMetadata';
-import { colorWithAlpha } from '../../../../components/visualizer/colorMix';
+
 import { useFoliaHexViewport } from '../shared/useFoliaHexViewport';
 import { PolaroidCard, type GridItem } from '../shared/PolaroidCard';
 import type { GridPlaybackMark } from '../shared/useGridStayPlayback';
@@ -755,24 +753,19 @@ export const GridView: React.FC<GridViewProps> = ({
 
         let minX = Infinity;
         let maxX = -Infinity;
-        let minY = Infinity;
-        let maxY = -Infinity;
 
         baseCoords.forEach((c) => {
             if (c.baseX < minX) minX = c.baseX;
             if (c.baseX > maxX) maxX = c.baseX;
-            if (c.baseY < minY) minY = c.baseY;
-            if (c.baseY > maxY) maxY = c.baseY;
         });
 
         const bufferX = Math.max(0, containerSize.width / 2 - 2 * layoutConfig.spacingX);
-        const bufferY = Math.max(0, containerSize.height / 2 - 2 * layoutConfig.spacingY);
 
         return {
             left: -maxX - bufferX,
             right: -minX + bufferX,
-            top: -maxY - bufferY,
-            bottom: -minY + bufferY,
+            top: 0,
+            bottom: 0,
         };
     }, [baseCoords, layoutConfig, containerSize]);
 
@@ -865,15 +858,10 @@ export const GridView: React.FC<GridViewProps> = ({
             : event.deltaMode === 2
                 ? Math.max(containerSize.height, 1)
                 : 1) * 2.8;
-        const horizontalDelta = event.shiftKey && Math.abs(event.deltaX) < 1
-            ? event.deltaY
-            : event.deltaX;
-        const verticalDelta = event.shiftKey && Math.abs(event.deltaX) < 1
-            ? 0
-            : event.deltaY;
+        const horizontalDelta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
 
         const targetX = wheelTargetRef.current.x - horizontalDelta * deltaScale;
-        const targetY = wheelTargetRef.current.y - verticalDelta * deltaScale;
+        const targetY = 0;
         const clampedX = Math.max(dragBounds.left, Math.min(dragBounds.right, targetX));
         const clampedY = Math.max(dragBounds.top, Math.min(dragBounds.bottom, targetY));
         wheelTargetRef.current = { x: clampedX, y: clampedY };
@@ -1335,10 +1323,8 @@ export const GridView: React.FC<GridViewProps> = ({
                     const dy = coord.baseY - curr.baseY;
 
                     let isMatch = false;
-                    if (e.key === 'ArrowLeft' && dx < -50 && Math.abs(dy) < 180) isMatch = true;
-                    if (e.key === 'ArrowRight' && dx > 50 && Math.abs(dy) < 180) isMatch = true;
-                    if (e.key === 'ArrowUp' && dy < -50 && Math.abs(dx) < 200) isMatch = true;
-                    if (e.key === 'ArrowDown' && dy > 50 && Math.abs(dx) < 200) isMatch = true;
+                    if ((e.key === 'ArrowLeft' || e.key === 'ArrowUp') && dx < -50 && Math.abs(dy) < 180) isMatch = true;
+                    if ((e.key === 'ArrowRight' || e.key === 'ArrowDown') && dx > 50 && Math.abs(dy) < 180) isMatch = true;
 
                     if (isMatch) {
                         const dist = dx * dx + dy * dy;
@@ -1569,9 +1555,10 @@ export const GridView: React.FC<GridViewProps> = ({
                     </div>
                 ) : (
                     <motion.div
-                        drag
+                        drag="x"
                         dragListener={false}
                         dragControls={dragControls}
+                        data-horizontal-card-viewport="true"
                         dragConstraints={dragBounds}
                         dragElastic={0.05}
                         dragTransition={{ power: 0.16, timeConstant: 220 }}

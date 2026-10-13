@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
     clearCache,
     getCacheKeysByPrefix,
@@ -11,7 +11,6 @@ import {
     removeProviderSessionValue,
 } from '../services/onlineMusic/providerStorage';
 import type { MediaId, ProviderCollection, ProviderUser } from '../types/onlineMusic';
-import { StatusMessage } from '../types';
 import { useOnlineProviderAccountStore } from '../stores/useOnlineProviderAccountStore';
 import { omni } from '../services/onlineMusic/omni';
 import {
@@ -21,8 +20,6 @@ import {
     saveProviderAccountSnapshot,
 } from '../services/onlineMusic/providerAccountCache';
 import { setStatusMessage as setStatusMsg } from '../stores/useStatusMessageStore';
-
-type StatusSetter = Dispatch<SetStateAction<StatusMessage | null>>;
 
 const NETEASE_USER_CACHE_KEYS = {
     profile: getProviderCacheKey('netease', 'user_profile'),

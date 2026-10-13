@@ -1,5 +1,4 @@
-import { shouldIgnoreAppKeyboardShortcut } from '../../../utils/appCombinationShortcuts';
-import { useEffect, useMemo, type CSSProperties } from 'react';
+import { useMemo, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { MotionValue } from 'framer-motion';
 import { PlayerState, type SongResult, type LyricData } from '../../../types';
@@ -17,8 +16,7 @@ import './Lattice.css';
 import LatticeLyricsProvider from './lyrics/LatticeLyricsProvider';
 import type { LatticeLyricSource } from './lyrics/types';
 import { getPlaybackSongKey } from '../../../utils/appPlaybackGuards';
-import { isPrimaryModifierPressed, isSecondaryModifierPressed } from '../../../utils/platform';
-import { isTextEntryTarget } from '../../../utils/keyboardTargets';
+
 import { resolveWallHandoffRole, useWallHandoffStore } from '../../../stores/useWallHandoffStore';
 
 // Queue display layer; it renders the play queue and never mutates it.
@@ -84,7 +82,6 @@ export default function Lattice({
     // 只有下面是透光档（没有颗粒）时颗粒在开翻后淡掉。
     const overlaysOff = handoffFlip && handoffRole === 'in' && handoffPhase === 'closing';
     const grainOff = overlaysOff || (handoffFlip && handoffRole === 'out' && handoffPhase !== 'waiting' && handoffSession?.seeThrough === true);
-
 
     // App rebuilds these on every render of its own, and the wall hands them to every poster on
     // screen. Given a permanent identity here they stop being a reason for those posters to render.

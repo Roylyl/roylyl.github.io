@@ -81,7 +81,10 @@ export const buildSonnetScene = (
     iconTextures: Map<string, import('pixi.js').Texture>,
     paragraph: SonnetParagraph,
 ): SceneView => {
-    const { Container, Graphics, Sprite } = pixi;
+    const {
+  Container,
+  Graphics
+} = pixi;
     const width = Math.max(options.host.clientWidth, 320);
     const height = Math.max(options.host.clientHeight, 240);
     const container = new Container();
@@ -146,7 +149,7 @@ export const buildSonnetScene = (
         nameText.anchor.set(0, 1);
         if (showOuterMetadata) sceneBackgroundLayer.addChild(nameText);
     }
-    
+
     if (options.theme.description) {
         const descText = new Text({
             text: options.theme.description,
@@ -231,7 +234,7 @@ export const buildSonnetScene = (
         postProcessFilters.push(...haloFilters);
         // Virtual instrumental lines can share one shot; the complete staff belongs to the shot, not each line.
         let staffViewAdded = false;
-        placements.forEach((placement, placementIndex) => {
+        placements.forEach((placement, _placementIndex) => {
             const segment = segments[placement.segmentIndex];
             if (segment.text === '♪') {
                 if (staffViewAdded) return;
@@ -282,7 +285,7 @@ export const buildSonnetScene = (
             placements,
             segmentTexts: segments.map(segment => segment.text),
         });
-        
+
         // Poster blocks start centered before runtime tracking; other templates start on the hero word.
         const heroPlacement = placements.find(p => p.role === 'hero');
         const focusX = shot.kind === 'poster-blocks'
@@ -291,7 +294,7 @@ export const buildSonnetScene = (
         const focusY = shot.kind === 'poster-blocks'
             ? 0
             : heroPlacement ? heroPlacement.y : (bounds.y + bounds.height / 2);
-        
+
         shotContainer.pivot.set(focusX, focusY);
         shotContainer.position.set(
             width * (shot.kind === 'poster-blocks' ? 0.5 : 0.5 + shot.camera.x),
@@ -317,7 +320,6 @@ export const buildSonnetScene = (
             mgFixedGeoLayer,
         };
     });
-
 
     if (!showOnlyText) {
         const sceneFilters = applySonnetScenePostProcess(

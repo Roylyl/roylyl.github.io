@@ -8,8 +8,7 @@ import { isGlowBlurQuantized } from '../../../utils/glowBlurQuantize';
 import { prepareActiveAndUpcoming, useVisualizerRuntime } from '../runtime';
 import { type VisualizerSharedProps } from '../definition';
 import VisualizerShell from '../VisualizerShell';
-import VisualizerSubtitleOverlay from '../VisualizerSubtitleOverlay';
-import { resolveSubtitleFontSizes } from '../subtitleFontSizes';
+
 import type {
     AnimatedPlacementState,
     OverlayWordNodes,
@@ -58,25 +57,16 @@ const STATUS_DRAW_ORDER = ['waiting', 'passed', 'active'] as const;
 
 const VisualizerCadenza: React.FC<VisualizerProps> = (props) => {
     const {
-        currentTime,
-        currentLineIndex,
-        lines,
-        theme,
-        subtitleTheme,
-        audioPower,
-        audioBands,
-        showText = true,
-        cadenzaTuning = DEFAULT_CADENZA_TUNING,
-        lyricsFontScale = 1,
-        subtitleFontScale = 1,
-        subtitleOverlayOpacity,
-        subtitleOverlayBackground,
-        subtitleUpcomingLyricsBlur,
-        isPlayerChromeHidden = false,
-        hideTranslationSubtitle = false,
-        showSubtitleTranslation = true,
-        subtitleContentMode,
-    } = props;
+  currentTime,
+  currentLineIndex,
+  lines,
+  theme,
+  audioPower,
+  audioBands,
+  showText = true,
+  cadenzaTuning = DEFAULT_CADENZA_TUNING,
+  lyricsFontScale = 1
+} = props;
     const { t } = useTranslation();
     const [viewport, setViewport] = useState({ width: 0, height: 0 });
     const containerRef = useRef<HTMLDivElement>(null);
@@ -90,19 +80,16 @@ const VisualizerCadenza: React.FC<VisualizerProps> = (props) => {
     const lastFrameTimeRef = useRef<number | null>(null);
 
     const {
-        activeLine,
-        recentCompletedLine,
-        upcomingLine,
-        nextLines,
-    } = useVisualizerRuntime({
-        currentTime,
-        currentLineIndex,
-        lines,
-        getLineEndTime: getLineRenderEndTime,
-    });
+  activeLine,
+  upcomingLine
+} = useVisualizerRuntime({
+  currentTime,
+  currentLineIndex,
+  lines,
+  getLineEndTime: getLineRenderEndTime
+});
     const tuning = cadenzaTuning;
     const emptyFontSize = `clamp(${(1.5 * lyricsFontScale).toFixed(3)}rem, ${(3.5 * lyricsFontScale).toFixed(3)}vw, ${(2.25 * lyricsFontScale).toFixed(3)}rem)`;
-    const { translationFontSize, upcomingFontSize } = resolveSubtitleFontSizes(lyricsFontScale);
 
     const preparedStateContext = useMemo<PreparedStateCacheContext>(() => ({
         showText,
@@ -540,24 +527,6 @@ const VisualizerCadenza: React.FC<VisualizerProps> = (props) => {
                 </AnimatePresence>
             </div>
 
-            <VisualizerSubtitleOverlay
-                showText={showText}
-                activeLine={activeLine}
-                recentCompletedLine={recentCompletedLine}
-                nextLines={nextLines}
-                theme={theme}
-                subtitleTheme={subtitleTheme}
-                translationFontSize={translationFontSize}
-                upcomingFontSize={upcomingFontSize}
-                subtitleOverlayOpacity={subtitleOverlayOpacity}
-                subtitleOverlayBackground={subtitleOverlayBackground}
-                subtitleUpcomingLyricsBlur={subtitleUpcomingLyricsBlur}
-                subtitleFontScale={subtitleFontScale}
-                isPlayerChromeHidden={isPlayerChromeHidden}
-                hideTranslationSubtitle={hideTranslationSubtitle}
-                showSubtitleTranslation={showSubtitleTranslation}
-                subtitleContentMode={subtitleContentMode}
-            />
         </VisualizerShell>
     );
 };

@@ -4,15 +4,7 @@ import type {
     SonnetSemanticSegment,
     SonnetShotKind,
 } from './types';
-import {
-    findSonnetHeroSegmentIndex,
-    findSonnetSemiHeroSegmentIndex,
-    findSonnetSemiHeroSegmentIndices,
-    getSonnetVisibleSegmentLength,
-    resolveSonnetRoleFontWeight,
-    scoreSonnetHeroSegment,
-    type SonnetSegmentRole,
-} from './sonnetTypographyRoles';
+import { findSonnetHeroSegmentIndex, findSonnetSemiHeroSegmentIndices, getSonnetVisibleSegmentLength, resolveSonnetRoleFontWeight, scoreSonnetHeroSegment, type SonnetSegmentRole } from './sonnetTypographyRoles';
 import { layoutSonnetPosterBlocks } from './sonnetPosterBlocksLayout';
 import {
     layoutCrossStack,
@@ -114,17 +106,16 @@ export const measureText = (text: string, fontSpec: string, fontSize: number) =>
 };
 
 export const resolveSonnetTypographyLayout = ({
-    lines,
-    shotKind,
-    paragraphKind,
-    width,
-    height,
-    baseFontSize,
-    fontFamily,
-    fontWeight,
+  lines,
+  shotKind,
+  width,
+  height,
+  baseFontSize,
+  fontFamily,
+  fontWeight
 }: SonnetTypographyLayoutOptions): SonnetTypographyPlacement[] => {
     const segments = lines.flat();
-    
+
     let offset = 0;
     const heroIndices: number[] = [];
     const semiHeroIndices: number[] = [];
@@ -162,7 +153,7 @@ export const resolveSonnetTypographyLayout = ({
         let bestScore = -Infinity;
         segments.forEach((segment, index) => {
             if (index === heroIndex || !segment.isWordLike || getSonnetVisibleSegmentLength(segment) === 0) return;
-            const distanceBonus = Math.abs(index - heroIndex) > 1 ? 50 : 0; 
+            const distanceBonus = Math.abs(index - heroIndex) > 1 ? 50 : 0;
             const score = scoreSonnetHeroSegment(segment) + distanceBonus;
             if (score > bestScore) {
                 bestScore = score;

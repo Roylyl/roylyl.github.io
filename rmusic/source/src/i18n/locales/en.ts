@@ -1,8 +1,6 @@
-
-
 export default {
   "libraryBravais": {
-    "suiteName": "Bravais wall",
+    "suiteName": "Grid wall",
     "homeTitle": "Library",
     "wallLabel": "Library wall",
     "seamLabel": "Info strip",
@@ -132,7 +130,7 @@ export default {
     "cancel": "no",
     "confirmDelete": "Delete “{{name}}”?",
     "rendererSwitch": "Collection view",
-    "rendererGrid": "Grid",
+    "rendererGrid": "Horizontal cards",
     "rendererTui": "TUI",
     "homeTitle": "library",
     "homeSources": "sources",
@@ -1685,7 +1683,7 @@ export default {
     "playbackEntryView": "View opened by Play",
     "playbackEntryViewDesc": "Which view opens by default after you press play.",
     "librarySuite": "Library interface",
-    "librarySuiteDesc": "Which interface the home screen, collections and artist pages are browsed in. Switching keeps your filters, selection and queue.",
+    "librarySuiteDesc": "Use one browsing style across all full-screen song and album selection pages, including home, playlists, albums and artists. Switching keeps your filters, selection and playback queue.",
     "libraryWallLook": "Wall transparency",
     "libraryWallLookDesc": "How much of the visualizer shows through the poster wall.",
     "libraryWallLookSolid": "Solid",
@@ -1739,7 +1737,7 @@ export default {
     "mediaFiles": "Media Files",
     "mediaCache": "Media Cache",
     "enableMediaCache": "Cache Songs",
-    "enableMediaCacheDesc": "Cache audio for offline listening. It also lets blended song changes measure the next track before its first play.",
+    "enableMediaCacheDesc": "Enabled by default. Cache the current track and prefetch full audio for the next three tracks and the previous track.",
     "mediaCacheLimit": "Cache Limit",
     "mediaCacheLimitDesc": "Past this, the songs you have not played in longest are dropped first.",
     "mediaCacheLimitNone": "No limit",

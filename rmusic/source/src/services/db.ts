@@ -1,7 +1,7 @@
 import type { LocalLibrarySnapshot, LocalSong } from '../types';
 import type { MigrationResult } from '../utils/lyrics/renderHints';
 import { appDatabase } from './appDatabase';
-import type { CacheData, SessionData } from './dbTypes';
+import type { SessionData } from './dbTypes';
 import {
   assignImportedSongs,
   deleteSongAssignment,

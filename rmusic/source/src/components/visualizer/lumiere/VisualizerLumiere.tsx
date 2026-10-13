@@ -10,9 +10,8 @@ import type { VisualizerSharedProps } from '../definition';
 import { useVisualizerPixiHost } from '../pixiRuntimeHost';
 import { useVisualizerRuntime } from '../runtime';
 import { useVisualizerSongCommit } from '../songHandover';
-import { resolveSubtitleFontSizes } from '../subtitleFontSizes';
 import VisualizerShell from '../VisualizerShell';
-import VisualizerSubtitleOverlay from '../VisualizerSubtitleOverlay';
+
 import type { LumierePixiRuntime, LumiereSongContext, LumiereSongMetadata } from './createLumierePixiRuntime';
 import { compileLumiereProgram } from './lumiereProgram';
 import { resolveLumiereCompileOptions } from './lumiereRuntimeTuning';
@@ -24,31 +23,22 @@ const EMPTY_LUMIERE_LINES: Line[] = [];
 
 const VisualizerLumiere: React.FC<VisualizerSharedProps> = (props) => {
     const {
-        currentTime,
-        currentLineIndex,
-        lines,
-        theme,
-        audioPower,
-        audioBands,
-        showText = true,
-        lyricsFontScale = 1,
-        staticMode = false,
-        paused = false,
-        seed = 'lumiere',
-        songTitle,
-        songArtist,
-        songAlbum,
-        isPlayerChromeHidden = false,
-        hideTranslationSubtitle = false,
-        showSubtitleTranslation = true,
-        subtitleContentMode,
-        subtitleTheme,
-        subtitleFontScale,
-        subtitleOverlayOpacity,
-        subtitleOverlayBackground,
-        subtitleUpcomingLyricsBlur,
-        lumiereTuning = DEFAULT_LUMIERE_TUNING,
-    } = props;
+  currentTime,
+  currentLineIndex,
+  lines,
+  theme,
+  audioPower,
+  audioBands,
+  showText = true,
+  lyricsFontScale = 1,
+  staticMode = false,
+  paused = false,
+  seed = 'lumiere',
+  songTitle,
+  songArtist,
+  songAlbum,
+  lumiereTuning = DEFAULT_LUMIERE_TUNING
+} = props;
     const { t } = useTranslation();
     const hostRef = useRef<HTMLDivElement>(null);
     const [runtimeFailed, setRuntimeFailed] = useState(false);
@@ -77,12 +67,14 @@ const VisualizerLumiere: React.FC<VisualizerSharedProps> = (props) => {
         () => compileLumiereProgram(committedLines, committedSeed, {}, resolveLumiereCompileOptions({ seamlessTransitions })),
         [committedLines, committedSeed, seamlessTransitions],
     );
-    const { activeLine, recentCompletedLine, nextLines } = useVisualizerRuntime({
-        currentTime,
-        currentLineIndex,
-        lines,
-        getLineEndTime: getLineRenderEndTime,
-    });
+    const {
+  activeLine
+} = useVisualizerRuntime({
+  currentTime,
+  currentLineIndex,
+  lines,
+  getLineEndTime: getLineRenderEndTime
+});
 
     const songContext = useMemo<LumiereSongContext>(
         () => ({ seed: committedSeed, program, theme }),
@@ -163,10 +155,8 @@ const VisualizerLumiere: React.FC<VisualizerSharedProps> = (props) => {
 
     const fallbackFontFamily = resolveThemeFontStack(theme);
     const fallbackFontWeight = resolveThemeFontWeight(theme, 500);
-    const subtitleFontSizes = resolveSubtitleFontSizes(lyricsFontScale);
-    const finalLine = lines.at(-1);
+
     // 片尾卡出来以后不再在字幕里重复最后一句。
-    const creditsRecentCompletedLine = recentCompletedLine === finalLine ? null : recentCompletedLine;
 
     return (
         <VisualizerShell
@@ -192,24 +182,6 @@ const VisualizerLumiere: React.FC<VisualizerSharedProps> = (props) => {
                 )}
             </div>
 
-            <VisualizerSubtitleOverlay
-                showText={showText}
-                activeLine={activeLine}
-                recentCompletedLine={creditsRecentCompletedLine}
-                nextLines={nextLines}
-                theme={theme}
-                subtitleTheme={subtitleTheme}
-                translationFontSize={subtitleFontSizes.translationFontSize}
-                upcomingFontSize={subtitleFontSizes.upcomingFontSize}
-                subtitleFontScale={subtitleFontScale}
-                subtitleOverlayOpacity={subtitleOverlayOpacity}
-                subtitleOverlayBackground={subtitleOverlayBackground}
-                subtitleUpcomingLyricsBlur={subtitleUpcomingLyricsBlur}
-                isPlayerChromeHidden={isPlayerChromeHidden}
-                hideTranslationSubtitle={hideTranslationSubtitle}
-                showSubtitleTranslation={showSubtitleTranslation}
-                subtitleContentMode={subtitleContentMode}
-            />
         </VisualizerShell>
     );
 };

@@ -1,13 +1,14 @@
+import { plannedShuffleIndex } from '../utils/plannedShuffle';
+import { cachePlayedTrackAssets } from './playedTrackCache';
 /**
  * Song Prefetch Service
- * 
+ *
  * Prefetches nearby songs in the queue to enable smooth transitions.
  * Handles URL expiration (1200s TTL) and re-prefetches on queue changes.
  */
 
 import { ReplayGainInfo, SongResult, LyricData, OnlineLyricsState, type LyricProviderSource } from '../types';
 import { migrateLyricDataRenderHints } from '../utils/lyrics/renderHints';
-import { isPureMusicLyricText } from '../utils/lyrics/pureMusic';
 import { autoMatchBestLyric } from '../utils/lyrics/autoMatchBestLyric';
 import { loadOnlineLyricsState, markOnlineLyricsPureMusic, resolveOnlineLyrics, saveOnlineLyricsState } from '../utils/onlineLyricsState';
 import type { AudioQualityPreference, MediaId } from '../types/onlineMusic';
@@ -25,19 +26,10 @@ import { useAudioSettingsStore } from '../stores/useAudioSettingsStore';
 import { classifyPlaybackError } from './playbackRecovery/onlinePlaybackFailure';
 import { getProviderPlaybackCooldown, noteProviderFailure } from './playbackRecovery/providerPlaybackCooldown';
 
-// Prefetch configuration
-//
-// Two ahead and one behind - the ordinary playback window, restored. This governs only the LIGHT
-// resources: a resolved URL, a lyric set and a cover URL, so a normal next/previous keypress lands on
-// something already fetched rather than a fresh network round-trip.
-//
-// The heavy automix work - the full decode and the beat-model pass - does NOT scale with this window.
-// It is capped separately to the current track plus the immediate next by `setAnalysisScope` below
-// (and gated off entirely when blending is disabled, in `analyseForAutomix`). So widening the playback
-// window back out costs a URL and some lyrics per extra track, not a decode - the memory the old
-// one-ahead value was protecting was already protected a layer down.
-const PREFETCH_COUNT_NEXT = 2;  // The next two songs' light resources (URL + lyrics + cover)
-const PREFETCH_COUNT_PREV = 1;  // One behind, so "previous" is instant rather than a refetch
+// Cache full audio immediately for the current song and the nearby playback window.
+// Automix analysis remains independently disabled unless explicitly enabled.
+const PREFETCH_COUNT_NEXT = 3;
+const PREFETCH_COUNT_PREV = 1;
 const URL_TTL_MS = 1200 * 1000; // 1200 seconds = 20 minutes
 const MAX_PREFETCH_CACHE_SIZE = 200; // Evict least recently used entries beyond this limit
 
@@ -51,7 +43,7 @@ const MAX_PREFETCH_CACHE_SIZE = 200; // Evict least recently used entries beyond
 const analyseForAutomix = (song: SongResult, audioUrl: string | null | undefined) => {
   const settingsAudioSettings = useAudioSettingsStore.getState();
   const settingsAutomixSettings = useAutomixSettingsStore.getState();
-  const settingsLyricSettings = useLyricSettingsStore.getState();
+
     // Nothing reads a profile while blending is switched off, and this is not a cheap thing to
     // produce for nobody: the whole file is read, decoded, and put through the beat model in the
     // inference process - per prefetched track, and a prefetch pass covers three of them. Blending
@@ -108,6 +100,9 @@ const touchPrefetchCacheEntry = (songKey: string, data: PrefetchedSongData): Pre
 
 // Track current prefetch operation to cancel on queue change
 let currentPrefetchAbortController: AbortController | null = null;
+useAudioSettingsStore.subscribe((state, previous) => {
+    if (previous.enableMediaCache && !state.enableMediaCache) currentPrefetchAbortController?.abort();
+});
 /**
  * Check if a prefetched URL is still valid (not expired)
  */
@@ -242,6 +237,9 @@ const prefetchSong = async (
     if (existing && lyricPreferenceMatches && existing.audioUrl && isUrlValid(existing.audioUrlFetchedAt) && (existing.lyrics || existing.lyricRaw?.isPureMusic)) {
         console.log(`[Prefetch] Already cached: ${song.name}`);
         touchPrefetchCacheEntry(songKey, existing);
+        if (useAudioSettingsStore.getState().enableMediaCache && existing.audioUrl !== 'CACHED_IN_DB') {
+            await cachePlayedTrackAssets(song, existing.audioUrl, undefined, signal);
+        }
         analyseForAutomix(song, existing.audioUrl);
         return;
     }
@@ -274,6 +272,10 @@ const prefetchSong = async (
                     : data.replayGain;
             }
         }
+    }
+
+    if (!signal.aborted && useAudioSettingsStore.getState().enableMediaCache && data.audioUrl && data.audioUrl !== 'CACHED_IN_DB') {
+        await cachePlayedTrackAssets(song, data.audioUrl, undefined, signal);
     }
 
     // Prefetch lyrics (if not cached)
@@ -313,8 +315,6 @@ const prefetchSong = async (
                 const onlineLyricsState = await loadOnlineLyricsState(song);
                 const resolvedLyrics = resolveOnlineLyrics(onlineLyricsState, parsedLyrics);
 
-  const settingsAudioSettings = useAudioSettingsStore.getState();
-  const settingsAutomixSettings = useAutomixSettingsStore.getState();
   const settingsLyricSettings = useLyricSettingsStore.getState();
                 const autoUseBest = settingsLyricSettings.autoUseBestLyric;
                 const preferredSource = settingsLyricSettings.preferredAlternativeLyricSource;
@@ -484,20 +484,18 @@ export const prefetchNearbySongs = async (
     // a track skipped through inside ten seconds reached its transition still unmeasured.
     const songsToPrefetch: SongResult[] = [];
 
-    // Next songs
-    for (let i = 1; i <= PREFETCH_COUNT_NEXT; i++) {
-        const idx = currentIndex + i;
-        if (idx < queue.length) {
-            songsToPrefetch.push(queue[idx]);
-        }
+    // Cache the current track immediately, then the upcoming window, wrapping the list.
+    if (useAudioSettingsStore.getState().enableMediaCache) songsToPrefetch.push(currentSong);
+    if (useAudioSettingsStore.getState().loopMode === 'shuffle' && queue.length > 1) {
+        songsToPrefetch.push(queue[plannedShuffleIndex(queue, currentIndex)]);
     }
-
-    // Previous songs
-    for (let i = 1; i <= PREFETCH_COUNT_PREV; i++) {
-        const idx = currentIndex - i;
-        if (idx >= 0) {
-            songsToPrefetch.push(queue[idx]);
-        }
+    for (let offset = 1; offset <= Math.min(PREFETCH_COUNT_NEXT, queue.length - 1); offset++) {
+        const candidate = queue[(currentIndex + offset) % queue.length];
+        if (!songsToPrefetch.includes(candidate)) songsToPrefetch.push(candidate);
+    }
+    for (let offset = 1; offset <= Math.min(PREFETCH_COUNT_PREV, queue.length - 1); offset++) {
+        const song = queue[(currentIndex - offset + queue.length) % queue.length];
+        if (!songsToPrefetch.some(entry => getPrefetchSongKey(entry) === getPrefetchSongKey(song))) songsToPrefetch.push(song);
     }
 
     console.log(`[Prefetch] Will prefetch ${songsToPrefetch.length} songs near index ${currentIndex}`);
@@ -507,32 +505,15 @@ export const prefetchNearbySongs = async (
     // listen. Its own prefetch entry usually still holds the URL it was resolved from.
     analyseForAutomix(currentSong, prefetchCache.get(currentSongKey)?.audioUrl);
 
-    // Prefetch using requestIdleCallback for non-blocking execution
-    const prefetchWithIdle = (songs: SongResult[], index: number) => {
-        if (signal.aborted || index >= songs.length) return;
-
-        const song = songs[index];
-
-        if ('requestIdleCallback' in window) {
-            requestIdleCallback(
-                async () => {
-                    if (signal.aborted) return;
-                    await prefetchSong(song, audioQuality, signal, userId);
-                    prefetchWithIdle(songs, index + 1);
-                },
-                { timeout: 5000 }
-            );
-        } else {
-            // Fallback for browsers without requestIdleCallback
-            setTimeout(async () => {
-                if (signal.aborted) return;
-                await prefetchSong(song, audioQuality, signal, userId);
-                prefetchWithIdle(songs, index + 1);
-            }, 100);
+    // Start immediately with two workers: current audio and the next track can download together.
+    let cursor = 0;
+    const run = async () => {
+        while (!signal.aborted && cursor < songsToPrefetch.length) {
+            const song = songsToPrefetch[cursor++];
+            await prefetchSong(song, audioQuality, signal, userId);
         }
     };
-
-    prefetchWithIdle(songsToPrefetch, 0);
+    await Promise.all([run(), run()]);
 };
 
 /**

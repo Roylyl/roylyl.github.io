@@ -6,7 +6,7 @@ import { getLineRenderEndTime } from '../../../utils/lyrics/renderHints';
 import { shouldPreheatLine, useVisualizerRuntime } from '../runtime';
 import { type VisualizerSharedProps } from '../definition';
 import VisualizerShell from '../VisualizerShell';
-import VisualizerSubtitleOverlay from '../VisualizerSubtitleOverlay';
+
 import { buildGlowWordLayoutVariants, glowWordBodyVariants } from '../glowWordVariants';
 import { getGlowWordLineContainerMotion, resolveGlowWordRenderProfile } from '../glowWordTiming';
 import {
@@ -32,25 +32,16 @@ type VisualizerPartitaProps = VisualizerSharedProps;
 
 const VisualizerPartita: React.FC<VisualizerPartitaProps> = (props) => {
     const {
-        currentTime,
-        currentLineIndex,
-        lines,
-        theme,
-        subtitleTheme,
-        audioPower,
-        audioBands,
-        showText = true,
-        partitaTuning = DEFAULT_PARTITA_TUNING,
-        lyricsFontScale = 1,
-        subtitleFontScale = 1,
-        subtitleOverlayOpacity,
-        subtitleOverlayBackground,
-        subtitleUpcomingLyricsBlur,
-        isPlayerChromeHidden = false,
-        hideTranslationSubtitle = false,
-        showSubtitleTranslation = true,
-        subtitleContentMode,
-    } = props;
+  currentTime,
+  currentLineIndex,
+  lines,
+  theme,
+  audioPower,
+  audioBands,
+  showText = true,
+  partitaTuning = DEFAULT_PARTITA_TUNING,
+  lyricsFontScale = 1
+} = props;
     const { t } = useTranslation();
     const [windowHeight, setWindowHeight] = useState(800);
     const resolvedPartitaTuning = useMemo(() => resolvePartitaTuning(partitaTuning), [partitaTuning]);
@@ -64,16 +55,14 @@ const VisualizerPartita: React.FC<VisualizerPartitaProps> = (props) => {
     }, []);
 
     const {
-        activeLine,
-        upcomingLine,
-        recentCompletedLine,
-        nextLines,
-    } = useVisualizerRuntime({
-        currentTime,
-        currentLineIndex,
-        lines,
-        getLineEndTime: getLineRenderEndTime,
-    });
+  activeLine,
+  upcomingLine
+} = useVisualizerRuntime({
+  currentTime,
+  currentLineIndex,
+  lines,
+  getLineEndTime: getLineRenderEndTime
+});
     const activeLineRenderProfile = activeLine ? resolveGlowWordRenderProfile(activeLine) : null;
     const activeLineContainerMotion = getGlowWordLineContainerMotion(activeLineRenderProfile);
 
@@ -106,8 +95,6 @@ const VisualizerPartita: React.FC<VisualizerPartitaProps> = (props) => {
     const densityScale = sequentialLayout.totalGraphemes > 40 ? 0.8 : 1;
     const mainFontSize = `clamp(${(2.5 * densityScale * lyricsFontScale).toFixed(3)}rem, ${(5.5 * densityScale * lyricsFontScale).toFixed(3)}vw, ${(4.5 * densityScale * lyricsFontScale).toFixed(3)}rem)`;
     const emptyFontSize = `clamp(${(1.2 * lyricsFontScale).toFixed(3)}rem, ${(2.8 * lyricsFontScale).toFixed(3)}vw, ${(1.9 * lyricsFontScale).toFixed(3)}rem)`;
-    const translationFontSize = `clamp(${(1.05 * lyricsFontScale).toFixed(3)}rem, ${(2.2 * lyricsFontScale).toFixed(3)}vw, ${(1.2 * lyricsFontScale).toFixed(3)}rem)`;
-    const upcomingFontSize = `clamp(${(0.875 * lyricsFontScale).toFixed(3)}rem, ${(1.8 * lyricsFontScale).toFixed(3)}vw, ${(1 * lyricsFontScale).toFixed(3)}rem)`;
 
     const layoutVariants = buildGlowWordLayoutVariants(theme.animationIntensity);
     const bodyVariants = glowWordBodyVariants;
@@ -167,7 +154,12 @@ const VisualizerPartita: React.FC<VisualizerPartitaProps> = (props) => {
                                         className="relative flex min-h-[24rem] min-w-[3.8rem] items-center justify-center px-3"
                                     >
                                         <div className="relative z-10 flex flex-col items-center justify-start">
-                                            {column.words.map(({ chunkWords, displayWords, config, order, rowIndex }) => (
+                                            {column.words.map(({
+  chunkWords,
+  displayWords,
+  config,
+  rowIndex
+}) => (
                                                 <PartitaChunk
                                                     key={`${config.id}`}
                                                     chunkWords={chunkWords}
@@ -210,24 +202,6 @@ const VisualizerPartita: React.FC<VisualizerPartitaProps> = (props) => {
                 </AnimatePresence>
             </motion.div>
 
-            <VisualizerSubtitleOverlay
-                showText={showText}
-                activeLine={activeLine}
-                recentCompletedLine={recentCompletedLine}
-                nextLines={nextLines}
-                theme={theme}
-                subtitleTheme={subtitleTheme}
-                translationFontSize={translationFontSize}
-                upcomingFontSize={upcomingFontSize}
-                subtitleOverlayOpacity={subtitleOverlayOpacity}
-                subtitleOverlayBackground={subtitleOverlayBackground}
-                subtitleUpcomingLyricsBlur={subtitleUpcomingLyricsBlur}
-                subtitleFontScale={subtitleFontScale}
-                isPlayerChromeHidden={isPlayerChromeHidden}
-                hideTranslationSubtitle={hideTranslationSubtitle}
-                showSubtitleTranslation={showSubtitleTranslation}
-                subtitleContentMode={subtitleContentMode}
-            />
         </VisualizerShell>
     );
 };

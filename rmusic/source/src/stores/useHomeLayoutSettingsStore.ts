@@ -5,7 +5,7 @@
 
 import { create } from 'zustand';
 import i18n from '../i18n/config';
-import { getStoredBoolean, setStoredBoolean } from './storagePrimitives';
+import { getStoredBoolean } from './storagePrimitives';
 import { setStatusMessage } from './useStatusMessageStore';
 
 const readStoredHomeLayoutStyle = (): 'carousel' | 'grid' => {
@@ -39,7 +39,7 @@ export type HomeLayoutSettingsState = {
 // Card positions are always remembered for the current app session.
 if (typeof window !== 'undefined') localStorage.removeItem('remember_home_card_position');
 
-export const useHomeLayoutSettingsStore = create<HomeLayoutSettingsState>((set, get) => ({
+export const useHomeLayoutSettingsStore = create<HomeLayoutSettingsState>((set, _get) => ({
     rememberHomeCardPosition: true,
     handleToggleRememberHomeCardPosition: () => {
         set({ rememberHomeCardPosition: true });

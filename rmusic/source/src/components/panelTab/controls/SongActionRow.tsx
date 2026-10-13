@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, Repeat, Repeat1, RepeatOff, Shuffle, Sparkle, Sparkles } from 'lucide-react';
+import { Heart, Repeat, Repeat1, Shuffle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { ThemeSourceModel } from '../../../hooks/themeControllerState';
 
@@ -23,24 +23,19 @@ interface SongActionRowProps {
 }
 
 const SongActionRow: React.FC<SongActionRowProps> = ({
-    loopMode,
-    onToggleLoop,
-    loopToggleDisabled,
-    onLike,
-    isLiked,
-    likeDisabled,
-    likeDisabledReason,
-    onGenerateAITheme,
-    isGeneratingTheme,
-    canGenerateAITheme,
-    themeSourceModel,
-    isDaylight,
+  loopMode,
+  onToggleLoop,
+  loopToggleDisabled,
+  onLike,
+  isLiked,
+  likeDisabled,
+  likeDisabledReason,
+  isDaylight
 }) => {
     const { t } = useTranslation();
     const loopButtonBg = isDaylight ? 'bg-black/5 hover:bg-zinc-300/85' : 'bg-white/5 hover:bg-white/10';
     const buttonBg = isDaylight ? 'bg-black/5 hover:bg-black/10' : 'bg-white/5 hover:bg-white/10';
     const loopTitle = loopMode === 'shuffle' ? t('player.loopShuffle') : loopMode === 'one' ? t('player.loopOne') : t('player.loopAll');
-    const generateThemeTitle = isGeneratingTheme ? t('ui.generatingTheme') : t('ui.generateAITheme');
 
     return (
         <div className="grid grid-cols-2 gap-3">

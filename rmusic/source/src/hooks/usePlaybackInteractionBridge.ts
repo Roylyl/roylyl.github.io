@@ -1,13 +1,12 @@
 import { shouldIgnoreAppKeyboardShortcut } from '../utils/appCombinationShortcuts';
 import { useCallback, useEffect } from 'react';
 import type React from 'react';
-import type { MotionValue } from 'framer-motion';
+
 import { omni } from '../services/onlineMusic/omni';
 import { playbackFade } from '../services/playbackFade';
 import { PlayerState } from '../types';
-import type { ReplayGainMode, SongResult, StageLoopMode, StatusMessage } from '../types';
+import type { ReplayGainMode } from '../types';
 import { getReplayGainModeLabel } from '../utils/appPlaybackHelpers';
-import { isMacPlatform as isMac } from '../utils/platform';
 import { effectiveKeyCode, hasBlockingWindow, isTextEntryTarget } from '../utils/keyboardTargets';
 import { setStatusMessage as setStatusMsg } from '../stores/useStatusMessageStore';
 import { setReplayGainMode } from '../stores/usePlaybackStore';

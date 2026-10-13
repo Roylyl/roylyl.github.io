@@ -2,7 +2,7 @@ import React, { useMemo, useState, useRef, useInsertionEffect } from 'react';
 import { motion, AnimatePresence, MotionValue, motionValue } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { prepareWithSegments, layoutWithLines } from '@chenglou/pretext';
-import { Line, Theme, AudioBands, type TiltColorScheme, type TiltTuning, DEFAULT_TILT_TUNING } from '../../../types';
+import { Line, Theme, type TiltColorScheme, type TiltTuning, DEFAULT_TILT_TUNING } from '../../../types';
 import { buildWordGraphemeTimings } from '../../../utils/lyrics/graphemeTiming';
 import { getLineRenderEndTime } from '../../../utils/lyrics/renderHints';
 import { resolveThemeFontStack, resolveThemeFontWeight } from '../../../utils/fontStacks';
@@ -10,8 +10,6 @@ import { SentenceLayout } from '../../../utils/lyrics/sentenceLayout';
 import { type VisualizerSharedProps } from '../definition';
 import { useVisualizerRuntime } from '../runtime';
 import VisualizerShell from '../VisualizerShell';
-import VisualizerSubtitleOverlay from '../VisualizerSubtitleOverlay';
-import { resolveSubtitleFontSizes } from '../subtitleFontSizes';
 
 const CHAR_REF_LENGTH = 20;
 const LOG_OFFSET = 4;
@@ -539,39 +537,27 @@ const TiltLine: React.FC<{
 
 const VisualizerTilt: React.FC<VisualizerTiltProps & { staticMode?: boolean; }> = (props) => {
     const {
-        currentTime,
-        currentLineIndex,
-        lines,
-        theme,
-        subtitleTheme,
-        audioPower,
-        audioBands,
-        showText = true,
-        staticMode = false,
-        lyricsFontScale = 1,
-        subtitleFontScale = 1,
-        subtitleOverlayOpacity,
-        subtitleOverlayBackground,
-        subtitleUpcomingLyricsBlur,
-        isPlayerChromeHidden = false,
-        hideTranslationSubtitle = false,
-        showSubtitleTranslation = true,
-        subtitleContentMode,
-        tiltTuning = DEFAULT_TILT_TUNING,
-    } = props;
+  currentTime,
+  currentLineIndex,
+  lines,
+  theme,
+  audioPower,
+  audioBands,
+  showText = true,
+  lyricsFontScale = 1,
+  tiltTuning = DEFAULT_TILT_TUNING
+} = props;
     const { t } = useTranslation();
     const [visibleSegmentIndex, setVisibleSegmentIndex] = useState(-1);
 
     const {
-        activeLine,
-        recentCompletedLine,
-        nextLines,
-    } = useVisualizerRuntime({
-        currentTime,
-        currentLineIndex,
-        lines,
-        getLineEndTime: getLineRenderEndTime,
-    });
+  activeLine
+} = useVisualizerRuntime({
+  currentTime,
+  currentLineIndex,
+  lines,
+  getLineEndTime: getLineRenderEndTime
+});
 
     const layout = useMemo<TiltLayout | null>(() => {
         if (!activeLine?.fullText) return null;
@@ -626,8 +612,6 @@ const VisualizerTilt: React.FC<VisualizerTiltProps & { staticMode?: boolean; }> 
         return unsubscribe;
     }, [currentTime, segmentTimings, activeLine]);
 
-    const { translationFontSize, upcomingFontSize } = resolveSubtitleFontSizes(lyricsFontScale);
-
     return (
         <VisualizerShell
             theme={theme}
@@ -676,24 +660,6 @@ const VisualizerTilt: React.FC<VisualizerTiltProps & { staticMode?: boolean; }> 
                 </AnimatePresence>
             </div>
 
-            <VisualizerSubtitleOverlay
-                showText={showText}
-                activeLine={activeLine}
-                recentCompletedLine={recentCompletedLine}
-                nextLines={nextLines}
-                theme={theme}
-                subtitleTheme={subtitleTheme}
-                translationFontSize={translationFontSize}
-                upcomingFontSize={upcomingFontSize}
-                subtitleOverlayOpacity={subtitleOverlayOpacity}
-                subtitleOverlayBackground={subtitleOverlayBackground}
-                subtitleUpcomingLyricsBlur={subtitleUpcomingLyricsBlur}
-                subtitleFontScale={subtitleFontScale}
-                isPlayerChromeHidden={isPlayerChromeHidden}
-                hideTranslationSubtitle={hideTranslationSubtitle}
-                showSubtitleTranslation={showSubtitleTranslation}
-                subtitleContentMode={subtitleContentMode}
-            />
         </VisualizerShell>
     );
 };

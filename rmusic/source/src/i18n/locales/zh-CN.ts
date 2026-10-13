@@ -1,8 +1,6 @@
-
-
 export default {
   "libraryBravais": {
-    "suiteName": "Bravais墙面",
+    "suiteName": "网格墙面",
     "homeTitle": "书库",
     "wallLabel": "资料库墙面",
     "seamLabel": "信息条",
@@ -132,7 +130,7 @@ export default {
     "cancel": "取消",
     "confirmDelete": "删除「{{name}}」？",
     "rendererSwitch": "集合视图",
-    "rendererGrid": "网格",
+    "rendererGrid": "横向卡片",
     "rendererTui": "TUI",
     "homeTitle": "曲库",
     "homeSources": "来源",
@@ -1684,7 +1682,7 @@ export default {
     "playbackEntryView": "播放后进入的视图",
     "playbackEntryViewDesc": "点击播放后默认打开哪个视图。",
     "librarySuite": "资料库界面",
-    "librarySuiteDesc": "首页、集合与歌手页用哪套界面浏览。切换时保留筛选、选中项和播放队列。",
+    "librarySuiteDesc": "统一设置所有全屏选曲、选专辑页面的浏览样式，包括首页、歌单、专辑和歌手页面。切换时保留筛选、选中项和播放队列。",
     "libraryWallLook": "透光",
     "libraryWallLookDesc": "海报墙透出多少下面的可视化。",
     "libraryWallLookSolid": "实色",
@@ -1738,10 +1736,10 @@ export default {
     "mediaFiles": "媒体文件",
     "mediaCache": "媒体缓存",
     "enableMediaCache": "缓存歌曲",
-    "enableMediaCacheDesc": "缓存音频以便离线收听。开启后，混音过渡也能在第一次播放前就听懂下一首。",
+    "enableMediaCacheDesc": "默认开启。播放时缓存当前歌曲，并提前缓存后续3首和前1首的完整音频，减少切歌等待。",
     "mediaCacheLimit": "缓存上限",
     "mediaCacheLimitDesc": "超过上限后，最久没听的歌会被先删掉。",
-    "mediaCacheLimitNone": "不限制",
+    "mediaCacheLimitNone": "无限",
     "cachedSongsCount": "已缓存歌曲",
     "cacheDirectory": "缓存目录",
     "cacheDirectoryDesc": "选择媒体文件的缓存位置。",

@@ -82,7 +82,7 @@ const buildOptions = (kind: 'visualizer' | 'background', context: CommandPalette
         })
 );
 
-const toCommand = (option: PickerOption, kind: 'visualizer' | 'background'): CommandPaletteCommand => ({
+const toCommand = (option: PickerOption, _kind: 'visualizer' | 'background'): CommandPaletteCommand => ({
     id: option.id,
     group: 'visualizer',
     title: option.label,

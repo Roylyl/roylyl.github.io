@@ -14,7 +14,6 @@ import {
 } from '../utils/localLibraryNames';
 import { appDatabase } from './appDatabase';
 import { createLocalLibraryAssignment, resolveEntityNames } from './localLibraryCatalogInternals';
-import { assignImportedSongs } from './localLibraryImportCatalog';
 import { sanitizeLocalSongForStorage } from './repositories/localSongRepository';
 import { deleteUnreferencedLocalCoverAssets } from './localCoverAssetService';
 

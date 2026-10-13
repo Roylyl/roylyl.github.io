@@ -105,20 +105,19 @@ const MonetWordSweep: React.FC<{
     isChorus?: boolean;
     audioPower?: MotionValue<number>;
 }> = ({
-    text,
-    startTime,
-    endTime,
-    graphemeTimings,
-    lineRenderEndTime,
-    currentTime,
-    lineStatus,
-    wordColor,
-    baseColor,
-    fontPx,
-    fontSpec,
-    fontsEpoch,
-    isChorus,
-    audioPower,
+  text,
+  startTime,
+  endTime,
+  graphemeTimings,
+  lineRenderEndTime,
+  currentTime,
+  lineStatus,
+  wordColor,
+  baseColor,
+  fontPx,
+  fontSpec,
+  fontsEpoch,
+  isChorus
 }) => {
         const isLineActive = lineStatus === 'active';
         const canRenderGlow = lineStatus === 'active' || lineStatus === 'passed';

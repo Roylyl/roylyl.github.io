@@ -20,7 +20,7 @@ import { SYNC_SCHEMA_VERSION } from './syncTypes';
 // Coordinates startup theme sync and user-triggered manual sync commands.
 
 const LOCAL_SETTINGS_UPDATED_AT_KEY = 'folia_sync_local_settings_updated_at_v1';
-let applyingRemoteSettings = false;
+
 let isSyncingInProgress = false;
 
 const isBrowser = () => typeof window !== 'undefined';
@@ -71,13 +71,11 @@ export const pullRemoteVisualSettings = async (remoteState?: SyncRemoteState | n
         return false;
     }
 
-    applyingRemoteSettings = true;
     try {
         applySyncedVisualSettings(readSyncableSettingsState(), remoteSettings.data);
         setLocalSettingsUpdatedAt(remoteSettings.updatedAt);
         return true;
     } finally {
-        applyingRemoteSettings = false;
     }
 };
 
@@ -115,7 +113,7 @@ export const syncNow = async (options: { syncThemes?: boolean; applyRemoteSettin
         if (options.syncThemes ?? true) {
             themeSyncResult = await pushMissingLocalThemesToRemote(remoteState);
         }
-        
+
         let appliedRemoteSettings = false;
         let pushedLocalSettings = false;
         if (options.applyRemoteSettings) {
@@ -188,12 +186,10 @@ export const importSyncLibraryBundle = async (
     try {
         await saveSyncLibraryBundleToLocalCache(validatedBundle);
         if (validatedBundle.settings) {
-            applyingRemoteSettings = true;
             try {
                 applySyncedVisualSettings(readSyncableSettingsState(), validatedBundle.settings.data);
                 setLocalSettingsUpdatedAt(validatedBundle.settings.updatedAt);
             } finally {
-                applyingRemoteSettings = false;
             }
         }
         if (options.pushRemote ?? true) {

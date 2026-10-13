@@ -229,7 +229,7 @@ export const useSearchNavigationStore = create<SearchNavigationState>((set, get)
         };
     }),
     hideSearchOverlay: () => set({ isSearchOpen: false, searchReturnView: 'home' }),
-    resetRuntime: (onlineProviderId) => set(state => ({
+    resetRuntime: (_onlineProviderId) => set(state => ({
         searchQuery: '',
         searchSourceTab: 'navidrome',
         searchResults: null,

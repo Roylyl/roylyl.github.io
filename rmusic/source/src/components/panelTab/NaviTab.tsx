@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ReplayGainMode, SongResult } from '../../types';
-import { RefreshCw, FileText, Cloud } from 'lucide-react';
+import { FileText, Cloud } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import LyricTimelineOffsetControl from './LyricTimelineOffsetControl';
 import LyricFileButton from './LyricFileButton';
@@ -21,14 +21,13 @@ interface NaviTabProps {
 }
 
 const NaviTab: React.FC<NaviTabProps> = ({
-    currentSong,
-    hasLyrics,
-    onMatchOnline,
-    lyricTimelineOffsetMs,
-    onLyricTimelineOffsetChange,
-    replayGainMode,
-    onChangeReplayGainMode,
-    isDaylight,
+  currentSong,
+  hasLyrics,
+  lyricTimelineOffsetMs,
+  onLyricTimelineOffsetChange,
+  replayGainMode,
+  onChangeReplayGainMode,
+  isDaylight
 }) => {
     const { t } = useTranslation();
     const navidromeSong = resolveNavidromePlaybackCarrier(currentSong);
@@ -49,7 +48,7 @@ const NaviTab: React.FC<NaviTabProps> = ({
     const matchedLyricsProviderPlatform = navidromeSong.matchedLyricsProviderPlatform;
     const hasMatchedLyrics = (matchedLyrics?.lines?.length ?? 0) > 0;
     const isOnline = hasMatchedLyrics && songLyricsSource === 'online';
-    
+
     let lyricsSourceLabel = t('localMusic.statusNone');
     if (isOnline) {
         lyricsSourceLabel = getLyricProviderLabel(matchedLyricsSource, matchedLyricsProviderPlatform);

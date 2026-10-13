@@ -36,7 +36,12 @@ async function bootRmusic() {
         showHomeTabAlbums: false, showHomeTabLocal: false,
     });
     useSearchNavigationStore.getState().setHomeViewTab('navidrome');
-    useLibrarySuiteStore.getState().setSuite('grid');
+    // Keep the user's browsing mode across reloads; new installations use cards.
+    let savedSuite: string | null = null;
+    try { savedSuite = localStorage.getItem('library_suite'); } catch { /* Storage may be unavailable. */ }
+    if (savedSuite !== 'grid' && savedSuite !== 'bravais') {
+        useLibrarySuiteStore.getState().setSuite('grid');
+    }
     usePlaybackEntryViewStore.getState().closePlaybackEntryViewPrompt();
     useStageSettingsStore.setState({
         enableNowPlayingStage: false, enablePlayerCapStage: false,

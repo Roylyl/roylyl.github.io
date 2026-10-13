@@ -7,8 +7,7 @@
 import { create } from 'zustand';
 import i18n from '../i18n/config';
 
-
-import { normalizePinnedCommandIds, readPinnedCommandIds, writePinnedCommandIds, type PinnedCommandIds } from '../components/command-palette/pinnedCommandPreferences';
+import { readPinnedCommandIds, type PinnedCommandIds } from '../components/command-palette/pinnedCommandPreferences';
 import { applyAppLanguagePreference, readStoredAppLanguagePreference, type AppLanguagePreference } from '../i18n/config';
 import { setStatusMessage } from './useStatusMessageStore';
 import type { SettingsAnchorId } from '../components/modal/settings/navigation/settingsAnchorModel';

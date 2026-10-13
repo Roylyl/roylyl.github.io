@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/react/shallow';
@@ -16,7 +16,6 @@ import { getVisualizerModeLabel } from '../visualizer/registry';
 import { normalizeThemeHexColor } from '../../services/themeSanitizer';
 import { BASE_DUAL_THEME } from '../../services/baseThemes';
 import type { ThemeCacheSongKey } from '../../services/themeCache';
-import { extractColors } from '../../utils/colorExtractor';
 import { buildRecommendedColors } from '../../utils/themeEditorPalette';
 import { useThemeQuickEditorStore } from '../../stores/useThemeQuickEditorStore';
 import type { VisualizerTuningBundle } from '../visualizer/tuningRegistry';
@@ -29,12 +28,7 @@ import ThemeParkContentPanel from './theme-park/ThemeParkContentPanel';
 import ThemeParkAiPanel from './theme-park/ThemeParkAiPanel';
 import { useThemeParkDraft } from './theme-park/useThemeParkDraft';
 import { useThemeParkPreviewClock } from './theme-park/useThemeParkPreviewClock';
-import {
-    isDualThemeNameValid,
-    type EditableMode,
-    type ThemeEditTarget,
-    type ThemeParkTab,
-} from './theme-park/themeParkDraft';
+import { isDualThemeNameValid, type EditableMode, type ThemeParkTab } from './theme-park/themeParkDraft';
 
 // src/components/modal/ThemePark.tsx
 // Full theme editor: live visualizer preview on the left, and a tabbed editor on the right that
@@ -96,23 +90,35 @@ const ThemePark: React.FC<ThemeParkProps> = ({
     const isMouseDownOnOverlayRef = useRef(false);
     const [isPaused, setIsPaused] = useState(false);
     const [activeTab, setActiveTab] = useState<ThemeParkTab>('colors');
-    const [coverColors, setCoverColors] = useState<string[]>([]);
+    const [coverColors] = useState<string[]>([]);
+
+// Shared theme-editing context (also feeding the quick editor): the live AI / custom themes
+// plus the current song, so a saved AI theme lands on the right cache entry.
 
     // Shared theme-editing context (also feeding the quick editor): the live AI / custom themes
     // plus the current song, so a saved AI theme lands on the right cache entry.
-    const { aiTheme, customTheme, bgMode, coverUrl, song, songKey, promptSourceText, isPureMusic, songTitle } = useThemeQuickEditorStore(
-        useShallow(state => ({
-            aiTheme: state.aiTheme,
-            customTheme: state.customTheme,
-            bgMode: state.bgMode,
-            coverUrl: state.coverUrl,
-            song: state.song,
-            songKey: state.songKey,
-            promptSourceText: state.promptSourceText,
-            isPureMusic: state.isPureMusic,
-            songTitle: state.songTitle,
-        })),
-    );
+    // Shared theme-editing context (also feeding the quick editor): the live AI / custom themes
+// plus the current song, so a saved AI theme lands on the right cache entry.
+const {
+  aiTheme,
+  customTheme,
+  bgMode,
+  song,
+  songKey,
+  promptSourceText,
+  isPureMusic,
+  songTitle
+} = useThemeQuickEditorStore(useShallow(state => ({
+  aiTheme: state.aiTheme,
+  customTheme: state.customTheme,
+  bgMode: state.bgMode,
+  coverUrl: state.coverUrl,
+  song: state.song,
+  songKey: state.songKey,
+  promptSourceText: state.promptSourceText,
+  isPureMusic: state.isPureMusic,
+  songTitle: state.songTitle
+})));
 
     const {
         target,

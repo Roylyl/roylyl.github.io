@@ -6,13 +6,7 @@
 
 import { create } from 'zustand';
 import i18n from '../i18n/config';
-import {
-    DEFAULT_PLAYER_CONTROL_SLOT_PRIMARY,
-    DEFAULT_PLAYER_CONTROL_SLOT_SECONDARY,
-    isPlayerControlSlotActionId,
-    type PlayerControlSlotActionId,
-} from '../types/playerControlSlots';
-import { PLAYER_BOTTOM_BAR_BASE_OFFSET_PX } from '../utils/playerBottomBarLayout';
+import { DEFAULT_PLAYER_CONTROL_SLOT_PRIMARY, DEFAULT_PLAYER_CONTROL_SLOT_SECONDARY, type PlayerControlSlotActionId } from '../types/playerControlSlots';
 import { getStoredBoolean, setStoredBoolean } from './storagePrimitives';
 import { setStatusMessage } from './useStatusMessageStore';
 
@@ -68,7 +62,7 @@ export type PlayerChromeSettingsState = {
     handleToggleOpenPanelCloseButton: (enable: boolean) => void;
 };
 
-export const usePlayerChromeSettingsStore = create<PlayerChromeSettingsState>((set, get) => ({
+export const usePlayerChromeSettingsStore = create<PlayerChromeSettingsState>((set, _get) => ({
     hidePlayerProgressBar: getStoredBoolean('hide_player_progress_bar', false),
     playerBottomBarOffset: readStoredPlayerBottomBarOffset(),
     playerControlSlotPrimary: readStoredPlayerControlSlot(
@@ -85,16 +79,15 @@ export const usePlayerChromeSettingsStore = create<PlayerChromeSettingsState>((s
     alwaysShowMainWindowTitlebar: getStoredBoolean('always_show_main_window_titlebar', false),
     hideFullscreenButton: getStoredBoolean('hide_fullscreen_button', false),
     useNativeMacFullscreenButton: getStoredBoolean('use_native_mac_fullscreen_button', false),
-    transparentPlayerBackground: getStoredBoolean('transparent_player_background', false),
+    transparentPlayerBackground: false,
     enablePlayerPageNativeBlur: getStoredBoolean('enable_player_page_native_blur', false),
     autoHidePlayerChrome: getStoredBoolean('auto_hide_player_chrome', false),
     // Rides the chrome auto-hide clock rather than owning one: the cursor goes away with the
     // controls it would have clicked. Opt-out, so auto-hide can keep the pointer if wanted.
     autoHideCursorWithPlayerChrome: getStoredBoolean('auto_hide_cursor_with_player_chrome', true),
     showOpenPanelCloseButton: getStoredBoolean('show_open_panel_close_button', true),
-    setTransparentPlayerBackgroundFromSystem: (enabled) => {
-        setStoredBoolean('transparent_player_background', enabled);
-        set({ transparentPlayerBackground: enabled });
+    setTransparentPlayerBackgroundFromSystem: () => {
+        set({ transparentPlayerBackground: false });
     },
     handleTogglePlayerPageNativeBlur: (enable) => {
         setStoredBoolean('enable_player_page_native_blur', enable);
@@ -168,13 +161,8 @@ export const usePlayerChromeSettingsStore = create<PlayerChromeSettingsState>((s
             text: i18n.t('notifications.' + (enable ? 'rightBtnHidden' : 'rightBtnShown')),
         });
     },
-    handleToggleTransparentPlayerBackground: (enable) => {
-        setStoredBoolean('transparent_player_background', enable);
-        set({ transparentPlayerBackground: enable });
-        setStatusMessage({
-            type: 'info',
-            text: i18n.t('notifications.' + (enable ? 'transparentBgOn' : 'transparentBgOff')),
-        });
+    handleToggleTransparentPlayerBackground: () => {
+        set({ transparentPlayerBackground: false });
     },
     // Main-process guard fired the refusal (classic Windows wallpaper mode cannot present a
     // transparent wallpaper window): surface why the toggle did not take effect.

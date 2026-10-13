@@ -11,7 +11,7 @@ import { useVisualizerPixiHost } from '../pixiRuntimeHost';
 import { useVisualizerRuntime } from '../runtime';
 import { useVisualizerSongCommit } from '../songHandover';
 import VisualizerShell from '../VisualizerShell';
-import VisualizerSubtitleOverlay from '../VisualizerSubtitleOverlay';
+
 import type {
     TemperaPixiRuntime,
     TemperaSongContext,
@@ -25,33 +25,24 @@ const EMPTY_TEMPERA_LINES: Line[] = [];
 
 const VisualizerTempera: React.FC<VisualizerSharedProps> = (props) => {
     const {
-        currentTime,
-        currentLineIndex,
-        lines,
-        theme,
-        audioPower,
-        audioBands,
-        showText = true,
-        lyricsFontScale = 1,
-        staticMode = false,
-        paused = false,
-        seed = 'tempera',
-        coverUrl,
-        temperaLayerImageAssets,
-        songTitle,
-        songArtist,
-        songAlbum,
-        isPlayerChromeHidden = false,
-        hideTranslationSubtitle = false,
-        showSubtitleTranslation = true,
-        subtitleContentMode,
-        subtitleTheme,
-        subtitleFontScale,
-        subtitleOverlayOpacity,
-        subtitleOverlayBackground,
-        subtitleUpcomingLyricsBlur,
-        temperaTuning = DEFAULT_TEMPERA_TUNING,
-    } = props;
+  currentTime,
+  currentLineIndex,
+  lines,
+  theme,
+  audioPower,
+  audioBands,
+  showText = true,
+  lyricsFontScale = 1,
+  staticMode = false,
+  paused = false,
+  seed = 'tempera',
+  coverUrl,
+  temperaLayerImageAssets,
+  songTitle,
+  songArtist,
+  songAlbum,
+  temperaTuning = DEFAULT_TEMPERA_TUNING
+} = props;
     const { t } = useTranslation();
     const hostRef = useRef<HTMLDivElement>(null);
     const pausedRef = useRef(paused);
@@ -108,12 +99,23 @@ const VisualizerTempera: React.FC<VisualizerSharedProps> = (props) => {
         () => compileTemperaProgram(programLines, committedSeed, { wholeLineLyrics }),
         [programLines, committedSeed, wholeLineLyrics],
     );
-    const { activeLine, recentCompletedLine, nextLines } = useVisualizerRuntime({
-        currentTime,
-        currentLineIndex,
-        lines,
-        getLineEndTime: getLineRenderEndTime,
-    });
+    const {
+  activeLine
+} = useVisualizerRuntime({
+  currentTime,
+  currentLineIndex,
+  lines,
+  getLineEndTime: getLineRenderEndTime
+});
+
+// Cover-art colours feed the gradient colour mode only; the other modes derive everything
+// from the theme, so there is no reason to decode the artwork for them.
+
+// Cover-art colours feed the gradient colour mode only; the other modes derive everything
+// from the theme, so there is no reason to decode the artwork for them.
+
+// Cover-art colours feed the gradient colour mode only; the other modes derive everything
+// from the theme, so there is no reason to decode the artwork for them.
 
     // Cover-art colours feed the gradient colour mode only; the other modes derive everything
     // from the theme, so there is no reason to decode the artwork for them.
@@ -237,10 +239,6 @@ const VisualizerTempera: React.FC<VisualizerSharedProps> = (props) => {
 
     const fallbackFontFamily = resolveThemeFontStack(theme);
     const fallbackFontWeight = resolveThemeFontWeight(theme, 600);
-    const finalLine = lines.at(-1);
-    const creditsRecentCompletedLine = recentCompletedLine === finalLine
-        ? null
-        : recentCompletedLine;
 
     return (
         <VisualizerShell
@@ -266,24 +264,6 @@ const VisualizerTempera: React.FC<VisualizerSharedProps> = (props) => {
                 )}
             </div>
 
-            <VisualizerSubtitleOverlay
-                showText={showText}
-                activeLine={activeLine}
-                recentCompletedLine={creditsRecentCompletedLine}
-                nextLines={nextLines}
-                theme={theme}
-                subtitleTheme={subtitleTheme}
-                translationFontSize={`clamp(${1.05 * lyricsFontScale}rem, ${2.2 * lyricsFontScale}vw, ${1.25 * lyricsFontScale}rem)`}
-                upcomingFontSize={`clamp(${0.9 * lyricsFontScale}rem, ${1.8 * lyricsFontScale}vw, ${1.05 * lyricsFontScale}rem)`}
-                subtitleFontScale={subtitleFontScale}
-                subtitleOverlayOpacity={subtitleOverlayOpacity}
-                subtitleOverlayBackground={subtitleOverlayBackground}
-                subtitleUpcomingLyricsBlur={subtitleUpcomingLyricsBlur}
-                isPlayerChromeHidden={isPlayerChromeHidden}
-                hideTranslationSubtitle={hideTranslationSubtitle}
-                showSubtitleTranslation={showSubtitleTranslation}
-                subtitleContentMode={subtitleContentMode}
-            />
         </VisualizerShell>
     );
 };

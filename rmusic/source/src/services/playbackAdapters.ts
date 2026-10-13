@@ -120,7 +120,7 @@ export const getLocalSongId = (localSong: LocalSong): number => {
     // DJB2 style hash into two parts to create a safe integer
     let h1 = 0x811c9dc5;
     let h2 = 0x811c9dc5;
-    
+
     for (let i = 0; i < localSong.id.length; i++) {
         const char = localSong.id.charCodeAt(i);
         h1 ^= char;
@@ -128,7 +128,7 @@ export const getLocalSongId = (localSong: LocalSong): number => {
         h2 ^= char;
         h2 = Math.imul(h2, 0x10a9055);
     }
-    
+
     // Combine into a 53-bit safe positive integer, then make it negative
     const high = (h1 & 0x1FFFFF) * 0x100000000;
     const low = (h2 >>> 0);
@@ -137,10 +137,9 @@ export const getLocalSongId = (localSong: LocalSong): number => {
 };
 
 export function buildUnifiedLocalSong({
-    localSong,
-    matchedSong,
-    coverUrl,
-    preferOnlineMetadata,
+  localSong,
+  matchedSong,
+  coverUrl
 }: {
     localSong: LocalSong;
     matchedSong: SongResult | null;

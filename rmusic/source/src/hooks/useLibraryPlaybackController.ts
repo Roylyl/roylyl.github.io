@@ -2,10 +2,10 @@ import { isNativeMediaPlaybackPreferred, playNativeMedia, setNativeMediaSource }
 import { RMUSIC_SERVER } from '../services/rmusicCatalog';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Dispatch, MutableRefObject, RefObject, SetStateAction } from 'react';
-import type { MotionValue } from 'framer-motion';
+
 import { LyricParserFactory } from '../utils/lyrics/LyricParserFactory';
-import { getFromCacheWithMigration, getLocalSong, getLocalSongs, removeFromCache, saveLocalSong, saveToCache } from '../services/db';
-import { getCachedCoverUrl, loadCachedOrFetchCover } from '../services/coverCache';
+import { getFromCacheWithMigration, getLocalSong, getLocalSongs, removeFromCache, saveToCache } from '../services/db';
+import { loadCachedOrFetchCover } from '../services/coverCache';
 import { ensureLocalSongCoverAsset, getAudioFromLocalSong } from '../services/localMusicService';
 import { addSongsToLocalPlaylist, buildCanonicalLocalSongIdIndex, createLocalPlaylist, getLocalPlaylists, setLocalSongFavorite } from '../services/localPlaylistService';
 import { applyLocalLibraryEntityDisplay, buildLocalQueue, buildNavidromeQueue, buildUnifiedLocalSong, buildUnifiedNavidromeSong, resolveLocalSongMetadata } from '../services/playbackAdapters';
@@ -32,15 +32,14 @@ import { resolveExplicitFileTimedLyricFormat } from '../utils/lyrics/formatDetec
 import { applyUploadedLocalLyrics } from '../utils/lyrics/localLyricsUpload';
 import { omni } from '../services/onlineMusic/omni';
 import { getProviderSongMetadata } from '../services/onlineMusic/songMetadata';
-import { getSongResourceCacheKey } from '../services/onlineMusic/resourceKeys';
 import { getSongCacheWithLegacyMigration } from '../services/onlineMusic/resourceCache';
 import { buildLocalSourceRevision, buildNavidromeSourceRevision } from '../services/playbackRecovery/sourceRevision';
 import { getPlaybackRepresentationForRevision } from '../services/playbackRecovery/representationRegistry';
 import { getProviderCacheKey } from '../services/onlineMusic/providerStorage';
 import { getNavidromeConfig, navidromeApi } from '../services/navidromeService';
 import { PlayerState } from '../types';
-import type { LyricData, LocalPlaylist, LocalSong, OnlineLyricsState, QueueAddBehavior, SongResult, StatusMessage } from '../types';
-import type { AudioQualityPreference, MediaId, ProviderCollection } from '../types/onlineMusic';
+import type { LyricData, LocalPlaylist, LocalSong, OnlineLyricsState, SongResult } from '../types';
+import type { MediaId, ProviderCollection } from '../types/onlineMusic';
 import type { PlaybackSnapshot, PlaybackNavigationOptions } from '../types/appPlayback';
 import type { NavidromeSong } from '../types/navidrome';
 import type { NavidromeMatchData } from '../components/modal/NaviLyricMatchModal';
@@ -107,20 +106,19 @@ type UseLibraryPlaybackControllerParams = {
 
 // Owns local and Navidrome playback helpers so App.tsx can stay focused on assembly.
 export function useLibraryPlaybackController({
-    audioRef,
-    likedSongIds,
-    userId,
-    setLyrics,
-    setIsLyricsLoading,
-    setLikedSongIds,
-    navigateToPlaybackView,
-    persistLastPlaybackCache,
-    restoreCachedThemeForSong,
-    interruptStagePlaybackForMainTransition,
-    blobUrlRef,
-    shouldAutoPlayRef,
-    currentSongRef,
-    currentOnlineAudioUrlFetchedAtRef,
+  audioRef,
+  likedSongIds,
+  userId,
+  setLyrics,
+  setIsLyricsLoading,
+  setLikedSongIds,
+  navigateToPlaybackView,
+  persistLastPlaybackCache,
+  restoreCachedThemeForSong,
+  interruptStagePlaybackForMainTransition,
+  blobUrlRef,
+  shouldAutoPlayRef,
+  currentSongRef
 }: UseLibraryPlaybackControllerParams) {
     // Read here rather than passed in: all store fields, a module-level signal, or i18n.
     const { t } = useTranslation();

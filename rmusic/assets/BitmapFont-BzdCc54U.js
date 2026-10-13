@@ -1,0 +1,1 @@
+export{BitmapFont}from"./lib-BT9M3Pdg.js";

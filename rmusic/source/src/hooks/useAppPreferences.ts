@@ -1,6 +1,5 @@
-import { useEffect, type Dispatch, type SetStateAction } from 'react';
-import { useShallow } from 'zustand/react/shallow';
-import type { StatusMessage } from '../types';
+import { useEffect } from 'react';
+
 import { getCustomCappellaEmojiPack } from '../services/cappellaEmojiPack';
 import { getCustomCappellaAvatar } from '../services/cappellaAvatarPack';
 import { getMonetBackgroundImage } from '../services/monetBackgroundImage';

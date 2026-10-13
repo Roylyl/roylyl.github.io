@@ -2,7 +2,7 @@ import { isNativeMediaPlaybackPreferred, playNativeMedia, setNativeMediaSource }
 import { useCallback, useEffect, useRef } from 'react';
 import type { MutableRefObject, RefObject } from 'react';
 import { PlayerState } from '../types';
-import type { ReplayGainInfo, ReplayGainMode, SongResult, StatusMessage } from '../types';
+import type { ReplayGainInfo, SongResult } from '../types';
 import type { LocalSong } from '../types';
 import { resolveNavidromePlaybackCarrier } from '../utils/appPlaybackGuards';
 import { calculateReplayGain } from '../utils/replayGain';

@@ -1,4 +1,5 @@
-import { getFromCache, removeFromCache, saveToCache } from './db';
+import { appDatabase } from './appDatabase';
+import { getFromCache, removeFromCache } from './db';
 import { isBlob } from '../utils/blobGuards';
 import { useAudioSettingsStore } from '../stores/useAudioSettingsStore';
 
@@ -11,6 +12,27 @@ import { useAudioSettingsStore } from '../stores/useAudioSettingsStore';
  */
 const cacheLimitBytes = () =>
   useAudioSettingsStore.getState().mediaCacheLimitGb * 1024 * 1024 * 1024;
+
+const trimBrowserAudioCache = async () => {
+  const limit = cacheLimitBytes();
+  if (!limit) return;
+  const table = appDatabase.media_cache;
+  await appDatabase.transaction('rw', table, async () => {
+    const entries = (await table.toArray()).filter(entry => entry.key.startsWith('audio_') && isBlob(entry.data));
+    let total = entries.reduce((sum, entry) => sum + (entry.data as Blob).size, 0);
+    entries.sort((a, b) => a.timestamp - b.timestamp);
+    for (const entry of entries) {
+      if (total <= limit) break;
+      await table.delete(entry.key);
+      total -= (entry.data as Blob).size;
+    }
+  });
+};
+useAudioSettingsStore.subscribe((state, previous) => {
+  if (state.mediaCacheLimitGb !== previous.mediaCacheLimitGb) {
+    void trimBrowserAudioCache().catch(error => console.warn('[Cache] Could not enforce cache limit', error));
+  }
+});
 
 interface ElectronAudioCacheEntry {
   found: boolean;
@@ -53,6 +75,7 @@ export async function getCachedAudioBlob(cacheKey: string): Promise<Blob | null>
     return null;
   }
   const indexedDbBlob = indexedDbValue;
+  await appDatabase.media_cache.update(cacheKey, { timestamp: Date.now() });
 
   if (isElectronAudioCacheAvailable()) {
     try {
@@ -105,7 +128,10 @@ export async function saveAudioBlob(cacheKey: string, blob: Blob): Promise<void>
     const buffer = await blob.arrayBuffer();
     await window.electron!.saveAudioCache(cacheKey, buffer, blob.type || 'audio/mpeg', cacheLimitBytes());
   } else {
-    await saveToCache(cacheKey, blob);
+    const limit = cacheLimitBytes();
+    if (limit && blob.size > limit) return;
+    await appDatabase.media_cache.put({ key: cacheKey, data: blob, timestamp: Date.now() });
+    await trimBrowserAudioCache();
   }
 
   // After the write, and over a copy: a listener that throws must not fail a write that has already

@@ -9,7 +9,7 @@ import { type VisualizerSharedProps } from '../definition';
 import { useVisualizerRuntime } from '../runtime';
 import { colorWithAlpha, mixColors } from '../colorMix';
 import VisualizerShell from '../VisualizerShell';
-import VisualizerSubtitleOverlay from '../VisualizerSubtitleOverlay';
+
 import { adjustCladdaghTimeline } from './claddaghTimeline';
 import { buildMeasuredSpacingInfo } from './claddaghLayout';
 import { RingLine } from './CladdaghRingLine';
@@ -18,25 +18,17 @@ import { RingLine } from './CladdaghRingLine';
 
 const VisualizerCladdagh: React.FC<VisualizerSharedProps> = (props) => {
     const {
-        currentTime,
-        currentLineIndex,
-        lines,
-        theme,
-        subtitleTheme,
-        showText = true,
-        lyricsFontScale = 1.0,
-        subtitleFontScale = 1,
-        subtitleOverlayOpacity,
-        subtitleOverlayBackground,
-        subtitleUpcomingLyricsBlur,
-        hideTranslationSubtitle,
-        showSubtitleTranslation,
-        subtitleContentMode,
-        audioPower,
-        audioBands,
-        claddaghTuning = DEFAULT_CLADDAGH_TUNING,
-        paused = false,
-    } = props;
+  currentTime,
+  currentLineIndex,
+  lines,
+  theme,
+  showText = true,
+  lyricsFontScale = 1.0,
+  audioPower,
+  audioBands,
+  claddaghTuning = DEFAULT_CLADDAGH_TUNING,
+  paused = false
+} = props;
 
     const centerNormalTiltDeg = 90 - claddaghTuning.ellipseTiltDeg;
 
@@ -50,11 +42,14 @@ const VisualizerCladdagh: React.FC<VisualizerSharedProps> = (props) => {
         return Math.max(0, Math.min(1, isRawScaleRef.current ? power / 255 : power));
     }, []);
 
-    const { activeLine, upcomingLine, recentCompletedLine, nextLines } = useVisualizerRuntime({
-        currentTime,
-        currentLineIndex,
-        lines,
-    });
+    const {
+  activeLine,
+  recentCompletedLine
+} = useVisualizerRuntime({
+  currentTime,
+  currentLineIndex,
+  lines
+});
 
     const isChorus = activeLine?.isChorus ?? false;
 
@@ -305,23 +300,7 @@ const VisualizerCladdagh: React.FC<VisualizerSharedProps> = (props) => {
             </motion.div>
 
             {showText && (
-                <VisualizerSubtitleOverlay
-                    showText={showText}
-                    activeLine={activeLine}
-                    recentCompletedLine={recentCompletedLine}
-                    nextLines={nextLines}
-                    theme={theme}
-                    subtitleTheme={subtitleTheme}
-                    translationFontSize="clamp(1.1rem, 2.2vw, 1.45rem)"
-                    upcomingFontSize="clamp(0.95rem, 1.8vw, 1.2rem)"
-                    subtitleOverlayOpacity={subtitleOverlayOpacity}
-                    subtitleOverlayBackground={subtitleOverlayBackground}
-                    subtitleUpcomingLyricsBlur={subtitleUpcomingLyricsBlur}
-                    subtitleFontScale={subtitleFontScale}
-                    hideTranslationSubtitle={hideTranslationSubtitle}
-                    showSubtitleTranslation={showSubtitleTranslation}
-                    subtitleContentMode={subtitleContentMode}
-                />
+                null
             )}
         </VisualizerShell>
     );

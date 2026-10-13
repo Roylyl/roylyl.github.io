@@ -1,7 +1,7 @@
 import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowLeft, CircleHelp, Command, CornerDownLeft, Loader2, Search, X } from 'lucide-react';
+import { CircleHelp, Command, CornerDownLeft, Loader2, Search, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { Theme } from '../../types';
 import type { CommandPaletteContext, CommandPaletteMatch, CommandPaletteCommand } from './types';
@@ -86,29 +86,28 @@ const pickNextPlaceholderIndex = (currentIndex: number) => {
 };
 
 const CommandPalette: React.FC<CommandPaletteProps> = ({
-    activeIndex,
-    activePreview,
-    activeCommand,
-    availableCommands,
-    context,
-    isDaylight,
-    isComposing,
-    isExecuting,
-    isOpen,
-    matches,
-    pinnedCommands,
-    query,
-    theme,
-    onActiveCommandChange,
-    onActiveIndexChange,
-    onClose,
-    onCompositionEnd,
-    onCompositionStart,
-    onExecuteActive,
-    onExecuteMatch,
-    onExecutePinnedCommand,
-    onQueryChange,
-    onQueryCommit,
+  activeIndex,
+  activeCommand,
+  availableCommands,
+  context,
+  isDaylight,
+  isComposing,
+  isExecuting,
+  isOpen,
+  matches,
+  pinnedCommands,
+  query,
+  theme,
+  onActiveCommandChange,
+  onActiveIndexChange,
+  onClose,
+  onCompositionEnd,
+  onCompositionStart,
+  onExecuteActive,
+  onExecuteMatch,
+  onExecutePinnedCommand,
+  onQueryChange,
+  onQueryCommit
 }) => {
     const { t, i18n } = useTranslation();
     const inputRef = useRef<HTMLInputElement | null>(null);

@@ -5,21 +5,13 @@
 ## 启动与渲染入口
 
 ```text
-src/index.tsx
-  -> 安装 Buffer 与 visualizer frame-rate limiter
-  -> src/bootstrap.tsx
-       -> index.css / i18n
-       -> /obs、?remote=1 等特殊入口
-       -> App.tsx
+src/bootstrap.tsx
+  -> 初始化Music曲库与界面偏好
+  -> index.css / i18n
+  -> App.tsx
 ```
 
-`src/bootstrap.tsx` 根据 URL 选择：
-
-- 普通应用：`src/App.tsx`
-- OBS 歌词：`components/obs/ObsBrowserSourceApp.tsx`
-- OBS Now Playing：`components/obs/ObsNowPlayingSourceApp.tsx`
-- OBS PlayerCap：`components/obs/ObsPlayerCapSourceApp.tsx`
-- Remote：`components/remote/RemoteControlApp.tsx`
+Rmusic使用单一浏览器应用入口，不再包含独立OBS与远程控制页面。
 
 普通应用的主要装配关系：
 

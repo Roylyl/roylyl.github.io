@@ -21,18 +21,16 @@ interface LyricsTimelineModalProps {
 }
 
 const LyricsTimelineModal: React.FC<LyricsTimelineModalProps> = ({
-    isOpen,
-    onClose,
-    lyrics,
-    duration,
-    currentTime,
-    onSeek,
-    disabled = false,
-    primaryColor = 'var(--text-primary)',
-    secondaryColor = 'var(--text-secondary)',
-    accentColor = 'var(--text-accent)',
-    theme,
-    isDaylight
+  isOpen,
+  onClose,
+  lyrics,
+  duration,
+  currentTime,
+  onSeek,
+  disabled = false,
+  secondaryColor = 'var(--text-secondary)',
+  accentColor = 'var(--text-accent)',
+  isDaylight
 }) => {
     const { t } = useTranslation();
     // const isDaylight = theme?.name === 'Daylight Default'; // Deprecated, passed as prop

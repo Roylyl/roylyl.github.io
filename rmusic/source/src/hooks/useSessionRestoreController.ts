@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
+import type { MutableRefObject } from 'react';
 import { getFromCache, getLocalSongs } from '../services/db';
 import { getLocalLibraryCatalogSnapshot } from '../services/localLibraryEntityRepository';
 import { buildNavidromeQueue, buildUnifiedNavidromeSong } from '../services/playbackAdapters';
@@ -15,16 +15,14 @@ import type { ThemeCacheSongKey } from '../services/themeCache';
 import { useOnlineProviderAccountStore } from '../stores/useOnlineProviderAccountStore';
 import { restorePlaybackSourceForSong } from '../components/app/playback/restorePlaybackSource';
 import { getPlaybackSongKey, isStagePlaybackSong, normalizePlaybackSongSource } from '../utils/appPlaybackGuards';
-import type { LyricData, SongResult, StatusMessage } from '../types';
-import type { AudioQualityPreference, MediaId } from '../types/onlineMusic';
+import type { LyricData, SongResult } from '../types';
+import type { MediaId } from '../types/onlineMusic';
 import { setStatusMessage as setStatusMsg } from '../stores/useStatusMessageStore';
 import { setAudioSrc, setCachedCoverUrl, setCurrentLineIndex, setCurrentSong, setPlayQueue, setPlayerState } from '../stores/usePlaybackStore';
 import { useAudioSettingsStore } from '../stores/useAudioSettingsStore';
 import { omni } from '../services/onlineMusic/omni';
 
 // src/hooks/useSessionRestoreController.ts
-
-type SetState<T> = Dispatch<SetStateAction<T>>;
 
 type UseSessionRestoreControllerParams = {
     userId?: MediaId;

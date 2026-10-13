@@ -48,7 +48,16 @@ const NO_COLLAPSED: ReadonlySet<string> = new Set();
 export const useBravaisDirectoryPanel = (input: BravaisDirectoryPanelInput) => {
     const { t } = useTranslation();
     const notice = useBravaisMutationNotice();
-    const { directoryKey, batchConfig, panelOpen, displayItems, query, selectedIds, context, capabilities, run } = input;
+    const {
+  directoryKey,
+  batchConfig,
+  panelOpen,
+  displayItems,
+  query,
+  selectedIds,
+  context,
+  capabilities
+} = input;
     const [formState, setFormState] = useState<DirectoryFormState | null>(null);
     const [collapsed, setCollapsed] = useState<{ key: string; ids: ReadonlySet<string> }>({ key: directoryKey, ids: NO_COLLAPSED });
     const collapsedIds = collapsed.key === directoryKey ? collapsed.ids : NO_COLLAPSED;

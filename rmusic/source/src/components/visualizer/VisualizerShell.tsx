@@ -8,7 +8,6 @@ import { type VisualizerSharedProps } from './definition';
 import VisualizerBackgroundRenderer from './backgrounds/VisualizerBackgroundRenderer';
 import { getSizedCoverUrl } from '../../utils/coverUrl';
 import { FoliumStageLayerSlot } from '../../mods/folium/registries/stageLayers';
-import { isMainAppSurface } from '../../utils/appSurface';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 
 // Shared outer shell for all visualizers.

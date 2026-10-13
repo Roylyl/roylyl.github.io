@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import type React from 'react';
+
 import { omni } from '../services/onlineMusic/omni';
 import {
     getPersonalFmSelectionLabel,
@@ -9,7 +9,7 @@ import {
 } from '../services/onlineMusic/fmModes';
 import { usePersonalFmModeStore } from '../stores/usePersonalFmModeStore';
 import { useOnlineProviderAccountStore } from '../stores/useOnlineProviderAccountStore';
-import type { SongResult, StatusMessage } from '../types';
+import type { SongResult } from '../types';
 import { setStatusMessage as setStatusMsg } from '../stores/useStatusMessageStore';
 
 // src/hooks/usePersonalFmModeController.ts

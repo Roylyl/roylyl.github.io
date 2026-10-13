@@ -75,8 +75,6 @@ interface LayoutRow {
     height: number;
 }
 
-const TAU = Math.PI * 2;
-
 export const isTemperaLayoutSegment = (segment: TemperaSegment) => segment.text.trim().length > 0;
 
 // Regions and entrance vectors are data, held per composition in temperaShotProfiles.

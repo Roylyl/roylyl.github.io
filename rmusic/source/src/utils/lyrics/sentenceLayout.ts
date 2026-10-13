@@ -1,7 +1,6 @@
 import type { LyricLayoutUnit } from './cjkSemanticLayout';
 
 const CJK_REGEX = /[\u4e00-\u9fa5\u3040-\u30ff\uac00-\ud7af]/;
-const WESTERN_WORD_REGEX = /[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*/;
 
 const hasCjkText = (text: string) => CJK_REGEX.test(text);
 
@@ -104,7 +103,7 @@ class SentenceLayout implements LyricLayoutUnit {
     private static splitByPunctuation(text: string): string[] {
         const allPunctRegex = /[，。；！？、…·\.\,\;\!\?]+/g;
         const matches = [...text.matchAll(allPunctRegex)];
-        
+
         if (matches.length === 0) {
             return [text];
         }
@@ -115,17 +114,17 @@ class SentenceLayout implements LyricLayoutUnit {
         for (const match of matches) {
             const punctStart = match.index;
             const punctEnd = punctStart + match[0].length;
-            
+
             let trailingSpaces = '';
             const afterPunct = text.slice(punctEnd);
             const spaceMatch = afterPunct.match(/^\s+/);
             if (spaceMatch) {
                 trailingSpaces = spaceMatch[0];
             }
-            
+
             const beforePunct = text.slice(lastIndex, punctStart);
             const punctWithSpaces = match[0] + trailingSpaces;
-            
+
             if (beforePunct.length > 0) {
                 result.push(beforePunct + punctWithSpaces);
             } else if (result.length > 0) {
@@ -133,7 +132,7 @@ class SentenceLayout implements LyricLayoutUnit {
             } else {
                 result.push(punctWithSpaces);
             }
-            
+
             lastIndex = punctEnd + trailingSpaces.length;
         }
 
@@ -150,7 +149,7 @@ class SentenceLayout implements LyricLayoutUnit {
         }
 
         const westernBlockRegex = /[a-zA-Z0-9]+(?:[a-zA-Z0-9'\-]*[a-zA-Z0-9]+)?(?:\s+[a-zA-Z0-9]+(?:[a-zA-Z0-9'\-]*[a-zA-Z0-9]+)?)+[.,;:!?。，；：！？]?\s*/g;
-        
+
         SentenceLayout.charCountCache.clear();
 
         let hasMultipleWordBlock = false;
@@ -221,19 +220,6 @@ class SentenceLayout implements LyricLayoutUnit {
         }
 
         return false;
-    }
-
-    private static splitWesternPhrase(text: string): string[] {
-        if (!hasCjkText(text) && text.length > 0) {
-            const splitRegex = /(?<=\w[.,;:!?。，；：！？])(?=\s+\w)/;
-            const parts = text.split(splitRegex);
-            
-            if (parts.length > 1) {
-                return parts.filter(p => p.length > 0);
-            }
-        }
-        
-        return [text];
     }
 
     private static splitByBracketsQuotes(text: string): string[] {
@@ -341,7 +327,7 @@ class SentenceLayout implements LyricLayoutUnit {
                 // - 全角空格 → 总是触发分割，附到前段末尾
                 // - 半角空格在 CJK 后 → 分割；其他情况跟随
                 const isFullWidthSpace = char === '\u3000';
-                
+
                 if (isFullWidthSpace && currentSegment.length > 0) {
                     // 全角空格：完成当前段
                     currentSegment += char;
@@ -406,7 +392,7 @@ class SentenceLayout implements LyricLayoutUnit {
                     result.push(specialChar);
                 }
             }
-            
+
             if (part) {
                 result.push(part);
                 lastIndex = index + part.length;

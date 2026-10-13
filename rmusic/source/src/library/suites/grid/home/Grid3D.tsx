@@ -8,7 +8,6 @@ import { SongResult, LocalSong, LocalPlaylist, LocalLibraryGroup, Theme, type St
 import LocalGrid3DView from './LocalGrid3DView';
 import NavidromeGrid3DView from './NavidromeGrid3DView';
 import DesktopGrid3DSurface from './DesktopGrid3DSurface';
-import OnlineProviderSwitcher from '../account/OnlineProviderSwitcher';
 import OnlineProviderConnectPanel from '../account/OnlineProviderConnectPanel';
 import OnlineProviderAccountlessPanel from '../account/OnlineProviderAccountlessPanel';
 import type { ProviderAccountSummary, ProviderCollection, ProviderUser } from '../../../../types/onlineMusic';
@@ -27,7 +26,7 @@ import { useLibraryHomeDirectory } from '../../../core/bindings/useLibraryHomeDi
 import { useLibraryHomeListRegistration, useLibraryHomeTabsRegistration } from '../../../core/bindings/useLibraryHomeSurfaceRegistration';
 import { useLibraryAccountProviders } from '../../../core/bindings/useLibraryAccount';
 import { resolveProviderSelectLabel } from '../../../core/model/accountRules';
-import { cycleIndex, translateHomeMessage } from '../../../core/model/homeSources';
+import { translateHomeMessage } from '../../../core/model/homeSources';
 
 // src/library/suites/grid/home/Grid3D.tsx
 // Glassmorphic interactive desktop home view replacing the legacy 3D carousel.
@@ -95,34 +94,33 @@ interface Grid3DProps {
 export const Grid3D: React.FC<Grid3DProps> = (props) => {
     countRender('Grid3D');
     const {
-        onBackToPlayer,
-        user,
-        playlists,
-        cloudPlaylist = null,
-        currentTrack,
-        localSongs,
-        localLibraryCatalog,
-        localPlaylists,
-        localMusicState,
-        setLocalMusicState,
-        navidromeFocusedAlbumIndex = 0,
-        setNavidromeFocusedAlbumIndex,
-        onSearchCommitted,
-        theme,
-        onOpenSettings,
-        onOpenLattice,
-        navidromeEnabled = false,
-        onOpenGridView,
-        stageEnabled = false,
-        stageIsActive = false,
-        onOpenStagePlayer,
-        account,
-        accountLayerRef,
-        isInteractive = true,
-        directoryActions,
-        homeResources,
-        declaredActions,
-    } = props;
+  user,
+  playlists,
+  cloudPlaylist = null,
+  currentTrack,
+  localSongs,
+  localLibraryCatalog,
+  localPlaylists,
+  localMusicState,
+  setLocalMusicState,
+  navidromeFocusedAlbumIndex = 0,
+  setNavidromeFocusedAlbumIndex,
+  onSearchCommitted,
+  theme,
+  onOpenSettings,
+  onOpenLattice,
+  navidromeEnabled = false,
+  onOpenGridView,
+  stageEnabled = false,
+  stageIsActive = false,
+  onOpenStagePlayer,
+  account,
+  accountLayerRef,
+  isInteractive = true,
+  directoryActions,
+  homeResources,
+  declaredActions
+} = props;
 
     const { t } = useTranslation();
     const {
@@ -302,7 +300,6 @@ export const Grid3D: React.FC<Grid3DProps> = (props) => {
                 ?.focus({ preventScroll: true });
         });
     };
-
 
     return (
         <div
@@ -593,8 +590,6 @@ export const Grid3D: React.FC<Grid3DProps> = (props) => {
 
             {/* 账户界面（登录弹窗）的挂载点：账户宿主把弹窗 portal 进来。放在切换器之前，切换器仍盖在弹窗之上。 */}
             <div ref={accountLayerRef} data-library-account-layer="" className="contents" />
-
-
 
         </div>
     );

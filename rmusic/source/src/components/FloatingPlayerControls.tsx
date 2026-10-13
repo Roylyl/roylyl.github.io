@@ -90,38 +90,36 @@ interface FloatingPlayerControlsProps {
     onCommitBottomBarOffset: (offsetPx: number) => void;
 }
 
-
 const FloatingPlayerControls: React.FC<FloatingPlayerControlsProps> = ({
-    currentSong,
-    playerState,
-    currentTime,
-    lyricCurrentTime,
-    duration,
-    loopMode,
-    currentView,
-    audioSrc,
-    canTogglePlay = false,
-    lyrics,
-    onSeek,
-    onTogglePlay,
-    onToggleLoop,
-    onNavigateToPlayer,
-    onFocusLatticeCurrentSong,
-    noTrackText = 'No Track',
-    primaryColor = 'var(--text-primary)',
-    secondaryColor = 'var(--text-secondary)',
-    theme,
-    isDaylight,
-    isHidden = false,
-    hideControlBar = false,
-    controlsDisabled = false,
-    trackNavigation = null,
-    slotPrimary,
-    slotSecondary,
-    slotContext,
-    onCommitBottomBarOffset,
+  currentSong,
+  playerState,
+  currentTime,
+  lyricCurrentTime,
+  duration,
+  loopMode,
+  currentView,
+  canTogglePlay = false,
+  lyrics,
+  onSeek,
+  onTogglePlay,
+  onToggleLoop,
+  onNavigateToPlayer,
+  onFocusLatticeCurrentSong,
+  noTrackText = 'No Track',
+  primaryColor = 'var(--text-primary)',
+  secondaryColor = 'var(--text-secondary)',
+  theme,
+  isDaylight,
+  isHidden = false,
+  hideControlBar = false,
+  controlsDisabled = false,
+  trackNavigation = null,
+  slotPrimary,
+  slotSecondary,
+  slotContext,
+  onCommitBottomBarOffset
 }) => {
-    const { t } = useTranslation();
+
     const isCompact = useMediaQuery('(max-width: 639px)');
     const canHover = useMediaQuery('(hover: hover) and (pointer: fine)');
     // const isDaylight = theme?.name === 'Daylight Default'; // Deprecated, passed as prop
@@ -129,11 +127,10 @@ const FloatingPlayerControls: React.FC<FloatingPlayerControlsProps> = ({
     const glassBgCollapsed = isDaylight ? 'bg-white/40 border border-white/20 shadow-lg hover:bg-white/50' : 'bg-black/20 border border-white/5 hover:bg-black/30';
     const trackColor = isDaylight ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.1)';
     // Button bg logic
-    const buttonBg = isDaylight ? { backgroundColor: primaryColor, color: 'var(--bg-color)' } : { backgroundColor: primaryColor, color: 'var(--bg-color)' }; // Keep primary for play button, looks good
+     // Keep primary for play button, looks good
 
     // Other buttons hover
-    const iconBtnExpandedClass = isDaylight ? 'hover:bg-black/5' : 'bg-white/20'; // Wait, loop button has logic
-    const iconBtnClass = isDaylight ? 'hover:bg-black/5 text-black/60' : 'hover:bg-white/10 opacity-40 hover:opacity-100';
+     // Wait, loop button has logic
 
     const [isHovered, setIsHovered] = useState(false);
     const [isTimelineOpen, setIsTimelineOpen] = useState(false);
@@ -547,24 +544,23 @@ interface ExpandedViewProps {
 }
 
 const ExpandedView: React.FC<ExpandedViewProps> = ({
-    currentSong,
-    playerState,
-    currentTime,
-    lyricCurrentTime,
-    duration,
-    canTogglePlay,
-    onSeek,
-    onTogglePlay,
-    noTrackText,
-    primaryColor,
-    secondaryColor,
-    trackColor,
-    isDaylight,
-    controlsDisabled = false,
-    trackNavigation = null,
-    slotPrimary,
-    slotSecondary,
-    slotContext,
+  currentSong,
+  playerState,
+  currentTime,
+  duration,
+  canTogglePlay,
+  onSeek,
+  onTogglePlay,
+  noTrackText,
+  primaryColor,
+  secondaryColor,
+  trackColor,
+  isDaylight,
+  controlsDisabled = false,
+  trackNavigation = null,
+  slotPrimary,
+  slotSecondary,
+  slotContext
 }) => {
     return (
         <div className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-x-4 gap-y-2 sm:grid-cols-[auto_minmax(0,1fr)_auto]">

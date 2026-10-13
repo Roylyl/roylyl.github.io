@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RefreshCw } from 'lucide-react';
 
@@ -22,33 +22,56 @@ export default function AppUpdateSection({ cardClass }: { cardClass: string }) {
     const language = i18n.resolvedLanguage || i18n.language;
     const copy = language.startsWith('zh') ? (language === 'zh-TW' ? {
         title: '應用更新', description: '檢查並載入R music的新版本。更新時會重新載入頁面。',
-        button: '更新', busy: '正在更新…', latest: '已是最新版本', failed: '更新失敗，請檢查網路後重試。',
+        button: '更新', busy: '正在更新…', checking: '正在檢查更新…', ready: '有新版本可用', unavailable: '目前無法檢查更新', latest: '已是最新版本', failed: '檢查或更新失敗，請檢查網路後重新開啟此頁。',
     } : {
         title: '应用更新', description: '检查并载入R music的新版本。更新时会重新载入页面。',
-        button: '更新', busy: '正在更新…', latest: '已是最新版本', failed: '更新失败，请检查网络后重试。',
+        button: '更新', busy: '正在更新…', checking: '正在检查更新…', ready: '有新版本可用', unavailable: '当前无法检查更新', latest: '已是最新版本', failed: '检查或更新失败，请检查网络后重新打开此页。',
     }) : {
         title: 'App updates', description: 'Check for a new version of R music. Installing an update reloads the page.',
-        button: 'Update', busy: 'Updating…', latest: 'Up to date', failed: 'Update failed. Check your connection and try again.',
+        button: 'Update', busy: 'Updating…', checking: 'Checking for updates…', ready: 'An update is available', unavailable: 'Update checking is unavailable', latest: 'Up to date', failed: 'Check or update failed. Check your connection and reopen this page.',
     };
     const [busy, setBusy] = useState(false);
-    const [status, setStatus] = useState('');
-    const update = async () => {
-        if (busy) return;
-        setBusy(true);
-        setStatus('');
-        try {
-            const registration = 'serviceWorker' in navigator
-                ? await navigator.serviceWorker.getRegistration(import.meta.env.BASE_URL) : undefined;
-            if (!registration) {
-                // Browser-only sessions without a worker fetch the current page before reloading.
-                const response = await fetch(import.meta.env.BASE_URL, { cache: 'reload' });
-                if (!response.ok) throw new Error('Update request failed');
-                window.location.reload();
-                return;
+    const [status, setStatus] = useState<'checking' | 'ready' | 'latest' | 'failed' | 'unavailable'>('checking');
+    const [readyRegistration, setReadyRegistration] = useState<ServiceWorkerRegistration | null>(null);
+    useEffect(() => {
+        let cancelled = false;
+        let registration: ServiceWorkerRegistration | undefined;
+        const inspect = async () => {
+            try {
+                if (registration?.installing) await waitForInstall(registration.installing);
+                if (cancelled) return;
+                const ready = registration?.waiting ? registration : null;
+                setReadyRegistration(ready);
+                setStatus(ready ? 'ready' : 'latest');
+            } catch {
+                if (!cancelled) setStatus('failed');
             }
-            await registration.update();
-            if (registration.installing) await waitForInstall(registration.installing);
-            if (registration.waiting) {
+        };
+        const onUpdateFound = () => { void inspect(); };
+        void (async () => {
+            try {
+                registration = 'serviceWorker' in navigator
+                    ? await navigator.serviceWorker.getRegistration(import.meta.env.BASE_URL) : undefined;
+                if (cancelled) return;
+                if (!registration) { setStatus('unavailable'); return; }
+                registration.addEventListener('updatefound', onUpdateFound);
+                // A previously downloaded update remains installable even while offline.
+                if (!registration.waiting) await registration.update();
+                await inspect();
+            } catch {
+                if (!cancelled) setStatus('failed');
+            }
+        })();
+        return () => {
+            cancelled = true;
+            registration?.removeEventListener('updatefound', onUpdateFound);
+        };
+    }, []);
+    const update = async () => {
+        if (busy || !readyRegistration?.waiting) return;
+        setBusy(true);
+        try {
+            const registration = readyRegistration;
                 await new Promise<void>((resolve, reject) => {
                     const done = () => {
                         clearTimeout(timer);
@@ -63,11 +86,9 @@ export default function AppUpdateSection({ cardClass }: { cardClass: string }) {
                     registration.waiting!.postMessage({ type: 'SKIP_WAITING' });
                 });
                 window.location.reload();
-            } else {
-                setStatus(copy.latest);
-            }
+
         } catch {
-            setStatus(copy.failed);
+            setStatus('failed');
         } finally {
             setBusy(false);
         }
@@ -76,12 +97,12 @@ export default function AppUpdateSection({ cardClass }: { cardClass: string }) {
         <div className="flex items-center justify-between gap-4">
             <div><h3 className="font-semibold">{copy.title}</h3>
                 <p className="text-sm opacity-60 mt-1">{copy.description}</p></div>
-            <button type="button" disabled={busy} onClick={() => void update()}
+            {readyRegistration && <button type="button" disabled={busy} onClick={() => void update()}
                 className="shrink-0 flex items-center gap-2 rounded-xl border px-4 py-2 disabled:opacity-50">
                 <RefreshCw size={16} className={busy ? 'animate-spin' : undefined} />
                 {busy ? copy.busy : copy.button}
-            </button>
+            </button>}
         </div>
-        <p role="status" className="text-sm opacity-70">{status}</p>
+        <p role="status" className="text-sm opacity-70">{copy[status]}</p>
     </section>;
 }

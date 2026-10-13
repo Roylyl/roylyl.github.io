@@ -18,8 +18,6 @@ const WESTERN_JOINABLE_TEXT_REGEX = /[\p{Script=Latin}\p{N}'’`-]/u;
 
 const seconds = (milliseconds: number | undefined): number => Math.max((milliseconds ?? 0) / 1000, 0);
 
-const optionalArray = <T>(items: T[]): T[] | undefined => items.length > 0 ? items : undefined;
-
 const isWesternJoinableSyllable = (text: string): boolean => {
     const trimmed = text.trim();
     return trimmed.length > 0

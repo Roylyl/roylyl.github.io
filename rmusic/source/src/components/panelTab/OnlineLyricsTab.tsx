@@ -1,6 +1,6 @@
-import React, { useMemo, useCallback, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Search, RotateCcw } from 'lucide-react';
+import { Search, RotateCcw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { OnlineLyricsState, ReplayGainMode, SongResult } from '../../types';
 import LyricTimelineOffsetControl from './LyricTimelineOffsetControl';

@@ -99,17 +99,16 @@ const MapCard = React.memo<{
     cardHeight: number;
 }>(
     ({
-        item,
-        isDaylight,
-        onSelect,
-        isPlaylistEditMode,
-        isHidden,
-        isBatchMode,
-        isBatchSelected,
-        onTogglePlaylistHidden,
-        cardWidth,
-        cardHeight,
-    }) => {
+  item,
+  onSelect,
+  isPlaylistEditMode,
+  isHidden,
+  isBatchMode,
+  isBatchSelected,
+  onTogglePlaylistHidden,
+  cardWidth,
+  cardHeight
+}) => {
         const { t } = useTranslation();
         const isPlaylistSelectionDisabled = isPlaylistEditMode && isHideableDirectoryItem(item);
         // 文件夹卡（含虚拟的「全部歌曲」）的标题、描述行数、「本目录 N 首」都按 folderLabel 判断，见 gridMapCardText。
@@ -520,8 +519,6 @@ export const GridMap: React.FC<GridMapProps> = ({
         };
     }, [dragX, dragY]);
 
-
-
     useEffect(() => {
         focusedIndexRef.current = focusedIndex;
     }, [focusedIndex]);
@@ -545,24 +542,19 @@ export const GridMap: React.FC<GridMapProps> = ({
 
         let minX = Infinity;
         let maxX = -Infinity;
-        let minY = Infinity;
-        let maxY = -Infinity;
 
         baseCoords.forEach((c) => {
             if (c.baseX < minX) minX = c.baseX;
             if (c.baseX > maxX) maxX = c.baseX;
-            if (c.baseY < minY) minY = c.baseY;
-            if (c.baseY > maxY) maxY = c.baseY;
         });
 
         const bufferX = Math.max(0, containerSize.width / 2 - 2 * layoutConfig.spacingX);
-        const bufferY = Math.max(0, containerSize.height / 2 - 2 * layoutConfig.spacingY);
 
         return {
             left: -maxX - bufferX,
             right: -minX + bufferX,
-            top: -maxY - bufferY,
-            bottom: -minY + bufferY,
+            top: 0,
+            bottom: 0,
         };
     }, [baseCoords, layoutConfig, containerSize]);
 
@@ -576,15 +568,10 @@ export const GridMap: React.FC<GridMapProps> = ({
             : event.deltaMode === 2
                 ? Math.max(containerSize.height, 1)
                 : 1) * 2.8;
-        const horizontalDelta = event.shiftKey && Math.abs(event.deltaX) < 1
-            ? event.deltaY
-            : event.deltaX;
-        const verticalDelta = event.shiftKey && Math.abs(event.deltaX) < 1
-            ? 0
-            : event.deltaY;
+        const horizontalDelta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
 
         const targetX = wheelTargetRef.current.x - horizontalDelta * deltaScale;
-        const targetY = wheelTargetRef.current.y - verticalDelta * deltaScale;
+        const targetY = 0;
         const clampedX = Math.max(dragBounds.left, Math.min(dragBounds.right, targetX));
         const clampedY = Math.max(dragBounds.top, Math.min(dragBounds.bottom, targetY));
         wheelTargetRef.current = { x: clampedX, y: clampedY };
@@ -871,10 +858,8 @@ export const GridMap: React.FC<GridMapProps> = ({
                     const dy = coord.baseY - curr.baseY;
 
                     let isMatch = false;
-                    if (e.key === 'ArrowLeft' && dx < -50 && Math.abs(dy) < 180) isMatch = true;
-                    if (e.key === 'ArrowRight' && dx > 50 && Math.abs(dy) < 180) isMatch = true;
-                    if (e.key === 'ArrowUp' && dy < -50 && Math.abs(dx) < 200) isMatch = true;
-                    if (e.key === 'ArrowDown' && dy > 50 && Math.abs(dx) < 200) isMatch = true;
+                    if ((e.key === 'ArrowLeft' || e.key === 'ArrowUp') && dx < -50 && Math.abs(dy) < 180) isMatch = true;
+                    if ((e.key === 'ArrowRight' || e.key === 'ArrowDown') && dx > 50 && Math.abs(dy) < 180) isMatch = true;
 
                     if (isMatch) {
                         const dist = dx * dx + dy * dy;
@@ -1059,15 +1044,16 @@ export const GridMap: React.FC<GridMapProps> = ({
 
                 {displayItems.length === 0 ? (
                     <div className="opacity-40 text-sm font-sans">
-                        {deferredSearchQuery.trim().length > 0 
-                            ? (t('home.gridSearchNoResults') || 'No matching cards') 
+                        {deferredSearchQuery.trim().length > 0
+                            ? (t('home.gridSearchNoResults') || 'No matching cards')
                             : (t('home.loadingLibrary') || 'No items found')}
                     </div>
                 ) : (
                     <motion.div
-                        drag
+                        drag="x"
                         dragListener={false}
                         dragControls={dragControls}
+                        data-horizontal-card-viewport="true"
                         dragConstraints={dragBounds}
                         dragElastic={0.05}
                         dragTransition={{ power: 0.16, timeConstant: 220 }}

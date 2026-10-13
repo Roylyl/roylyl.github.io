@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import type { MotionValue } from 'framer-motion';
+
 import { useTranslation } from 'react-i18next';
 import { DEFAULT_SONNET_TUNING } from '../../../types';
 import type { Line } from '../../../types';
@@ -11,7 +11,7 @@ import { useVisualizerRuntime } from '../runtime';
 import { useVisualizerSongCommit } from '../songHandover';
 import { useFoliumTunings } from '@/mods/folium/registries/tunings';
 import VisualizerShell from '../VisualizerShell';
-import VisualizerSubtitleOverlay from '../VisualizerSubtitleOverlay';
+
 import type {
     SonnetPixiRuntime,
     SonnetSongContext,
@@ -25,32 +25,23 @@ const EMPTY_SONNET_LINES: Line[] = [];
 
 const VisualizerSonnet: React.FC<VisualizerSharedProps> = (props) => {
     const {
-        currentTime,
-        currentLineIndex,
-        lines,
-        theme,
-        audioPower,
-        audioBands,
-        showText = true,
-        lyricsFontScale = 1,
-        staticMode = false,
-        paused = false,
-        seed = 'sonnet',
-        songTitle,
-        songArtist,
-        songAlbum,
-        isPlayerChromeHidden = false,
-        hideTranslationSubtitle = false,
-        showSubtitleTranslation = true,
-        subtitleContentMode,
-        subtitleTheme,
-        subtitleFontScale,
-        subtitleOverlayOpacity,
-        subtitleOverlayBackground,
-        subtitleUpcomingLyricsBlur,
-        background,
-        sonnetTuning = DEFAULT_SONNET_TUNING,
-    } = props;
+  currentTime,
+  currentLineIndex,
+  lines,
+  theme,
+  audioPower,
+  audioBands,
+  showText = true,
+  lyricsFontScale = 1,
+  staticMode = false,
+  paused = false,
+  seed = 'sonnet',
+  songTitle,
+  songArtist,
+  songAlbum,
+  background,
+  sonnetTuning = DEFAULT_SONNET_TUNING
+} = props;
     const transparentBackground = background?.transparent ?? false;
     const { t } = useTranslation();
     // Mod-driven per-frame multipliers (K3Panel etc.). Read once per render; the
@@ -109,12 +100,20 @@ const VisualizerSonnet: React.FC<VisualizerSharedProps> = (props) => {
         () => compileSonnetProgram(programLines, committedSeed),
         [programLines, committedSeed],
     );
-    const { activeLine, recentCompletedLine, nextLines } = useVisualizerRuntime({
-        currentTime,
-        currentLineIndex,
-        lines,
-        getLineEndTime: getLineRenderEndTime,
-    });
+    const {
+  activeLine
+} = useVisualizerRuntime({
+  currentTime,
+  currentLineIndex,
+  lines,
+  getLineEndTime: getLineRenderEndTime
+});
+
+// Song-scoped inputs, kept as one object so a track change is a single identity change.
+
+// Song-scoped inputs, kept as one object so a track change is a single identity change.
+
+// Song-scoped inputs, kept as one object so a track change is a single identity change.
 
     // Song-scoped inputs, kept as one object so a track change is a single identity change.
     const songContext = useMemo<SonnetSongContext>(
@@ -195,10 +194,6 @@ const VisualizerSonnet: React.FC<VisualizerSharedProps> = (props) => {
 
     const fallbackFontFamily = resolveThemeFontStack(theme);
     const fallbackFontWeight = resolveThemeFontWeight(theme, 600);
-    const finalLine = lines.at(-1);
-    const creditsRecentCompletedLine = recentCompletedLine === finalLine
-        ? null
-        : recentCompletedLine;
 
     return (
         <VisualizerShell
@@ -224,24 +219,6 @@ const VisualizerSonnet: React.FC<VisualizerSharedProps> = (props) => {
                 )}
             </div>
 
-            <VisualizerSubtitleOverlay
-                showText={showText}
-                activeLine={activeLine}
-                recentCompletedLine={creditsRecentCompletedLine}
-                nextLines={nextLines}
-                theme={theme}
-                subtitleTheme={subtitleTheme}
-                translationFontSize={`clamp(${1.05 * lyricsFontScale}rem, ${2.2 * lyricsFontScale}vw, ${1.25 * lyricsFontScale}rem)`}
-                upcomingFontSize={`clamp(${0.9 * lyricsFontScale}rem, ${1.8 * lyricsFontScale}vw, ${1.05 * lyricsFontScale}rem)`}
-                subtitleFontScale={subtitleFontScale}
-                subtitleOverlayOpacity={subtitleOverlayOpacity}
-                subtitleOverlayBackground={subtitleOverlayBackground}
-                subtitleUpcomingLyricsBlur={subtitleUpcomingLyricsBlur}
-                isPlayerChromeHidden={isPlayerChromeHidden}
-                hideTranslationSubtitle={hideTranslationSubtitle}
-                showSubtitleTranslation={showSubtitleTranslation}
-                subtitleContentMode={subtitleContentMode}
-            />
         </VisualizerShell>
     );
 };

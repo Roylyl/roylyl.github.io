@@ -36,7 +36,7 @@ export const NETEASE_SCROBBLE_KEY = 'folia_netease_scrobble';
 export const PLAYBACK_FADE_KEY = 'folia_playback_fade_enabled';
 
 /** Gigabytes of cached audio to keep. Zero is the listener asking for no ceiling at all. */
-export const DEFAULT_MEDIA_CACHE_LIMIT_GB = 5;
+export const DEFAULT_MEDIA_CACHE_LIMIT_GB = 0;
 
 export type AudioQuality = AudioQualityPreference;
 
@@ -44,31 +44,16 @@ export const resolveStoredAudioQuality = (saved: string | null): AudioQuality =>
     saved === 'standard' || saved === 'lossless' || saved === 'hires' ? saved : 'high'
 );
 
-/**
- * Reads the media cache toggle, honouring the key its own setter used to write to.
- *
- * The setter wrote a bare 'enable_media_cache' while startup read the folia-prefixed key, so the
- * setting silently reverted to off on every restart. Anyone who switched it on has their real
- * preference sitting under the legacy key, and simply correcting the setter would throw that
- * away once more - so read it as a fallback and promote it to the canonical key.
- */
+// Upgrade existing installs to caching once, while retaining future user opt-outs.
 export const readStoredEnableMediaCache = (): boolean => {
-    if (typeof window === 'undefined') {
-        return false;
+    if (typeof window === 'undefined') return true;
+    // Enable the new caching policy once; subsequent explicit opt-outs are retained.
+    const migrationKey = 'rmusic_precache_v1';
+    if (localStorage.getItem(migrationKey) !== 'true') {
+        localStorage.setItem(ENABLE_MEDIA_CACHE_KEY, 'true');
+        localStorage.setItem(migrationKey, 'true');
     }
-
-    const canonical = localStorage.getItem(ENABLE_MEDIA_CACHE_KEY);
-    if (canonical !== null) {
-        return canonical === 'true';
-    }
-
-    const legacy = localStorage.getItem(LEGACY_ENABLE_MEDIA_CACHE_KEY);
-    if (legacy === null) {
-        return false;
-    }
-
-    localStorage.setItem(ENABLE_MEDIA_CACHE_KEY, legacy);
-    return legacy === 'true';
+    return localStorage.getItem(ENABLE_MEDIA_CACHE_KEY) !== 'false';
 };
 
 export const readStoredMediaCacheLimitGb = (): number => {
@@ -78,7 +63,7 @@ export const readStoredMediaCacheLimitGb = (): number => {
 
     const saved = localStorage.getItem(MEDIA_CACHE_LIMIT_GB_KEY);
     const parsed = saved === null ? NaN : Number(saved);
-    return Number.isFinite(parsed) && parsed >= 0 ? parsed : DEFAULT_MEDIA_CACHE_LIMIT_GB;
+    return [0, 1, 3, 5].includes(parsed) ? parsed : DEFAULT_MEDIA_CACHE_LIMIT_GB;
 };
 
 const readStoredAudioQuality = (): AudioQuality => {
@@ -197,7 +182,7 @@ export const useAudioSettingsStore = create<AudioSettingsState>((set, get) => ({
         set({ enableMediaCache: enable });
     },
     handleSetMediaCacheLimitGb: (gigabytes) => {
-        const next = Number.isFinite(gigabytes) && gigabytes >= 0 ? gigabytes : DEFAULT_MEDIA_CACHE_LIMIT_GB;
+        const next = [0, 1, 3, 5].includes(gigabytes) ? gigabytes : DEFAULT_MEDIA_CACHE_LIMIT_GB;
         if (typeof window !== 'undefined') {
             localStorage.setItem(MEDIA_CACHE_LIMIT_GB_KEY, String(next));
         }

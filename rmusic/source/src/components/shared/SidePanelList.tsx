@@ -27,17 +27,16 @@ const RowComponent = ({ index, style, items, renderItem }: any): React.ReactElem
 };
 
 export function SidePanelList<T>({
-    isOpen,
-    onClose,
-    title,
-    items,
-    renderItem,
-    itemHeight,
-    isDaylight,
-    focusedIndex,
-    hideTitle = false,
-    headerLeadingActions,
-    headerActions,
+  isOpen,
+  onClose,
+  title,
+  items,
+  renderItem,
+  itemHeight,
+  focusedIndex,
+  hideTitle = false,
+  headerLeadingActions,
+  headerActions
 }: SidePanelListProps<T>) {
     const { t } = useTranslation();
     const [listHeight, setListHeight] = useState(400);
@@ -68,17 +67,17 @@ export function SidePanelList<T>({
             // Use a small timeout to ensure the list has rendered first
                 const isInitialOpen = lastScrollTargetRef.current === null;
                 const delay = isInitialOpen ? 50 : 350; // Debounce subsequent scroll updates
-                
+
                 const timer = setTimeout(() => {
                     const list = virtualListRef.current;
                     if (!list) return;
-    
+
                     // If opening panel for the first time
                     if (isInitialOpen) {
                         // Start from nearby (e.g. 8 items above) to create a short smooth scroll effect
                         const jumpIndex = Math.max(0, focusedIndex - 8);
                         list.scrollToRow({ index: jumpIndex, align: 'start', behavior: 'auto' });
-                        
+
                         setTimeout(() => {
                             list.scrollToRow({ index: focusedIndex, align: 'center', behavior: 'smooth' });
                         }, 50);
@@ -86,7 +85,7 @@ export function SidePanelList<T>({
                         // If already open, just smoothly scroll to the target directly
                         list.scrollToRow({ index: focusedIndex, align: 'center', behavior: 'smooth' });
                     }
-                    
+
                     lastScrollTargetRef.current = focusedIndex;
                 }, delay);
                 return () => clearTimeout(timer);
@@ -167,21 +166,29 @@ export const TrackListItem = React.memo<{
     isUnavailable?: boolean;
     isActive?: boolean;
     albumTrackLabel?: string | null;
-}>(({ track, index, style, onPlay, onAddToQueue, isUnavailable, isActive, albumTrackLabel }) => {
+}>(({
+  track,
+  style,
+  onPlay,
+  onAddToQueue,
+  isUnavailable,
+  isActive,
+  albumTrackLabel
+}) => {
     const { t } = useTranslation();
     const coverUrl = getSongCoverUrl(track) || '';
     const artistName = getSongArtistLabel(track).split(',')[0]?.trim() || 'Unknown Artist';
-    
+
     return (
-        <div 
-            style={style} 
+        <div
+            style={style}
             className="px-2 py-1"
         >
-            <div 
+            <div
                 onClick={isUnavailable ? undefined : onPlay}
                 className={`flex items-center gap-3 p-2 rounded-lg transition-colors w-full h-full ${
-                    isUnavailable 
-                        ? 'opacity-40 cursor-not-allowed' 
+                    isUnavailable
+                        ? 'opacity-40 cursor-not-allowed'
                         : isActive
                             ? 'bg-black/10 dark:bg-white/10 cursor-pointer group'
                             : 'hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer group'
@@ -189,8 +196,8 @@ export const TrackListItem = React.memo<{
             >
                 <div className="relative w-10 h-10 shrink-0 rounded overflow-hidden bg-zinc-200 dark:bg-zinc-800">
                     {coverUrl && (
-                        <img 
-                            src={getSizedCoverUrl(coverUrl, 50)} 
+                        <img
+                            src={getSizedCoverUrl(coverUrl, 50)}
                             alt={track.name}
                             className="w-full h-full object-cover"
                             loading="lazy"
@@ -251,13 +258,18 @@ export const CollectionListItem = React.memo<{
     style: React.CSSProperties;
     onClick: () => void;
     isActive?: boolean;
-}>(({ item, index, style, onClick, isActive }) => {
+}>(({
+  item,
+  style,
+  onClick,
+  isActive
+}) => {
     return (
-        <div 
-            style={style} 
+        <div
+            style={style}
             className="px-2 py-1"
         >
-            <div 
+            <div
                 onClick={onClick}
                 className={`flex items-center gap-3 p-2 rounded-lg transition-colors w-full h-full ${
                     isActive
@@ -267,7 +279,7 @@ export const CollectionListItem = React.memo<{
             >
                 <div className="w-10 h-10 shrink-0 rounded overflow-hidden bg-zinc-200 dark:bg-zinc-800 relative">
                     {item.coverUrl && (
-                        <img 
+                        <img
                             src={getSizedCoverUrl(item.coverUrl, 512)}
                             alt={item.name}
                             className="w-full h-full object-cover"

@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type React from 'react';
+
 import type { RefObject } from 'react';
-import type { MotionValue } from 'framer-motion';
-import type { SongResult } from '../types';
+
 import type { RemoteControlCommand } from '../types/remoteControl';
 import type { VideoExportPreset, VideoExportState } from '../types/videoExport';
 import { idleVideoExportState } from '../types/videoExport';

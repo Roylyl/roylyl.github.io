@@ -1,7 +1,7 @@
 import { PlayerState, type LyricData, type PlaybackContext, type SongResult, type StagePlayerSnapshot } from '../types';
 import type { PlayerChromeVisibilityMode, RemoteControlSnapshot, RemoteTrackTransition } from '../types/remoteControl';
 import type { VideoExportState } from '../types/videoExport';
-import { getPlaybackSongKey, isLocalPlaybackSong } from './appPlaybackGuards';
+import { getPlaybackSongKey } from './appPlaybackGuards';
 import { buildStagePlayerSnapshot } from './stagePlayerSnapshot';
 import { resolvePlaybackNeighbors } from './playbackNeighbors';
 import { resolvePlaybackSongArtist, resolvePlaybackSongCoverUrl } from './playbackSongMeta';

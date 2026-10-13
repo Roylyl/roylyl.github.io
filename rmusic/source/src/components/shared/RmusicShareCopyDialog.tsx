@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Copy, X } from 'lucide-react';
 import { copyRmusicSongLink, useRmusicShareCopyStore } from '../../services/rmusicShare';
 

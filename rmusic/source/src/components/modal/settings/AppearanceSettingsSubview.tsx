@@ -1,25 +1,13 @@
-import { selectWebObsSource } from '../../../services/obs/webObsTarget';
 import RmusicThemeSelector from '../../shared/RmusicThemeSelector';
 import React from 'react';
-import { Monitor, Palette, Settings2, PanelsTopLeft, ChevronRight, AlertTriangle, KeyRound, Music2 } from 'lucide-react';
+import { Monitor, Palette, Settings2, ChevronRight, AlertTriangle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/react/shallow';
-import {
-    type DualTheme,
-    type Theme,
-    type ThemeMode,
-    type UrlBackgroundItem,
-} from '../../../types';
-import { ObsCopyCssButton } from '../../shared/ObsCopyCssButton';
-import { ObsCopyUrlButton } from '../../shared/ObsCopyUrlButton';
-import NowPlayingCardSettingsSection from './NowPlayingCardSettingsSection';
-import { isThemeGenerationSource, type ThemeGenerationSource } from '../../../services/themePreferences';
+import { type DualTheme, type Theme, type ThemeMode } from '../../../types';
+import { type ThemeGenerationSource } from '../../../services/themePreferences';
 import { SettingsAnchor } from './navigation/SettingsAnchorContext';
 import SettingsSectionHeading from './navigation/SettingsSectionHeading';
 import { usePlayerChromeSettingsStore } from '../../../stores/usePlayerChromeSettingsStore';
-import { useStageSettingsStore } from '../../../stores/useStageSettingsStore';
-import { useLibraryWallLookStore } from '../../../stores/useLibraryWallLookStore';
-import { isLibraryWallSeamStyle } from '../../../utils/libraryWallSeamStyle';
 
 // src/components/modal/settings/AppearanceSettingsSubview.tsx
 // Visual settings subview for theme presets, lyric renderer entry, layout settings, and configurations import/export.
@@ -43,7 +31,6 @@ type AppearanceSettingsSubviewProps = {
     onChangeThemeGenerationSource: (source: ThemeGenerationSource) => void;
     aiApiKeyStatus: 'loading' | 'configured' | 'missing';
     onOpenAiSettings: () => void;
-    onToggleTransparentPlayerBackground: (enabled: boolean) => void;
     onToggleAutoHidePlayerChrome: (enabled: boolean) => void;
     onToggleAutoHideCursorWithPlayerChrome: (enabled: boolean) => void;
     onSaveCustomTheme: (dualTheme: DualTheme) => void;
@@ -53,7 +40,6 @@ type AppearanceSettingsSubviewProps = {
     theme?: Theme;
     themeParkInitialTheme: DualTheme;
     toggleOffBackgroundClass: string;
-    transparentPlayerBackground: boolean;
     autoHidePlayerChrome: boolean;
     autoHideCursorWithPlayerChrome: boolean;
     stageTrackPillMode: 'auto' | 'always' | 'never';
@@ -72,67 +58,25 @@ type AppearanceSettingsSubviewProps = {
 // ==========================================
 
 const AppearanceSettingsSubview: React.FC<AppearanceSettingsSubviewProps> = ({
-    accentOutlineColor,
-    bgMode,
-    hasCustomTheme,
-    isCustomThemePreferred,
-    isDaylight,
-    followSystemTheme,
-    onApplyCustomTheme,
-    onApplyDefaultTheme,
-    onOpenThemePark,
-    onOpenVisPlayground,
-    onToggleSongThemeAutoGenerate,
-    onToggleFollowSystemTheme,
-    onToggleCustomThemePreferred,
-    onToggleSongThemeAutoSwitch,
-    themeGenerationSource,
-    onChangeThemeGenerationSource,
-    aiApiKeyStatus,
-    onOpenAiSettings,
-    onToggleTransparentPlayerBackground,
-    onToggleAutoHidePlayerChrome,
-    onToggleAutoHideCursorWithPlayerChrome,
-    onSaveCustomTheme,
-    settingsCardClass,
-    songThemeAutoSwitchEnabled,
-    songThemeAutoGenerateEnabled,
-    theme,
-    themeParkInitialTheme,
-    toggleOffBackgroundClass,
-    transparentPlayerBackground,
-    autoHidePlayerChrome,
-    autoHideCursorWithPlayerChrome,
-    stageTrackPillMode,
-    stageTrackPillTimeoutSec,
-    onChangeStageTrackPillMode,
-    onChangeStageTrackPillTimeoutSec,
-    stageTrackPillOnHome,
-    onToggleStageTrackPillOnHome,
-    utilityGhostButtonClass,
-    aiTheme,
-    customTheme,
+  accentOutlineColor,
+  isDaylight,
+  onOpenVisPlayground,
+  onToggleAutoHidePlayerChrome,
+  onToggleAutoHideCursorWithPlayerChrome,
+  settingsCardClass,
+  theme,
+  toggleOffBackgroundClass,
+  autoHidePlayerChrome,
+  autoHideCursorWithPlayerChrome
 }) => {
     const { t } = useTranslation();
     // OBS static URL points to this web deploy, so the copy button is web-only (no shareable URL under Electron).
     // The link follows the selected web stage source (Now Playing / PlayerCap); disabled when none is on.
-    const isElectron = typeof window !== 'undefined' && Boolean((window as { electron?: unknown }).electron);
-    const webObsSource = useStageSettingsStore(selectWebObsSource);
+
     const storePlayerChromeSettings = usePlayerChromeSettingsStore(useShallow(state => ({
         enablePlayerPageNativeBlur: state.enablePlayerPageNativeBlur,
     })));
-    const getAccentOptionStyle = (selected: boolean) => (
-        selected
-            ? {
-                borderColor: accentOutlineColor,
-                boxShadow: `inset 0 0 0 1px ${accentOutlineColor}`,
-                backgroundColor: isDaylight ? `${accentOutlineColor}12` : `${accentOutlineColor}18`,
-            }
-            : {
-                borderColor: isDaylight ? 'rgba(24, 24, 27, 0.12)' : 'rgba(255, 255, 255, 0.1)',
-                backgroundColor: isDaylight ? 'rgba(255, 255, 255, 0.72)' : 'rgba(255, 255, 255, 0.05)',
-            }
-    );
+
     const lyricsStyleBorderStart = theme?.accentColor || accentOutlineColor;
     const lyricsStyleBorderEnd = theme?.secondaryColor || theme?.primaryColor || accentOutlineColor;
 
@@ -184,23 +128,6 @@ const AppearanceSettingsSubview: React.FC<AppearanceSettingsSubviewProps> = ({
                         <div className="flex items-center justify-between gap-4">
                             <div className="space-y-1">
                                 <div className="text-sm font-medium flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
-                                    {t('options.transparentPlayerBackground')}
-                                </div>
-                                <div className="text-xs opacity-50 max-w-[360px]" style={{ color: 'var(--text-secondary)' }}>
-                                    {t('options.transparentPlayerBackgroundDesc')}
-                                </div>
-                            </div>
-                            <button
-                                onClick={() => onToggleTransparentPlayerBackground(!transparentPlayerBackground)}
-                                className={`w-12 h-6 rounded-full p-1 transition-colors shrink-0 ${!transparentPlayerBackground ? toggleOffBackgroundClass : ''}`}
-                                style={{ backgroundColor: transparentPlayerBackground ? theme?.secondaryColor || 'rgba(114, 119, 134, 1)' : undefined }}
-                            >
-                                <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${transparentPlayerBackground ? 'translate-x-6' : 'translate-x-0'}`} />
-                            </button>
-                        </div>
-                        <div className="pt-2 border-t border-white/5 flex items-center justify-between gap-4">
-                            <div className="space-y-1">
-                                <div className="text-sm font-medium flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
                                     {t('options.autoHidePlayerChrome')}
                                 </div>
                                 <div className="text-xs opacity-50 max-w-[360px]" style={{ color: 'var(--text-secondary)' }}>
@@ -246,12 +173,6 @@ const AppearanceSettingsSubview: React.FC<AppearanceSettingsSubviewProps> = ({
                 </div>
             </SettingsAnchor>
             {/* Section 3: Now playing card */}
-            
-
-
-
-
-
 
         </div>
     );

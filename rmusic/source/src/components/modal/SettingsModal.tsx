@@ -26,7 +26,7 @@ import { setStatusMessage } from '../../stores/useStatusMessageStore';
 import { useState, useEffect, useMemo, useRef } from "react";
 import { AnimatePresence, motion } from 'framer-motion';
 
-import { X, Loader2, Check, AlertCircle, ChevronLeft, Download, ExternalLink } from "lucide-react";
+import { X, Loader2, Check, AlertCircle, Download, ExternalLink } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { getCacheUsageByCategory, clearCacheByCategory, clearAllData } from '../../services/db';
 
@@ -34,7 +34,7 @@ import { getNavidromeConfig, saveNavidromeConfig, clearNavidromeConfig, hashPass
 import { fetchNavidromeServerPreset, markNavidromeConfigAsPresetIfMatching, restoreNavidromeServerPreset } from '../../services/navidromeServerPreset';
 import { NavidromeServerProfile } from "../../types/navidrome";
 import VisPlayground from '../visualizer/VisPlayground';
-import { VISUALIZER_REGISTRY, getVisualizerModeLabel } from '../visualizer/registry';
+
 import ThemePark from './ThemePark';
 
 import GlobalLyricOffsetModal from './settings/GlobalLyricOffsetModal';
@@ -54,9 +54,8 @@ import { AiHelpPromptModal } from './AiHelpPromptModal';
 import ReleaseNotesDialog from './ReleaseNotesDialog';
 
 import { copyTextToClipboard } from '../../utils/clipboard';
-import { BUILD_KIND_TAGS, getBuildKind } from '../../utils/buildProvenance';
-import meowImageUrl from '../../../build/miao.png';
 
+import meowImageUrl from '../../../build/miao.png';
 
 import { SettingsAnchorProvider, useSettingsAnchorList, useSettingsAnchorStore } from './settings/navigation/SettingsAnchorContext';
 import SettingsSidebarChips from './settings/navigation/SettingsSidebarChips';
@@ -72,13 +71,9 @@ import { useShallow } from 'zustand/react/shallow';
 
 import { getWebAiProvider } from '../../services/runtimeConfig';
 
-
-
-
-
 import { selectVisualizerSettingsSnapshot, useVisualizerSettingsStore } from '../../stores/useVisualizerSettingsStore';
 import { selectVisualizerAssetSnapshot, useVisualizerAssetStore } from '../../stores/useVisualizerAssetStore';
-import { selectLyricSettingsSnapshot, useLyricSettingsStore } from '../../stores/useLyricSettingsStore';
+
 import { selectTypographySettingsSnapshot, useTypographySettingsStore } from '../../stores/useTypographySettingsStore';
 import { selectPlayerChromeSettingsSnapshot, usePlayerChromeSettingsStore } from '../../stores/usePlayerChromeSettingsStore';
 import { selectThemeSettingsSnapshot, useThemeSettingsStore } from '../../stores/useThemeSettingsStore';
@@ -86,19 +81,10 @@ import { selectDesktopSettingsSnapshot, useDesktopSettingsStore } from '../../st
 import { selectStageSettingsSnapshot, useStageSettingsStore } from '../../stores/useStageSettingsStore';
 import { useSettingsModalStore } from '../../stores/useSettingsModalStore';
 import { selectAudioSettingsSnapshot, useAudioSettingsStore } from '../../stores/useAudioSettingsStore';
-import { selectHomeLayoutSettingsSnapshot, useHomeLayoutSettingsStore } from '../../stores/useHomeLayoutSettingsStore';
+
 import { setNavidromeEnabledState, useLibraryStore } from '../../stores/useLibraryStore';
 
-
-
 const DEFAULT_OPENAI_TEMPERATURE = '0.7';
-const AUR_PACKAGE_URL = 'https://aur.archlinux.org/packages/folia-major-bin';
-const BUILD_KIND = getBuildKind();
-const VERSION_INFO = (__DOCKER_STACK_VERSION__
-    ? `${__APP_VERSION_LABEL__} v${__APP_VERSION__} · Stack ${__DOCKER_STACK_VERSION__} · ${__COMMIT_HASH__}`
-    : `${__APP_VERSION_LABEL__} v${__APP_VERSION__} - ${__GIT_BRANCH__} - ${__COMMIT_HASH__}`)
-    // 自部署与非官方构建强制带上标记（固定英文，复制进 issue 后 triage 能认出来）
-    + (BUILD_KIND === 'official' ? '' : ` · ${BUILD_KIND_TAGS[BUILD_KIND]}`);
 
 interface SettingsModalProps {
     onClose: () => void;
@@ -166,60 +152,51 @@ const DEFAULT_UPDATE_CHANNEL: 'realeco' | 'limo' | 'cielo' | 'internal' = __APP_
 const hasElectronBridge = () => typeof window !== 'undefined' && Boolean((window as any).electron);
 
 const SettingsModal: React.FC<SettingsModalProps> = ({
-    onClose,
-    initialTab = 'help',
-    initialSubview = null,
-    initialVisualizerSection = null,
-    initialAnchor = null,
-    theme,
-    bgMode,
-    onApplyDefaultTheme,
-    hasCustomTheme,
-    themeParkInitialTheme,
-    isCustomThemePreferred,
-    songThemeAutoSwitchEnabled,
-    songThemeAutoGenerateEnabled,
-    onSaveCustomTheme,
-    onSaveAiTheme,
-    onApplyCustomTheme,
-    onToggleCustomThemePreferred,
-    onToggleSongThemeAutoSwitch,
-    themeGenerationSource,
-    onChangeThemeGenerationSource,
-    onToggleSongThemeAutoGenerate,
-    onToggleNavidrome,
-    loadLyricFilterPreview,
-    currentLyrics,
-    lyricCurrentTime,
-    currentSongTitle,
-    onSaveLyricFilterPattern,
-    stageStatus = null,
-    stageSource = null,
-    onToggleStageMode,
-    onStageSourceChange,
-    onRegenerateStageToken,
-    onClearStageState,
-    onToggleNowPlayingStage,
-    nowPlayingConnectionStatus = 'disabled',
-    playerCapConnectionStatus = 'idle',
-    playerCapPlayers = [],
-    obsBrowserSourceStatus = null,
-    onToggleObsBrowserSource,
-    onRegenerateObsBrowserSourceToken,
-    lyricApiStatus = null,
-    onToggleLyricApi,
-    onAudioOutputDeviceChange,
-    replayGainMode,
-    onReplayGainModeChange,
-    onToggleTransparentPlayerBackground,
-    aiTheme,
-    customTheme,
+  onClose,
+  initialTab = 'help',
+  initialSubview = null,
+  initialVisualizerSection = null,
+  initialAnchor = null,
+  theme,
+  bgMode,
+  onApplyDefaultTheme,
+  hasCustomTheme,
+  themeParkInitialTheme,
+  isCustomThemePreferred,
+  songThemeAutoSwitchEnabled,
+  songThemeAutoGenerateEnabled,
+  onSaveCustomTheme,
+  onSaveAiTheme,
+  onApplyCustomTheme,
+  onToggleCustomThemePreferred,
+  onToggleSongThemeAutoSwitch,
+  themeGenerationSource,
+  onChangeThemeGenerationSource,
+  onToggleSongThemeAutoGenerate,
+  onToggleNavidrome,
+  currentLyrics,
+  lyricCurrentTime,
+  stageStatus = null,
+  stageSource = null,
+  onToggleStageMode,
+  onStageSourceChange,
+  onRegenerateStageToken,
+  nowPlayingConnectionStatus = 'disabled',
+  playerCapConnectionStatus = 'idle',
+  playerCapPlayers = [],
+  obsBrowserSourceStatus = null,
+  onToggleObsBrowserSource,
+  onRegenerateObsBrowserSourceToken,
+  lyricApiStatus = null,
+  onToggleLyricApi,
+  onAudioOutputDeviceChange,
+  aiTheme,
+  customTheme
 }) => {
     const { t } = useTranslation();
     // Track the press origin per overlay so nested subview backdrops do not overwrite each other.
     const overlayMouseDownTargetsRef = useRef(new WeakSet<HTMLDivElement>());
-    const {
-    } = useHomeLayoutSettingsStore(useShallow(selectHomeLayoutSettingsSnapshot));
+
     const {
         enableMediaCache,
         mediaCacheLimitGb,
@@ -257,31 +234,21 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         handleToggleStageTrackPillOnHome: onToggleStageTrackPillOnHome,
     } = useStageSettingsStore(useShallow(selectStageSettingsSnapshot));
     const {
-        useCoverColorBg,
-        staticMode,
-        disableHomeDynamicBackground,
-        isDaylight,
-        followSystemTheme,
-        setDaylightPreference: onSetDaylightPreference,
-        setFollowSystemTheme: onSetFollowSystemTheme,
-        handleToggleCoverColorBg: onToggleCoverColorBg,
-        handleToggleStaticMode: onToggleStaticMode,
-        handleToggleDisableHomeDynamicBackground: onToggleDisableHomeDynamicBackground,
-    } = useThemeSettingsStore(useShallow(selectThemeSettingsSnapshot));
+  useCoverColorBg,
+  staticMode,
+  isDaylight,
+  followSystemTheme,
+  setDaylightPreference: onSetDaylightPreference,
+  setFollowSystemTheme: onSetFollowSystemTheme,
+  handleToggleCoverColorBg: onToggleCoverColorBg
+} = useThemeSettingsStore(useShallow(selectThemeSettingsSnapshot));
     const {
-        hidePlayerProgressBar,
-        hidePlayerRightPanelButton,
-        transparentPlayerBackground,
-        autoHidePlayerChrome,
-        autoHideCursorWithPlayerChrome,
-        showOpenPanelCloseButton,
-        handleToggleHidePlayerProgressBar: onToggleHidePlayerProgressBar,
-        handleToggleHidePlayerRightPanelButton: onToggleHidePlayerRightPanelButton,
-        handleToggleTransparentPlayerBackground: onToggleTransparentPlayerBackgroundFromStore,
-        handleToggleAutoHidePlayerChrome: onToggleAutoHidePlayerChrome,
-        handleToggleAutoHideCursorWithPlayerChrome: onToggleAutoHideCursorWithPlayerChrome,
-        handleToggleOpenPanelCloseButton: onToggleOpenPanelCloseButton,
-    } = usePlayerChromeSettingsStore(useShallow(selectPlayerChromeSettingsSnapshot));
+  transparentPlayerBackground,
+  autoHidePlayerChrome,
+  autoHideCursorWithPlayerChrome,
+  handleToggleAutoHidePlayerChrome: onToggleAutoHidePlayerChrome,
+  handleToggleAutoHideCursorWithPlayerChrome: onToggleAutoHideCursorWithPlayerChrome
+} = usePlayerChromeSettingsStore(useShallow(selectPlayerChromeSettingsSnapshot));
     const {
         lyricsCustomFontFamily,
         lyricsCustomFontLabel,
@@ -326,14 +293,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         handleSetSubtitleFontFamily: onSubtitleFontFamilyChange,
         handleSetSubtitleFontFallbackFamilies: onSubtitleFontFallbackFamiliesChange,
     } = useTypographySettingsStore(useShallow(selectTypographySettingsSnapshot));
-    const {
-        lyricFilterPattern,
-        lyricFilterEnabled,
-        lyricStaffPolicy,
-        lyricStaffMinDwellSeconds,
-        lyricStaffAbsorbMode,
-        lyricStaffPattern,
-    } = useLyricSettingsStore(useShallow(selectLyricSettingsSnapshot));
+
     const {
         handleToggleDisableVisualizerVignette: onToggleDisableVisualizerVignette,
         handleToggleDisableVisualizerGeometricBackground: onToggleDisableVisualizerGeometricBackground,
@@ -423,7 +383,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         monetPortraitImage,
         isLoadingMonetPortraitImage,
     } = useVisualizerAssetStore(useShallow(selectVisualizerAssetSnapshot));
-    const resolvedToggleTransparentPlayerBackground = onToggleTransparentPlayerBackground ?? onToggleTransparentPlayerBackgroundFromStore;
     const setIsSubSettingsViewOpen = useSettingsModalStore(state => state.setIsSubSettingsViewOpen);
     const [activeTab, setActiveTab] = useState<'help' | 'options'>(initialTab);
     const [tabDirection, setTabDirection] = useState<'left' | 'right'>('right');
@@ -452,10 +411,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     const [showGlobalLyricOffset, setShowGlobalLyricOffset] = useState(false);
     const [showAiHelpPrompt, setShowAiHelpPrompt] = useState(false);
     const [showReleaseNotes, setShowReleaseNotes] = useState(false);
-    const [versionCopied, setVersionCopied] = useState(false);
+
     const [stageAddressCopied, setStageAddressCopied] = useState(false);
-    const [authorClickCount, setAuthorClickCount] = useState(0);
-    const [meowEasterEgg, setMeowEasterEgg] = useState<{ id: number; } | null>(null);
+
+    const [meowEasterEgg] = useState<{
+  id: number;
+} | null>(null);
     const shouldCloseModalOnSubviewBack = initialSubview !== null;
 
     useEffect(() => {
@@ -522,8 +483,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     const [cacheDirectoryIsDefault, setCacheDirectoryIsDefault] = useState(true);
     const [cacheDirectoryStatus, setCacheDirectoryStatus] = useState<'idle' | 'choosing'>('idle');
     const [stageActionStatus, setStageActionStatus] = useState<'idle' | 'regenerating'>('idle');
-    const configuredAiProvider = isElectron ? electronSettings.AI_PROVIDER : getWebAiProvider();
-    const aiServiceLabel = configuredAiProvider === 'openai' ? t('options.otherCompatibleApi') : 'Google Gemini';
+    isElectron ? electronSettings.AI_PROVIDER : getWebAiProvider();
+
     const isElectronRuntime = typeof window !== 'undefined' && Boolean(window.electron);
     const savedAiApiKey = savedElectronAiCredentials.AI_PROVIDER === 'openai'
         ? savedElectronAiCredentials.OPENAI_API_KEY
@@ -535,7 +496,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             : savedAiApiKey
                 ? 'configured'
                 : 'missing';
-    const showQuarkDownload = electronSettings.UPDATE_CHANNEL === 'realeco';
 
     useEffect(() => {
         if (aiApiKeyStatus === 'missing' && themeGenerationSource === 'ai') {
@@ -605,34 +565,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             // Seeing the settings panel should never fail the panel itself.
         });
     }, [updateStatus?.availableVersion, updateStatus?.updateSeen]);
-
-    const handleCopyVersionInfo = async () => {
-        try {
-            await copyTextToClipboard(VERSION_INFO);
-            setVersionCopied(true);
-            window.setTimeout(() => setVersionCopied(false), 1800);
-        } catch (error) {
-            console.error('Failed to copy version info:', error);
-            setVersionCopied(false);
-        }
-    };
-
-    const handleAuthorLabelClick = () => {
-        setAuthorClickCount((prev) => {
-            const nextCount = prev + 1;
-
-            if (nextCount >= 7) {
-                const id = Date.now();
-                setMeowEasterEgg({ id });
-                window.setTimeout(() => {
-                    setMeowEasterEgg((current) => (current?.id === id ? null : current));
-                }, 2200);
-                return 0;
-            }
-
-            return nextCount;
-        });
-    };
 
     const saveElectronSettings = async () => {
         if ((window as any).electron) {
@@ -752,9 +684,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             setUpdateStatus(status);
         }
     };
-
-    const isWin = typeof navigator !== 'undefined' && navigator.userAgent.toLowerCase().includes('win');
-
 
     const handleCheckForUpdates = async () => {
         if (!window.electron?.checkForUpdates) {
@@ -964,88 +893,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         }
     };
 
-    const handleCopyStageAddress = async (address: string) => {
-        try {
-            await copyTextToClipboard(address);
-            setStageAddressCopied(true);
-            window.setTimeout(() => setStageAddressCopied(false), 1800);
-        } catch (error) {
-            console.error('Failed to copy stage address:', error);
-            setStageAddressCopied(false);
-        }
-    };
-
-    const maskStageToken = (token: string | null | undefined) => {
-        if (!token) return t('options.stageTokenMissing') || 'Not generated';
-        if (token.length <= 12) return token;
-        return `${token.slice(0, 6)}...${token.slice(-6)}`;
-    };
-
-    const nowPlayingStatusLabel = (() => {
-        switch (nowPlayingConnectionStatus) {
-            case 'connected':
-                return t('status.connected');
-            case 'connecting':
-                return t('status.connecting');
-            case 'error':
-                return t('status.disconnected');
-            default:
-                return t('options.updateCheckDisabled');
-        }
-    })();
-    const stageEnabled = Boolean(stageStatus?.modeEnabled);
-    const activeStageSource = stageStatus?.source ?? stageSource;
-    const stageHasActiveSession = Boolean(stageStatus?.lyricsSession || stageStatus?.mediaSession);
-    // now-playing 与 playercap 是互斥的舞台源：两颗状态指示都只认当前选中源 activeStageSource，
-    // 保证同一时刻至多显示一个（web 端即便两个 enable 标志同时为真，也以派生出的选中源为准）。
-    const nowPlayingEnabled = Boolean(
-        isElectron
-            ? (stageStatus?.modeEnabled && activeStageSource === 'now-playing')
-            : activeStageSource === 'now-playing'
-    );
-    const nowPlayingConnected = nowPlayingEnabled && nowPlayingConnectionStatus === 'connected';
-    const stageConnected = stageEnabled && activeStageSource === 'stage-api';
-    const playerCapEnabled = Boolean(
-        isElectron
-            ? (stageStatus?.modeEnabled && activeStageSource === 'playercap')
-            : activeStageSource === 'playercap'
-    );
-    const playerCapConnected = playerCapEnabled && playerCapConnectionStatus === 'connected';
-    const integrationStatusItems = [
-        ...(stageConnected
-            ? [{
-                key: 'stage',
-                label: t('options.stageConnected'),
-                tone: 'success' as const,
-            }]
-            : []),
-        ...(nowPlayingEnabled
-            ? [{
-                key: 'now-playing',
-                label: nowPlayingConnected ? t('options.nowPlayingConnectedStatus') : t('options.nowPlayingDisconnectedStatus'),
-                tone: nowPlayingConnected ? 'success' as const : 'error' as const,
-            }]
-            : []),
-        ...(playerCapEnabled
-            ? [{
-                key: 'playercap',
-                label: playerCapConnected ? t('options.playerCapConnectedStatus') : t('options.playerCapDisconnectedStatus'),
-                tone: playerCapConnected ? 'success' as const : 'error' as const,
-            }]
-            : []),
-    ];
-    const navidromeExtensionCount = navidromeServerProfile?.openSubsonicExtensions.length ?? 0;
-    const navidromeFolderCount = navidromeServerProfile?.musicFolders.length ?? 0;
-    const navidromeServerLabel = navidromeServerProfile?.serverVersion
-        || navidromeServerProfile?.serverType
-        || t('navidrome.serverProfileUnavailable')
-        || 'Unknown server';
-
-    // const isDaylight = theme?.name === 'Daylight Default'; // Deprecated, passed as prop
     const glassBg = isDaylight ? 'bg-white' : 'bg-[#18181b]';
-    const subviewPanelBg = isDaylight ? 'bg-zinc-50' : 'bg-[#18181b]';
+
     const borderColor = isDaylight ? 'border-black/5' : 'border-white/10';
-    const textColor = isDaylight ? 'text-zinc-800' : 'text-zinc-100';
+
     const successTextColor = isDaylight ? 'text-green-600' : 'text-green-400';
     const successBgColor = isDaylight ? 'bg-green-500/10' : 'bg-green-500/20';
     const errorTextColor = isDaylight ? 'text-red-600' : 'text-red-400';
@@ -1054,9 +905,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     const toggleOffBackgroundClass = settingsToggleOffClassFor(isDaylight);
     const accentOutlineColor = theme?.accentColor || (isDaylight ? '#44403c' : '#f4f4f5');
     const settingsCardClass = settingsCardClassFor(isDaylight);
-    const settingsCardInteractiveClass = isDaylight
-        ? 'bg-black/[0.025] border-black/10 hover:bg-black/[0.055]'
-        : 'bg-white/5 border-white/5 hover:bg-white/8';
+
     const settingsIconClass = isDaylight
         ? 'bg-black/[0.04] border-black/10'
         : 'bg-white/8 border-white/10';
@@ -1076,14 +925,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             }
             : unselectedOptionStyle
     );
-    const rangeInputClass = [
-        'w-full h-1.5 rounded-full appearance-none cursor-pointer',
-        '[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:hover:scale-125 [&::-webkit-slider-thumb]:transition-transform',
-        '[&::-moz-range-thumb]:w-3 [&::-moz-range-thumb]:h-3 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:transition-transform',
-        isDaylight
-            ? 'bg-black/15 [&::-webkit-slider-thumb]:bg-zinc-700 [&::-moz-range-thumb]:bg-zinc-700'
-            : 'bg-white/10 [&::-webkit-slider-thumb]:bg-white [&::-moz-range-thumb]:bg-white',
-    ].join(' ');
+
     const shellTransition = { duration: 0.24, ease: 'easeOut' as const };
     const panelMotion = {
         initial: { opacity: 0, y: 20, scale: 0.98 },
@@ -1170,110 +1012,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         };
     }, [isAnySubviewOpen, setIsSubSettingsViewOpen]);
 
-    const visualizerModeOptions = VISUALIZER_REGISTRY.map(entry => ({
-        mode: entry.mode,
-        label: getVisualizerModeLabel(entry.mode, t),
-    }));
-
-    const renderToggle = (checked: boolean, onChange: () => void, disabled?: boolean) => {
-        return (
-            <button
-                type="button"
-                onClick={onChange}
-                disabled={disabled}
-                className={`relative w-11 h-6 rounded-full transition-all duration-300 shrink-0 ${disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer hover:scale-105 active:scale-95'
-                    } ${checked ? '' : toggleOffBackgroundClass}`}
-                style={{
-                    backgroundColor: checked
-                        ? (theme?.accentColor || (isDaylight ? '#18181b' : '#f4f4f5'))
-                        : undefined
-                }}
-            >
-                <div
-                    className={`absolute top-1 left-1 w-4 h-4 rounded-full transition-transform duration-300 shadow-sm ${isDaylight ? 'bg-white' : 'bg-zinc-100'
-                        } ${checked ? 'translate-x-5' : 'translate-x-0'}`}
-                />
-            </button>
-        );
-    };
-
-    const renderSettingsSubview = ({
-        isOpen,
-        onClose: handleClose,
-        title,
-        description,
-        children,
-        action,
-        zIndex = 136,
-    }: {
-        isOpen: boolean;
-        onClose: () => void;
-        title: string;
-        description: string;
-        children: React.ReactNode;
-        action?: React.ReactNode;
-        zIndex?: number;
-    }) => (
-        <AnimatePresence>
-            {isOpen && (
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={shellTransition}
-                    className="fixed inset-0 p-3 sm:p-5"
-                    style={{ backgroundColor: overlayBackground, zIndex }}
-                    onMouseDown={handleOverlayMouseDown}
-                    onClick={(event) => handleBackdropClose(event, handleClose)}
-                >
-                    <motion.div
-                        {...panelMotion}
-                        transition={shellTransition}
-                        className={`mx-auto flex h-full max-w-3xl flex-col overflow-hidden rounded-[32px] border ${borderColor} ${subviewPanelBg} shadow-[0_24px_80px_rgba(0,0,0,0.28)] relative`}
-                        onClick={(event) => event.stopPropagation()}
-                    >
-                        {/* Decorative background blobs */}
-                        <div className="absolute inset-0 pointer-events-none z-0">
-                            <div
-                                className={`absolute -top-24 -right-24 w-64 h-64 rounded-full blur-[80px] ${isDaylight ? 'opacity-20' : 'opacity-10'}`}
-                                style={{ backgroundColor: theme?.accentColor || (isDaylight ? '#60a5fa' : '#3b82f6') }}
-                            />
-                            <div
-                                className={`absolute -bottom-24 -left-24 w-64 h-64 rounded-full blur-[80px] ${isDaylight ? 'opacity-20' : 'opacity-10'}`}
-                                style={{ backgroundColor: theme?.secondaryColor || theme?.accentColor || (isDaylight ? '#c084fc' : '#a855f7') }}
-                            />
-                        </div>
-                        <div className="flex items-center justify-between border-b border-white/10 px-4 py-4 sm:px-6 relative z-10">
-                            <div className="flex items-center gap-3 min-w-0">
-                                <button
-                                    type="button"
-                                    onClick={handleClose}
-                                    className="h-10 w-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center transition-colors hover:bg-white/10"
-                                    style={{ color: 'var(--text-primary)' }}
-                                >
-                                    <ChevronLeft size={18} />
-                                </button>
-                                <div className="min-w-0">
-                                    <div className="text-lg sm:text-xl font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
-                                        {title}
-                                    </div>
-                                    <div className="text-xs opacity-50 mt-1" style={{ color: 'var(--text-secondary)' }}>
-                                        {description}
-                                    </div>
-                                </div>
-                            </div>
-                            {action ?? null}
-                        </div>
-                        <div className="flex-1 overflow-y-auto custom-scrollbar px-4 py-5 sm:px-6 relative z-10">
-                            <div className="space-y-8">
-                                {children}
-                            </div>
-                        </div>
-                    </motion.div>
-                </motion.div>
-            )}
-        </AnimatePresence>
-    );
     const closeSubviewOrModal = (closeSubview: () => void) => {
         if (shouldCloseModalOnSubviewBack) {
             onClose();
@@ -1353,7 +1091,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     // the reset above on purpose — that reset fires on the same commit the section changes on, and
     // a scrollTop write would abort the smooth scroll this starts.
     useSettingsInitialAnchor(initialAnchor, settingsAnchors, scrollToAnchor);
-
 
     return (
         <motion.div
@@ -1514,7 +1251,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                                                 onChangeThemeGenerationSource={onChangeThemeGenerationSource}
                                                 aiApiKeyStatus={aiApiKeyStatus}
                                                 onOpenAiSettings={() => useSettingsModalStore.getState().openSettings('options', 'desktop', null, 'electronSettings')}
-                                                onToggleTransparentPlayerBackground={resolvedToggleTransparentPlayerBackground}
                                                 onToggleAutoHidePlayerChrome={onToggleAutoHidePlayerChrome}
                                                 onToggleAutoHideCursorWithPlayerChrome={onToggleAutoHideCursorWithPlayerChrome}
                                                 onSaveCustomTheme={onSaveCustomTheme}
@@ -1524,7 +1260,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                                                 theme={theme}
                                                 themeParkInitialTheme={themeParkInitialTheme}
                                                 toggleOffBackgroundClass={toggleOffBackgroundClass}
-                                                transparentPlayerBackground={transparentPlayerBackground}
                                                 autoHidePlayerChrome={autoHidePlayerChrome}
                                                 autoHideCursorWithPlayerChrome={autoHideCursorWithPlayerChrome}
                                                 stageTrackPillMode={stageTrackPillMode}

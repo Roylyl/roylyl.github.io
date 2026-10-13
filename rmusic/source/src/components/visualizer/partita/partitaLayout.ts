@@ -63,7 +63,6 @@ export const PARTITA_PREHEAT_WINDOW: VisualizerPreheatWindow = {
     maxLead: 1.2,
 };
 
-const isCJK = (text: string) => /[\u4e00-\u9fa5\u3040-\u30ff\uac00-\ud7af]/.test(text);
 const graphemeSegmenter = typeof Intl !== 'undefined'
     ? new Intl.Segmenter(undefined, { granularity: 'grapheme' })
     : null;
@@ -93,14 +92,6 @@ export const resolvePartitaTuning = (tuning?: PartitaTuning): PartitaTuning => {
 
 export const getActiveColor = (wordText: string, theme: Theme) => {
     return resolveWordColor(wordText, theme.wordColors, theme.accentColor);
-};
-
-const getTargetColumnCount = (totalGraphemes: number, wordCount: number) => {
-    if (wordCount <= 2 || totalGraphemes <= 5) return 1;
-    if (totalGraphemes <= 10) return 2;
-    if (totalGraphemes <= 16) return 3;
-    if (totalGraphemes <= 24) return 4;
-    return 5;
 };
 
 const buildSequentialColumns = (line: Line, theme: Theme, windowHeight: number, tuning: PartitaTuning): PartitaSequentialLayout => {

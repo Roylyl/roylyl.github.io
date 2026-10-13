@@ -13,8 +13,8 @@ import { type LocalLyricsPriority, type LyricProviderSource } from '../types';
 import { getLyricProviderPreferenceLabel } from '../utils/lyrics/lyricSourceLabels';
 import { normalizeLocalLyricFormatOrder, type LocalLyricFileFormat } from '../utils/lyrics/localLyricFormatOrder';
 import { migratePreferredLyricSource } from '../utils/lyrics/sourcePriority';
-import { DEFAULT_LYRIC_STAFF_ABSORB_MODE, DEFAULT_LYRIC_STAFF_MIN_DWELL_SECONDS, DEFAULT_LYRIC_STAFF_POLICY, LYRIC_STAFF_MIN_DWELL_RANGE, type LyricStaffAbsorbMode, type LyricStaffPolicy } from '../utils/lyrics/staffCreditsPolicy';
-import { getStoredBoolean, getStoredString, setStoredBoolean } from './storagePrimitives';
+import { DEFAULT_LYRIC_STAFF_MIN_DWELL_SECONDS, LYRIC_STAFF_MIN_DWELL_RANGE, type LyricStaffAbsorbMode, type LyricStaffPolicy } from '../utils/lyrics/staffCreditsPolicy';
+import { getStoredBoolean, setStoredBoolean } from './storagePrimitives';
 import { setStatusMessage } from './useStatusMessageStore';
 
 export const GLOBAL_LYRIC_TIMELINE_OFFSET_STORAGE_KEY = 'global_lyric_timeline_offset_ms';
@@ -72,32 +72,6 @@ const readStoredPreferredAlternativeLyricSource = (): LyricProviderSource => {
     return migrated;
 };
 
-const readStoredLyricFilterPattern = (): string => {
-    if (typeof window === 'undefined') {
-        return '';
-    }
-
-    return localStorage.getItem('lyrics_filter_pattern')?.trim() || '';
-};
-
-const readStoredLyricFilterEnabled = (pattern: string): boolean => {
-    if (typeof window === 'undefined') {
-        return false;
-    }
-
-    const saved = localStorage.getItem('lyrics_filter_enabled');
-    return saved === null ? Boolean(pattern) : saved === 'true';
-};
-
-const readStoredLyricStaffPolicy = (): LyricStaffPolicy => {
-    if (typeof window === 'undefined') {
-        return DEFAULT_LYRIC_STAFF_POLICY;
-    }
-
-    const saved = localStorage.getItem('lyrics_staff_policy');
-    return saved === 'keep' || saved === 'hide' || saved === 'smart' ? saved : DEFAULT_LYRIC_STAFF_POLICY;
-};
-
 const readStoredLyricStaffMinDwellSeconds = (): number => {
     if (typeof window === 'undefined') {
         return DEFAULT_LYRIC_STAFF_MIN_DWELL_SECONDS;
@@ -109,15 +83,6 @@ const readStoredLyricStaffMinDwellSeconds = (): number => {
     }
 
     return Math.min(LYRIC_STAFF_MIN_DWELL_RANGE.max, Math.max(LYRIC_STAFF_MIN_DWELL_RANGE.min, parsed));
-};
-
-const readStoredLyricStaffAbsorbMode = (): LyricStaffAbsorbMode => {
-    if (typeof window === 'undefined') {
-        return DEFAULT_LYRIC_STAFF_ABSORB_MODE;
-    }
-
-    const saved = localStorage.getItem('lyrics_staff_absorb_mode');
-    return saved === 'before' || saved === 'both' || saved === 'off' ? saved : DEFAULT_LYRIC_STAFF_ABSORB_MODE;
 };
 
 export type LyricSettingsState = {
@@ -146,14 +111,12 @@ export type LyricSettingsState = {
     handleSetLyricStaffPattern: (pattern: string) => void;
 };
 
-const initialLyricFilterPattern = readStoredLyricFilterPattern();
-
 // R music preserves every lyric line and always displays leading credits.
 if (typeof window !== 'undefined') {
     for (const key of ['lyrics_filter_pattern', 'lyrics_filter_enabled', 'lyrics_staff_policy', 'lyrics_staff_absorb_mode', 'lyrics_staff_pattern']) localStorage.removeItem(key);
 }
 
-export const useLyricSettingsStore = create<LyricSettingsState>((set, get) => ({
+export const useLyricSettingsStore = create<LyricSettingsState>((set, _get) => ({
     autoUseBestLyric: getStoredBoolean('auto_use_best_lyric', true),
     preferredAlternativeLyricSource: readStoredPreferredAlternativeLyricSource(),
     localLyricsPriority: readStoredLocalLyricsPriority(),

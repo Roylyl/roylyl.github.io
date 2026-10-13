@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Dispatch, MutableRefObject, RefObject, SetStateAction } from 'react';
-import type { MotionValue } from 'framer-motion';
+
 import { LyricParserFactory } from '../utils/lyrics/LyricParserFactory';
 import { getFromCache, removeFromCache, saveToCache } from '../services/db';
 import { NowPlayingProvider } from '../services/nowPlayingProvider';
@@ -18,19 +18,7 @@ import {
     shouldApplyNowPlayingProgressCorrection,
 } from '../utils/nowPlayingClock';
 import { buildNowPlayingLyricSource } from '../utils/lyrics/nowPlayingSource';
-import {
-    LyricData,
-    NowPlayingConnectionStatus,
-    NowPlayingLyricPayload,
-    NowPlayingTrackSnapshot,
-    PlayerState,
-    SongResult,
-    StageLyricsSession,
-    StageMediaSession,
-    StageSource,
-    StageStatus,
-    StatusMessage,
-} from '../types';
+import { LyricData, NowPlayingConnectionStatus, NowPlayingLyricPayload, NowPlayingTrackSnapshot, PlayerState, SongResult, StageLyricsSession, StageMediaSession, StageSource, StageStatus } from '../types';
 import type {
     NowPlayingClockState,
     PlaybackSnapshot,

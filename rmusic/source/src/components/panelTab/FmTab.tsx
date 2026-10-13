@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+
 import { Play, Pause, SkipBack, SkipForward, Heart, Trash2, Radio } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { PlayerState } from '../../types';

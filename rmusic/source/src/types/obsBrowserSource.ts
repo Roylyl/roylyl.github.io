@@ -1,25 +1,4 @@
-import type {
-    CappellaAvatarImage,
-    CappellaEmojiImage,
-    CappellaTuning,
-    CadenzaTuning,
-    ClassicTuning,
-    CladdaghTuning,
-    DioramaTuning,
-    FumeTuning,
-    LyricData,
-    MonetBackgroundImage,
-    MonetBackgroundTuning,
-    MonetPortraitImage,
-    PlayerState,
-    SongResult,
-    StageSource,
-    SubtitleContentMode,
-    Theme,
-    UrlBackgroundItem,
-    VisualizerBackgroundMode,
-    VisualizerMode,
-} from '../types';
+import type { CappellaAvatarImage, CappellaEmojiImage, LyricData, MonetBackgroundImage, MonetBackgroundTuning, MonetPortraitImage, PlayerState, SongResult, StageSource, SubtitleContentMode, Theme, UrlBackgroundItem, VisualizerBackgroundMode, VisualizerMode } from '../types';
 import type { VisualizerTuningBundle } from '../components/visualizer/tuningRegistry';
 import type { VisualizerBackgroundConfig } from '../components/visualizer/backgrounds/definition';
 

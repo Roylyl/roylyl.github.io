@@ -180,7 +180,6 @@ export const RingLine: React.FC<RingLineProps> = ({
             // Scale radius, bounded to avoid excessive translation
             const scaleFactor = Math.min(1 + power * intensityMultiplier, maxScale);
             const currentRx = Rx * scaleFactor;
-            const currentRy = Ry * scaleFactor;
 
             const isUpcomingLine = lineIndex > centerLineIndex;
             const upcomingEntryProgress = isUpcomingLine
@@ -214,7 +213,7 @@ export const RingLine: React.FC<RingLineProps> = ({
             const activeNextLine = lines[renderBaseIndex + 1];
             // Extend the render end time to the next line's start time (minus lead time) so the ring slowly drifts
             // continuously during instrumental gaps, while leaving time for the next line's entry animation.
-            const activeRenderEnd = activeLine 
+            const activeRenderEnd = activeLine
                 ? Math.max(
                     activeLine.renderHints?.renderEndTime ?? activeLine.endTime,
                     activeNextLine ? activeNextLine.startTime - CLADDAGH_NEXT_LINE_ENTRY_LEAD_SECONDS : activeLine.endTime + 10.0
@@ -374,7 +373,7 @@ export const RingLine: React.FC<RingLineProps> = ({
                     : 24 * Math.pow(F, 2.0);
 
                 const finalHighlightColor = item.charColor || highlightColor;
-                
+
                 // Color and alpha with "camera flash" effect
                 let targetColor = baseColor;
                 let currentAlpha = 0.55;
@@ -388,7 +387,7 @@ export const RingLine: React.FC<RingLineProps> = ({
                     const progressFactor = Math.min(1, charProgress * 15.0);
                     currentAlpha = 0.55 + 0.45 * progressFactor;
                     targetColor = mixColors(baseColor, finalHighlightColor, progressFactor, currentAlpha);
-                    
+
                     // A quick decaying pop on the radius to emphasize the flash
                     if (charProgress < 0.4) {
                         flashPop = Math.pow(1 - charProgress / 0.4, 2.0) * 0.65;
@@ -428,7 +427,7 @@ export const RingLine: React.FC<RingLineProps> = ({
                         // We use shadowFade directly as the alpha so it blooms beautifully at 1.0 near the center,
                         // but fades to invisible at the edges.
                         const innerGlowColor = mixColors(targetColor, theme.primaryColor || '#ffffff', 0.65, shadowFade);
-                        
+
                         // Restored exact multiplier ratios from Image 1 (0.35, 1.0, 1.6)
                         textShadow = `0 0 ${quantizeShadowBlur(currentGlowRadius * 0.35)}px ${innerGlowColor}, 0 0 ${quantizeShadowBlur(currentGlowRadius)}px ${fadedTargetColor}, 0 0 ${quantizeShadowBlur(currentGlowRadius * 1.6)}px ${fadedTargetColor}`;
                     } else {

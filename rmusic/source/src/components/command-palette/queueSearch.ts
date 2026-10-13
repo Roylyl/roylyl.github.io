@@ -1,12 +1,6 @@
 import type { SongResult } from '../../types';
-import {
-    parseQueueQuery,
-    QUEUE_SYNTAX_SPEC,
-    type ParsedQueueQuery,
-    type QueueBatchAction,
-    type QueueFacetKind,
-} from './queueQuery';
-import { buildFacetSuggestions, buildFlagSuggestions, type SyntaxFacetCandidate, type SyntaxSuggestion } from './syntax/suggest';
+import { parseQueueQuery, type ParsedQueueQuery, type QueueBatchAction, type QueueFacetKind } from './queueQuery';
+import { buildFacetSuggestions, type SyntaxFacetCandidate, type SyntaxSuggestion } from './syntax/suggest';
 import type { ParsedCommandQuery } from './syntax/types';
 import {
     getCurrentQueueIndex,

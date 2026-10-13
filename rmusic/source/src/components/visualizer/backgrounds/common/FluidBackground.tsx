@@ -1,6 +1,7 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Theme } from '../../../../types';
+import { resolveCoverReadability } from '../../../../utils/coverReadability';
 
 // src/components/visualizer/backgrounds/common/FluidBackground.tsx
 
@@ -169,6 +170,9 @@ const buildDownscaledCover = (coverUrl: string, maxSize: number): Promise<string
 
 const FluidBackground: React.FC<FluidBackgroundProps> = memo(({ coverUrl, theme }) => {
     const isIOSSafari = useMemo(detectIOSSafari, []);
+    const readability = useMemo(() => resolveCoverReadability(
+        theme.primaryColor, theme.secondaryColor, theme.backgroundColor,
+    ), [theme.primaryColor, theme.secondaryColor, theme.backgroundColor]);
     const [softFocusCoverUrl, setSoftFocusCoverUrl] = useState<string | null>(null);
 
     useEffect(() => {
@@ -376,14 +380,12 @@ const FluidBackground: React.FC<FluidBackgroundProps> = memo(({ coverUrl, theme 
                 />
             )}
 
-            {/* Overlay Gradient for better text readability and blending */}
+            {/* Keep text readable over every cover region, including cross-fades and iOS layers. */}
             <div
-                className="absolute inset-0 w-full h-full"
-                style={{
-                    background: `linear-gradient(to bottom right, ${theme.primaryColor}, transparent, ${theme.secondaryColor})`,
-                    opacity: isIOSSafari ? 0.2 : 0.4,
-                    mixBlendMode: isIOSSafari ? 'normal' : 'overlay',
-                }}
+                aria-hidden="true"
+                data-cover-readability="true"
+                className="absolute inset-0 w-full h-full pointer-events-none"
+                style={{ backgroundColor: readability.color, opacity: readability.opacity }}
             />
         </div>
     );

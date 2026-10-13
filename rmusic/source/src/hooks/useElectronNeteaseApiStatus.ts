@@ -1,13 +1,11 @@
 import { useEffect, useRef } from 'react';
-import type { Dispatch, SetStateAction } from 'react';
+
 import type { TFunction } from 'i18next';
-import type { StatusMessage } from '../types';
+
 import { setStatusMessage as setStatusMsg } from '../stores/useStatusMessageStore';
 import { useNeteaseApiStatusStore } from '../stores/useNeteaseApiStatusStore';
 
 // src/hooks/useElectronNeteaseApiStatus.ts
-
-type StatusSetter = Dispatch<SetStateAction<StatusMessage | null>>;
 
 // Watches the Electron NetEase API startup state, mirrors it into the store the login modal reads,
 // and surfaces backend failures through the app toast.

@@ -73,7 +73,7 @@ const punchRow: TemperaCompositionDrawer = ctx => {
 // transport holes pulling it past.
 const filmGate: TemperaCompositionDrawer = ctx => {
     const { width, height, palette } = ctx;
-    const unit = Math.min(width, height);
+
     const gate = rectPolygon(width * 0.2, height * 0.1, width * 0.6, height * 0.52);
     const holes = [gate];
     for (let index = 0; index < 4; index += 1) {

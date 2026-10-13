@@ -84,7 +84,6 @@ const UrlBackgroundSettingsCard: React.FC<UrlBackgroundSettingsCardProps> = ({
         onSetUrlBackgroundSelectedId?.(id);
     }, [onSetUrlBackgroundSelectedId]);
 
-    const isEditingOrAdding = isAdding || editingId !== null;
     const borderColor = colorWithAlpha(theme.secondaryColor, isDaylight ? 0.18 : 0.16);
     const itemBg = colorWithAlpha(theme.backgroundColor, isDaylight ? 0.24 : 0.34);
     const inputBg = colorWithAlpha(theme.backgroundColor, isDaylight ? 0.42 : 0.52);

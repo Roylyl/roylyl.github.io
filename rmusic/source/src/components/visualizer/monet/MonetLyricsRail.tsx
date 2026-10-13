@@ -38,25 +38,24 @@ interface MonetLyricsRailProps {
 }
 
 const MonetLyricsRail: React.FC<MonetLyricsRailProps> = ({
-    entries,
-    lines,
-    currentLineIndex,
-    currentTime,
-    theme,
-    lyricFontPx,
-    inactiveFontPx,
-    translationFontPx,
-    fontStack,
-    translationFontStack = fontStack,
-    subtitleTheme,
-    keywordColoringEnabled,
-    emptyText,
-    subtitleContentMode = 'translation',
-    audioPower,
-    audioBands,
-    onLyricLineSeek,
-    seekDisabled = false,
-    layoutScale = 1,
+  entries,
+  lines,
+  currentLineIndex,
+  currentTime,
+  theme,
+  lyricFontPx,
+  inactiveFontPx,
+  translationFontPx,
+  fontStack,
+  translationFontStack = fontStack,
+  subtitleTheme,
+  keywordColoringEnabled,
+  emptyText,
+  subtitleContentMode = 'translation',
+  audioPower,
+  onLyricLineSeek,
+  seekDisabled = false,
+  layoutScale = 1
 }) => {
     const railRef = useRef<HTMLDivElement | null>(null);
     const layoutCacheRef = useRef<MonetLayoutCache>(new Map());

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Square } from 'lucide-react';
 import { DEFAULT_SORA_BACKGROUND_TUNING } from '../../../../types';
 import SoraBackground from './SoraBackground';

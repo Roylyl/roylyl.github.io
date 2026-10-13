@@ -1,16 +1,10 @@
 import AppUpdateSection from './AppUpdateSection';
 import React from 'react';
-import { AudioWaveform, Check, Cloud, Command, Database, Disc3, Download, FolderOpen, HardDrive, Layers, Loader2, Pencil, PlayCircle, RefreshCw, Trash2, Upload, X } from 'lucide-react';
+import { AudioWaveform, Command, Database, Disc3, Download, FolderOpen, HardDrive, Layers, Loader2, Pencil, PlayCircle, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { Theme } from '../../../types';
-import { getSyncConfig, getSyncStatus, saveSyncConfig, setSyncStatus, subscribeSyncConfig, subscribeSyncStatus } from '../../../services/sync/syncConfig';
-import { exportSyncLibraryBundle, importSyncLibraryBundle, isSyncLibraryExportBundle, syncNow, testSyncProviderConnection } from '../../../services/sync/syncCoordinator';
-import { createSyncLibraryZipBlob, readSyncLibraryZipFile } from '../../../services/sync/syncArchive';
-import { SYNC_PROVIDER, type SyncProviderConfig, type SyncRuntimeStatus } from '../../../services/sync/syncTypes';
-import { createSafeObjectUrl } from '../../../utils/blobGuards';
-import { formatLocalDateTimeStamp } from '../../../utils/downloadFileName';
+
 import { CustomSelect } from '../../shared/CustomSelect';
-import LocalLibraryWatchSection from './LocalLibraryWatchSection';
 import { SettingsAnchor } from './navigation/SettingsAnchorContext';
 import SettingsSectionHeading from './navigation/SettingsSectionHeading';
 import { openCommandPaletteCommand } from '../../../stores/useAppViewStore';
@@ -72,13 +66,6 @@ const StorageSettingsSection: React.FC<StorageSettingsSectionProps> = ({
     useInsetCacheRows = false,
 }) => {
     const { t } = useTranslation();
-    const [syncConfig, setSyncConfig] = React.useState<SyncProviderConfig>(() => getSyncConfig());
-    const [draftSyncConfig, setDraftSyncConfig] = React.useState<SyncProviderConfig>(() => getSyncConfig());
-    const [syncStatus, setSyncStatusState] = React.useState<SyncRuntimeStatus>(() => getSyncStatus());
-    const [syncAction, setSyncAction] = React.useState<'idle' | 'testing' | 'syncing' | 'syncingSettings' | 'exporting' | 'importing'>('idle');
-    const [testResult, setTestResult] = React.useState<'idle' | 'success' | 'error'>('idle');
-    const [syncSummaryMsg, setSyncSummaryMsg] = React.useState<string | null>(null);
-    const syncImportInputRef = React.useRef<HTMLInputElement | null>(null);
     const cacheRowClass = useInsetCacheRows
         ? `flex items-center justify-between p-3 rounded-xl border ${settingsCardClass}`
         : 'flex items-center justify-between bg-white/5 p-3 rounded-xl border border-white/5';
@@ -87,9 +74,9 @@ const StorageSettingsSection: React.FC<StorageSettingsSectionProps> = ({
         : 'p-2 bg-white/5 rounded-lg opacity-60';
     // Zero is "no ceiling", which is a real answer rather than a missing one, so it gets a label
     // instead of an empty field.
-    const cacheLimitOptions = [1, 2, 5, 10, 20, 50, 0].map((gigabytes) => ({
+    const cacheLimitOptions = [1, 3, 5, 0].map((gigabytes) => ({
         value: String(gigabytes),
-        label: gigabytes === 0 ? (t('options.mediaCacheLimitNone') || 'No limit') : `${gigabytes} GB`,
+        label: gigabytes === 0 ? (t('options.mediaCacheLimitNone') || 'No limit') : `${gigabytes}GB`,
     }));
     const cacheItems = [
         { id: 'playlist' as const, label: t('options.playlistData') || 'Playlist Data', size: cacheSizes.playlist, icon: Layers },
@@ -98,153 +85,6 @@ const StorageSettingsSection: React.FC<StorageSettingsSectionProps> = ({
         { id: 'media' as const, label: t('options.mediaFiles') || 'Media Files', size: cacheSizes.media, icon: PlayCircle },
         { id: 'analysis' as const, label: t('options.analysisData') || 'Analysis Data', size: cacheSizes.analysis, icon: AudioWaveform },
     ];
-    const syncConfigDirty = JSON.stringify(syncConfig) !== JSON.stringify(draftSyncConfig);
-    const syncConfigured = Boolean(draftSyncConfig.workerBaseUrl.trim() && draftSyncConfig.authToken.trim());
-    const syncStatusLabel = syncStatus.state === 'error'
-        ? (syncStatus.lastError || t('options.r2SyncStatusError') || 'Sync failed')
-        : syncStatus.lastSyncAt
-            ? `${t('options.r2SyncLastSync') || 'Last sync'}: ${new Date(syncStatus.lastSyncAt).toLocaleString()}`
-            : (t('options.r2SyncStatusIdle') || 'Not synced yet');
-
-    React.useEffect(() => {
-        const unsubscribeConfig = subscribeSyncConfig(() => {
-            const nextConfig = getSyncConfig();
-            setSyncConfig(nextConfig);
-            setDraftSyncConfig(nextConfig);
-        });
-        const unsubscribeStatus = subscribeSyncStatus(() => setSyncStatusState(getSyncStatus()));
-        return () => {
-            unsubscribeConfig();
-            unsubscribeStatus();
-        };
-    }, []);
-
-    const updateDraftSyncConfig = (patch: Partial<SyncProviderConfig>) => {
-        setDraftSyncConfig(prev => ({
-            ...prev,
-            ...patch,
-            provider: SYNC_PROVIDER,
-        }));
-    };
-
-    const handleSaveSyncConfig = () => {
-        saveSyncConfig(draftSyncConfig);
-        setSyncConfig(getSyncConfig());
-    };
-
-    const handleTestSync = async () => {
-        setSyncAction('testing');
-        setTestResult('idle');
-        setSyncSummaryMsg(null);
-        const nextConfig = {
-            ...draftSyncConfig,
-            workerBaseUrl: draftSyncConfig.workerBaseUrl.trim().replace(/\/+$/, ''),
-            authToken: draftSyncConfig.authToken.trim(),
-        };
-        try {
-            const ok = await testSyncProviderConnection(nextConfig);
-            if (ok) {
-                saveSyncConfig(nextConfig);
-                setSyncConfig(getSyncConfig());
-                setSyncStatus({ state: 'success', lastSyncAt: new Date().toISOString(), lastError: null });
-                setTestResult('success');
-                setSyncSummaryMsg(t('ui.storage.syncTestSuccess'));
-            } else {
-                setTestResult('error');
-                setSyncSummaryMsg(t('ui.storage.syncTestFailed'));
-            }
-        } catch (error) {
-            setTestResult('error');
-            setSyncSummaryMsg(error instanceof Error ? error.message : String(error));
-            setSyncStatus({ state: 'error', lastError: error instanceof Error ? error.message : String(error) });
-        } finally {
-            setSyncAction('idle');
-            setTimeout(() => setTestResult('idle'), 3000);
-        }
-    };
-
-    const handleSyncNow = async () => {
-        if (syncConfigDirty) {
-            handleSaveSyncConfig();
-        }
-        setSyncAction('syncing');
-        setSyncSummaryMsg(null);
-        try {
-            const summary = await syncNow({ syncThemes: true, applyRemoteSettings: false, pushSettings: false });
-            if (summary) {
-                setSyncSummaryMsg(t('ui.storage.syncThemesComplete', { uploaded: summary.uploadedThemeCount, downloaded: summary.downloadedThemeCount, local: summary.checkedLocalThemeCount, diff: summary.diffBucketCount }));
-            }
-        } finally {
-            setSyncAction('idle');
-        }
-    };
-
-    const handleSyncSettings = async () => {
-        if (syncConfigDirty) {
-            handleSaveSyncConfig();
-        }
-        setSyncAction('syncingSettings');
-        setSyncSummaryMsg(null);
-        try {
-            const summary = await syncNow({ syncThemes: false, applyRemoteSettings: true, pushSettings: true });
-            if (summary) {
-                const parts = [];
-                if (summary.appliedRemoteSettings) parts.push(t('ui.storage.syncAppliedRemote'));
-                if (summary.pushedLocalSettings) parts.push(t('ui.storage.syncPushedLocal'));
-                setSyncSummaryMsg(parts.length > 0 ? t('ui.storage.syncSettingsComplete', { details: parts.join(', ') }) : t('ui.storage.syncSettingsNoChange'));
-            }
-        } finally {
-            setSyncAction('idle');
-        }
-    };
-
-    const handleExportSyncLibrary = async () => {
-        setSyncAction('exporting');
-        try {
-            const bundle = await exportSyncLibraryBundle();
-            const blob = createSyncLibraryZipBlob(bundle);
-            const url = createSafeObjectUrl(blob);
-            if (!url) throw new TypeError('Sync export must produce a Blob');
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `folia-sync-${formatLocalDateTimeStamp()}.zip`;
-            link.click();
-            URL.revokeObjectURL(url);
-        } finally {
-            setSyncAction('idle');
-        }
-    };
-
-    const handleImportSyncLibrary = async (file: File | null) => {
-        if (!file) {
-            return;
-        }
-
-        setSyncAction('importing');
-        try {
-            const parsed = file.name.toLowerCase().endsWith('.zip')
-                ? await readSyncLibraryZipFile(file)
-                : JSON.parse(await file.text()) as unknown;
-            if (!isSyncLibraryExportBundle(parsed)) {
-                throw new Error('Invalid Folia sync export');
-            }
-            const shouldImport = window.confirm(t('options.r2SyncImportConfirm') || 'Import this sync library and overwrite local sync cache?');
-            if (!shouldImport) {
-                return;
-            }
-            await importSyncLibraryBundle(parsed, {
-                pushRemote: draftSyncConfig.enabled && syncConfigured,
-            });
-        } catch (error) {
-            setSyncStatus({ state: 'error', lastError: error instanceof Error ? error.message : String(error) });
-        } finally {
-            setSyncAction('idle');
-            if (syncImportInputRef.current) {
-                syncImportInputRef.current.value = '';
-            }
-        }
-    };
-
     return (
         <>
             <AppUpdateSection cardClass={settingsCardClass} />
@@ -302,15 +142,6 @@ const StorageSettingsSection: React.FC<StorageSettingsSectionProps> = ({
                     ))}
                 </div>
             </SettingsAnchor>
-
-            
-
-            <LocalLibraryWatchSection
-                errorTextColor={errorTextColor}
-                settingsCardClass={settingsCardClass}
-                theme={theme}
-                toggleOffBackgroundClass={toggleOffBackgroundClass}
-            />
 
             <SettingsAnchor anchorId="mediaCache" label={t('options.mediaCache') || 'Media Cache'}>
                 <SettingsSectionHeading icon={Database} label={t('options.mediaCache') || 'Media Cache'} />
@@ -370,7 +201,7 @@ const StorageSettingsSection: React.FC<StorageSettingsSectionProps> = ({
                         </div>
                     )}
 
-                    {isElectron && (
+                    {(
                         <div className="pt-3 border-t border-white/10 flex items-center justify-between gap-4">
                             <div className="space-y-1">
                                 <div className="text-sm font-medium flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>

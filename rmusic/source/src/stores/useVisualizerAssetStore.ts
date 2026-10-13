@@ -7,13 +7,8 @@
 // snapshot meant every consumer of any setting re-rendered when an image finished loading.
 
 import { create } from 'zustand';
-import { buildStoredCappellaAvatar, clearCustomCappellaAvatar, isSupportedCappellaAvatarFile, saveCustomCappellaAvatar } from '../services/cappellaAvatarPack';
-import { buildStoredCappellaEmojiPack, clearCustomCappellaEmojiPack, isSupportedCappellaEmojiFile, saveCustomCappellaEmojiPack } from '../services/cappellaEmojiPack';
-import { buildStoredMonetBackgroundImage, clearMonetBackgroundImage, isSupportedMonetBackgroundFile, saveMonetBackgroundImage } from '../services/monetBackgroundImage';
-import { buildStoredMonetPortraitImage, clearMonetPortraitImage, isSupportedMonetPortraitFile, saveMonetPortraitImage } from '../services/monetPortraitImage';
+
 import { type CappellaAvatarImage, type CappellaEmojiImage, type MonetBackgroundImage, type MonetPortraitImage, type StoredCappellaAvatarImage, type StoredCappellaEmojiImage, type StoredMonetBackgroundImage, type StoredMonetPortraitImage } from '../types';
-import i18n from '../i18n/config';
-import { setStatusMessage } from './useStatusMessageStore';
 
 export type VisualizerAssetState = {
     storedCappellaEmojiPack: StoredCappellaEmojiImage[];
@@ -42,7 +37,7 @@ export type VisualizerAssetState = {
     setIsLoadingMonetPortraitImage: (loading: boolean) => void;
 };
 
-export const useVisualizerAssetStore = create<VisualizerAssetState>((set, get) => ({
+export const useVisualizerAssetStore = create<VisualizerAssetState>((set, _get) => ({
     storedCappellaEmojiPack: [],
     cappellaCustomEmojiImages: [],
     isLoadingCappellaCustomEmojiPack: true,

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Monitor, Moon, Sun, Palette } from 'lucide-react';
 import { useThemeSettingsStore, type RmusicAppearanceMode } from '../../stores/useThemeSettingsStore';
 

@@ -1,5 +1,5 @@
 import type { CommandPaletteContext } from '../../command-palette/types';
-import type { LyricStaffPolicy } from '../../../utils/lyrics/staffCreditsPolicy';
+
 import type { ThemeGenerationSource } from '../../../services/themePreferences';
 import { useAudioSettingsStore } from '../../../stores/useAudioSettingsStore';
 import { useAutomixSettingsStore } from '../../../stores/useAutomixSettingsStore';

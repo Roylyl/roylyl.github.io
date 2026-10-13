@@ -45,7 +45,6 @@ type PosterWallProps = {
     onBack: () => void;
 };
 
-
 const CELL_SIZE = 128;
 const GAP = 8;
 const OVERSCAN = 500;
@@ -58,7 +57,6 @@ const ENTRANCE_WINDOW = 1100;
 const METRICS: WallMetrics = { cellSize: CELL_SIZE, gap: GAP };
 // Longest edge a card can reach, which is the gear expansion hands it.
 const EXPANDED_SIZE = EXPANSION_SPAN.cols * (CELL_SIZE + GAP) - GAP;
-
 
 const getScale = (width: number) => width < 640 ? 0.52 : width < 1100 ? 0.64 : 0.76;
 
@@ -295,7 +293,6 @@ export default function PosterWall({
         const expandedRect = layoutExpandedBlock(currentGeometry, currentTiles.length, instance, METRICS).get(instanceId);
         if (expandedRect) panTo(expandedRect);
     }, [panTo, setActivePoster, setFocused]);
-    const collapsePoster = useCallback(() => setActivePoster(null), [setActivePoster]);
 
     useLatticePlaybackFocus({
         currentSong,

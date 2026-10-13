@@ -1,4 +1,3 @@
-import React from 'react';
 import { DEFAULT_MONET_BACKGROUND_TUNING } from '../../../../types';
 import { MonetBackgroundSettingsCard } from './MonetBackgroundSettingsCard';
 import MonetBackgroundLayer from './MonetBackgroundLayer';

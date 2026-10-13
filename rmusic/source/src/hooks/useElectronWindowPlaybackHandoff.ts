@@ -3,8 +3,8 @@ import type { Dispatch, MutableRefObject, RefObject, SetStateAction } from 'reac
 import type { MotionValue } from 'framer-motion';
 import { restorePlaybackSourceForSong } from '../components/app/playback/restorePlaybackSource';
 import { PlayerState } from '../types';
-import type { LyricData, SongResult, StageSource, StageStatus, StatusMessage } from '../types';
-import type { AudioQualityPreference, MediaId } from '../types/onlineMusic';
+import type { LyricData, SongResult, StageSource, StageStatus } from '../types';
+import type { MediaId } from '../types/onlineMusic';
 import type { RestorePlaybackSourceOutcome } from '../types/playbackFailure';
 import type { ThemeCacheSongKey } from '../services/themeCache';
 import { getPlaybackSongKey, isStagePlaybackSong } from '../utils/appPlaybackGuards';

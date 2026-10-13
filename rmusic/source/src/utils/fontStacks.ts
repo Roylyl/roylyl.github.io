@@ -24,40 +24,7 @@ export const BUILTIN_FONT_STACKS: Record<Theme['fontStyle'], string> = {
     mono: '"IBM Plex Mono", "Sarasa Mono SC", "Noto Sans Mono CJK SC", "Noto Sans Mono", "SFMono-Regular", Consolas, monospace',
 };
 
-const TRANSLATION_FONT_STACKS: Record<Theme['fontStyle'], string> = {
-    sans: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Helvetica Neue", Arial, "Noto Sans CJK SC", "Source Han Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans JP", "Source Han Sans JP", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif',
-    serif: `${SUGAR_SERIF_FAMILY}, "Folia Noto Serif SC", "Iowan Old Style", Georgia, "Times New Roman", "Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", "Noto Serif JP", "Source Han Serif JP", "Yu Mincho", "MS PMincho", serif`,
-    mono: 'Consolas, "IBM Plex Mono", "SFMono-Regular", Menlo, Monaco, "Sarasa Mono SC", "Noto Sans Mono CJK SC", "SimHei", "DengXian", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans Mono CJK JP", "MS Gothic", monospace',
-};
-
-const CSS_GENERIC_FONT_FAMILIES = new Set([
-    'serif',
-    'sans-serif',
-    'monospace',
-    'cursive',
-    'fantasy',
-    'system-ui',
-    'ui-serif',
-    'ui-sans-serif',
-    'ui-monospace',
-    'ui-rounded',
-    'emoji',
-    'math',
-    'fangsong',
-]);
-
-const quoteFontFamily = (fontFamily: string) => `"${fontFamily.replace(/["\\]/g, '\\$&')}"`;
-
 const normalizeFontFamilyName = (fontFamily: string) => fontFamily.trim().replace(/^['"]|['"]$/g, '').trim();
-
-const formatFontFamily = (fontFamily: string) => {
-    const normalized = normalizeFontFamilyName(fontFamily);
-    if (!normalized) return null;
-
-    return CSS_GENERIC_FONT_FAMILIES.has(normalized.toLowerCase())
-        ? normalized
-        : quoteFontFamily(normalized);
-};
 
 export const normalizeFontFamilyStack = (fontFamilies: Array<string | null | undefined> | null | undefined) => {
     const seen = new Set<string>();
@@ -75,21 +42,6 @@ export const normalizeFontFamilyStack = (fontFamilies: Array<string | null | und
     });
 
     return stack;
-};
-
-const buildCustomFontFamilyStack = (theme: Pick<Theme, 'fontFamily' | 'fontFamilyStack'>) => {
-    const familiesToNormalize: (string | null | undefined)[] = [
-        ...(theme.fontFamily ? [theme.fontFamily] : []),
-        ...(theme.fontFamilyStack ?? []),
-    ];
-
-    if (familiesToNormalize.length === 0) {
-        return [];
-    }
-
-    return normalizeFontFamilyStack(familiesToNormalize)
-        .map(formatFontFamily)
-        .filter((fontFamily): fontFamily is string => Boolean(fontFamily));
 };
 
 export const getBuiltinThemeFontStack = (fontStyle: Theme['fontStyle']) => {

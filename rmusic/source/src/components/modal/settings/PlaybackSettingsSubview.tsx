@@ -1,19 +1,15 @@
 import React, { useState } from 'react';
-import { ChevronRight, Monitor, Radio, RefreshCw, Settings2, Timer } from 'lucide-react';
+import { ChevronRight, Monitor, RefreshCw, Settings2, Timer } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/react/shallow';
-import type { LocalLyricsPriority, Theme } from '../../../types';
+import type { Theme } from '../../../types';
 import { useAudioOutputDevices } from '../../../hooks/useAudioOutputDevices';
 import { CustomSelect } from '../../shared/CustomSelect';
-import { LYRIC_MATCH_SOURCES } from '../../../utils/lyrics/lyricMatchSources';
-import { getLyricProviderPreferenceLabel } from '../../../utils/lyrics/lyricSourceLabels';
-import LocalLyricFormatOrderSetting from './LocalLyricFormatOrderSetting';
 import { SettingsAnchor } from './navigation/SettingsAnchorContext';
 import SettingsSectionHeading from './navigation/SettingsSectionHeading';
 import { useLyricSettingsStore } from '../../../stores/useLyricSettingsStore';
 import { useAudioSettingsStore } from '../../../stores/useAudioSettingsStore';
-import { useOnlineProviderAccountStore } from '../../../stores/useOnlineProviderAccountStore';
-import { isNeteaseScrobbleReady } from '../../../services/onlineMusic/playbackReportGate';
+import '../../../stores/useOnlineProviderAccountStore';
 import { isNativeMediaPlaybackPreferred } from '../../../services/nativeMediaPlayback';
 
 // src/components/modal/settings/PlaybackSettingsSubview.tsx
@@ -43,44 +39,38 @@ const PlaybackSettingsSubview: React.FC<PlaybackSettingsSubviewProps> = ({
     const { t } = useTranslation();
     const supportsAudioProcessing = !isNativeMediaPlaybackPreferred();
     const {
-        audioOutputDeviceId,
-        enableTranscodeFallback,
-        neteaseScrobbleEnabled,
-        playbackFadeEnabled,
-        onToggleTranscodeFallback,
-        onToggleNeteaseScrobble,
-        onTogglePlaybackFade,
-    } = useAudioSettingsStore(useShallow(state => ({
-        audioOutputDeviceId: state.audioOutputDeviceId,
-        enableTranscodeFallback: state.enableTranscodeFallback,
-        neteaseScrobbleEnabled: state.neteaseScrobbleEnabled,
-        playbackFadeEnabled: state.playbackFadeEnabled,
-        onToggleTranscodeFallback: state.handleToggleTranscodeFallback,
-        onToggleNeteaseScrobble: state.handleToggleNeteaseScrobble,
-        onTogglePlaybackFade: state.handleTogglePlaybackFade,
-    })));
+  audioOutputDeviceId,
+  enableTranscodeFallback,
+  playbackFadeEnabled,
+  onToggleTranscodeFallback,
+  onTogglePlaybackFade
+} = useAudioSettingsStore(useShallow(state => ({
+  audioOutputDeviceId: state.audioOutputDeviceId,
+  enableTranscodeFallback: state.enableTranscodeFallback,
+  neteaseScrobbleEnabled: state.neteaseScrobbleEnabled,
+  playbackFadeEnabled: state.playbackFadeEnabled,
+  onToggleTranscodeFallback: state.handleToggleTranscodeFallback,
+  onToggleNeteaseScrobble: state.handleToggleNeteaseScrobble,
+  onTogglePlaybackFade: state.handleTogglePlaybackFade
+})));
+// Subscribed to rather than read once: the panel has to grey out the moment the NetEase account
+// signs out. `isNeteaseScrobbleReady` is the same predicate the command palette gates on, so the
+// two can never disagree about whether the toggle may be flipped.
     // Subscribed to rather than read once: the panel has to grey out the moment the NetEase account
     // signs out. `isNeteaseScrobbleReady` is the same predicate the command palette gates on, so the
     // two can never disagree about whether the toggle may be flipped.
-    useOnlineProviderAccountStore(state => state.accounts.netease?.status);
-    const canReportNeteasePlayback = isNeteaseScrobbleReady();
+
     const {
-        autoUseBestLyric,
-        preferredAlternativeLyricSource,
-        localLyricsPriority,
-        globalLyricTimelineOffsetMs,
-        onToggleAutoUseBestLyric,
-        onPreferredAlternativeLyricSourceChange,
-        onLocalLyricsPriorityChange,
-    } = useLyricSettingsStore(useShallow(state => ({
-        autoUseBestLyric: state.autoUseBestLyric,
-        preferredAlternativeLyricSource: state.preferredAlternativeLyricSource,
-        localLyricsPriority: state.localLyricsPriority,
-        globalLyricTimelineOffsetMs: state.globalLyricTimelineOffsetMs,
-        onToggleAutoUseBestLyric: state.handleToggleAutoUseBestLyric,
-        onPreferredAlternativeLyricSourceChange: state.handleSetPreferredAlternativeLyricSource,
-        onLocalLyricsPriorityChange: state.handleSetLocalLyricsPriority,
-    })));
+  globalLyricTimelineOffsetMs
+} = useLyricSettingsStore(useShallow(state => ({
+  autoUseBestLyric: state.autoUseBestLyric,
+  preferredAlternativeLyricSource: state.preferredAlternativeLyricSource,
+  localLyricsPriority: state.localLyricsPriority,
+  globalLyricTimelineOffsetMs: state.globalLyricTimelineOffsetMs,
+  onToggleAutoUseBestLyric: state.handleToggleAutoUseBestLyric,
+  onPreferredAlternativeLyricSourceChange: state.handleSetPreferredAlternativeLyricSource,
+  onLocalLyricsPriorityChange: state.handleSetLocalLyricsPriority
+})));
     const {
         devices: audioOutputDevices,
         ensureLoaded: ensureAudioOutputDevicesLoaded,
@@ -94,7 +84,7 @@ const PlaybackSettingsSubview: React.FC<PlaybackSettingsSubviewProps> = ({
     } = useAudioOutputDevices(audioOutputDeviceId);
     const [isSelectingAudioOutput, setIsSelectingAudioOutput] = useState(false);
     const mediaDevicesWithAudioOutput = navigator.mediaDevices as MediaDevicesWithAudioOutput | undefined;
-    const accentOutlineColor = theme?.accentColor || (isDaylight ? '#44403c' : '#f4f4f5');
+
     const toggleOffBackgroundClass = isDaylight ? 'bg-zinc-300/90' : 'bg-white/10';
 
     // `disabled` rather than a `pointer-events-none` wrapper: that only stops the mouse, leaving the

@@ -31,7 +31,9 @@ export const buildGlowWordLayoutVariants = (
             opacity: { duration: 0.1 }
         }
     }),
-    passed: ({ config, baseColor }: any) => ({
+    passed: ({
+  config
+}) => ({
         opacity: animationIntensity === 'chaotic' ? 0.9 : 0.82,
         scale: config.scale || 1,
         x: config.x,

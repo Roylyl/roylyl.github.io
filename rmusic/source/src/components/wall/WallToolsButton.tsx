@@ -1,7 +1,7 @@
 import { shouldIgnoreAppKeyboardShortcut } from '../../utils/appCombinationShortcuts';
 import { createContext, useContext, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { AnimatePresence, motion, useIsPresent, useTransform, type MotionStyle } from 'framer-motion';
-import { CircleHelp, Command, Layers3, Settings2, X } from 'lucide-react';
+import { CircleHelp, Command, Settings2, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useLatticeSettingsStore } from '../../stores/useLatticeSettingsStore';
 import { openCommandPalette } from '../../stores/useAppViewStore';
@@ -87,8 +87,7 @@ export function WallToolsSurface({ idPrefix, label, isDaylight, locate, destinat
     const rootRef = useRef<HTMLDivElement>(null);
     const lightsOn = useLatticeSettingsStore(state => state.latticeLightsOn);
     const handleToggleLatticeLights = useLatticeSettingsStore(state => state.handleToggleLatticeLights);
-    const tintEnabled = useLatticeSettingsStore(state => state.latticePosterTintEnabled);
-    const handleToggleLatticePosterTint = useLatticeSettingsStore(state => state.handleToggleLatticePosterTint);
+
     const isWideLayout = useMediaQuery('(min-width: 640px)');
     const bottomPx = usePlayerBottomBarBottomPx(isWideLayout ? 24 : 124);
     // stack 的 max-height 要减掉按钮此刻的底距（随底栏抬升量变），经 CSS 变量交给样式。

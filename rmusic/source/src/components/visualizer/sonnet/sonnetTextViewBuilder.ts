@@ -145,8 +145,7 @@ export const buildSonnetTextView = (
     // Parallax depth assignment
     const zDepth = resolveSonnetSegmentDepth(placement.role);
 
-    const blurAmount = Math.abs(zDepth) * fontSize * 0.12;
-    const isBlurry = blurAmount > 2;
+    Math.abs(zDepth) * fontSize * 0.12;
 
     const baseDropShadow = options.glowEnabled && !isDecoration ? {
         color: glowColor,
@@ -336,7 +335,6 @@ export const buildSonnetTextView = (
         };
     });
 
-
     // Randomized background geometry accompanying specific text segments.
     // Kept rarer than before and mutually exclusive with the frame decor so the
     // two outline-style layers never stack on the same segment.
@@ -357,7 +355,7 @@ export const buildSonnetTextView = (
         bgWrapper.position.set(placement.x, placement.y);
         bgWrapper.rotation = placement.rotation;
         bgWrapper.alpha = 0;
-        
+
         const bgShape = buildSonnetTextFixedGeo(pixi, {
             seed: textSeed,
             isChorusEffect,
@@ -365,10 +363,10 @@ export const buildSonnetTextView = (
             layoutWidth: options.width,
             theme: options.theme,
         });
-        
+
         bgWrapper.addChild(bgShape);
         options.textLayer.addChildAt(bgWrapper, 0); // Ensure it stays behind the text
-        
+
         const firstGlyph = glyphs[0];
         const bgGlyph: GlyphView = {
             display: bgWrapper,

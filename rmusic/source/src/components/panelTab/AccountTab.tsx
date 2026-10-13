@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { LogOut, SlidersHorizontal, HardDrive, Trash2, RefreshCw, Crown } from 'lucide-react';
+import { LogOut, SlidersHorizontal, RefreshCw, Crown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { AudioQualityPreference, ProviderUser } from '../../types/onlineMusic';
 import type { LibraryAccountController } from '../../library/core/contracts/account';
@@ -36,15 +36,13 @@ const AUDIO_QUALITY_OPTIONS: Array<{
 const selectLogoutPending = (snapshot: LibraryAccountSnapshot) => snapshot.logout.status === 'pending';
 
 const AccountTab: React.FC<AccountTabProps> = ({
-    user,
-    accountController,
-    audioQuality,
-    onAudioQualityChange,
-    cacheSize,
-    onClearCache,
-    onSyncData,
-    isSyncing,
-    onNavigateHome,
+  user,
+  accountController,
+  audioQuality,
+  onAudioQualityChange,
+  onSyncData,
+  isSyncing,
+  onNavigateHome
 }) => {
     const { t } = useTranslation();
     // 当前平台取 controller 快照里回落过的那个，与登出的判定（只有当前且已登录的平台能登出）一致。

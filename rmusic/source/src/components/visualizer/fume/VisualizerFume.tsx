@@ -7,9 +7,9 @@ import { colorWithAlpha } from '../colorMix';
 
 import { type VisualizerSharedProps } from '../definition';
 import { buildFumeBackgroundScene } from '../FumeBackground';
-import { getRecentCompletedLine, getUpcomingLines } from '../runtime';
+
 import VisualizerShell from '../VisualizerShell';
-import VisualizerSubtitleOverlay from '../VisualizerSubtitleOverlay';
+
 import type { FumeArticleLayout, ViewportSize } from './fumeTypes';
 import { createFumeCameraState, type FumeCameraState } from './fumeCameraStep';
 
@@ -42,28 +42,19 @@ const LAYOUT_REBUILD_DEBOUNCE_MS = 96;
 
 const VisualizerFume: React.FC<VisualizerProps> = (props) => {
     const {
-        currentTime,
-        currentLineIndex,
-        lines,
-        theme,
-        subtitleTheme,
-        audioPower,
-        audioBands,
-        showText = true,
-        seed,
-        staticMode = false,
-        lyricsFontScale = 1,
-        subtitleFontScale = 1,
-        fumeTuning,
-        subtitleOverlayOpacity,
-        subtitleOverlayBackground,
-        subtitleUpcomingLyricsBlur,
-        isPlayerChromeHidden = false,
-        hideTranslationSubtitle = false,
-        showSubtitleTranslation = true,
-        subtitleContentMode,
-        paused = false,
-    } = props;
+  currentTime,
+  currentLineIndex,
+  lines,
+  theme,
+  audioPower,
+  audioBands,
+  showText = true,
+  seed,
+  staticMode = false,
+  lyricsFontScale = 1,
+  fumeTuning,
+  paused = false
+} = props;
     const viewportRef = useRef<HTMLDivElement | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const currentLineIndexRef = useRef(currentLineIndex);
@@ -102,20 +93,6 @@ const VisualizerFume: React.FC<VisualizerProps> = (props) => {
         return () => observer.disconnect();
     }, []);
 
-    const runtime = useMemo(() => {
-        const activeLine = lines[currentLineIndex] ?? null;
-        const timeNow = currentTime.get();
-        return {
-            activeLine,
-            recentCompletedLine: getRecentCompletedLine({
-                lines,
-                currentLineIndex,
-                currentTime: timeNow,
-                getLineEndTime: getLineRenderEndTime,
-            }),
-            nextLines: getUpcomingLines(lines, currentLineIndex, 2),
-        };
-    }, [currentLineIndex, lines]);
     const resolvedFumeTuning = useMemo<FumeTuning>(() => ({
         hidePrintSymbols: fumeTuning?.hidePrintSymbols ?? DEFAULT_FUME_TUNING.hidePrintSymbols,
         disableGeometricBackground: fumeTuning?.disableGeometricBackground ?? DEFAULT_FUME_TUNING.disableGeometricBackground,
@@ -236,8 +213,6 @@ const VisualizerFume: React.FC<VisualizerProps> = (props) => {
         () => resolveFumePassedFadeDuration(lines, textHoldRatio),
         [lines, textHoldRatio],
     );
-    const translationFontSize = `clamp(${(1.05 * lyricsFontScale).toFixed(3)}rem, ${(2.2 * lyricsFontScale).toFixed(3)}vw, ${(1.2 * lyricsFontScale).toFixed(3)}rem)`;
-    const upcomingFontSize = `clamp(${(0.875 * lyricsFontScale).toFixed(3)}rem, ${(1.8 * lyricsFontScale).toFixed(3)}vw, ${(1 * lyricsFontScale).toFixed(3)}rem)`;
 
     useEffect(() => {
         hasPrintedContentRef.current = false;
@@ -375,24 +350,6 @@ const VisualizerFume: React.FC<VisualizerProps> = (props) => {
                 )}
             </div>
 
-            <VisualizerSubtitleOverlay
-                showText={showText}
-                activeLine={runtime.activeLine}
-                recentCompletedLine={runtime.recentCompletedLine}
-                nextLines={runtime.nextLines}
-                theme={theme}
-                subtitleTheme={subtitleTheme}
-                translationFontSize={translationFontSize}
-                upcomingFontSize={upcomingFontSize}
-                subtitleOverlayOpacity={subtitleOverlayOpacity}
-                subtitleOverlayBackground={subtitleOverlayBackground}
-                subtitleUpcomingLyricsBlur={subtitleUpcomingLyricsBlur}
-                subtitleFontScale={subtitleFontScale}
-                isPlayerChromeHidden={isPlayerChromeHidden}
-                hideTranslationSubtitle={hideTranslationSubtitle}
-                showSubtitleTranslation={showSubtitleTranslation}
-                subtitleContentMode={subtitleContentMode}
-            />
         </VisualizerShell>
     );
 };

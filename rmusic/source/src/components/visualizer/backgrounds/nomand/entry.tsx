@@ -1,4 +1,3 @@
-import React from 'react';
 import { Layers } from 'lucide-react';
 import { DEFAULT_NOMAND_BACKGROUND_TUNING } from '../../../../types';
 import NomandBackgroundLayer from './NomandBackgroundLayer';

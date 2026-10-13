@@ -32,8 +32,9 @@ export const cachePlayedTrackAssets = async (
     song: SongResult | null,
     src: string | null,
     coverUrl?: string | null,
+    signal?: AbortSignal,
 ): Promise<PlayedTrackCacheResult> => {
-    if (!song) return NOTHING_WRITTEN;
+    if (!song || signal?.aborted) return NOTHING_WRITTEN;
 
     const result: PlayedTrackCacheResult = { audio: false, cover: false };
 
@@ -43,10 +44,10 @@ export const cachePlayedTrackAssets = async (
     if (src && !src.startsWith('blob:') && (!await hasCachedSongAudio(song) || isCachedSongAudioDistrusted(song))) {
         console.log('[Cache] Caching fully played song:', song.name);
         try {
-            const response = await fetch(src);
+            const response = await fetch(src, { signal });
             const blob = await response.blob();
             // 错误页、JSON 报错和截断的下载不能当成音频存进去：缓存命中优先于 provider，坏的一份会一直顶替真音源。
-            if (isCacheableAudioResponse(response, blob)) {
+            if (!signal?.aborted && isCacheableAudioResponse(response, blob)) {
                 await saveAudioBlob(getSongResourceCacheKey('audio', song), blob);
                 clearCachedSongAudioDistrust(song);
                 result.audio = true;
@@ -71,10 +72,11 @@ export const cachePlayedTrackAssets = async (
     // `https:` test also keeps out the blob: URL the app hands back for an already-cached cover,
     // which the old code refetched and rewrote on every play.
     const isLocal = getPlaybackSourceRef(song).kind === 'local';
-    if (!isLocal && cover?.startsWith('https:') && !await hasCachedSongCover(song)) {
+    if (!signal?.aborted && !isLocal && cover?.startsWith('https:') && !await hasCachedSongCover(song)) {
         try {
-            const response = await fetch(cover, { mode: 'cors' });
+            const response = await fetch(cover, { mode: 'cors', signal });
             const blob = await response.blob();
+            if (signal?.aborted) return result;
             await saveToCache(getSongResourceCacheKey('cover', song), blob);
             result.cover = true;
             console.log('[Cache] Cover saved');

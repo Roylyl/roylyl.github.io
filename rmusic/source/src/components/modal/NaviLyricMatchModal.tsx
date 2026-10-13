@@ -62,9 +62,6 @@ const NaviLyricMatchModal: React.FC<NaviLyricMatchModalProps> = ({ song, onClose
     const closeBtnHover = isDaylight ? 'hover:bg-zinc-200/50' : 'hover:bg-white/10';
     const cancelBtnBg = isDaylight ? 'bg-zinc-100/80 hover:bg-zinc-200' : 'bg-white/5 hover:bg-white/10';
     const noMatchBtnBg = isDaylight ? 'bg-red-500/5 hover:bg-red-500/10 border-red-500/10' : 'bg-red-500/10 hover:bg-red-500/20 border-red-500/20';
-    const dotBase = isDaylight ? 'bg-zinc-300' : 'bg-zinc-600';
-    const dotActive = isDaylight ? 'bg-blue-500' : 'bg-blue-400';
-    const editInputBg = isDaylight ? 'bg-black/5 border-black/10 focus:border-black/20' : 'bg-white/5 border-white/10 focus:border-white/20';
 
     // Search state
     const [searchQuery, setSearchQuery] = useState('');
@@ -74,7 +71,10 @@ const NaviLyricMatchModal: React.FC<NaviLyricMatchModalProps> = ({ song, onClose
     const [isMatching, setIsMatching] = useState(false);
 
     // Initial config from cache
-    const [initialMatchData, setInitialMatchData] = useState<NavidromeMatchData | null>(null);
+    // Initial config from cache
+const [, setInitialMatchData] = useState<NavidromeMatchData | null>(null);
+
+// Online data toggle state
 
     // Online data toggle state
     const [lyricsSource, setLyricsSource] = useState<'navi' | 'online'>('online');
@@ -178,8 +178,6 @@ const NaviLyricMatchModal: React.FC<NaviLyricMatchModalProps> = ({ song, onClose
             setLyricsSource('online');
         }
     }, [selectedResult]);
-
-
 
     const handleConfirm = async () => {
         if (!selectedResult) return;
@@ -373,7 +371,7 @@ const NaviLyricMatchModal: React.FC<NaviLyricMatchModalProps> = ({ song, onClose
                                 <h3 className={`text-base font-bold line-clamp-2 leading-snug px-2 ${textPrimary}`}>
                                     {selectedResult ? formatSongName(selectedResult) : song.name}
                                 </h3>
-                                
+
                                 <div className={`text-sm opacity-75 font-medium line-clamp-1 ${textPrimary}`}>
                                     {selectedResult ? selectedArtists : navidromeArtist}
                                 </div>

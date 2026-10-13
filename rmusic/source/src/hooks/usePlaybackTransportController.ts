@@ -1,6 +1,6 @@
 import { isNativeMediaPlaybackPreferred, playNativeMedia } from '../services/nativeMediaPlayback';
 import { useCallback, useEffect, useRef } from 'react';
-import type { Dispatch, MutableRefObject, RefObject, SetStateAction } from 'react';
+import type { MutableRefObject, RefObject } from 'react';
 import { PlayerState } from '../types';
 import { setStatusMessage as setStatusMsg } from '../stores/useStatusMessageStore';
 import { setPlayerState } from '../stores/usePlaybackStore';

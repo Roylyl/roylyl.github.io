@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { AlertTriangle, CaptionsOff, Focus, Monitor, PanelTop, RotateCcw, type LucideIcon } from 'lucide-react';
+import { RotateCcw } from 'lucide-react';
 import {
     type CappellaAvatarImage,
     type CappellaEmojiImage,
@@ -21,23 +21,15 @@ import {
     type VisualizerMode,
 } from '../../types';
 import { colorWithAlpha } from './colorMix';
-import FontFallbackStackControl from './FontFallbackStackControl';
 import { VISUALIZER_REGISTRY, getVisualizerModeLabel, type VisualizerRegistryEntry } from './registry';
 import { type VisPlaygroundEditSection } from './VisPlaygroundPreviewHotspots';
 import { FoliumTuningCards } from '@/mods/folium/registries/tunings';
 import { visualizersRegistry } from '@/mods/folium/registries/visualizers';
-import { backgroundsRegistry } from '@/mods/folium/registries/backgrounds';
 import { useFoliumRegistryEntries } from '@/mods/folium/registry';
 import { useMissingFoliumSelections } from '@/mods/folium/missingEntries';
 import { type PreviewPlaceholderId } from './PreviewPlaceholder';
 import type { VisualizerBackgroundActions, VisualizerBackgroundConfig } from './backgrounds/definition';
-import {
-    DEFAULT_VISUALIZER_BACKGROUND_MODE,
-    getVisualizerBackgroundModeLabel,
-    getVisualizerBackgroundRegistryEntry,
-    VISUALIZER_BACKGROUND_REGISTRY,
-} from './backgrounds/registry';
-import { usePlayerChromeSettingsStore } from '../../stores/usePlayerChromeSettingsStore';
+import { DEFAULT_VISUALIZER_BACKGROUND_MODE } from './backgrounds/registry';
 
 // src/components/visualizer/VisPlaygroundSettingsPanel.tsx
 // Right-side settings panel for the click-to-edit visualizer playground.
@@ -54,15 +46,6 @@ interface PresetGroupProps<T> {
     isDaylight: boolean;
     theme: Theme;
     isOptionActive?: (option: PresetOption<T>) => boolean;
-}
-
-interface ToggleRowProps {
-    label: string;
-    description?: string;
-    checked: boolean;
-    onChange?: (checked: boolean) => void;
-    theme: Theme;
-    icon?: LucideIcon;
 }
 
 interface VisPlaygroundSettingsPanelProps {
@@ -169,11 +152,6 @@ interface VisPlaygroundSettingsPanelProps {
 }
 
 // Modes that size their own lyrics: the generic font-size controls are disabled and this notice explains why.
-const LYRICS_FONT_SIZE_AUTO_NOTICE_KEYS: Partial<Record<string, string>> = {
-    sonnet: 'options.sonnetFontSizeAutoNotice',
-    tempera: 'options.temperaFontSizeAutoNotice',
-    lumiere: 'options.lumiereFontSizeAutoNotice',
-};
 
 const SECTION_OPTIONS: VisPlaygroundEditSection[] = ['visualizer'];
 
@@ -233,45 +211,6 @@ const PresetGroup = <T,>({
     </div>
 );
 
-const ToggleRow: React.FC<ToggleRowProps> = ({
-    label,
-    description,
-    checked,
-    onChange,
-    theme,
-    icon: Icon = Monitor,
-}) => (
-    <div className="flex items-center justify-between gap-4">
-        <div className="space-y-1">
-            <div className="text-sm font-medium flex items-center gap-2" style={{ color: theme.primaryColor }}>
-                <Icon size={14} />
-                {label}
-            </div>
-            {description && (
-                <div className="text-xs opacity-70 max-w-[320px]" style={{ color: theme.secondaryColor }}>
-                    {description}
-                </div>
-            )}
-        </div>
-        <button
-            type="button"
-            aria-label={label}
-            aria-pressed={checked}
-            onClick={() => onChange?.(!checked)}
-            className="w-12 h-6 rounded-full p-1 transition-colors shrink-0 disabled:opacity-45"
-            disabled={!onChange}
-            style={{
-                backgroundColor: checked ? theme.secondaryColor : colorWithAlpha(theme.secondaryColor, 0.18),
-            }}
-        >
-            <div
-                className={`w-4 h-4 rounded-full shadow-sm transition-transform ${checked ? 'translate-x-6' : 'translate-x-0'}`}
-                style={{ backgroundColor: theme.backgroundColor }}
-            />
-        </button>
-    </div>
-);
-
 const ResetSectionButton: React.FC<{
     label: string;
     onClick?: () => void;
@@ -323,109 +262,63 @@ const SectionTabs: React.FC<Pick<VisPlaygroundSettingsPanelProps, 'activeSection
 
 const VisPlaygroundSettingsPanel: React.FC<VisPlaygroundSettingsPanelProps> = (props) => {
     const {
-        activeSection,
-        onSectionChange,
-        t,
-        isDaylight,
-        theme,
-        visualizerMode,
-        visualizerEntry,
-        onVisualizerModeChange,
-        onResetVisualizerTuning,
-        controlCardBg,
-        rangeInputClass,
-        visualizerOpacity,
-        onVisualizerOpacityChange,
-        backgroundConfig,
-        backgroundActions,
-        previewPlaceholderId,
-        previewPlaceholderOptions,
-        onPreviewPlaceholderChange,
-        fontStyleValue,
-        builtinFontOptions,
-        fontStyleOptions,
-        subtitleFontStyleOptions,
-        onFontStyleChange,
-        fontScale,
-        fontScaleOptions,
-        onFontScaleChange,
-        subtitleFontScale,
-        onSubtitleFontScaleChange,
-        fontWeight,
-        fontWeightOptions,
-        onFontWeightChange,
-        onFontWeightFollowChange,
-        onResetCommonSettings,
-        classicTuning,
-        onClassicTuningChange,
-        partitaTuning,
-        onPartitaTuningChange,
-        fumeTuning,
-        onFumeTuningChange,
-        claddaghTuning,
-        onCladdaghTuningChange,
-        cappellaTuning,
-        cappellaCustomEmojiImages,
-        onCappellaTuningChange,
-        isLoadingCappellaCustomEmojiPack,
-        onImportCappellaCustomEmojiPack,
-        onClearCappellaCustomEmojiPack,
-        cappellaCustomAvatarImages = [],
-        onImportCappellaCustomAvatar,
-        onClearCappellaCustomAvatar,
-        isLoadingCappellaCustomAvatarPack = false,
-        tiltTuning,
-        onTiltTuningChange,
-        dioramaTuning,
-        onDioramaTuningChange,
-        monetTuning,
-        onMonetTuningChange,
-        pendoloTuning,
-        onPendoloTuningChange,
-        sonnetTuning,
-        onSonnetTuningChange,
-        temperaTuning,
-        onTemperaTuningChange,
-        lumiereTuning,
-        onLumiereTuningChange,
-        monetPortraitImage,
-        onUploadMonetPortraitImage,
-        onClearMonetPortraitImage,
-        isLoadingMonetPortraitImage,
-        hideTranslationSubtitle,
-        onToggleHideTranslationSubtitle,
-        onToggleShowSubtitleTranslation,
-        subtitleContentMode,
-        onSubtitleContentModeChange,
-        subtitleOverlayOpacity,
-        onSubtitleOverlayOpacityChange,
-        subtitleOverlayBackground,
-        onToggleSubtitleOverlayBackground,
-        subtitleUpcomingLyricsBlur,
-        onToggleSubtitleUpcomingLyricsBlur,
-        showHarmonySubtitle,
-        onToggleShowHarmonySubtitle,
-        harmonySubtitleBackground,
-        onToggleHarmonySubtitleBackground,
-        subtitleFontInheritsLyrics,
-        onSubtitleFontInheritsLyricsChange,
-        subtitleFontStyle,
-        subtitleFontWeight,
-        onSubtitleFontWeightChange,
-        onSubtitleFontWeightFollowChange,
-        onSubtitleFontStyleChange,
-        subtitleFontFamily,
-        onSubtitleFontFamilyChange,
-        subtitleFontFallbackFamilies,
-        onSubtitleFontFallbackFamiliesChange,
-        onOpenSubtitleFontPicker,
-        onResetSubtitleSettings,
-        onSliderPointerDown,
-        onSliderCommit,
-    } = props;
-    const lyricsFontSizeAutoNoticeKey = LYRICS_FONT_SIZE_AUTO_NOTICE_KEYS[visualizerMode] ?? null;
-    const [fontWeightSliderValue, setFontWeightSliderValue] = useState(fontWeight ?? 400);
-    const [subtitleFontWeightSliderValue, setSubtitleFontWeightSliderValue] = useState(subtitleFontWeight ?? 400);
+  activeSection,
+  onSectionChange,
+  t,
+  isDaylight,
+  theme,
+  visualizerMode,
+  visualizerEntry,
+  onVisualizerModeChange,
+  onResetVisualizerTuning,
+  controlCardBg,
+  rangeInputClass,
+  backgroundConfig,
+  fontWeight,
+  classicTuning,
+  onClassicTuningChange,
+  partitaTuning,
+  onPartitaTuningChange,
+  fumeTuning,
+  onFumeTuningChange,
+  claddaghTuning,
+  onCladdaghTuningChange,
+  cappellaTuning,
+  cappellaCustomEmojiImages,
+  onCappellaTuningChange,
+  isLoadingCappellaCustomEmojiPack,
+  onImportCappellaCustomEmojiPack,
+  onClearCappellaCustomEmojiPack,
+  cappellaCustomAvatarImages = [],
+  onImportCappellaCustomAvatar,
+  onClearCappellaCustomAvatar,
+  isLoadingCappellaCustomAvatarPack = false,
+  tiltTuning,
+  onTiltTuningChange,
+  dioramaTuning,
+  onDioramaTuningChange,
+  monetTuning,
+  onMonetTuningChange,
+  pendoloTuning,
+  onPendoloTuningChange,
+  sonnetTuning,
+  onSonnetTuningChange,
+  temperaTuning,
+  onTemperaTuningChange,
+  lumiereTuning,
+  onLumiereTuningChange,
+  monetPortraitImage,
+  onUploadMonetPortraitImage,
+  onClearMonetPortraitImage,
+  isLoadingMonetPortraitImage,
+  subtitleFontWeight,
+  subtitleFontFamily,
+  onSliderPointerDown,
+  onSliderCommit
+} = props;
+
+    const [, setFontWeightSliderValue] = useState(fontWeight ?? 400);
+    const [, setSubtitleFontWeightSliderValue] = useState(subtitleFontWeight ?? 400);
 
     useEffect(() => {
         if (fontWeight !== null) setFontWeightSliderValue(fontWeight);
@@ -437,7 +330,7 @@ const VisPlaygroundSettingsPanel: React.FC<VisPlaygroundSettingsPanelProps> = (p
     // Mod modes and backgrounds come and go at runtime (Folium registries), so the
     // option lists recompute on registry changes, not only on language changes.
     const foliumVisualizerEntries = useFoliumRegistryEntries(visualizersRegistry);
-    const foliumBackgroundEntries = useFoliumRegistryEntries(backgroundsRegistry);
+
     const missingFoliumSelections = useMissingFoliumSelections();
     const modeOptions = useMemo(() => (
         VISUALIZER_REGISTRY.map(entry => ({
@@ -446,22 +339,14 @@ const VisPlaygroundSettingsPanel: React.FC<VisPlaygroundSettingsPanelProps> = (p
         }))
         // eslint-disable-next-line react-hooks/exhaustive-deps
     ), [t, foliumVisualizerEntries]);
-    const [subtitleFontFamilyDraft, setSubtitleFontFamilyDraft] = useState(subtitleFontFamily ?? '');
+    const [, setSubtitleFontFamilyDraft] = useState(subtitleFontFamily ?? '');
 
     useEffect(() => {
         setSubtitleFontFamilyDraft(subtitleFontFamily ?? '');
     }, [subtitleFontFamily]);
 
-    const enablePlayerPageNativeBlur = usePlayerChromeSettingsStore(state => state.enablePlayerPageNativeBlur);
-    const resolvedBackgroundMode = backgroundConfig?.mode ?? DEFAULT_VISUALIZER_BACKGROUND_MODE;
-    const backgroundEntry = getVisualizerBackgroundRegistryEntry(resolvedBackgroundMode);
-    const backgroundModeOptions = useMemo(() => (
-        VISUALIZER_BACKGROUND_REGISTRY.map(entry => ({
-            value: entry.mode,
-            label: getVisualizerBackgroundModeLabel(entry.mode, t),
-        }))
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    ), [t, foliumBackgroundEntries]);
+    backgroundConfig?.mode ?? DEFAULT_VISUALIZER_BACKGROUND_MODE;
+
     const renderMissingFoliumHint = (kind: 'visualizer' | 'background') => {
         const missing = missingFoliumSelections.find(entry => entry.kind === kind);
         return missing ? (
@@ -572,7 +457,6 @@ const VisPlaygroundSettingsPanel: React.FC<VisPlaygroundSettingsPanelProps> = (p
                         />
                     </>
                 )}
-
 
             </div>
         </div>

@@ -1,7 +1,7 @@
 import i18n from '../../../i18n/config';
 import { clearCacheByCategory } from '../../../services/db';
 import { invalidatePrefetchedLyrics } from '../../../services/prefetchService';
-import type { LyricData, StatusMessage } from '../../../types';
+import type { LyricData } from '../../../types';
 import type { LyricStaffAbsorbMode, LyricStaffPolicy } from '../../../utils/lyrics/staffCreditsPolicy';
 import { setStatusMessage as setStatusMsg } from '../../../stores/useStatusMessageStore';
 import { setCurrentLineIndex } from '../../../stores/usePlaybackStore';

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Layers } from 'lucide-react';
 import { DEFAULT_LATENT_BACKGROUND_TUNING, type LatentBackgroundDisplayMode } from '../../../../types';
 import LatentBackground from './LatentBackground';

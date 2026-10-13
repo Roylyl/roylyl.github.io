@@ -57,27 +57,26 @@ export interface PolaroidCardProps {
  */
 export const PolaroidCard = React.memo<PolaroidCardProps>(
     ({
-        item,
-        isDaylight,
-        theme,
-        onSelect,
-        onCenter,
-        onAddQueue,
-        mode,
-        t,
-        cardWidth,
-        cardHeight,
-        isEditMode = false,
-        onRemoveTrack,
-        onSelectArtist,
-        onSelectAlbum,
-        onBeforeNestedNavigate,
-        onEditLocalMetadata,
-        openWhenFocusedOnCardClick = false,
-        isFocused = false,
-        fullBleedCover = false,
-        playbackMark = null,
-    }) => {
+  item,
+  isDaylight,
+  onSelect,
+  onCenter,
+  onAddQueue,
+  mode,
+  t,
+  cardWidth,
+  cardHeight,
+  isEditMode = false,
+  onRemoveTrack,
+  onSelectArtist,
+  onSelectAlbum,
+  onBeforeNestedNavigate,
+  onEditLocalMetadata,
+  openWhenFocusedOnCardClick = false,
+  isFocused = false,
+  fullBleedCover = false,
+  playbackMark = null
+}) => {
         const isUnavailable = mode === 'tracks' && item.rawTrack ? isSongUnavailable(item.rawTrack) : false;
         const unavailableTagText = (mode === 'tracks' && item.rawTrack)
             ? getSongUnavailableLabel(item.rawTrack, t('status.songUnavailableTag'))

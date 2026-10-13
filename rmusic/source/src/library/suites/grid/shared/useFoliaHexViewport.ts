@@ -2,7 +2,7 @@ import { startTransition, useCallback, useEffect, useMemo, useRef, useState, typ
 import {
     areIndexListsEqual,
     pixelToCubeCenter,
-    resizeHexGridCoords,
+    buildHorizontalCardCoords,
     resolveVisibleHexIndexes,
     toCubeKey,
 } from './hexViewport';
@@ -28,22 +28,8 @@ export const useFoliaHexViewport = ({
     fallbackIndexRef,
     coords: customCoords,
 }: UseFoliaHexViewportOptions) => {
-    const generatedCoordsRef = useRef<HexGridCoord[]>([]);
-    const generatedSpacingRef = useRef({ x: spacingX, y: spacingY });
-    const coords = useMemo<HexGridCoord[]>(() => {
-        if (customCoords) return customCoords;
-        if (generatedSpacingRef.current.x !== spacingX || generatedSpacingRef.current.y !== spacingY) {
-            generatedCoordsRef.current = [];
-            generatedSpacingRef.current = { x: spacingX, y: spacingY };
-        }
-        generatedCoordsRef.current = resizeHexGridCoords(
-            generatedCoordsRef.current,
-            itemCount,
-            spacingX,
-            spacingY
-        );
-        return generatedCoordsRef.current;
-    }, [customCoords, itemCount, spacingX, spacingY]);
+    const coords = useMemo<HexGridCoord[]>(() => customCoords
+        ?? buildHorizontalCardCoords(itemCount, spacingX), [customCoords, itemCount, spacingX]);
 
     const coordIndexRef = useRef<{ coords: HexGridCoord[]; map: Map<string, number>; }>({
         coords: [],

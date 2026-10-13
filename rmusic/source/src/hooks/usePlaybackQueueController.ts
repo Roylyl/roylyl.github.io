@@ -1,9 +1,9 @@
+import { plannedShuffleIndex } from '../utils/plannedShuffle';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
-import type { MotionValue } from 'framer-motion';
+
 import { applyOnlineAudioSourceMetadata, loadOnlineSongAudioSource, loadOnlineSongLyrics } from '../services/onlinePlayback';
 import { getSongReplacement, isSongUnavailable } from '../services/onlineMusic/songAvailability';
-import { getSongResourceCacheKey } from '../services/onlineMusic/resourceKeys';
 import { omni } from '../services/onlineMusic/omni';
 import { getCachedSongCoverUrl, hasCachedSongAudio } from '../services/onlineMusic/resourceCache';
 import { getPrefetchedData, invalidateAndRefetch, prefetchNearbySongs, refreshPrefetchAfterQueueEdit } from '../services/prefetchService';
@@ -12,8 +12,8 @@ import { retireBlobUrl } from '../services/playbackBlobUrls';
 import type { ThemeCacheSongKey } from '../services/themeCache';
 import { loadOnlineLyricsState } from '../utils/onlineLyricsState';
 import { PlayerState, type StagePlayerQueueDiffOp, type StagePlayerQueueRequest, type StagePlayerSnapshot } from '../types';
-import type { LocalSong, QueueAddBehavior, SongResult, StatusMessage, UnifiedSong } from '../types';
-import type { AudioQualityPreference, MediaId } from '../types/onlineMusic';
+import type { LocalSong, SongResult, StatusMessage, UnifiedSong } from '../types';
+import type { MediaId } from '../types/onlineMusic';
 import type { NextTrackOptions, PlaybackNavigationOptions, SkipPromptMessageKey, UnavailableReplacementRequest } from '../types/appPlayback';
 import type { PlaybackFailure, PlaybackFailureSkipOptions } from '../types/playbackFailure';
 import type { NavidromeSong } from '../types/navidrome';
@@ -1005,8 +1005,7 @@ export function usePlaybackQueueController({
         let nextIndex = -1;
 
         if (loopMode === 'shuffle' && playQueue.length > 0) {
-            const candidates = playQueue.map((_, index) => index).filter(index => index !== currentIndex);
-            nextIndex = candidates.length ? candidates[Math.floor(Math.random() * candidates.length)] : 0;
+            nextIndex = plannedShuffleIndex(playQueue, currentIndex);
         } else if (currentIndex >= 0 && currentIndex < playQueue.length - 1) {
             nextIndex = currentIndex + 1;
         } else if (currentIndex < 0 && playQueue.length > 0) {

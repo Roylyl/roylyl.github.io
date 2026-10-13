@@ -1,28 +1,10 @@
-import { useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { generateThemeFromLyrics, isMissingAiApiKeyError } from '../services/gemini';
 import { saveToCache } from '../services/db';
-import { DualTheme, LyricData, SongResult, StatusMessage, Theme, ThemeMode } from '../types';
+import { DualTheme, LyricData, SongResult, Theme, ThemeMode } from '../types';
 import { getCachedThemeState, getCachedThemeStateForSong, getLastDualTheme, getLastLegacyTheme, type ThemeCacheSongKey } from '../services/themeCache';
 import { saveSyncedThemeForSong } from '../services/sync/syncRepository';
-import {
-    applyStoredAnimationIntensityToDualTheme,
-    applyStoredAnimationIntensityToTheme,
-    isThemeAnimationIntensity,
-    readStoredLastAppliedThemePointer,
-    readStoredThemeAutoGenerateEnabled,
-    readStoredThemeAutoSwitchEnabled,
-    readStoredThemeGenerationSource,
-    resolveCustomThemePreferenceChange,
-    resolveSongThemeAutoGenerateChange,
-    resolveSongThemeAutoSwitchChange,
-    saveStoredAnimationIntensity,
-    saveStoredLastAppliedThemePointer,
-    saveStoredThemeAutoGenerateEnabled,
-    saveStoredThemeAutoSwitchEnabled,
-    saveStoredThemeGenerationSource,
-    type ThemeGenerationSource,
-    type ThemePreferenceSwitchState,
-} from '../services/themePreferences';
+import { applyStoredAnimationIntensityToDualTheme, applyStoredAnimationIntensityToTheme, isThemeAnimationIntensity, readStoredLastAppliedThemePointer, resolveCustomThemePreferenceChange, resolveSongThemeAutoGenerateChange, resolveSongThemeAutoSwitchChange, saveStoredAnimationIntensity, saveStoredLastAppliedThemePointer, saveStoredThemeAutoGenerateEnabled, saveStoredThemeAutoSwitchEnabled, saveStoredThemeGenerationSource, type ThemeGenerationSource, type ThemePreferenceSwitchState } from '../services/themePreferences';
 import { FALLBACK_AI_DUAL_THEME, sanitizeDualTheme, sanitizeTheme } from '../services/themeSanitizer';
 import { extractColors } from '../utils/colorExtractor';
 import { isPureMusicLyricText } from '../utils/lyrics/pureMusic';
@@ -38,7 +20,6 @@ import { setStatusMessage as setStatusMsg } from '../stores/useStatusMessageStor
 import { useStableCallbacks } from './useStableCallbacks';
 import { useThemeSettingsStore } from '../stores/useThemeSettingsStore';
 
-type StatusSetter = Dispatch<SetStateAction<StatusMessage | null>>;
 export type GenerateAIThemeOptions = {
     source?: 'manual' | 'auto';
     shouldApply?: () => boolean;
@@ -121,8 +102,6 @@ const readStoredCustomTheme = (): DualTheme | null => {
         return null;
     }
 };
-
-const readStoredCustomPreferred = () => localStorage.getItem(CUSTOM_THEME_PREFERRED_KEY) === 'true';
 
 const getSelectedDualTheme = (dualTheme: DualTheme, isDaylight: boolean) => (
     isDaylight ? dualTheme.light : dualTheme.dark
@@ -216,7 +195,7 @@ export function useThemeController({
 
     const getPreferenceSwitchState = (): ThemePreferenceSwitchState => preferenceSwitchRef.current;
 
-    const applyPreferenceSwitchState = (state: ThemePreferenceSwitchState) => {
+    const applyPreferenceSwitchState = (_state: ThemePreferenceSwitchState) => {
         preferenceSwitchRef.current = { isCustomThemePreferred: false, songThemeAutoSwitchEnabled: false, songThemeAutoGenerateEnabled: false };
         setIsCustomThemePreferred(false);
         setSongThemeAutoSwitchEnabled(false);

@@ -2,8 +2,8 @@ import { isNativeMediaPlaybackPreferred } from '../nativeMediaPlayback';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { MutableRefObject } from 'react';
 import { PlayerState } from '../../types';
-import type { LyricData, SongResult, StageLoopMode } from '../../types';
-import type { AudioQualityPreference } from '../../types/onlineMusic';
+import type { SongResult, StageLoopMode } from '../../types';
+
 import type { PlaybackRecoveryTarget } from '../../types/playbackRecovery';
 import { getPlaybackSongKey, isNavidromePlaybackSong, resolveNavidromePlaybackCarrier } from '../../utils/appPlaybackGuards';
 import { getPrefetchedData } from '../prefetchService';
@@ -153,7 +153,6 @@ export const resolveDeckSrc = ({
     // "playback error, skipping in 4s". Never return undefined for the deck being listened to.
     return warm ?? audioSrc ?? undefined;
 };
-
 
 type UseAutomixDecksParams = {
 

@@ -7,8 +7,7 @@ import { isInterludeLine } from '../../../utils/lyrics/parserCore';
 import { useVisualizerRuntime } from '../runtime';
 import { type VisualizerSharedProps } from '../definition';
 import VisualizerShell from '../VisualizerShell';
-import VisualizerSubtitleOverlay from '../VisualizerSubtitleOverlay';
-import { resolveSubtitleFontSizes } from '../subtitleFontSizes';
+
 import CameraRig from './CameraRig';
 import DioramaScene from './DioramaScene';
 import { type DioramaVec, getFrame, resolveDioramaMotionParams } from './cameraPath';
@@ -99,32 +98,30 @@ const READY_GRACE_MS = 8000;
 
 const VisualizerDiorama: React.FC<VisualizerDioramaProps> = (props) => {
     const {
-        currentTime,
-        currentLineIndex,
-        lines,
-        theme,
-        subtitleTheme,
-        audioPower,
-        audioBands,
-        showText = true,
-        lyricsFontScale = 1,
-        subtitleFontScale = 1,
-        subtitleOverlayOpacity,
-        subtitleOverlayBackground,
-        subtitleUpcomingLyricsBlur,
-        isPlayerChromeHidden = false,
-        hideTranslationSubtitle = false,
-        subtitleContentMode,
-        seed,
-        dioramaTuning,
-    } = props;
+  currentTime,
+  currentLineIndex,
+  lines,
+  theme,
+  audioPower,
+  audioBands,
+  showText = true,
+  lyricsFontScale = 1,
+  seed,
+  dioramaTuning
+} = props;
     const { t } = useTranslation();
 
-    const { activeLine, recentCompletedLine, nextLines } = useVisualizerRuntime({
-        currentTime,
-        currentLineIndex,
-        lines,
-    });
+    const {
+  activeLine
+} = useVisualizerRuntime({
+  currentTime,
+  currentLineIndex,
+  lines
+});
+
+// Shared measured world-width of the active lyric line: DioramaScene writes it each frame (from
+// the raster layout), CameraRig reads it to size its word-following lateral truck. A ref, not
+// state - it changes every frame and must never trigger React re-renders (per runtime guardrails).
 
     // Shared measured world-width of the active lyric line: DioramaScene writes it each frame (from
     // the raster layout), CameraRig reads it to size its word-following lateral truck. A ref, not
@@ -390,7 +387,6 @@ const VisualizerDiorama: React.FC<VisualizerDioramaProps> = (props) => {
     const showWaiting = showText && !activeLine && !hasEverActiveRef.current;
 
     const emptyFontSize = `clamp(${(1.5 * lyricsFontScale).toFixed(3)}rem, ${(3.5 * lyricsFontScale).toFixed(3)}vw, ${(2.25 * lyricsFontScale).toFixed(3)}rem)`;
-    const { translationFontSize, upcomingFontSize } = resolveSubtitleFontSizes(lyricsFontScale);
 
     return (
         <VisualizerShell
@@ -473,23 +469,6 @@ const VisualizerDiorama: React.FC<VisualizerDioramaProps> = (props) => {
                 </AnimatePresence>
             </div>
 
-            <VisualizerSubtitleOverlay
-                showText={showText}
-                activeLine={activeLine}
-                recentCompletedLine={recentCompletedLine}
-                nextLines={nextLines}
-                theme={theme}
-                subtitleTheme={subtitleTheme}
-                translationFontSize={translationFontSize}
-                upcomingFontSize={upcomingFontSize}
-                subtitleOverlayOpacity={subtitleOverlayOpacity}
-                subtitleOverlayBackground={subtitleOverlayBackground}
-                subtitleUpcomingLyricsBlur={subtitleUpcomingLyricsBlur}
-                subtitleFontScale={subtitleFontScale}
-                isPlayerChromeHidden={isPlayerChromeHidden}
-                hideTranslationSubtitle={hideTranslationSubtitle}
-                subtitleContentMode={subtitleContentMode}
-            />
         </VisualizerShell>
     );
 };

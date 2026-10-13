@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Cone } from 'lucide-react';
 import { defineVisualizerBackground } from '../definition';

@@ -45,7 +45,7 @@ import {
     type CollectionMorphPlan,
 } from '../transitions/morphGeometry';
 import { useGridViewSettingsStore } from '../../../../stores/useGridViewSettingsStore';
-import { HexGridCoord, CubeCoord, getHexCubicSpiral } from '../shared/hexViewport';
+import { HexGridCoord, buildHorizontalCardCoords } from '../shared/hexViewport';
 import { useFoliaHexViewport } from '../shared/useFoliaHexViewport';
 import { CollectionListItem, SidePanelList } from '../../../../components/shared/SidePanelList';
 import { GridListSearchButton } from '../../../../components/shared/GridListSearchButton';
@@ -154,97 +154,10 @@ const gridItemEntryKey = (item: GridItem | undefined): string | null => {
     return null;
 };
 
-// Custom coordinate generator for Artist Grid
-// Computes baseX/baseY for hexagons, reserving specific spots for Avatar and Bio.
-// Popular songs are placed in the upper half (z <= -1) and albums are placed in the lower half (z >= 1).
+// Avatar, biography, songs and albums share one horizontal browsing row.
 export const buildArtistGridCoords = (
-    songCount: number,
-    albumCount: number,
-    spacingX: number,
-    spacingY: number
-): HexGridCoord[] => {
-    const coords: HexGridCoord[] = [];
-
-    // Keep the avatar and biography visually grouped around the grid origin.
-    coords.push({
-        index: 0,
-        cube: { x: -1, y: 1, z: 0 },
-        baseX: -spacingX * 0.95,
-        baseY: 0,
-    });
-
-    // Index 1: Biography Card
-    coords.push({
-        index: 1,
-        cube: { x: 0, y: 0, z: 0 },
-        baseX: spacingX * 0.65,
-        baseY: 0,
-    });
-
-    // Generate candidates for the upper half (songs: z <= -1)
-    const upperCandidates: { cube: CubeCoord; baseX: number; baseY: number; distSq: number; }[] = [];
-    for (let z = -1; z >= -10; z--) {
-        for (let x = -20; x <= 20; x++) {
-            const y = -x - z;
-            const baseX = x * spacingX + (z * spacingX) / 2;
-            const baseY = z * spacingY;
-            const distSq = baseX * baseX + baseY * baseY;
-            upperCandidates.push({
-                cube: { x, y, z },
-                baseX,
-                baseY,
-                distSq,
-            });
-        }
-    }
-    // Sort upper candidates by distance to center to pack them tightly
-    upperCandidates.sort((a, b) => a.distSq - b.distSq);
-
-    // Assign upper candidates to popular songs (indices 2 .. 2 + songCount - 1)
-    for (let i = 0; i < songCount; i++) {
-        const candidate = upperCandidates[i];
-        coords.push({
-            index: 2 + i,
-            cube: candidate.cube,
-            baseX: candidate.baseX,
-            baseY: candidate.baseY,
-        });
-    }
-
-    // Generate candidates for the lower half (albums: z >= 1)
-    const lowerCandidates: { cube: CubeCoord; baseX: number; baseY: number; distSq: number; }[] = [];
-    const maxZ = Math.max(10, Math.floor(albumCount / 2) + 5);
-    for (let z = 1; z <= maxZ; z++) {
-        for (let x = -20; x <= 20; x++) {
-            const y = -x - z;
-            const baseX = x * spacingX + (z * spacingX) / 2;
-            const baseY = z * spacingY;
-            const distSq = baseX * baseX + baseY * baseY;
-            lowerCandidates.push({
-                cube: { x, y, z },
-                baseX,
-                baseY,
-                distSq,
-            });
-        }
-    }
-    // Sort lower candidates by distance to center
-    lowerCandidates.sort((a, b) => a.distSq - b.distSq);
-
-    // Assign lower candidates to albums (indices starting after songs)
-    const startIndex = 2 + songCount;
-    for (let i = 0; i < albumCount; i++) {
-        const candidate = lowerCandidates[i];
-        coords.push({
-            index: startIndex + i,
-            cube: candidate.cube,
-            baseX: candidate.baseX,
-            baseY: candidate.baseY,
-        });
-    }
-
-    return coords;
-};
+    songCount: number, albumCount: number, spacingX: number, _spacingY: number,
+): HexGridCoord[] => buildHorizontalCardCoords(songCount + albumCount + 2, spacingX);
 
 const getLowResCoverUrl = (url: string): string => getSizedCoverUrl(url, 150);
 
@@ -263,8 +176,6 @@ const resolveArtistGridCardBox = (width: number) => {
             lodStart: 280,
             lodEnd: 320,
             avatarSize: 200,
-            bioWidth: 360,
-            bioHeight: 200,
         };
     } else if (width < 1440) {
         // Desktop
@@ -277,8 +188,6 @@ const resolveArtistGridCardBox = (width: number) => {
             lodStart: 340,
             lodEnd: 385,
             avatarSize: 280,
-            bioWidth: 480,
-            bioHeight: 260,
         };
     } else if (width < 2000) {
         // Large Desktop
@@ -291,8 +200,6 @@ const resolveArtistGridCardBox = (width: number) => {
             lodStart: 400,
             lodEnd: 450,
             avatarSize: 320,
-            bioWidth: 540,
-            bioHeight: 280,
         };
     } else {
         // Ultra Desktop
@@ -305,8 +212,6 @@ const resolveArtistGridCardBox = (width: number) => {
             lodStart: 450,
             lodEnd: 510,
             avatarSize: 360,
-            bioWidth: 600,
-            bioHeight: 300,
         };
     }
 };
@@ -587,22 +492,17 @@ const ArtistGridView: React.FC<ArtistGridViewProps> = ({
 
         let minX = Infinity;
         let maxX = -Infinity;
-        let minY = Infinity;
-        let maxY = -Infinity;
         baseCoords.forEach((coord) => {
             minX = Math.min(minX, coord.baseX);
             maxX = Math.max(maxX, coord.baseX);
-            minY = Math.min(minY, coord.baseY);
-            maxY = Math.max(maxY, coord.baseY);
         });
 
         const bufferX = Math.max(0, containerSize.width / 2 - 2 * layoutConfig.spacingX);
-        const bufferY = Math.max(0, containerSize.height / 2 - 2 * layoutConfig.spacingY);
         return {
             left: -maxX - bufferX,
             right: -minX + bufferX,
-            top: -maxY - bufferY,
-            bottom: -minY + bufferY,
+            top: 0,
+            bottom: 0,
         };
     }, [baseCoords, containerSize, layoutConfig.spacingX, layoutConfig.spacingY]);
 
@@ -667,10 +567,9 @@ const ArtistGridView: React.FC<ArtistGridViewProps> = ({
         const storedIndex = pending.stored ? pending.stored.focusedIndex : 1;
         const restoredIndex = Math.max(0, Math.min(entryIndex >= 0 ? entryIndex : storedIndex, gridItems.length - 1));
         // 相机位置只在布局记录指向的就是这张卡时沿用，否则把这张卡居中。
-        const stored = pending.stored;
-        const keepsStoredCamera = stored !== null && stored.focusedIndex === restoredIndex;
-        const restoredX = keepsStoredCamera && Number.isFinite(stored.dragX) ? stored.dragX : -baseCoords[restoredIndex].baseX;
-        const restoredY = keepsStoredCamera && Number.isFinite(stored.dragY) ? stored.dragY : -baseCoords[restoredIndex].baseY;
+        pending.stored;
+        const restoredX = -baseCoords[restoredIndex].baseX;
+        const restoredY = 0;
 
         focusedIndexRef.current = restoredIndex;
         setFocusedIndex(restoredIndex);
@@ -704,8 +603,8 @@ const ArtistGridView: React.FC<ArtistGridViewProps> = ({
                 ? Math.max(containerSize.height, 1)
                 : 1) * 2.8;
 
-        const targetX = wheelTargetRef.current.x - event.deltaX * deltaScale;
-        const targetY = wheelTargetRef.current.y - event.deltaY * deltaScale;
+        const targetX = wheelTargetRef.current.x - (Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY) * deltaScale;
+        const targetY = 0;
         const clampedX = Math.max(dragBounds.left, Math.min(dragBounds.right, targetX));
         const clampedY = Math.max(dragBounds.top, Math.min(dragBounds.bottom, targetY));
         wheelTargetRef.current = { x: clampedX, y: clampedY };
@@ -882,10 +781,8 @@ const ArtistGridView: React.FC<ArtistGridViewProps> = ({
                     const dy = coord.baseY - curr.baseY;
 
                     let isMatch = false;
-                    if (e.key === 'ArrowLeft' && dx < -50 && Math.abs(dy) < 180) isMatch = true;
-                    if (e.key === 'ArrowRight' && dx > 50 && Math.abs(dy) < 180) isMatch = true;
-                    if (e.key === 'ArrowUp' && dy < -50 && Math.abs(dx) < 200) isMatch = true;
-                    if (e.key === 'ArrowDown' && dy > 50 && Math.abs(dx) < 200) isMatch = true;
+                    if ((e.key === 'ArrowLeft' || e.key === 'ArrowUp') && dx < -50 && Math.abs(dy) < 180) isMatch = true;
+                    if ((e.key === 'ArrowRight' || e.key === 'ArrowDown') && dx > 50 && Math.abs(dy) < 180) isMatch = true;
 
                     if (isMatch) {
                         const dist = dx * dx + dy * dy;
@@ -1055,8 +952,8 @@ const ArtistGridView: React.FC<ArtistGridViewProps> = ({
                                 }}
                                 className={`rounded-3xl p-6 flex flex-col justify-between shadow-2xl backdrop-blur-xl transition-shadow cursor-pointer select-none text-left ${cardBg}`}
                                 style={{
-                                    width: layoutConfig.bioWidth || 460,
-                                    height: layoutConfig.bioHeight || 250,
+                                    width: layoutConfig.cardWidth,
+                                    height: layoutConfig.cardHeight,
                                 }}
                             >
                                 <div className="space-y-2 min-w-0">
@@ -1315,7 +1212,6 @@ const ArtistGridView: React.FC<ArtistGridViewProps> = ({
                 } : undefined}
             />
 
-
             {(progressiveLoading.backgroundLoading || backgroundLoadFailed || loadError) && (
                 <button
                     type="button"
@@ -1361,9 +1257,10 @@ const ArtistGridView: React.FC<ArtistGridViewProps> = ({
                     <div className="opacity-40 text-sm">{t('home.loadingLibrary') || 'No items found'}</div>
                 ) : (
                     <motion.div
-                        drag
+                        drag="x"
                         dragListener={false}
                         dragControls={dragControls}
+                        data-horizontal-card-viewport="true"
                         dragConstraints={dragBounds}
                         dragElastic={0.05}
                         dragTransition={{ power: 0.16, timeConstant: 220 }}
@@ -1380,34 +1277,6 @@ const ArtistGridView: React.FC<ArtistGridViewProps> = ({
                         style={{ x: dragX, y: dragY, background: 'rgba(0,0,0,0)', touchAction: 'none' }}
                         className="absolute inset-0 flex items-center justify-center cursor-grab active:cursor-grabbing bg-transparent"
                     >
-                        {/* Spatial visual separator texts anchored around the artist avatar. */}
-                        <div
-                            className="absolute text-2xl md:text-3xl font-extrabold tracking-[0.25em] select-none pointer-events-none opacity-[0.06] transition-opacity duration-300 font-serif"
-                            style={{
-                                transform: `translate(-50%, -50%) translate(${-(layoutConfig.spacingX * 2.55)}px, ${-(layoutConfig.spacingY * 0.42)}px)`,
-                                color: 'var(--text-primary)',
-                                left: '50%',
-                                top: '50%',
-                                whiteSpace: 'nowrap',
-                                zIndex: 80,
-                            }}
-                        >
-                            {t('artistGrid.popularSongs')}
-                        </div>
-                        <div
-                            className="absolute text-2xl md:text-3xl font-extrabold tracking-[0.25em] select-none pointer-events-none opacity-[0.06] transition-opacity duration-300 font-serif"
-                            style={{
-                                transform: `translate(-50%, -50%) translate(${layoutConfig.spacingX * 0.45}px, ${layoutConfig.spacingY * 0.52}px)`,
-                                color: 'var(--text-primary)',
-                                left: '50%',
-                                top: '50%',
-                                whiteSpace: 'nowrap',
-                                zIndex: 80,
-                            }}
-                        >
-                            {t('artistGrid.artistAlbums')}
-                        </div>
-
                         {renderedCards}
                     </motion.div>
                 )}

@@ -64,15 +64,6 @@ const readStoredSubtitleOverlayOpacity = () => {
     return Number.isFinite(parsed) ? Math.min(1, Math.max(0.2, parsed)) : 0.6;
 };
 
-const readStoredLyricsFontStyle = (): Theme['fontStyle'] => {
-    if (typeof window === 'undefined') {
-        return 'sans';
-    }
-
-    const saved = localStorage.getItem('lyrics_font_style');
-    return saved === 'serif' || saved === 'mono' ? saved : 'sans';
-};
-
 const readStoredFontScale = (key: string): number => {
     if (typeof window === 'undefined') {
         return 1;
@@ -169,22 +160,6 @@ export const resolveStoredCustomLyricsFont = (parsed: Partial<StoredCustomLyrics
     };
 };
 
-const readStoredCustomLyricsFont = (): StoredCustomLyricsFont | null => {
-    if (typeof window === 'undefined') {
-        return null;
-    }
-
-    const saved = localStorage.getItem('lyrics_custom_font');
-    if (!saved) return null;
-
-    try {
-        const parsed = JSON.parse(saved) as Partial<StoredCustomLyricsFont>;
-        return resolveStoredCustomLyricsFont(parsed);
-    } catch {
-        return null;
-    }
-};
-
 export type TypographySettingsState = {
     hidePlayerTranslationSubtitle: boolean;
     showSubtitleTranslation: boolean;
@@ -228,7 +203,7 @@ export type TypographySettingsState = {
     handleSetSubtitleFontFallbackFamilies: (families: string[]) => void;
 };
 
-export const useTypographySettingsStore = create<TypographySettingsState>((set, get) => ({
+export const useTypographySettingsStore = create<TypographySettingsState>((set, _get) => ({
     hidePlayerTranslationSubtitle: true,
     showSubtitleTranslation: false,
     subtitleContentMode: 'none',

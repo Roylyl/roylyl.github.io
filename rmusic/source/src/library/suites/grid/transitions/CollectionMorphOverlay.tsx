@@ -2,20 +2,9 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useCollectionNavigationStore } from '../../../../stores/useCollectionNavigationStore';
 import MorphExitLayer from './MorphExitLayer';
-import MorphFlightLayer, { CROSSFADE_SECONDS, type MorphFastForwardStart } from './MorphFlightLayer';
+import MorphFlightLayer, { type MorphFastForwardStart } from './MorphFlightLayer';
 import { reportMorphCapture, useCollectionMorphStore } from './collectionMorphStore';
-import {
-    COLLECTION_MORPH_Z_INDEX,
-    estimateCenterTarget,
-    isMorphTargetSettled,
-    MORPH_NESTED_LANDING_DETAIL_MS,
-    type CollectionMorphExit,
-    type CollectionMorphGeometry,
-    type CollectionMorphHeroMeasured,
-    type CollectionMorphPending,
-    type CollectionMorphRect,
-    type CollectionMorphTarget,
-} from './morphGeometry';
+import { estimateCenterTarget, isMorphTargetSettled, MORPH_NESTED_LANDING_DETAIL_MS, type CollectionMorphExit, type CollectionMorphGeometry, type CollectionMorphHeroMeasured, type CollectionMorphPending, type CollectionMorphRect, type CollectionMorphTarget } from './morphGeometry';
 import { attachMorphCapture, findMorphCard, probeArtistIntroTargets, probeHeroTargets, rectOfElement } from './morphProbes';
 
 // src/library/suites/grid/transitions/CollectionMorphOverlay.tsx

@@ -1,7 +1,7 @@
 import React from 'react';
 import { PANEL_SLIDE_CLAMP_PX, PANEL_SLIDE_TRACK_BASE_PX, PANEL_SLIDE_TRACK_FULL_PX, PANEL_SLIDE_TRIGGER_PX } from '../utils/panelSlideGesture';
 import { motion, AnimatePresence, useTransform } from 'framer-motion';
-import { Settings, Settings2, X, Disc, SlidersHorizontal, ListMusic, User as UserIcon, Home as HomeIcon, FileAudio, FileText, Radio, Cloud, Star, Command, ChevronLeft, MirrorRectangular, Puzzle } from 'lucide-react';
+import { Settings, Settings2, X, Disc, SlidersHorizontal, ListMusic, Home as HomeIcon, FileAudio, FileText, Radio, Cloud, Star, Command, MirrorRectangular, Puzzle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Album, Artist, SongResult, Theme, PlayerState, ReplayGainMode, ThemeMode, VisualizerMode } from '../types';
 import type { ProviderUser } from '../types/onlineMusic';
@@ -24,7 +24,7 @@ import { usePlayerBottomBarBottomPx } from '../hooks/usePlayerBottomBarBottomPx'
 import { useMediaQuery } from '../hooks/useMediaQuery';
 import { getSizedCoverUrl } from '../utils/coverUrl';
 import { openAddToPlaylist, useAddToPlaylistStore } from '../stores/useAddToPlaylistStore';
-import { FOLIUM_PANEL_TAB_PREFIX, FoliumPanelTabBody, useFoliumPanelTabs } from '../mods/folium/registries/playerPanelTabs';
+import { FoliumPanelTabBody, useFoliumPanelTabs } from '../mods/folium/registries/playerPanelTabs';
 import { countRender } from '../dev/renderCount';
 
 const TOUCH_GUIDE_DISPLAY_MS = 1400;
@@ -273,7 +273,7 @@ const UnifiedPanel: React.FC<UnifiedPanelProps> = ({
     const tabs: { id: PanelTab; label: string; icon: React.ComponentType<{ size?: number }> }[] = [
         { id: 'cover' as PanelTab, label: t('panel.cover'), icon: Disc },
         { id: 'controls' as PanelTab, label: t('panel.controls'), icon: SlidersHorizontal },
-        isFmMode 
+        isFmMode
             ? { id: 'queue' as PanelTab, label: t('home.radio'), icon: Radio }
             : { id: 'queue' as PanelTab, label: t('panel.playlist'), icon: ListMusic },
     ];
@@ -298,7 +298,7 @@ const UnifiedPanel: React.FC<UnifiedPanelProps> = ({
 
     // Theme Helper
     // const isDaylight = theme.name === 'Daylight Default'; // Deprecated
-    const isAI = bgMode === 'ai'; // AI themes usually dark
+     // AI themes usually dark
     const commandSlideRef = React.useRef<{ startX: number; startY: number; triggered: boolean; } | null>(null);
     const suppressToggleClickRef = React.useRef(false);
     const toggleButtonRef = React.useRef<HTMLButtonElement | null>(null);
@@ -983,7 +983,7 @@ const UnifiedPanel: React.FC<UnifiedPanelProps> = ({
                                 }`}
                             >
                                 {/* Semi-transparent command icon at the left end of the track */}
-                                <motion.div 
+                                <motion.div
                                     className="absolute left-3.5 top-[17px] w-3.5 h-3.5 pointer-events-none flex items-center justify-center"
                                     animate={isGuideLineVisible ? {
                                         x: [0, -4, 0],
@@ -1000,7 +1000,7 @@ const UnifiedPanel: React.FC<UnifiedPanelProps> = ({
                                 >
                                     <div
                                         ref={trackEndIconRef}
-                                        style={{ 
+                                        style={{
                                             color: isDaylight ? '#000000' : '#ffffff',
                                         }}
                                         className="w-full h-full flex items-center justify-center"

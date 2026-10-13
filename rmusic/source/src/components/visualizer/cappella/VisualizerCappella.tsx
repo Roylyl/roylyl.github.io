@@ -6,7 +6,7 @@ import { getLineRenderEndTime } from '../../../utils/lyrics/renderHints';
 import { shouldPreheatLine, useVisualizerRuntime } from '../runtime';
 import { type VisualizerSharedProps } from '../definition';
 import VisualizerShell from '../VisualizerShell';
-import VisualizerSubtitleOverlay from '../VisualizerSubtitleOverlay';
+
 import { builtinEmoImages } from './emoImages';
 import type { PreparedBubbleMetrics } from './cappellaTypes';
 import { CAPPELLA_PREHEAT_WINDOW } from './cappellaConstants';
@@ -22,31 +22,22 @@ type VisualizerCappellaProps = VisualizerSharedProps;
 
 const VisualizerCappella: React.FC<VisualizerCappellaProps> = (props) => {
     const {
-        currentTime,
-        currentLineIndex,
-        lines,
-        theme,
-        subtitleTheme,
-        audioPower,
-        audioBands,
-        showText = true,
-        songTitle,
-        coverUrl,
-        seed,
-        lyricsFontScale = 1,
-        subtitleFontScale = 1,
-        subtitleOverlayOpacity,
-        subtitleOverlayBackground,
-        subtitleUpcomingLyricsBlur,
-        isPlayerChromeHidden = false,
-        hideTranslationSubtitle = false,
-        showSubtitleTranslation = true,
-        subtitleContentMode,
-        cappellaTuning = DEFAULT_CAPPELLA_TUNING,
-        cappellaCustomEmojiImages = [],
-        cappellaCustomAvatarImages = [],
-        isPreviewMode = false,
-    } = props;
+  currentTime,
+  currentLineIndex,
+  lines,
+  theme,
+  audioPower,
+  audioBands,
+  showText = true,
+  songTitle,
+  coverUrl,
+  seed,
+  lyricsFontScale = 1,
+  cappellaTuning = DEFAULT_CAPPELLA_TUNING,
+  cappellaCustomEmojiImages = [],
+  cappellaCustomAvatarImages = [],
+  isPreviewMode = false
+} = props;
     const { t } = useTranslation();
     const [viewportSize, setViewportSize] = useState(() => (
         typeof window === 'undefined'
@@ -114,12 +105,14 @@ const VisualizerCappella: React.FC<VisualizerCappellaProps> = (props) => {
             visibleLineIndex,
         ]
     );
-    const { activeLine, recentCompletedLine, upcomingLine, nextLines } = useVisualizerRuntime({
-        currentTime,
-        currentLineIndex,
-        lines,
-        getLineEndTime: getLineRenderEndTime,
-    });
+    const {
+  upcomingLine
+} = useVisualizerRuntime({
+  currentTime,
+  currentLineIndex,
+  lines,
+  getLineEndTime: getLineRenderEndTime
+});
 
     useEffect(() => {
         const handleResize = () => {
@@ -213,24 +206,6 @@ const VisualizerCappella: React.FC<VisualizerCappellaProps> = (props) => {
                 }
             `}</style>
 
-            <VisualizerSubtitleOverlay
-                showText={showText}
-                activeLine={activeLine}
-                recentCompletedLine={recentCompletedLine}
-                nextLines={nextLines}
-                theme={theme}
-                subtitleTheme={subtitleTheme}
-                translationFontSize={`${Math.max(14, 16 * lyricsFontScale)}px`}
-                upcomingFontSize={`${Math.max(12, 14 * lyricsFontScale)}px`}
-                subtitleOverlayOpacity={subtitleOverlayOpacity}
-                subtitleOverlayBackground={subtitleOverlayBackground}
-                subtitleUpcomingLyricsBlur={subtitleUpcomingLyricsBlur}
-                subtitleFontScale={subtitleFontScale}
-                isPlayerChromeHidden={isPlayerChromeHidden}
-                hideTranslationSubtitle={hideTranslationSubtitle}
-                showSubtitleTranslation={showSubtitleTranslation}
-                subtitleContentMode={subtitleContentMode}
-            />
         </VisualizerShell>
     );
 };

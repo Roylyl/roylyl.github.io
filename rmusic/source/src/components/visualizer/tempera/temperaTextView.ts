@@ -50,7 +50,7 @@ interface TemperaTextViewOptions {
 const SHADOW_OFFSET_X = 0.06;
 const SHADOW_OFFSET_Y = 0.08;
 /** The ghost is tinted by the filter, so only its opacity is its own. */
-const SHADOW_ALPHA = 0.34;
+
 export const buildTemperaTextViews = (
     pixi: PixiModule,
     options: TemperaTextViewOptions,

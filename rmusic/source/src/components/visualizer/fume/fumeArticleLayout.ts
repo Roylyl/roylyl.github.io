@@ -116,25 +116,6 @@ const chooseBlockVariant = (
         : chooseNaturalBlockVariant(line, index, total)
 );
 
-const chooseFontPx = (
-    line: Line,
-    variant: 'body' | 'hero',
-    width: number,
-    lyricsFontScale: number,
-    densityScale: number,
-) => {
-    const graphemeCount = Math.max(countRenderableGraphemes(line.fullText), 1);
-    const density = graphemeCount + line.words.length * 1.4;
-    const base = variant === 'hero'
-        ? width / Math.max(Math.sqrt(density) * 1.5, 4.5)
-        : width / Math.max(Math.sqrt(density) * 2.25, 7);
-
-    const scaled = base * lyricsFontScale * densityScale;
-    return variant === 'hero'
-        ? clamp(scaled, 24, 54)
-        : clamp(scaled, 14, 28);
-};
-
 export const buildLayoutCacheKey = (
     lines: Line[],
     viewport: ViewportSize,

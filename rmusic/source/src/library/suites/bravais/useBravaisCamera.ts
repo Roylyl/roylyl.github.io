@@ -3,13 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type MutableRefObjec
 import type { Bounds } from '../../../components/wall/layout';
 import type { LatticeCamera } from '../../../components/wall/useWallCameraPan';
 import { useWallPointerPan } from '../../../components/wall/useWallPointerPan';
-import {
-    cameraFromViewCenter,
-    getViewWorldBounds,
-    viewCenterFromCamera,
-    type WallView,
-    type WallViewCenter,
-} from '../../../components/wall/wallView';
+import { cameraFromViewCenter, getViewWorldBounds, viewCenterFromCamera, type WallViewCenter } from '../../../components/wall/wallView';
 import type { WallCameraRange } from '../../../components/wall/finiteWall';
 import { BRAVAIS_CAMERA_TWEEN_S, BRAVAIS_CULL_EDGE_MARGIN, BRAVAIS_OVERSCAN } from './bravaisConstants';
 import { rubberBand } from './bravaisFiniteWall';

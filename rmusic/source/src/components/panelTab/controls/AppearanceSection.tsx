@@ -1,13 +1,8 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { Theme, ThemeMode, VisualizerBackgroundMode, VisualizerMode } from '../../../types';
+import type { Theme, ThemeMode, VisualizerMode } from '../../../types';
 import type { ThemeSourceModel } from '../../../hooks/themeControllerState';
 import { getVisualizerModeLabel, getVisualizerRegistryEntry, VISUALIZER_REGISTRY } from '../../visualizer/registry';
-import {
-    getVisualizerBackgroundModeLabel,
-    getVisualizerBackgroundRegistryEntry,
-    VISUALIZER_BACKGROUND_REGISTRY,
-} from '../../visualizer/backgrounds/registry';
 import { resolveVisualizerBackgroundMode } from '../../../stores/visualizerSettingsPersistence';
 import { useVisualizerModeStepper } from '../../../hooks/useVisualizerModeStepper';
 import { QuickControlChip, QuickControlToggle } from '../../shared/QuickControlChip';
@@ -17,7 +12,7 @@ import { useLyricSegmentationStore } from '../../../stores/useLyricSegmentationS
 import { LYRIC_SEGMENTATION_COMMAND_ID } from '../../command-palette/commands/lyricSegmentationCommand';
 import ModeStepperRow from './ModeStepperRow';
 import ThemeSourceRow from './ThemeSourceRow';
-import { BackgroundModeGlyph, VisualizerModeGlyph } from '../../visualizer/modeGlyphs';
+import { VisualizerModeGlyph } from '../../visualizer/modeGlyphs';
 import { useVisualizerSettingsStore } from '../../../stores/useVisualizerSettingsStore';
 import { useSettingsModalStore } from '../../../stores/useSettingsModalStore';
 
@@ -45,19 +40,17 @@ interface AppearanceSectionProps {
 const ANIMATION_INTENSITIES: Theme['animationIntensity'][] = ['calm', 'normal', 'chaotic'];
 
 const AppearanceSection: React.FC<AppearanceSectionProps> = ({
-    theme,
-    onThemeChange,
-    isDaylight,
-    visualizerMode,
-    onVisualizerModeChange,
-    useCoverColorBg,
-    onToggleCoverColorBg,
-    themeSourceModel,
-    onBgModeChange,
-    hasCustomTheme,
-    defaultTheme,
-    daylightTheme,
-    onClosePanel,
+  theme,
+  onThemeChange,
+  isDaylight,
+  visualizerMode,
+  onVisualizerModeChange,
+  themeSourceModel,
+  onBgModeChange,
+  hasCustomTheme,
+  defaultTheme,
+  daylightTheme,
+  onClosePanel
 }) => {
     const { t } = useTranslation();
     const openSettings = useSettingsModalStore(state => state.openSettings);
@@ -66,15 +59,6 @@ const AppearanceSection: React.FC<AppearanceSectionProps> = ({
     const usesWordSegmentation = Boolean(getVisualizerRegistryEntry(visualizerMode).usesWordSegmentation);
     const hasSavedSegmentation = useLyricSegmentationStore(state => Boolean(state.record));
     const visualizerBackgroundMode = useVisualizerSettingsStore(state => state.visualizerBackgroundMode);
-    const setVisualizerBackgroundMode = useVisualizerSettingsStore(state => state.handleSetVisualizerBackgroundMode);
-    const monetBackgroundTuning = useVisualizerSettingsStore(state => state.monetBackgroundTuning);
-    const setMonetBackgroundTuning = useVisualizerSettingsStore(state => state.handleSetMonetBackgroundTuning);
-    const nomandBackgroundTuning = useVisualizerSettingsStore(state => state.nomandBackgroundTuning);
-    const setNomandBackgroundTuning = useVisualizerSettingsStore(state => state.handleSetNomandBackgroundTuning);
-    const latentBackgroundTuning = useVisualizerSettingsStore(state => state.latentBackgroundTuning);
-    const setLatentBackgroundTuning = useVisualizerSettingsStore(state => state.handleSetLatentBackgroundTuning);
-    const soraBackgroundTuning = useVisualizerSettingsStore(state => state.soraBackgroundTuning);
-    const setSoraBackgroundTuning = useVisualizerSettingsStore(state => state.handleSetSoraBackgroundTuning);
 
     const visualizerOptions = useMemo(
         () => VISUALIZER_REGISTRY.map(entry => ({
@@ -86,32 +70,10 @@ const AppearanceSection: React.FC<AppearanceSectionProps> = ({
     const visualizerModes = useMemo(() => visualizerOptions.map(option => option.value), [visualizerOptions]);
     const stepVisualizerMode = useVisualizerModeStepper(visualizerModes);
 
-    const backgroundOptions = useMemo(
-        () => VISUALIZER_BACKGROUND_REGISTRY.map(entry => ({
-            value: entry.mode,
-            label: getVisualizerBackgroundModeLabel(entry.mode, t),
-        })),
-        [t],
-    );
-    const resolvedBackgroundMode = resolveVisualizerBackgroundMode(visualizerBackgroundMode, visualizerMode);
-
-    const stepBackgroundMode = (direction: -1 | 1) => {
-        if (backgroundOptions.length < 2) {
-            return;
-        }
-
-        const index = backgroundOptions.findIndex(option => option.value === resolvedBackgroundMode);
-        const nextIndex = ((index < 0 ? 0 : index) + direction + backgroundOptions.length) % backgroundOptions.length;
-        setVisualizerBackgroundMode(backgroundOptions[nextIndex].value);
-    };
+    resolveVisualizerBackgroundMode(visualizerBackgroundMode, visualizerMode);
 
     const openVisualizerSettings = () => {
         openSettings('options', 'visualizer', 'visualizer');
-        onClosePanel?.();
-    };
-
-    const openBackgroundSettings = () => {
-        openSettings('options', 'visualizer', 'background');
         onClosePanel?.();
     };
 
@@ -122,26 +84,6 @@ const AppearanceSection: React.FC<AppearanceSectionProps> = ({
             animationIntensity: ANIMATION_INTENSITIES[(currentIndex + 1) % ANIMATION_INTENSITIES.length],
         });
     };
-
-    const backgroundQuickControls = getVisualizerBackgroundRegistryEntry(resolvedBackgroundMode).renderQuickControls?.({
-        config: {
-            common: { useCoverColorBg },
-            monet: { tuning: monetBackgroundTuning },
-            nomand: { tuning: nomandBackgroundTuning },
-            latent: { tuning: latentBackgroundTuning },
-            sora: { tuning: soraBackgroundTuning },
-        },
-        actions: {
-            common: { onCoverColorChange: onToggleCoverColorBg },
-            monet: { onTuningChange: setMonetBackgroundTuning },
-            nomand: { onTuningChange: setNomandBackgroundTuning },
-            latent: { onTuningChange: setLatentBackgroundTuning },
-            sora: { onTuningChange: setSoraBackgroundTuning },
-        },
-        t,
-        isDaylight,
-        theme,
-    });
 
     return (
         <div className="space-y-1">
@@ -182,7 +124,6 @@ const AppearanceSection: React.FC<AppearanceSectionProps> = ({
                         </>
                     )}
                 />
-
 
             </div>
 

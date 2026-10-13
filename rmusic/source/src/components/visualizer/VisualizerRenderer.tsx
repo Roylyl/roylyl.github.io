@@ -4,7 +4,6 @@ import { type VisualizerSharedProps } from './definition';
 import { getVisualizerRegistryEntry } from './registry';
 import { applyVisualizerTuning } from './tuningRegistry';
 import { DEFAULT_VISUALIZER_BACKGROUND_MODE } from './backgrounds/registry';
-import VisualizerHarmonyOverlay from './VisualizerHarmonyOverlay';
 
 interface VisualizerRendererProps extends VisualizerSharedProps {
     mode: VisualizerMode;

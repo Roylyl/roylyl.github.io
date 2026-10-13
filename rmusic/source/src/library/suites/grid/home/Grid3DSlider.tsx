@@ -214,15 +214,14 @@ export const resolveGrid3DLeapPlan = ({
 };
 
 export const Grid3DSlider: React.FC<Grid3DSliderProps> = ({
-    items,
-    focusedIndex,
-    onFocusedIndexChange,
-    onSelect,
-    isInteractive = true,
-    isLoading = false,
-    emptyMessage,
-    isDaylight,
-    hasFloatingPlayer = false,
+  items,
+  focusedIndex,
+  onFocusedIndexChange,
+  onSelect,
+  isInteractive = true,
+  isLoading = false,
+  emptyMessage,
+  hasFloatingPlayer = false
 }) => {
     const { t } = useTranslation();
     const grid3dCardStyle = useHomeLayoutSettingsStore(state => state.grid3dCardStyle);

@@ -1,5 +1,5 @@
-import { LocalSong, LyricData, LocalLibrarySnapshot, LocalLibrarySnapshotFile, LocalLibrarySnapshotNode, type SongResult } from '../types';
-import { saveLocalSong, saveLocalSongs, deleteLocalSong as dbDeleteLocalSong, deleteLocalSongs as dbDeleteLocalSongs, saveDirHandles, getDirHandles, deleteDirHandle, getLocalSongs, getLocalLibrarySnapshot, saveLocalLibrarySnapshot, deleteLocalLibrarySnapshot } from './db';
+import { LocalSong, LyricData, LocalLibrarySnapshot, LocalLibrarySnapshotFile, LocalLibrarySnapshotNode } from '../types';
+import { saveLocalSong, saveLocalSongs, deleteLocalSong as dbDeleteLocalSong, deleteLocalSongs as dbDeleteLocalSongs, getDirHandles, deleteDirHandle, getLocalSongs, getLocalLibrarySnapshot, saveLocalLibrarySnapshot, deleteLocalLibrarySnapshot } from './db';
 import { getLocalPlaylists, saveLocalPlaylists } from './localPlaylistService';
 import { parseEmbeddedMetadataAsync, type EmbeddedMetadataResult } from '../utils/localMetadataWorkerClient';
 import { autoMatchBestLyric } from '../utils/lyrics/autoMatchBestLyric';
@@ -30,7 +30,6 @@ import { useLyricSettingsStore } from '../stores/useLyricSettingsStore';
 import { getLocalLyricFilePriority, isSameLocalLyricFormatOrder, normalizeLocalLyricFormatOrder, type LocalLyricFileFormat } from '../utils/lyrics/localLyricFormatOrder';
 import { readLyricFile } from '../utils/lyrics/lyricFileDecoding';
 import { isLocalFolderIgnored, normalizeLocalFolderPath, runLocalFolderMutation, setLocalFolderIgnored } from './localLibraryFolderIgnore';
-
 
 type EmbeddedMetadata = EmbeddedMetadataResult;
 
@@ -218,7 +217,7 @@ export function extractMetadataFromFilename(fileName: string): { title?: string;
     // 去掉扩展名
     let nameWithoutExt = fileName.replace(KNOWN_AUDIO_EXTENSIONS, '');
 
-    // 去掉开头的cue切分产生的序号 "01. ", "01 - ", or "1-01 " 
+    // 去掉开头的cue切分产生的序号 "01. ", "01 - ", or "1-01 "
     nameWithoutExt = nameWithoutExt.replace(/^\d{1,3}(?:[-.]\d{1,3})?(?:\s*[-.]\s*|\s+)/, '');
 
     // 分割艺术家和标题 - 尝试 " - " (带空格)
@@ -392,14 +391,6 @@ function hashSnapshotNode(
         .join('|');
 
     return hashString(`${relativePath}__${normalizedFiles}__${normalizedChildren}`);
-}
-
-function getDurationFromParsedMetadata(durationSeconds?: number): number {
-    if (typeof durationSeconds !== 'number' || !isFinite(durationSeconds) || durationSeconds <= 0) {
-        return 0;
-    }
-
-    return Math.round(durationSeconds * 1000);
 }
 
 async function mapWithConcurrency<T, R>(
@@ -707,7 +698,7 @@ async function collectImportDiffPlan(
         }
 
         const pathSegments = snapshotFile.relativePath.split('/');
-        const fileName = pathSegments[pathSegments.length - 1];
+
         const folderName = pathSegments.slice(0, -1).join('/');
 
         if (snapshotFile.kind === 'lyric' || snapshotFile.kind === 'translationLyric') {
@@ -1118,7 +1109,6 @@ async function hydrateImportedSongsInBackground(rootFolderName: string, songs: L
         });
     }
 }
-
 
 // Import folder using File System Access API (if supported)
 export async function importFolder(expectedRootName?: string): Promise<LocalSong[]> {

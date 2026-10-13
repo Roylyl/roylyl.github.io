@@ -1,5 +1,5 @@
 import React from 'react';
-import { Languages, LayoutList, Move } from 'lucide-react';
+import { Languages } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/react/shallow';
 import type { Theme } from '../../../types';
@@ -9,8 +9,6 @@ import PlaybackEntryViewSection from './PlaybackEntryViewSection';
 import LibrarySuiteSection from './LibrarySuiteSection';
 import { SettingsAnchor } from './navigation/SettingsAnchorContext';
 import SettingsSectionHeading from './navigation/SettingsSectionHeading';
-import { settingsDividerClassFor } from './settingsCardClasses';
-import { useHomeLayoutSettingsStore } from '../../../stores/useHomeLayoutSettingsStore';
 import { useSettingsModalStore } from '../../../stores/useSettingsModalStore';
 
 // src/components/modal/settings/GeneralSettingsSubview.tsx
@@ -24,10 +22,9 @@ type GeneralSettingsSubviewProps = {
 };
 
 const GeneralSettingsSubview: React.FC<GeneralSettingsSubviewProps> = ({
-    isDaylight,
-    settingsCardClass,
-    theme,
-    utilityGhostButtonClass,
+  isDaylight,
+  settingsCardClass,
+  theme
 }) => {
     const { t, i18n } = useTranslation();
     const {
@@ -37,25 +34,7 @@ const GeneralSettingsSubview: React.FC<GeneralSettingsSubviewProps> = ({
         appLanguagePreference: state.appLanguagePreference,
         onAppLanguagePreferenceChange: state.handleSetAppLanguagePreference,
     })));
-    const {
-        showHomeTabPlaylist,
-        showHomeTabRadio,
-        showHomeTabAlbums,
-        showHomeTabLocal,
-        handleToggleHomeTabPlaylist,
-        handleToggleHomeTabRadio,
-        handleToggleHomeTabAlbums,
-        handleToggleHomeTabLocal,
-    } = useHomeLayoutSettingsStore(useShallow(state => ({
-        showHomeTabPlaylist: state.showHomeTabPlaylist,
-        showHomeTabRadio: state.showHomeTabRadio,
-        showHomeTabAlbums: state.showHomeTabAlbums,
-        showHomeTabLocal: state.showHomeTabLocal,
-        handleToggleHomeTabPlaylist: state.handleToggleHomeTabPlaylist,
-        handleToggleHomeTabRadio: state.handleToggleHomeTabRadio,
-        handleToggleHomeTabAlbums: state.handleToggleHomeTabAlbums,
-        handleToggleHomeTabLocal: state.handleToggleHomeTabLocal,
-    })));
+
     const getResolvedLanguageLabel = (): string => {
         const lang = i18n.resolvedLanguage;
         if (lang === 'zh-TW') return '繁體中文';
@@ -75,12 +54,6 @@ const GeneralSettingsSubview: React.FC<GeneralSettingsSubviewProps> = ({
     const languageHint = appLanguagePreference === 'system'
         ? (t('options.appLanguageSystemHint')).replace('{{language}}', currentResolvedLanguage)
         : null;
-
-    const toggleOffBackgroundClass = isDaylight ? 'bg-zinc-200' : 'bg-[#2A2D35]';
-    const rangeInputClass = [
-        'w-full accent-current',
-        isDaylight ? 'text-zinc-900' : 'text-white',
-    ].join(' ');
 
     return (
         <div className="space-y-5">
@@ -112,9 +85,6 @@ const GeneralSettingsSubview: React.FC<GeneralSettingsSubviewProps> = ({
                 </div>
             </SettingsAnchor>
 
-            
-
-
             <PlaybackEntryViewSection
                 isDaylight={isDaylight}
                 settingsCardClass={settingsCardClass}
@@ -126,9 +96,6 @@ const GeneralSettingsSubview: React.FC<GeneralSettingsSubviewProps> = ({
                 settingsCardClass={settingsCardClass}
                 theme={theme}
             />
-
-
-
 
         </div>
     );

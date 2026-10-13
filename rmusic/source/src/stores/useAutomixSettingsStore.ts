@@ -69,19 +69,6 @@ if (typeof window !== 'undefined') {
  * border had switched itself back on at the next launch. A migration has to happen once and then be
  * over.
  */
-const readTransitionAnimationCard = (): boolean => {
-    if (typeof window === 'undefined') {
-        return false;
-    }
-
-    if (localStorage.getItem(TRANSITION_ANIMATION_CARD_KEY) !== null) {
-        return getStoredBoolean(TRANSITION_ANIMATION_CARD_KEY, false);
-    }
-
-    const inherited = getStoredBoolean(TRANSITION_ANIMATION_KEY, false);
-    setStoredBoolean(TRANSITION_ANIMATION_CARD_KEY, inherited);
-    return inherited;
-};
 
 const readStoredTransitionMode = (): TransitionMode => {
     if (typeof window === 'undefined') return DEFAULT_TRANSITION_SETTINGS.mode;
@@ -129,7 +116,7 @@ export type AutomixSettingsState = {
     handleToggleTransitionAnimationCard: (enable: boolean) => void;
 };
 
-export const useAutomixSettingsStore = create<AutomixSettingsState>((set, get) => ({
+export const useAutomixSettingsStore = create<AutomixSettingsState>((set, _get) => ({
     automixEnabled: false,
     isAutomixModelReminderOpen: false,
     transitionMode: readStoredTransitionMode(),

@@ -1,10 +1,7 @@
 import React, { useMemo } from 'react';
 import type { VisualizerSharedProps } from '@/components/visualizer/definition';
 import VisualizerShell from '@/components/visualizer/VisualizerShell';
-import VisualizerSubtitleOverlay from '@/components/visualizer/VisualizerSubtitleOverlay';
-import { resolveSubtitleFontSizes } from '@/components/visualizer/subtitleFontSizes';
-import { useVisualizerRuntime } from '@/components/visualizer/runtime';
-import { getLineRenderEndTime } from '@/utils/lyrics/renderHints';
+
 import { useFoliumStageContext } from '../stageContext';
 import { FoliumMountHost } from '../FoliumMountHost';
 import type { StoredFoliumVisualizer } from './visualizers';
@@ -13,60 +10,6 @@ import type { StoredFoliumVisualizer } from './visualizers';
 // The render half of a mod visualizer mode, loaded lazily like every builtin
 // renderer: the host shell (background, back button, stage layer slots), the
 // mod's own mount, and the shared bottom subtitle layer.
-
-/*
- * The shared bottom subtitle layer (translation / upcoming line) for mod modes.
- * Builtin modes wire this inside their own renderers; a mod has no React and no
- * access to the host's subtitle settings, so the host fills the gap here and
- * mod modes get the same font scaling, opacity, offset, blur and content mode
- * as every builtin mode. Font sizes come from subtitleFontSizes, so switching
- * from a builtin mode to a mod mode keeps the subtitles in place.
- */
-const FoliumSubtitleOverlay: React.FC<VisualizerSharedProps> = (props) => {
-    const {
-        currentTime,
-        currentLineIndex,
-        lines,
-        theme,
-        subtitleTheme,
-        showText = true,
-        lyricsFontScale = 1,
-        subtitleFontScale = 1,
-        subtitleOverlayOpacity,
-        subtitleOverlayBackground,
-        subtitleUpcomingLyricsBlur,
-        isPlayerChromeHidden,
-        hideTranslationSubtitle,
-        showSubtitleTranslation,
-        subtitleContentMode,
-    } = props;
-    const { activeLine, recentCompletedLine, nextLines } = useVisualizerRuntime({
-        currentTime,
-        currentLineIndex,
-        lines,
-        getLineEndTime: getLineRenderEndTime,
-    });
-    const subtitleFontSizes = resolveSubtitleFontSizes(lyricsFontScale);
-    return (
-        <VisualizerSubtitleOverlay
-            showText={showText}
-            activeLine={activeLine}
-            recentCompletedLine={recentCompletedLine}
-            nextLines={nextLines}
-            theme={theme}
-            subtitleTheme={subtitleTheme}
-            {...subtitleFontSizes}
-            subtitleFontScale={subtitleFontScale}
-            subtitleOverlayOpacity={subtitleOverlayOpacity}
-            subtitleOverlayBackground={subtitleOverlayBackground}
-            subtitleUpcomingLyricsBlur={subtitleUpcomingLyricsBlur}
-            isPlayerChromeHidden={isPlayerChromeHidden}
-            hideTranslationSubtitle={hideTranslationSubtitle}
-            showSubtitleTranslation={showSubtitleTranslation}
-            subtitleContentMode={subtitleContentMode}
-        />
-    );
-};
 
 const FoliumVisualizerStage: React.FC<{
     id: string;
@@ -141,7 +84,6 @@ const FoliumVisualizerRender: React.FC<{
         renderBackground={stored.hostBackground}
     >
         <FoliumVisualizerStage id={id} modId={modId} stored={stored} props={props} />
-        {stored.hostSubtitles ? <FoliumSubtitleOverlay {...props} /> : null}
     </VisualizerShell>
 );
 

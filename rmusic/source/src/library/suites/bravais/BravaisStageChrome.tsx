@@ -1,14 +1,12 @@
 import React, { useCallback } from 'react';
-import { Blinds, Crosshair, PanelsTopLeft } from 'lucide-react';
+import { Crosshair, PanelsTopLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import WallBackButton from '../../../components/wall/WallBackButton';
 import WallToolsButton from '../../../components/wall/WallToolsButton';
 import type { WallToolsEntry, WallToolsQuickAction } from '../../../components/wall/WallToolsRows';
-import { useLibraryWallLookStore } from '../../../stores/useLibraryWallLookStore';
 import { usePlaybackStore } from '../../../stores/usePlaybackStore';
-import type { LibraryWallLook } from '../../../utils/libraryWallLook';
+
 import { BRAVAIS_HELP_ROWS } from './bravaisHelp';
-import { nextWallLook } from './bravaisLook';
 import type { BravaisBackStep } from './bravaisBack';
 
 // src/library/suites/bravais/BravaisStageChrome.tsx
@@ -22,12 +20,6 @@ import type { BravaisBackStep } from './bravaisBack';
 //   2. destination：前往 Lattice（宿主的 onOpenLattice，首页工具格「队列拼贴」同一个入口；私人 FM 下禁用并写原因）；
 //   3. entries：「墙面外观」与透光（循环三档，面板不收起）；共享的叠色开关、开灯 / 关灯在 wall 里；帮助行在 bravaisHelp。
 //   滑动打开命令面板。不碰相机与显示：定位走外观动作的同一个实现，透光写 app 层偏好（与命令面板的 wall-look 同一条路）。
-
-const LOOK_LABEL_KEYS: Record<LibraryWallLook, string> = {
-    solid: 'options.libraryWallLookSolid',
-    partial: 'options.libraryWallLookPartial',
-    clear: 'options.libraryWallLookClear',
-};
 
 type BravaisStageChromeProps = {
     isDaylight: boolean;
@@ -52,8 +44,7 @@ const BravaisStageChrome: React.FC<BravaisStageChromeProps> = ({
     toolsClaimed = true,
 }) => {
     const { t } = useTranslation();
-    const look = useLibraryWallLookStore(state => state.look);
-    const setLook = useLibraryWallLookStore(state => state.setLook);
+
     const isFmMode = usePlaybackStore(state => state.isFmMode);
 
     // 面板打开着渲染时才求值：正在播放的那首此刻在不在墙上（与命令面板里同一个判定）。
