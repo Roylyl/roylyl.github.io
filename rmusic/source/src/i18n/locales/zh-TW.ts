@@ -657,10 +657,7 @@ export default {
         "title": "私人FM模式",
         "description": "切換私人FM的模式或場景"
       },
-      "settings-help": {
-        "title": "打開幫助",
-        "description": "打開幫助和快捷鍵"
-      },
+      "settings-about": {"title": "關於R music", "description": "應用資訊、原始碼與授權條款"},
       "settings-options": {
         "title": "打開選項",
         "description": "打開設置中心"
@@ -2284,6 +2281,20 @@ export default {
     "lyricMatchPriorityDesc": "在多個歌詞源都存在高置信度匹配時，優先選擇該歌詞源的結果。"
   },
   "options": {
+    "viewLicense": "查看授權條款",
+    "aboutLicense": "Folia及本衍生前端遵循AGPL-3.0授權。",
+    "aboutAttribution": "本播放器由Roylyl基於Folia的Web前端適配個人曲庫。",
+    "musicRepository": "音樂儲存庫",
+    "sourceCode": "R music原始碼",
+    "copyDiagnostics": "複製播放診斷",
+    "copyFailed": "複製失敗，請重試",
+    "diagnosticsCopied": "播放診斷已複製",
+    "aboutFeatures": "支援專輯與歌手瀏覽、曲庫搜尋、播放佇列、隨機播放和動態歌詞。音訊透過瀏覽器原生播放器播放。",
+    "aboutIntro": "Roylyl的個人音樂播放器，曲庫、專輯封面和標準化歌詞來自Roylyl/Music。",
+    "cachePolicyHint": "無限表示應用不限制容量，實際空間由瀏覽器和裝置決定。開啟快取時，清除後會依播放需要重新快取。",
+    "cacheClearFailed": "清除快取失敗，請重試。",
+    "cacheCleared": "快取已清除",
+    "cacheReadFailed": "讀取快取統計失敗，請重新進入此頁。",
     "about": "關於",
     "aboutDesc": "應用資訊、原始碼與授權條款",
     "refresh": "刷新",
@@ -2392,9 +2403,9 @@ export default {
     "lyricApiEnabledStatus": "歌詞接口已在http://127.0.0.1:32109/v1/lyric啟用",
     "lyricApiDisabledStatus": "歌詞接口已關閉",
     "lyricApiEnableFailed": "歌詞接口啟動失敗",
-    "storageSettings": "存儲與同步",
-    "storageSettingsDesc": "緩存佔用、清理、主題雲同步。",
-    "storageSettingsPanelDesc": "緩存佔用、清理、主題雲同步。",
+    "storageSettings": "儲存與更新",
+    "storageSettingsDesc": "管理歌曲快取與應用更新。",
+    "storageSettingsPanelDesc": "管理歌曲快取與應用更新。",
     "desktopSettings": "桌面端設置",
     "desktopSettingsDesc": "更新檢查、自動更新和桌面端AI配置。",
     "desktopSettingsPanelDesc": "桌面窗口行為、更新檢查、自動更新和AI配置。",

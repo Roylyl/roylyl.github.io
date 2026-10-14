@@ -192,7 +192,7 @@ export const PolaroidCard = React.memo<PolaroidCardProps>(
                         onRemove={onRemoveTrack}
                     />
 
-                    <div className="absolute inset-x-0 bottom-0 z-20 flex flex-col gap-1 p-3 text-left">
+                    <div className="rmusic-card-caption absolute inset-x-0 bottom-0 z-20 flex flex-col gap-1 p-3 text-left">
                         <div className="group/song-title relative max-w-full">
                             <div
                                 {...{ [CARD_TITLE_ATTR]: item.name }}

@@ -120,7 +120,7 @@ const FloatingPlayerControls: React.FC<FloatingPlayerControlsProps> = ({
   onCommitBottomBarOffset
 }) => {
 
-    const isCompact = useMediaQuery('(max-width: 639px)');
+    const isCompact = useMediaQuery('(max-width: 767px), (max-height: 500px) and (pointer: coarse)');
     const canHover = useMediaQuery('(hover: hover) and (pointer: fine)');
     // const isDaylight = theme?.name === 'Daylight Default'; // Deprecated, passed as prop
     const glassBgExpanded = isDaylight ? 'bg-white/60 border border-white/20 shadow-xl' : 'bg-black/40 border border-white/5';
@@ -402,6 +402,10 @@ const FloatingPlayerControls: React.FC<FloatingPlayerControlsProps> = ({
                                     trackColor={trackColor}
                                     controlsDisabled={controlsDisabled}
                                     trackNavigation={trackNavigation}
+                                    slotPrimary={slotPrimary}
+                                    slotSecondary={slotSecondary}
+                                    slotContext={resolvedSlotContext}
+                                    isDaylight={isDaylight}
                                 />
                             ) : showExpanded ? (
                                 <ExpandedView
@@ -477,23 +481,24 @@ const FloatingPlayerControls: React.FC<FloatingPlayerControlsProps> = ({
 
 type MobileViewProps = Pick<ExpandedViewProps, 'currentSong' | 'playerState' | 'currentTime' | 'duration'
     | 'canTogglePlay' | 'onSeek' | 'onTogglePlay' | 'noTrackText' | 'primaryColor' | 'secondaryColor'
-    | 'trackColor' | 'controlsDisabled' | 'trackNavigation'>;
+    | 'trackColor' | 'controlsDisabled' | 'trackNavigation' | 'slotPrimary' | 'slotSecondary' | 'slotContext' | 'isDaylight'>;
 
 // Touch controls keep one compact shape while playing, paused and buffering.
 const MobileView: React.FC<MobileViewProps> = ({ currentSong, playerState, currentTime, duration,
     canTogglePlay, onSeek, onTogglePlay, noTrackText, primaryColor, secondaryColor, trackColor,
-    controlsDisabled = false, trackNavigation }) => {
+    controlsDisabled = false, trackNavigation, slotPrimary, slotSecondary, slotContext, isDaylight }) => {
     const { t } = useTranslation();
     return (
         <div className="rmusic-mobile-player w-full min-w-0">
-            <div className="flex items-center gap-2 min-w-0">
-                <div className="flex-1 min-w-0 truncate pl-1 text-xs font-semibold" style={{ color: primaryColor }}>
+            <div className="flex flex-col gap-1 min-w-0">
+                <div className="w-full min-w-0 truncate text-center text-sm font-semibold" style={{ color: primaryColor }}>
                     {currentSong?.name || noTrackText}
                 </div>
-                <div className="flex shrink-0 items-center gap-1">
+                <div className="flex w-full shrink-0 items-center justify-evenly gap-1">
+                    <PlayerControlSlotButton actionId={slotPrimary} context={slotContext} primaryColor={primaryColor} isDaylight={isDaylight} controlsDisabled={controlsDisabled} />
                     <button type="button" aria-label={trackNavigation?.prevLabel || t('help.previousTrack')}
                         disabled={controlsDisabled || !trackNavigation?.canPrev}
-                        className="flex h-10 w-10 items-center justify-center rounded-full touch-manipulation active:bg-current/10 disabled:opacity-25"
+                        className="flex h-11 w-11 items-center justify-center rounded-full touch-manipulation active:bg-current/10 disabled:opacity-25"
                         onClick={event => { event.stopPropagation(); trackNavigation?.onPrev(); }} style={{ color: primaryColor }}>
                         <SkipBack size={19} />
                     </button>
@@ -506,10 +511,11 @@ const MobileView: React.FC<MobileViewProps> = ({ currentSong, playerState, curre
                     </button>
                     <button type="button" aria-label={trackNavigation?.nextLabel || t('help.nextTrack')}
                         disabled={controlsDisabled || !trackNavigation?.canNext}
-                        className="flex h-10 w-10 items-center justify-center rounded-full touch-manipulation active:bg-current/10 disabled:opacity-25"
+                        className="flex h-11 w-11 items-center justify-center rounded-full touch-manipulation active:bg-current/10 disabled:opacity-25"
                         onClick={event => { event.stopPropagation(); trackNavigation?.onNext(); }} style={{ color: primaryColor }}>
                         <SkipForward size={19} />
                     </button>
+                    <PlayerControlSlotButton actionId={slotSecondary} context={slotContext} primaryColor={primaryColor} isDaylight={isDaylight} controlsDisabled={controlsDisabled} />
                 </div>
             </div>
             <div className="flex min-h-7 items-center px-1 pt-1">

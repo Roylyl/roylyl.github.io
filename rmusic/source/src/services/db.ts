@@ -181,8 +181,8 @@ export const getCacheUsageByCategory = async (): Promise<{
     }
     usage.cover += await getCoverAssetUsage();
     return usage;
-  } catch {
-    return { playlist: 0, lyrics: 0, cover: 0, media: 0, analysis: 0, mediaCount: 0 };
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -195,6 +195,7 @@ export const clearCacheByCategory = async (category: CacheCategory): Promise<voi
     if (category === 'cover') await clearCoverAssets();
   } catch (error) {
     console.error('Failed to clear cache by category', error);
+    throw error;
   }
 };
 
@@ -259,6 +260,7 @@ export const clearAllData = async (): Promise<void> => {
     await appDatabase.open();
   } catch (error) {
     console.error('Failed to clear all data', error);
+    throw error;
   }
 };
 

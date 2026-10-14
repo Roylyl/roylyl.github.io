@@ -220,7 +220,7 @@ const ResetSectionButton: React.FC<{
         type="button"
         onClick={onClick}
         disabled={!onClick}
-        className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-xs transition-colors disabled:cursor-not-allowed disabled:opacity-45"
+        className="inline-flex shrink-0 items-center whitespace-nowrap gap-1.5 rounded-full border px-2.5 py-1.5 text-xs transition-colors disabled:cursor-not-allowed disabled:opacity-45"
         style={{
             color: theme.secondaryColor,
             borderColor: colorWithAlpha(theme.secondaryColor, 0.16),

@@ -34,7 +34,7 @@ const PlaybackEntryViewSection: React.FC<PlaybackEntryViewSectionProps> = ({
         <SettingsAnchor anchorId="playbackEntryView" label={t('options.playbackEntryView')}>
             <SettingsSectionHeading icon={MonitorPlay} label={t('options.playbackEntryView')} />
             <div className={`p-4 rounded-xl border space-y-4 ${settingsCardClass}`}>
-                <div className="text-[11px] opacity-50 max-w-[420px]" style={{ color: 'var(--text-secondary)' }}>
+                <div className="text-xs opacity-80 max-w-[420px]" style={{ color: 'var(--text-secondary)' }}>
                     {t('options.playbackEntryViewDesc')}
                 </div>
                 <PlaybackEntryViewOptions

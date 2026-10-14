@@ -168,7 +168,7 @@ const PlaybackSettingsSubview: React.FC<PlaybackSettingsSubviewProps> = ({
                                     <Timer size={14} />
                                     {t('options.globalLyricTimelineOffset')}
                                 </div>
-                                <div className="text-[11px] opacity-50 max-w-[420px]" style={{ color: 'var(--text-secondary)' }}>
+                                <div className="text-xs opacity-80 max-w-[420px]" style={{ color: 'var(--text-secondary)' }}>
                                     {t('options.globalLyricTimelineOffsetDesc')}
                                 </div>
                             </div>
@@ -192,7 +192,7 @@ const PlaybackSettingsSubview: React.FC<PlaybackSettingsSubviewProps> = ({
                             <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
                                 {t('options.playbackFade')}
                             </div>
-                            <div className="text-[11px] opacity-50 max-w-[420px]" style={{ color: 'var(--text-secondary)' }}>
+                            <div className="text-xs opacity-80 max-w-[420px]" style={{ color: 'var(--text-secondary)' }}>
                                 {t('options.playbackFadeDesc')}
                             </div>
                         </div>
@@ -204,7 +204,7 @@ const PlaybackSettingsSubview: React.FC<PlaybackSettingsSubviewProps> = ({
                                 <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
                                     {t('options.transcodeFallback')}
                                 </div>
-                                <div className="text-[11px] opacity-50 max-w-[420px]" style={{ color: 'var(--text-secondary)' }}>
+                                <div className="text-xs opacity-80 max-w-[420px]" style={{ color: 'var(--text-secondary)' }}>
                                     {t('options.transcodeFallbackDesc')}
                                 </div>
                             </div>
@@ -216,7 +216,7 @@ const PlaybackSettingsSubview: React.FC<PlaybackSettingsSubviewProps> = ({
                             <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
                                 {t('options.audioOutputDevice')}
                             </div>
-                            <div className="text-[11px] opacity-50 max-w-[420px]" style={{ color: 'var(--text-secondary)' }}>
+                            <div className="text-xs opacity-80 max-w-[420px]" style={{ color: 'var(--text-secondary)' }}>
                                 {t('options.audioOutputDeviceDesc')}
                             </div>
                         </div>
@@ -250,7 +250,7 @@ const PlaybackSettingsSubview: React.FC<PlaybackSettingsSubviewProps> = ({
                                 theme={theme}
                             />
 
-                            <div className="text-[11px] opacity-50" style={{ color: 'var(--text-secondary)' }}>
+                            <div className="text-xs opacity-80" style={{ color: 'var(--text-secondary)' }}>
                                 {isSelectingAudioOutput
                                     ? (t('options.audioOutputSelecting'))
                                     : isAudioOutputDevicesLoading

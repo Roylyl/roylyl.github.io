@@ -22,16 +22,16 @@ export default function AppUpdateSection({ cardClass }: { cardClass: string }) {
     const language = i18n.resolvedLanguage || i18n.language;
     const copy = language.startsWith('zh') ? (language === 'zh-TW' ? {
         title: '應用更新', description: '檢查並載入R music的新版本。更新時會重新載入頁面。',
-        button: '更新', busy: '正在更新…', checking: '正在檢查更新…', ready: '有新版本可用', unavailable: '目前無法檢查更新', latest: '已是最新版本', failed: '檢查或更新失敗，請檢查網路後重新開啟此頁。',
+        button: '更新', busy: '正在更新…', checking: '正在檢查更新…', ready: '有新版本可用', development: '開發預覽不檢查更新，請使用正式網頁。', unavailable: '目前瀏覽器不支援更新檢查，請使用HTTPS開啟正式網頁。', latest: '已是最新版本', failed: '檢查或更新失敗，請確認網路連線後重新進入此頁。',
     } : {
         title: '应用更新', description: '检查并载入R music的新版本。更新时会重新载入页面。',
-        button: '更新', busy: '正在更新…', checking: '正在检查更新…', ready: '有新版本可用', unavailable: '当前无法检查更新', latest: '已是最新版本', failed: '检查或更新失败，请检查网络后重新打开此页。',
+        button: '更新', busy: '正在更新…', checking: '正在检查更新…', ready: '有新版本可用', development: '开发预览不检查更新，请使用正式网页。', unavailable: '当前浏览器不支持更新检查，请使用HTTPS打开正式网页。', latest: '已是最新版本', failed: '检查或更新失败，请检查网络后重新打开此页。',
     }) : {
         title: 'App updates', description: 'Check for a new version of R music. Installing an update reloads the page.',
-        button: 'Update', busy: 'Updating…', checking: 'Checking for updates…', ready: 'An update is available', unavailable: 'Update checking is unavailable', latest: 'Up to date', failed: 'Check or update failed. Check your connection and reopen this page.',
+        button: 'Update', busy: 'Updating…', checking: 'Checking for updates…', ready: 'An update is available', development: 'Updates are disabled in development previews. Use the published site.', unavailable: 'This browser cannot check for updates. Open the published site over HTTPS.', latest: 'Up to date', failed: 'Check or update failed. Check your connection and reopen this page.',
     };
     const [busy, setBusy] = useState(false);
-    const [status, setStatus] = useState<'checking' | 'ready' | 'latest' | 'failed' | 'unavailable'>('checking');
+    const [status, setStatus] = useState<'checking' | 'ready' | 'latest' | 'failed' | 'unavailable' | 'development'>('checking');
     const [readyRegistration, setReadyRegistration] = useState<ServiceWorkerRegistration | null>(null);
     useEffect(() => {
         let cancelled = false;
@@ -50,7 +50,11 @@ export default function AppUpdateSection({ cardClass }: { cardClass: string }) {
         const onUpdateFound = () => { void inspect(); };
         void (async () => {
             try {
-                if (!window.isSecureContext || !('serviceWorker' in navigator) || import.meta.env.DEV) {
+                if (import.meta.env.DEV) {
+                    if (!cancelled) setStatus('development');
+                    return;
+                }
+                if (!window.isSecureContext || !('serviceWorker' in navigator)) {
                     if (!cancelled) setStatus('unavailable');
                     return;
                 }
@@ -106,9 +110,9 @@ export default function AppUpdateSection({ cardClass }: { cardClass: string }) {
         }
     };
     return <section className={`p-4 rounded-xl border space-y-3 ${cardClass}`}>
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div><h3 className="font-semibold">{copy.title}</h3>
-                <p className="text-sm opacity-60 mt-1">{copy.description}</p></div>
+                <p className="text-sm opacity-80 mt-1">{copy.description}</p></div>
             {readyRegistration && <button type="button" disabled={busy} onClick={() => void update()}
                 className="shrink-0 flex items-center gap-2 rounded-xl border px-4 py-2 disabled:opacity-50">
                 <RefreshCw size={16} className={busy ? 'animate-spin' : undefined} />

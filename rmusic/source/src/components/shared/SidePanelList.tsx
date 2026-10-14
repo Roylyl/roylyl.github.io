@@ -103,7 +103,7 @@ export function SidePanelList<T>({
                     exit={{ opacity: 0, x: 60, scale: 0.95 }}
                     transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                     data-testid="side-panel-list"
-                    className="absolute right-6 top-24 w-[480px] max-w-[calc(100vw-3rem)] rounded-3xl z-[80] flex flex-col p-6 shadow-2xl border backdrop-blur-2xl pointer-events-auto theme-glass-panel"
+                    className="rmusic-side-list absolute right-6 top-24 w-[480px] max-w-[calc(100vw-3rem)] rounded-3xl z-[80] flex flex-col p-6 shadow-2xl border backdrop-blur-2xl pointer-events-auto theme-glass-panel"
                     style={{
                         bottom: bottomBarBottomPx,
                         boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2)',
@@ -125,7 +125,7 @@ export function SidePanelList<T>({
                             <button
                                 onClick={onClose}
                                 aria-label={t('common.close', '关闭')}
-                                className="p-1.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+                                className="rmusic-dialog-close p-1.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
                             >
                                 <X size={18} />
                             </button>
@@ -218,7 +218,7 @@ export const TrackListItem = React.memo<{
                             </span>
                         )}
                     </div>
-                    <div className="text-[10px] opacity-60 truncate leading-tight mt-0.5">{artistName}</div>
+                    <div className="text-xs opacity-80 truncate leading-tight mt-0.5">{artistName}</div>
                 </div>
                 {!isUnavailable && onAddToQueue && (
                     <button
@@ -226,7 +226,7 @@ export const TrackListItem = React.memo<{
                             e.stopPropagation();
                             onAddToQueue();
                         }}
-                        className="p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 opacity-60 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 transition-opacity shrink-0"
+                        className="min-w-11 min-h-11 flex items-center justify-center p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 opacity-60 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 transition-opacity shrink-0"
                         title={t('navidrome.addToQueue')}
                         style={{ color: 'var(--text-secondary)' }}
                     >
@@ -239,7 +239,7 @@ export const TrackListItem = React.memo<{
                         event.stopPropagation();
                         void shareRmusicSong(track);
                     }}
-                    className="p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 opacity-60 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 transition-opacity shrink-0"
+                    className="min-w-11 min-h-11 flex items-center justify-center p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 opacity-60 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 transition-opacity shrink-0"
                     title="分享歌曲"
                     aria-label="分享歌曲"
                     style={{ color: 'var(--text-secondary)' }}
@@ -290,7 +290,7 @@ export const CollectionListItem = React.memo<{
                 <div className="flex flex-col min-w-0 flex-1 justify-center">
                     <div className="text-sm font-semibold line-clamp-2 break-words leading-tight">{item.name}</div>
                     {item.description && (
-                        <div className="text-[10px] opacity-60 truncate leading-tight mt-0.5">{item.description}</div>
+                        <div className="text-xs opacity-80 truncate leading-tight mt-0.5">{item.description}</div>
                     )}
                 </div>
             </div>

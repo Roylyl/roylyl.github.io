@@ -99,7 +99,7 @@ const SearchWorkspace: React.FC<SearchWorkspaceProps> = ({
                     initial={{ opacity: 0, y: 28 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 28 }}
-                    className={`fixed inset-0 flex flex-col overflow-hidden px-3 py-4 sm:px-6 sm:py-6 ${
+                    className={`rmusic-search-workspace fixed inset-0 flex flex-col overflow-hidden px-3 py-4 sm:px-6 sm:py-6 ${
                         hasCollection ? 'z-[5]' : 'z-50'
                     }`}
                     style={{
@@ -111,7 +111,7 @@ const SearchWorkspace: React.FC<SearchWorkspaceProps> = ({
                     <header className="mx-auto flex w-full max-w-5xl shrink-0 flex-col gap-3">
                         <div className="flex items-center gap-3">
                             <form
-                                className={`relative flex-1 rounded-2xl border ${
+                                className={`relative min-w-0 flex-1 rounded-2xl border ${
                                     isDaylight ? 'border-black/10 bg-black/[0.04]' : 'border-white/10 bg-white/[0.05]'
                                 }`}
                                 onSubmit={(event) => {

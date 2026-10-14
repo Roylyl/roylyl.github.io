@@ -14,14 +14,13 @@ import { librarySuitePickerSurface } from '../surfaces/librarySuitePickerSurface
 // Commands in the `settings` group: settings subviews, app toggles, theme, sync, and desktop-only switches.
 
 export const settingsCommands: CommandPaletteCommand[] = [
-    createSettingsCommand('settings-help', 'Open Help', 'Open help and shortcuts', ['help', '帮助'], 'help', null, { executeShortcut: 'h' }),
+    createSettingsCommand('settings-about', 'About R music', 'Application information, source code and license', ['about', '关于'], 'options', 'about', { executeShortcut: 'h' }),
     sleepTimerCommand,
     createSettingsCommand('settings-options', 'Open Options', 'Open the options center', ['settings', 'options', '设置', '选项'], 'options', null, { executeShortcut: 'o' }),
     createSettingsCommand('settings-appearance', 'Appearance settings', 'Open visual and appearance settings', ['appearance', 'visual settings', '外观', '视觉'], 'options', 'appearance'),
     createSettingsAnchorCommand('settings-theme-presets', 'Theme presets', 'Jump to the built-in and saved theme presets', ['preset theme', 'color preset', '预设主题'], 'themePresets'),
     createSettingsAnchorCommand('settings-lyrics-renderer', 'Lyrics renderer', 'Jump to how lyrics are drawn on the player', ['lyric renderer', 'lyric engine', '歌词渲染'], 'lyricsRenderer'),
     createSettingsCommand('settings-general', 'General settings', 'Open general app preferences', ['general', 'language settings', 'locale', '通用', '语言'], 'options', 'general'),
-    createSettingsAnchorCommand('settings-home-tabs', 'Home tab visibility', 'Choose which tabs the home screen shows', ['hide tabs', 'home tabs', '首页标签'], 'homeTabsVisibility'),
     createSettingsAnchorCommand('settings-playback-entry-view', 'Play opens', 'Jump to which view pressing play opens', ['entry view', 'open on play', 'default view', '播放进入视图', '默认视图'], 'playbackEntryView'),
     {
         id: 'playback-entry-view-player',
@@ -88,7 +87,6 @@ export const settingsCommands: CommandPaletteCommand[] = [
     }),
     // bravais 的透光档位与每块窗数：只在生效 suite 是 bravais 时可用（与设置分区同一个谓词）。
     createSettingsCommand('settings-playback', 'Playback settings', 'Open playback behavior settings', ['playback', '播放', '播放设置'], 'options', 'playback'),
-    createSettingsAnchorCommand('settings-netease-scrobble', 'NetEase listening report', 'Jump to whether finished plays are reported to NetEase Cloud Music', ['scrobble', 'netease scrobble', 'listening report', 'play count', '听歌打卡', '打卡', '听歌排行'], 'scrobbleSettings'),
     createToggleCommand(
         'netease-scrobble-toggle',
         'settings',
@@ -101,13 +99,6 @@ export const settingsCommands: CommandPaletteCommand[] = [
         { isAvailable: context => context?.settings.canReportNeteasePlayback() ?? true },
     ),
     createSettingsAnchorCommand('settings-audio-output', 'Audio output', 'Jump to the audio output device and format settings', ['output device', 'audio device', 'sound card', '输出设备'], 'audioOutputSettings'),
-    createSettingsAnchorCommand('settings-local-lyrics-priority', 'Local song lyrics priority', 'Choose whether local songs prefer local or online lyrics', ['local lyrics priority', 'online lyrics first', 'local song lyrics', '本地歌曲歌词优先级', '在线优先', '本地歌词', 'bendigeciyouxianji', 'bdgcyxj'], 'lyrics'),
-    createSettingsAnchorCommand('settings-local-lyric-format-order', 'Local lyric file format priority', 'Choose which format wins when a track has several lyric files', ['lyric format priority', 'lyric file order', 'lrc ttml priority', '本地歌词文件格式优先级', '歌词格式', '格式优先级', 'geciwenjiangeshi', 'gcgsyxj'], 'lyrics'),
-    createSettingsCommand('settings-integration', 'Integration settings', 'Open Stage, Now Playing, and Navidrome settings', ['integration', 'stage', 'now playing', 'navidrome settings', '集成', '连接'], 'options', 'integration'),
-    createSettingsAnchorCommand('settings-navidrome', 'Navidrome server', 'Jump to the Navidrome server connection', ['navidrome', 'subsonic', 'music server', '音乐服务器'], 'navidrome'),
-    createSettingsAnchorCommand('settings-stage-mode', 'Stage mode', 'Jump to the Stage external player settings', ['stage', 'external player', '舞台模式'], 'stageMode'),
-    createSettingsAnchorCommand('settings-discord-presence', 'Discord playback status', 'Open Discord Rich Presence settings', ['discord', 'rich presence', 'discord presence', 'playing status', '播放状态', 'discord状态', 'discordzhuangtai', 'dc'], 'discordRichPresence'),
-    createSettingsAnchorCommand('settings-obs-browser-source', 'OBS browser source', 'Open OBS browser source settings', ['obs', 'browser source', 'live source', '直播源', '浏览器源'], 'obsBrowserSource'),
     createToggleCommand(
         'obs-toggle-keep-main-window-animation',
         'settings',
@@ -177,7 +168,6 @@ export const settingsCommands: CommandPaletteCommand[] = [
     },
     createSettingsCommand('settings-storage', 'Storage settings', 'Open cache and storage settings', ['storage', 'cache', '存储', '缓存'], 'options', 'storage'),
     createSettingsAnchorCommand('settings-media-cache', 'Media cache', 'Jump to the downloaded audio cache', ['audio cache', 'downloads', 'offline songs', '音频缓存'], 'mediaCache'),
-    createSettingsAnchorCommand('settings-r2-sync', 'Sync server settings', 'Open sync server settings', ['sync server', 'd1 sync', 'cloud sync', 'sync settings', '同步', '云同步', 'd1同步'], 'r2Sync'),
     {
         id: 'sync-now',
         group: 'settings',
@@ -197,8 +187,6 @@ export const settingsCommands: CommandPaletteCommand[] = [
         },
     },
     ...lyricExportCommands,
-    createSettingsCommand('settings-desktop', 'Desktop settings', 'Open desktop app settings', ['desktop', 'electron', '桌面', '桌面端'], 'options', 'desktop', { platform: ['electron'] }),
-    createSettingsCommand('settings-update-channel', 'Update channel', 'Choose the desktop app release channel', ['release channel', 'realeco', 'limo', 'cielo', '更新通道', '发布通道'], 'options', 'desktop', { platform: ['electron'] }),
     {
         id: 'desktop-toggle-voice-input-pause',
         platform: ['win'],
@@ -224,7 +212,6 @@ export const settingsCommands: CommandPaletteCommand[] = [
             return true;
         },
     },
-    createSettingsCommand('settings-wallpaper-mode', 'Wallpaper mode settings', 'Open wallpaper mode settings', ['wallpaper mode', 'desktop wallpaper', 'lyrics wallpaper', '壁纸模式', '桌面壁纸', '歌词壁纸'], 'options', 'desktop', { platform: ['linux', 'win', 'mac'] }),
     {
         id: 'desktop-toggle-wallpaper-mode',
         platform: ['linux', 'win', 'mac'],
@@ -281,8 +268,6 @@ export const settingsCommands: CommandPaletteCommand[] = [
             return true;
         },
     },
-    createSettingsCommand('settings-mods', 'Mod settings', 'Open the mod system switch and the installed mods', ['mod manager', 'mod system', 'plugins', '模组设置', '模组系统', '插件'], 'options', 'mods', { platform: ['electron'] }),
-    createSettingsCommand('settings-lab', 'Lab settings', 'Open experimental settings', ['lab', 'experimental', '实验', '实验室'], 'options', 'lab'),
     createSettingsCommand('settings-global-lyric-offset', 'Global timing offset', 'Calibrate lyric timing against Bluetooth or device audio latency', ['lyric delay', 'audio latency', 'bluetooth delay', 'sync lyrics', '全局时间偏移', '歌词延迟', '音画同步', '蓝牙延迟'], 'options', 'globalLyricOffset'),
     createToggleCommand('settings-toggle-daylight', 'settings', 'Toggle light/dark', 'Toggle theme daylight/midnight mode', ['daylight', 'midnight', 'light', 'dark', '明暗', '切换明暗', '日夜', '日间', '夜间'], context => context.settings.toggleDaylightMode(), { executeShortcut: 'd' }),
     createToggleCommand('settings-toggle-player-back-button', 'settings', 'Always show player back button', 'Toggle whether the player page back button stays visible', ['always show back button', 'player back button', 'back button', '返回按钮', '始终显示返回按钮', '播放页返回按钮', 'fanhui annniu', 'bofangye fanhui annniu', 'fh', 'bfyfh'], context => context.settings.toggleAlwaysShowPlayerBackButton()),

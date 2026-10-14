@@ -1,3 +1,4 @@
+import { useQueuePanelStore } from '../../../stores/useQueuePanelStore';
 import React from 'react';
 import FloatingPlayerControls from '../../FloatingPlayerControls';
 import SearchWorkspace from '../search/SearchWorkspace';
@@ -20,7 +21,8 @@ type AppOverlaysProps = {
 const AppOverlays: React.FC<AppOverlaysProps> = ({ model }) => {
     countRender('AppOverlays');
     const isCurrentSongPosterVisible = useLatticeControlsStore(state => state.isCurrentSongPosterVisible);
-    const isCompact = useMediaQuery('(max-width: 639px)');
+    const isCompact = useMediaQuery('(max-width: 767px), (max-height: 500px) and (pointer: coarse)');
+    const queueOpen = useQueuePanelStore(state => state.isOpen);
     const settingsOpen = useSettingsModalStore(state => state.settingsModalState.isOpen);
     const panelOpen = useAppViewStore(state => state.isPanelOpen);
     const searchOpen = useSearchNavigationStore(state => state.isSearchOpen);
@@ -45,7 +47,7 @@ const AppOverlays: React.FC<AppOverlaysProps> = ({ model }) => {
             {memoryMonitor && <MemoryMonitorWindow {...memoryMonitor} />}
 
             {floatingControls
-                && !(isCompact && (settingsOpen || panelIsVisible || searchIsVisible))
+                && !(isCompact && (queueOpen || settingsOpen || panelIsVisible || searchIsVisible))
                 && (floatingControls.currentView !== 'lattice' || !isCurrentSongPosterVisible)
                 && <FloatingPlayerControls {...floatingControls} />}
 

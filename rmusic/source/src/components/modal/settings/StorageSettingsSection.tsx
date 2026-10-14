@@ -86,7 +86,7 @@ const StorageSettingsSection: React.FC<StorageSettingsSectionProps> = ({
         <>
             <AppUpdateSection cardClass={settingsCardClass} />
             <SettingsAnchor anchorId="cacheDetails" label={t('options.cacheDetails') || 'Cache Details'}>
-                <h3 className="text-sm font-bold uppercase tracking-wider opacity-50 mb-4 flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
+                <h3 className="text-sm font-bold uppercase tracking-wider opacity-80 mb-4 flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
                     <Database size={14} /> {t('options.cacheDetails') || 'Cache Storage'}
                     <button
                         onClick={onClearAll}
@@ -107,13 +107,13 @@ const StorageSettingsSection: React.FC<StorageSettingsSectionProps> = ({
                                 </div>
                                 <div>
                                     <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>{item.label}</div>
-                                    <div className="text-xs opacity-50" style={{ color: 'var(--text-secondary)' }}>{item.size}</div>
+                                    <div className="text-xs opacity-80" style={{ color: 'var(--text-secondary)' }}>{item.size}</div>
                                 </div>
                             </div>
                             <div className="flex items-center gap-1">
                                 <button
                                     onClick={() => onClear(item.id)}
-                                    disabled={isCleaning === item.id}
+                                    disabled={isCleaning !== null}
                                     className={`p-2 hover:bg-white/10 rounded-lg ${errorTextColor} opacity-60 hover:opacity-100 transition-all disabled:opacity-20`}
                                     title={t('ui.clear')}
                                 >
@@ -133,7 +133,7 @@ const StorageSettingsSection: React.FC<StorageSettingsSectionProps> = ({
                             <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
                                 {t('options.enableMediaCache') || 'Cache Songs'}
                             </div>
-                            <div className="text-xs opacity-50 max-w-[200px]" style={{ color: 'var(--text-secondary)' }}>
+                            <div className="text-xs opacity-80 max-w-[200px]" style={{ color: 'var(--text-secondary)' }}>
                                 {t('options.enableMediaCacheDesc') || 'Cache audio after playback for offline listening.'}
                             </div>
                         </div>
@@ -153,14 +153,14 @@ const StorageSettingsSection: React.FC<StorageSettingsSectionProps> = ({
                                     <FolderOpen size={14} />
                                     {t('options.cacheDirectory') || 'Cache Directory'}
                                 </div>
-                                <div className="text-xs opacity-50" style={{ color: 'var(--text-secondary)' }}>
+                                <div className="text-xs opacity-80" style={{ color: 'var(--text-secondary)' }}>
                                     {t('options.cacheDirectoryDesc') || 'Choose where large desktop cache files should be stored.'}
                                 </div>
                             </div>
 
                             <div className="flex gap-2">
                                 <div className="flex-1 bg-black/10 rounded-lg border border-white/5 px-3 py-2 min-w-0">
-                                    <div className="text-[11px] break-all font-mono" style={{ color: 'var(--text-primary)' }}>
+                                    <div className="text-xs break-all font-mono" style={{ color: 'var(--text-primary)' }}>
                                         {cacheDirectory || '...'}
                                     </div>
                                     <div className="text-[10px] opacity-45 mt-1" style={{ color: 'var(--text-secondary)' }}>
@@ -190,7 +190,7 @@ const StorageSettingsSection: React.FC<StorageSettingsSectionProps> = ({
                                     <HardDrive size={14} />
                                     {t('options.mediaCacheLimit') || 'Cache Limit'}
                                 </div>
-                                <div className="text-xs opacity-50 max-w-[240px]" style={{ color: 'var(--text-secondary)' }}>
+                                <div className="text-xs opacity-80 max-w-[240px]" style={{ color: 'var(--text-secondary)' }}>
                                     {t('options.mediaCacheLimitDesc') || 'Once past this, the songs you have not played in longest are dropped first.'}
                                 </div>
                             </div>
@@ -207,7 +207,8 @@ const StorageSettingsSection: React.FC<StorageSettingsSectionProps> = ({
                         </div>
                     )}
 
-                    <div className="pt-3 border-t border-white/10 flex justify-between items-center text-xs opacity-50">
+                    <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{t('options.cachePolicyHint')}</p>
+                    <div className="pt-3 border-t border-white/10 flex justify-between items-center text-xs opacity-80">
                         <span>{t('options.cachedSongsCount') || 'Cached Songs'}:</span>
                         <span className="font-mono">{mediaCount} · {cacheSizes.media}</span>
                     </div>

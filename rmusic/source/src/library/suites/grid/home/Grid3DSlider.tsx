@@ -270,7 +270,7 @@ export const Grid3DSlider: React.FC<Grid3DSliderProps> = ({
     }, [onFocusedIndexChange]);
 
     const isDesktopWidth = containerSize.width >= 768;
-    const isNarrowLayout = containerSize.width > 0 && containerSize.width < 768;
+    const isNarrowLayout = containerSize.width > 0 && (containerSize.width < 768 || containerSize.height < 400);
     const isShortLayout = containerSize.height > 0 && containerSize.height < (hasFloatingPlayer ? 420 : 380);
     const useCompactMetrics = isNarrowLayout || isShortLayout;
     const isLargeDesktop = !useCompactMetrics

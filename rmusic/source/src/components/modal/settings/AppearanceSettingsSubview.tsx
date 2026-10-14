@@ -112,7 +112,7 @@ const AppearanceSettingsSubview: React.FC<AppearanceSettingsSubviewProps> = ({
                             <span className="block text-sm font-semibold">
                                 {t('options.lyricsAnimationAdjust')}
                             </span>
-                            <span className="block text-xs opacity-55" style={{ color: 'var(--text-secondary)' }}>
+                            <span className="block text-xs opacity-80" style={{ color: 'var(--text-secondary)' }}>
                                 {t('options.lyricsRendererDesc')}
                             </span>
                         </span>
@@ -124,7 +124,7 @@ const AppearanceSettingsSubview: React.FC<AppearanceSettingsSubviewProps> = ({
                                 <div className="text-sm font-medium flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
                                     {t('options.autoHidePlayerChrome')}
                                 </div>
-                                <div className="text-xs opacity-50 max-w-[360px]" style={{ color: 'var(--text-secondary)' }}>
+                                <div className="text-xs opacity-80 max-w-[360px]" style={{ color: 'var(--text-secondary)' }}>
                                     {t('options.autoHidePlayerChromeDesc')}
                                 </div>
                             </div>
@@ -143,7 +143,7 @@ const AppearanceSettingsSubview: React.FC<AppearanceSettingsSubviewProps> = ({
                                 <div className="text-sm font-medium flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
                                     {t('options.autoHideCursorWithPlayerChrome')}
                                 </div>
-                                <div className="text-xs opacity-50 max-w-[360px]" style={{ color: 'var(--text-secondary)' }}>
+                                <div className="text-xs opacity-80 max-w-[360px]" style={{ color: 'var(--text-secondary)' }}>
                                     {t('options.autoHideCursorWithPlayerChromeDesc')}
                                 </div>
                             </div>

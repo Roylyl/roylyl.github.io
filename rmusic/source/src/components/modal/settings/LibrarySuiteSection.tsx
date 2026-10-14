@@ -36,7 +36,7 @@ const LibrarySuiteSection: React.FC<LibrarySuiteSectionProps> = ({
         <SettingsAnchor anchorId="librarySuite" label={t('options.librarySuite')}>
             <SettingsSectionHeading icon={Library} label={t('options.librarySuite')} />
             <div className={`p-4 rounded-xl border space-y-4 ${settingsCardClass}`}>
-                <div className="text-[11px] opacity-50 max-w-[420px]" style={{ color: 'var(--text-secondary)' }}>
+                <div className="text-xs opacity-80 max-w-[420px]" style={{ color: 'var(--text-secondary)' }}>
                     {t('options.librarySuiteDesc')}
                 </div>
                 <div className="grid grid-cols-2 gap-3" role="radiogroup" aria-label={t('options.librarySuite')}>

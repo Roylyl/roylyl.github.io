@@ -1,3 +1,4 @@
+import { onAudioCached } from '../../services/audioCache';
 import { useCallback } from 'react';
 import React from "react";
 import type { MotionValue } from "framer-motion";
@@ -63,7 +64,7 @@ import SettingsSidebarWide from './settings/navigation/SettingsSidebarWide';
 
 import SettingsSectionHeader from './settings/SettingsSectionHeader';
 import { buildSettingsNavGroups, findSettingsNavItem, type SettingsSectionId } from './settings/navigation/settingsNavModel';
-import { isSettingsSectionSubview, resolveInitialSettingsSection, sectionForSettingsSubview, writeLastSettingsSection } from './settings/navigation/settingsLastSection';
+import { sectionForSettingsSubview } from './settings/navigation/settingsLastSection';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 
 import { useSettingsInitialAnchor } from '../../hooks/useSettingsInitialAnchor';
@@ -379,15 +380,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     } = useVisualizerAssetStore(useShallow(selectVisualizerAssetSnapshot));
     const setIsSubSettingsViewOpen = useSettingsModalStore(state => state.setIsSubSettingsViewOpen);
     // Settings opens on appearance; explicit section links select their destination.
-    const [activeSettingsSection, setActiveSettingsSection] = useState<SettingsSectionId>(() => resolveInitialSettingsSection({
-        initialSubview,
-        hasInitialAnchor: initialAnchor !== null,
-        isElectron: hasElectronBridge(),
-    }));
-    const handleSelectSettingsSection = (section: SettingsSectionId) => {
-        setActiveSettingsSection(section);
-        writeLastSettingsSection(section, { isElectron: hasElectronBridge() });
-    };
+    const [activeSettingsSection, setActiveSettingsSection] = useState<SettingsSectionId>(
+        () => sectionForSettingsSubview(initialSubview) ?? (initialTab === 'help' ? 'about' : 'appearance'),
+    );
+    const handleSelectSettingsSection = setActiveSettingsSection;
     const contentScrollRef = useRef<HTMLDivElement>(null);
     // Matches the md:flex-row split below; the two sidebars are different enough to render separately.
     const isWideSettingsLayout = useMediaQuery('(min-width: 768px)');
@@ -416,10 +412,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         if (targetSection) {
             // 这两个是播放页歌词区里的二级面板，关掉后应该落回它们的入口所在分区。
             setActiveSettingsSection(targetSection);
-            // 只有真正进入某个分区页才记忆；二级面板和调参台不算「进入」分区。
-            if (isSettingsSectionSubview(initialSubview)) {
-                writeLastSettingsSection(targetSection, { isElectron: hasElectronBridge() });
-            }
         } else {
             setActiveSettingsSection(initialTab === 'help' ? 'about' : 'appearance');
         }
@@ -830,7 +822,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     };
 
-    const fetchCacheUsage = async () => {
+    const fetchCacheUsage = useCallback(async () => {
         const usage = await getCacheUsageByCategory();
         setCacheSizes({
             playlist: formatBytes(usage.playlist),
@@ -840,24 +832,48 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             analysis: formatBytes(usage.analysis)
         });
         setMediaCount(usage.mediaCount);
-    };
-
-    useEffect(() => {
-        fetchCacheUsage();
     }, []);
 
+    useEffect(() => {
+        if (activeSettingsSection !== 'storage') return;
+        let disposed = false;
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        const refresh = () => {
+            if (!disposed) void fetchCacheUsage().catch(() => {
+                setStatusMessage({ type: 'error', text: t('options.cacheReadFailed') });
+            });
+        };
+        refresh();
+        const unsubscribe = onAudioCached(() => {
+            if (timer !== undefined) return;
+            timer = setTimeout(() => { timer = undefined; refresh(); }, 1000);
+        });
+        return () => { disposed = true; clearTimeout(timer); unsubscribe(); };
+    }, [activeSettingsSection, fetchCacheUsage, t]);
+
     const handleClear = async (category: 'playlist' | 'lyrics' | 'cover' | 'media' | 'analysis') => {
+        if (isCleaning) return;
         setIsCleaning(category);
-        await clearCacheByCategory(category);
-        await fetchCacheUsage();
-        setIsCleaning(null);
+        try {
+            await clearCacheByCategory(category);
+            await fetchCacheUsage();
+            setStatusMessage({ type: 'success', text: t('options.cacheCleared') });
+        } catch {
+            setStatusMessage({ type: 'error', text: t('options.cacheClearFailed') });
+        } finally {
+            setIsCleaning(null);
+        }
     };
 
     const handleClearAllCache = async () => {
         if (confirm(t('options.confirmClearAll'))) {
             setIsCleaning('all');
-            await clearAllData();
-            window.location.reload();
+            try {
+                await clearAllData();
+                window.location.reload();
+            } catch {
+                setStatusMessage({ type: 'error', text: t('options.cacheClearFailed') });
+            }
         }
     };
 
@@ -1070,7 +1086,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             transition={shellTransition}
             data-folia-keyboard-window="true"
             data-ponder-page-scope="settings-page"
-            className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-8 sm:px-5 sm:py-12"
+            className="rmusic-settings-overlay fixed inset-0 z-[100] flex items-center justify-center px-4 py-8 sm:px-5 sm:py-12"
             style={{ backgroundColor: overlayBackground }}
             onMouseDown={handleOverlayMouseDown}
             onClick={(event) => handleBackdropClose(event, onClose)}
@@ -1078,7 +1094,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             <motion.div
                 {...panelMotion}
                 transition={shellTransition}
-                className={`${glassBg} border ${borderColor} p-6 md:p-8 rounded-3xl w-full md:max-w-4xl md:w-[900px] h-[90vh] md:h-[85vh] relative shadow-2xl overflow-hidden flex flex-col max-h-[90vh] transition-all duration-300`}
+                className={`rmusic-settings-panel ${glassBg} border ${borderColor} p-6 md:p-8 rounded-3xl w-full md:max-w-4xl md:w-[900px] h-[90vh] md:h-[85vh] relative shadow-2xl overflow-hidden flex flex-col max-h-[90vh] transition-all duration-300`}
                 onClick={(event) => event.stopPropagation()}
             >
                 {/* Decorative background blobs */}
@@ -1095,7 +1111,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 opacity-30 hover:opacity-100 rounded-full bg-white/5 p-1 transition-colors z-20"
+                    aria-label={t('common.close', '关闭')}
+                    className="rmusic-dialog-close absolute top-4 right-4 opacity-70 hover:opacity-100 rounded-full bg-white/5 p-1 transition-colors z-20"
                     style={{ color: 'var(--text-primary)' }}
                 >
                     <X size={20} />
@@ -1143,21 +1160,21 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                                         {activeSettingsSection === 'about' && (<div className="space-y-5 select-text">
                                 <div className="space-y-2">
                                     <h2 className="text-3xl font-semibold tracking-tight">R music</h2>
-                                    <p className="text-sm leading-relaxed opacity-70">Roylyl的个人音乐播放器，曲库、专辑封面和标准化歌词来自Roylyl/Music。</p>
+                                    <p className="text-sm leading-relaxed opacity-70">{t('options.aboutIntro')}</p>
                                 </div>
-                                <p className="text-sm leading-relaxed opacity-60">支持专辑与歌手浏览、曲库搜索、播放队列、随机播放和动态歌词。音频通过浏览器原生播放器播放。</p>
+                                <p className="text-sm leading-relaxed opacity-60">{t('options.aboutFeatures')}</p>
                                 <div className="flex flex-wrap gap-3 text-sm">
                                     <button type="button" className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
                                         onClick={async () => {
                                             const copied = await copyRmusicPlaybackDiagnostics();
-                                            setStatusMessage({ type: copied ? 'success' : 'error', text: copied ? '播放诊断已复制' : '复制失败，请重试' });
-                                        }}>复制播放诊断</button>
-                                    <a href="https://github.com/Roylyl/roylyl.github.io/tree/main/rmusic/source" target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors">R music源码</a>
-                                    <a href="https://github.com/Roylyl/Music" target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors">音乐仓库</a>
+                                            setStatusMessage({ type: copied ? 'success' : 'error', text: copied ? t('options.diagnosticsCopied') : t('options.copyFailed') });
+                                        }}>{t('options.copyDiagnostics')}</button>
+                                    <a href="https://github.com/Roylyl/roylyl.github.io/tree/main/rmusic/source" target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors">{t('options.sourceCode')}</a>
+                                    <a href="https://github.com/Roylyl/Music" target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors">{t('options.musicRepository')}</a>
                                 </div>
                                 <div className="pt-5 border-t border-white/10 text-xs leading-relaxed opacity-55 space-y-2">
-                                    <p>本播放器使用<a href="https://github.com/chthollyphile/folia-major" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Folia的Web前端源码</a>，由Roylyl适配个人曲库。</p>
-                                    <p>Folia及本衍生前端遵循AGPL-3.0许可。<a href="https://github.com/Roylyl/roylyl.github.io/blob/main/rmusic/source/LICENSE" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">查看许可证</a></p>
+                                    <p>{t('options.aboutAttribution')} <a href="https://github.com/chthollyphile/folia-major" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">Folia</a></p>
+                                    <p>{t('options.aboutLicense')} <a href="https://github.com/Roylyl/roylyl.github.io/blob/main/rmusic/source/LICENSE" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">{t('options.viewLicense')}</a></p>
                                 </div>
                                         </div>)}
                                         {activeSettingsSection === 'appearance' && (

@@ -162,7 +162,7 @@ const LyricFilterSettingsModal: React.FC<LyricFilterSettingsModalProps> = ({
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={shellTransition}
-                    className="fixed inset-0 z-[140] backdrop-blur-xl p-3 sm:p-5"
+                    className="rmusic-mobile-dialog fixed inset-0 z-[140] backdrop-blur-xl p-3 sm:p-5"
                     style={{ backgroundColor: overlayBackground }}
                     onClick={onClose}
                 >

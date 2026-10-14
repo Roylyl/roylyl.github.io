@@ -280,3 +280,61 @@ html[data-click-through='active'] body .click-through-interactive * {
 html, body, button, input, select, textarea, #root * {
   font-family: "Microsoft YaHei", "微软雅黑", "PingFang SC", "Noto Sans CJK SC", sans-serif !important;
 }
+
+/* Shared compact layouts cover narrow phones and short landscape viewports. */
+@media (max-width: 767px), (max-height: 500px) and (pointer: coarse) {
+  .rmusic-settings-overlay, .rmusic-mobile-dialog {
+    height: var(--rmusic-viewport-height);
+    padding: max(8px, var(--rmusic-safe-top)) max(8px, var(--rmusic-safe-right)) max(8px, var(--rmusic-bottom-inset)) max(8px, var(--rmusic-safe-left));
+  }
+  .rmusic-settings-panel {
+    height: 100%; max-height: 100%; min-width: 0; padding: 16px; border-radius: 20px;
+  }
+  .rmusic-settings-panel > h1 { font-size: 22px; margin-bottom: 16px; padding-right: 48px; }
+  .rmusic-dialog-close { width: 44px; height: 44px; display: grid; place-items: center; flex-shrink: 0; }
+  .rmusic-settings-panel > .rmusic-dialog-close { top: 8px; right: 8px; }
+  .rmusic-settings-panel button { min-height: 44px; }
+  .rmusic-settings-panel .custom-scrollbar { overscroll-behavior: contain; }
+  .rmusic-settings-panel [role="radiogroup"] { gap: 8px; }
+  .rmusic-settings-panel [role="radio"] { min-width: 0; overflow-wrap: anywhere; }
+  .rmusic-side-list.theme-glass-panel {
+    top: calc(8px + var(--rmusic-safe-top));
+    left: calc(8px + var(--rmusic-safe-left)); right: calc(8px + var(--rmusic-safe-right));
+    width: auto; max-width: none; padding: 12px; border-radius: 20px;
+    bottom: calc(8px + var(--rmusic-bottom-inset)) !important;
+    z-index: 140;
+  }
+  .rmusic-side-list > div:first-child { margin-bottom: 8px; }
+  .rmusic-search-workspace {
+    height: var(--rmusic-viewport-height);
+    padding: calc(12px + var(--rmusic-safe-top)) calc(12px + var(--rmusic-safe-right)) calc(12px + var(--rmusic-bottom-inset)) calc(12px + var(--rmusic-safe-left));
+  }
+  .rmusic-search-workspace nav > button { flex-shrink: 0; min-height: 44px; }
+  .rmusic-command-overlay {
+    height: var(--rmusic-viewport-height); overflow-y: auto;
+    padding: calc(12px + var(--rmusic-safe-top)) calc(12px + var(--rmusic-safe-right)) calc(12px + var(--rmusic-bottom-inset)) calc(12px + var(--rmusic-safe-left));
+    overscroll-behavior: contain;
+  }
+  .rmusic-mobile-dialog > div { border-radius: 20px; }
+  .rmusic-visualizer-editor { display: flex; flex-direction: column; overflow-y: auto; padding: 12px; gap: 12px; }
+  .rmusic-visualizer-preview { min-height: 180px; height: 28dvh; flex-shrink: 0; border-radius: 16px; }
+  .rmusic-visualizer-editor > :last-child { flex-shrink: 0; min-height: 240px; }
+  input:not([type="range"]):not([type="checkbox"]):not([type="radio"]), textarea, select { font-size: 16px; }
+  .rmusic-card-caption { background: color-mix(in srgb, var(--bg-color) 94%, transparent); padding: 10px 12px; }
+  .rmusic-card-caption .line-clamp-3 { -webkit-line-clamp: 2; }
+  .rmusic-grid-card-actions > button { width: 40px; height: 40px; }
+  .rmusic-safe-back, .lattice-back { min-width: 44px; min-height: 44px; }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+  .rmusic-settings-overlay, .rmusic-mobile-dialog { padding-block: 6px; }
+  .rmusic-settings-panel { padding: 12px 16px; }
+  .rmusic-settings-panel > h1 { margin-bottom: 8px; font-size: 20px; }
+  .rmusic-visualizer-editor { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 1fr); overflow-y: auto; }
+  .rmusic-visualizer-preview { height: 100%; min-height: 180px; }
+}
+
+@media (max-width: 767px), (max-height: 500px) and (pointer: coarse) {
+  .rmusic-grid-home[data-has-player="true"] { padding-bottom: calc(148px + var(--rmusic-bottom-inset)); }
+  [data-rmusic-home-slider] { isolation: isolate; overflow: hidden; }
+  .rmusic-mobile-player button { min-width: 44px; min-height: 44px; }
+}

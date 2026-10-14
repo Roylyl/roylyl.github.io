@@ -64,7 +64,7 @@ const GeneralSettingsSubview: React.FC<GeneralSettingsSubviewProps> = ({
                         <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
                             {t('options.appLanguage')}
                         </div>
-                        <div className="text-[11px] opacity-50 max-w-[420px]" style={{ color: 'var(--text-secondary)' }}>
+                        <div className="text-xs opacity-80 max-w-[420px]" style={{ color: 'var(--text-secondary)' }}>
                             {t('options.appLanguageDesc')}
                         </div>
                     </div>
@@ -78,7 +78,7 @@ const GeneralSettingsSubview: React.FC<GeneralSettingsSubviewProps> = ({
                         theme={theme}
                     />
                     {languageHint && (
-                        <div className="text-[11px] opacity-50" style={{ color: 'var(--text-secondary)' }}>
+                        <div className="text-xs opacity-80" style={{ color: 'var(--text-secondary)' }}>
                             {languageHint}
                         </div>
                     )}
