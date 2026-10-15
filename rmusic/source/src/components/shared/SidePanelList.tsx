@@ -124,7 +124,7 @@ export function SidePanelList<T>({
                             {headerActions}
                             <button
                                 onClick={onClose}
-                                aria-label={t('common.close', '关闭')}
+                                aria-label={t('ui.close')}
                                 className="rmusic-dialog-close p-1.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
                             >
                                 <X size={18} />
@@ -226,7 +226,7 @@ export const TrackListItem = React.memo<{
                             e.stopPropagation();
                             onAddToQueue();
                         }}
-                        className="min-w-11 min-h-11 flex items-center justify-center p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 opacity-60 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 transition-opacity shrink-0"
+                        className="rmusic-row-action min-w-11 min-h-11 flex items-center justify-center p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 opacity-60 focus-visible:opacity-100 transition-opacity shrink-0"
                         title={t('navidrome.addToQueue')}
                         style={{ color: 'var(--text-secondary)' }}
                     >
@@ -239,9 +239,9 @@ export const TrackListItem = React.memo<{
                         event.stopPropagation();
                         void shareRmusicSong(track);
                     }}
-                    className="min-w-11 min-h-11 flex items-center justify-center p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 opacity-60 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 transition-opacity shrink-0"
-                    title="分享歌曲"
-                    aria-label="分享歌曲"
+                    className="rmusic-row-action min-w-11 min-h-11 flex items-center justify-center p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 opacity-60 focus-visible:opacity-100 transition-opacity shrink-0"
+                    title={t('search.shareSong')}
+                    aria-label={t('search.shareSong')}
                     style={{ color: 'var(--text-secondary)' }}
                 >
                     <Share2 size={16} />

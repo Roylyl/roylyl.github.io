@@ -8,12 +8,7 @@ export type SettingsSectionId =
     | 'appearance'
     | 'general'
     | 'playback'
-    | 'integration'
-    | 'storage'
-    | 'desktop'
-    | 'mods'
-    | 'lab'
-    | 'developer';
+    | 'storage';
 
 export interface SettingsNavItem {
     id: SettingsSectionId;

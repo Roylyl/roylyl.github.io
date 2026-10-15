@@ -1,0 +1,1 @@
+import{t as e}from"./rolldown-runtime-8BhlS34s.js";import{n as t,t as n}from"./app-core-D0QC9wru.js";var r=e((e=>{var r=t(),i=n();e.version=r.version,e.renderToString=r.renderToString,e.renderToStaticMarkup=r.renderToStaticMarkup,e.renderToReadableStream=i.renderToReadableStream,e.resume=i.resume}));export{r as t};

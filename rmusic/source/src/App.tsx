@@ -166,12 +166,11 @@ export default function App() {
     countRender('App');
     const { t } = useTranslation();
     const {
-        navidromeEnabled, setNavidromeEnabledState,
+        navidromeEnabled,
         starredNavidromeSongIds, setStarredNavidromeSongIds,
         isProviderSyncing, setIsProviderSyncing,
     } = useLibraryStore(useShallow(state => ({
         navidromeEnabled: state.navidromeEnabled,
-        setNavidromeEnabledState: state.setNavidromeEnabledState,
         starredNavidromeSongIds: state.starredNavidromeSongIds,
         setStarredNavidromeSongIds: state.setStarredNavidromeSongIds,
         isProviderSyncing: state.isProviderSyncing,
@@ -374,16 +373,6 @@ export default function App() {
     // const lastBufferedPercentLogRef = useRef<number | null>(null);
     const [isLyricsLoading, setIsLyricsLoading] = useState(false);
     const isNowPlayingControlDisabledRef = useRef(false);
-
-    // Navigation persistence state shared by the Grid home surfaces.
-    const homeViewTab = useSearchNavigationStore(state => state.homeViewTab);
-    const setHomeViewTab = useSearchNavigationStore(state => state.setHomeViewTab);
-    const handleToggleNavidromeEnabled = useCallback((enabled: boolean) => {
-        setNavidromeEnabledState(enabled);
-        if (!enabled && homeViewTab === 'navidrome') {
-            setHomeViewTab('local');
-        }
-    }, [homeViewTab, setHomeViewTab]);
 
     // Preferences and Theme
     // Manages user preferences for audio quality, theme settings,
@@ -815,7 +804,6 @@ export default function App() {
     });
     const {
   stageStatus,
-  setStageStatus,
   stageSource,
   stageActiveEntryKind,
   stageLyricsSession,
@@ -830,20 +818,16 @@ export default function App() {
   isPlayerCapStageActive,
   getPlayerCapDisplayTime,
   playerCapConnectionStatus,
-  playerCapPlayers,
   mainPlaybackSnapshotRef,
   stageLyricsClockRef,
   syncStageLyricsClock,
   getSyntheticStageLyricsTime,
   syncNowPlayingClock,
   getNowPlayingDisplayTime,
-  loadStageSessionIntoPlayback,
   restoreStagePlaybackHandoff,
   clearPersistedStagePlaybackCache,
   openStagePlayer,
-  leaveStagePlayback,
   interruptStagePlaybackForMainTransition,
-  clearStagePlaybackSession
 } = useStagePlaybackController({
   isDev,
   isElectronWindow,
@@ -1572,9 +1556,7 @@ export default function App() {
         && isPlayerChromeHidden;
     const isSettingsModalOpen = settingsModalState.isOpen;
     const {
-        obsBrowserSourceStatus,
         isObsBrowserSourceRendering,
-        refreshObsBrowserSourceStatus,
     } = useObsBrowserSourcePublisher({
         isElectronWindow,
         stageSource,
@@ -1585,10 +1567,7 @@ export default function App() {
         hideTranslationSubtitle: shouldHidePlayerTranslationSubtitle,
         seed: visualizerGeometrySeed,
     });
-    const {
-        lyricApiStatus,
-        setLyricApiEnabled,
-    } = useLyricApiPublisher({
+    useLyricApiPublisher({
         isElectronWindow,
         lyrics,
         offset: effectiveLyricTimelineOffsetMs,
@@ -2244,26 +2223,7 @@ export default function App() {
     const settingsDialog = useSettingsDialogModel({
         themeController,
         themeParkInitialTheme: themeParkSeedTheme,
-        onToggleNavidrome: handleToggleNavidromeEnabled,
-        loadLyricFilterPreview: loadCurrentSongLyricPreview,
-        onSaveLyricFilterPattern: handleSaveLyricFilterPattern,
-        stageStatus,
-        stageSource,
-        setStageStatus,
-        leaveStagePlayback,
-        clearStagePlaybackSession,
-        clearPersistedStagePlaybackCache,
-        loadStageSessionIntoPlayback,
-        nowPlayingConnectionStatus,
-        playerCapConnectionStatus,
-        playerCapPlayers,
-        obsBrowserSourceStatus,
-        refreshObsBrowserSourceStatus,
-        lyricApiStatus,
-        setLyricApiEnabled,
         onAudioOutputDeviceChange: handleAudioOutputDeviceChange,
-        onReplayGainModeChange: handleChangeReplayGainMode,
-        onToggleTransparentPlayerBackground: toggleTransparentModeWithHandoff,
     });
     const appDialogsModel = useAppDialogsModel({
         showLyricMatchModal,

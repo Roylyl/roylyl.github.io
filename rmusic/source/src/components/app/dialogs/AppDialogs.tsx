@@ -1,12 +1,13 @@
 import React from 'react';
+import { deferDialog } from '../../shared/deferDialog';
 import { createPortal } from 'react-dom';
 import { AlertCircle, CheckCircle2, Sparkles } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
-import LyricMatchModal from '../../modal/LyricMatchModal';
-import NaviLyricMatchModal from '../../modal/NaviLyricMatchModal';
-import OnlineLyricMatchModal from '../../modal/OnlineLyricMatchModal';
-import UnavailableReplacementDialog from '../../modal/UnavailableReplacementDialog';
-import SettingsModal from '../../modal/SettingsModal';
+const LyricMatchModal = deferDialog(() => import('../../modal/LyricMatchModal'));
+const NaviLyricMatchModal = deferDialog(() => import('../../modal/NaviLyricMatchModal'));
+const OnlineLyricMatchModal = deferDialog(() => import('../../modal/OnlineLyricMatchModal'));
+const UnavailableReplacementDialog = deferDialog(() => import('../../modal/UnavailableReplacementDialog'));
+const SettingsModal = deferDialog(() => import('../../modal/SettingsModal'));
 import ConfirmDialog from '../../shared/ConfirmDialog';
 import RmusicShareCopyDialog from '../../shared/RmusicShareCopyDialog';
 import type { AppDialogsModel } from './buildAppDialogsModel';

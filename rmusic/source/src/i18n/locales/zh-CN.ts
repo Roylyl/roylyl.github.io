@@ -827,6 +827,9 @@ export default {
     }
   },
   "ui": {
+    "dialogLoadFailed": "页面暂时无法加载。请检查网络后重新加载页面。",
+    "dialogReload": "重新加载页面",
+    "dialogLoading": "正在加载…",
     "noTrack": "无音轨",
     "previousTrack": "上一首",
     "nextTrack": "下一首",
@@ -1168,6 +1171,7 @@ export default {
     "syncFailedHint": "还有歌曲没加载成功（{{error}}）。点击从中断处继续加载"
   },
   "search": {
+    "shareSong": "分享歌曲",
     "placeholder": "搜索歌曲...",
     "sourceNetease": "网易云",
     "sourceLocal": "本地",
@@ -1564,6 +1568,8 @@ export default {
     "diagnosticsCopied": "播放诊断已复制",
     "aboutFeatures": "支持专辑与歌手浏览、曲库搜索、播放队列、随机播放和动态歌词。音频通过浏览器原生播放器播放。",
     "aboutIntro": "Roylyl的个人音乐播放器，曲库、专辑封面和标准化歌词来自Roylyl/Music。",
+    "cacheStorageFull": "浏览器存储空间不足，歌曲缓存已暂停。清理部分缓存或释放设备空间后，可以重试。",
+    "cacheResume": "重试缓存",
     "cachePolicyHint": "无限表示应用不限制容量，实际空间由浏览器和设备决定。缓存开启时，清理后会按播放需要重新缓存。",
     "cacheClearFailed": "清理缓存失败，请重试。",
     "cacheCleared": "缓存已清理",
@@ -2473,6 +2479,10 @@ export default {
     "glowBlurQuantizeDocs": "chromium FD耗尽问题",
     "visualizerFrameRateValue": "限制档位",
     "themePresets": "主题",
+    "appearanceModeSystem": "跟随系统",
+    "appearanceModeDark": "深色模式",
+    "appearanceModeLight": "浅色模式",
+    "appearanceModeCover": "跟随封面",
     "themePresetsDefault": "墨染/素白",
     "openThemePark": "打开Theme Park",
     "themeParkDesc": "自定义配色主题。",
@@ -2532,7 +2542,7 @@ export default {
     "customTheme": "自定义",
     "customThemeUnavailable": "尚未创建自定义主题",
     "clearAll": "全部清空",
-    "confirmClearAll": "确定要清空所有缓存吗？",
+    "confirmClearAll": "确定要清空下载缓存吗？播放队列和你修改的歌词会保留。",
     "electronSettings": "AI主题设置",
     "aiProvider": "AI供应商",
     "otherCompatibleApi": "其他兼容接口",

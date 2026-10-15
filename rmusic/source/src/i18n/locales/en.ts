@@ -827,6 +827,9 @@ export default {
     }
   },
   "ui": {
+    "dialogLoadFailed": "This page could not load. Check your connection and reload the page.",
+    "dialogReload": "Reload page",
+    "dialogLoading": "Loading…",
     "noTrack": "No Track",
     "previousTrack": "Previous track",
     "nextTrack": "Next track",
@@ -1169,6 +1172,7 @@ export default {
     "syncFailedHint": "Some songs failed to load ({{error}}). Click to continue from where it stopped"
   },
   "search": {
+    "shareSong": "Share song",
     "placeholder": "Search songs...",
     "sourceNetease": "NetEase",
     "sourceLocal": "Local",
@@ -1565,6 +1569,8 @@ export default {
     "diagnosticsCopied": "Playback diagnostics copied",
     "aboutFeatures": "Browse albums and artists, search the library, manage the queue and enjoy shuffle playback and animated lyrics. Audio uses the browser’s native player.",
     "aboutIntro": "Roylyl’s personal music player, with the catalog, album artwork and standardized lyrics from Roylyl/Music.",
+    "cacheStorageFull": "Browser storage is full, so song caching is paused. Clear some cache or free device storage, then retry.",
+    "cacheResume": "Retry caching",
     "cachePolicyHint": "Unlimited removes the app limit; available space depends on your browser and device. With caching enabled, songs may be cached again as you play.",
     "cacheClearFailed": "Could not clear the cache. Please try again.",
     "cacheCleared": "Cache cleared",
@@ -2471,7 +2477,11 @@ export default {
     "glowBlurQuantizeDesc": "Changes how some lyric animations draw their glow, fixing occasional freezes after long playback on Linux. On by default on Linux, off elsewhere. See",
     "glowBlurQuantizeDocs": "Chromium FD exhaustion",
     "visualizerFrameRateValue": "Limit",
-    "themePresets": "Theme Presets",
+    "themePresets": "Theme",
+    "appearanceModeSystem": "Follow system",
+    "appearanceModeDark": "Dark mode",
+    "appearanceModeLight": "Light mode",
+    "appearanceModeCover": "Cover colors",
     "themePresetsDefault": "Default",
     "openThemePark": "Open Theme Park",
     "themeParkDesc": "Customize color themes.",
@@ -2531,7 +2541,7 @@ export default {
     "customTheme": "Custom",
     "customThemeUnavailable": "No custom theme yet",
     "clearAll": "Clear All",
-    "confirmClearAll": "Are you sure you want to clear all cache?",
+    "confirmClearAll": "Clear downloaded caches? Your playback queue and edited lyrics will be kept.",
     "electronSettings": "AI Theme Settings",
     "aiProvider": "AI Provider",
     "otherCompatibleApi": "Other Compatible API",

@@ -50,22 +50,15 @@ html[data-rmusic-standalone="true"] .rmusic-app-shell { position: relative; inse
 html[data-rmusic-standalone="true"] .rmusic-safe-viewport { position: absolute; bottom: auto; }
 
 @media (max-width: 639px) {
-  .rmusic-safe-back, .lattice-back {
-    top: calc(16px + var(--rmusic-safe-top)) !important;
-    left: calc(16px + var(--rmusic-safe-left)) !important;
-  }
-  .rmusic-safe-heading { top: calc(16px + var(--rmusic-safe-top)); max-width: calc(100% - 136px - var(--rmusic-safe-left) - var(--rmusic-safe-right)); padding-inline: 10px; }
+  .rmusic-safe-heading { padding-inline: 10px; }
   .rmusic-safe-heading h2, .rmusic-safe-heading > button { min-width: 0; font-size: 15px; line-height: 1.4; overflow-wrap: anywhere; }
-  .rmusic-safe-top-right { top: calc(16px + var(--rmusic-safe-top)); right: calc(16px + var(--rmusic-safe-right)); max-width: 78px; overflow: hidden; font-size: 10px; }
-  .rmusic-safe-header-left { top: var(--rmusic-safe-top); left: var(--rmusic-safe-left); padding: 16px; gap: 8px; }
-  .rmusic-safe-top-header { top: var(--rmusic-safe-top); padding-inline: max(16px, var(--rmusic-safe-left)) max(16px, var(--rmusic-safe-right)); padding-block: 16px; gap: 8px; }
+  .rmusic-safe-top-right { max-width: 78px; overflow: hidden; font-size: 10px; }
+  .rmusic-safe-header-left { padding: 16px; gap: 8px; }
+  .rmusic-safe-top-header { padding-block: 16px; gap: 8px; }
   .rmusic-safe-top-header .group\/grid-title { min-width: 0; flex: 1; }
   .rmusic-safe-top-header .group\/grid-title h2 { font-size: 15px; overflow-wrap: anywhere; }
   .rmusic-safe-top-header > button:first-child, .rmusic-safe-top-header > div:last-child { flex-shrink: 0; }
-  .rmusic-safe-viewport .theme-glass-panel { top: calc(86px + var(--rmusic-safe-top)); left: calc(16px + var(--rmusic-safe-left)); max-width: calc(100vw - 32px - var(--rmusic-safe-left) - var(--rmusic-safe-right)); }
-  .rmusic-grid-home { padding-top: var(--rmusic-safe-top); padding-inline: var(--rmusic-safe-left) var(--rmusic-safe-right); }
   .rmusic-grid-home[data-has-player="true"] { padding-bottom: calc(112px + var(--rmusic-bottom-inset)); }
-  .rmusic-floating-controls { z-index: 130; max-width: calc(100vw - var(--rmusic-safe-left) - var(--rmusic-safe-right)); left: calc(50% + (var(--rmusic-safe-left) - var(--rmusic-safe-right)) / 2); }
   .rmusic-mobile-player [data-folium-part="progress.root"] { gap: 9px; }
   .rmusic-mobile-player [data-folium-part="progress.track"] input { top: -11px; height: 28px; touch-action: none; }
   .rmusic-mobile-player [data-folium-part="progress.thumb"] > div { width: 9px; height: 9px; opacity: 1; }
@@ -281,8 +274,28 @@ html, body, button, input, select, textarea, #root * {
   font-family: "Microsoft YaHei", "微软雅黑", "PingFang SC", "Noto Sans CJK SC", sans-serif !important;
 }
 
+/* Only hover-capable pointers hide row actions until the row is highlighted. */
+@media (hover: hover) and (pointer: fine) and (min-width: 640px) {
+  .rmusic-row-action { opacity: 0; }
+  .group:hover .rmusic-row-action, .group:focus-within .rmusic-row-action { opacity: 1; }
+}
+@media (hover: none), (pointer: coarse) {
+  .rmusic-search-row-action { min-width: 44px; min-height: 44px; }
+}
+
 /* Shared compact layouts cover narrow phones and short landscape viewports. */
 @media (max-width: 767px), (max-height: 500px) and (pointer: coarse) {
+  .rmusic-safe-back, .lattice-back {
+    top: calc(16px + var(--rmusic-safe-top)) !important;
+    left: calc(16px + var(--rmusic-safe-left)) !important;
+  }
+  .rmusic-safe-heading { top: calc(16px + var(--rmusic-safe-top)); max-width: calc(100% - 136px - var(--rmusic-safe-left) - var(--rmusic-safe-right)); }
+  .rmusic-safe-top-right { top: calc(16px + var(--rmusic-safe-top)); right: calc(16px + var(--rmusic-safe-right)); }
+  .rmusic-safe-header-left { top: var(--rmusic-safe-top); left: var(--rmusic-safe-left); }
+  .rmusic-safe-top-header { top: var(--rmusic-safe-top); padding-inline: max(16px, var(--rmusic-safe-left)) max(16px, var(--rmusic-safe-right)); }
+  .rmusic-safe-viewport .theme-glass-panel { top: calc(86px + var(--rmusic-safe-top)); left: calc(16px + var(--rmusic-safe-left)); max-width: calc(100vw - 32px - var(--rmusic-safe-left) - var(--rmusic-safe-right)); }
+  .rmusic-grid-home { padding-top: var(--rmusic-safe-top); padding-inline: var(--rmusic-safe-left) var(--rmusic-safe-right); }
+  .rmusic-floating-controls { z-index: 130; max-width: calc(100vw - var(--rmusic-safe-left) - var(--rmusic-safe-right)); left: calc(50% + (var(--rmusic-safe-left) - var(--rmusic-safe-right)) / 2); }
   .rmusic-settings-overlay, .rmusic-mobile-dialog {
     height: var(--rmusic-viewport-height);
     padding: max(8px, var(--rmusic-safe-top)) max(8px, var(--rmusic-safe-right)) max(8px, var(--rmusic-bottom-inset)) max(8px, var(--rmusic-safe-left));
@@ -326,7 +339,10 @@ html, body, button, input, select, textarea, #root * {
   .rmusic-safe-back, .lattice-back { min-width: 44px; min-height: 44px; }
 }
 @media (max-height: 500px) and (orientation: landscape) {
-  .rmusic-settings-overlay, .rmusic-mobile-dialog { padding-block: 6px; }
+  .rmusic-settings-overlay, .rmusic-mobile-dialog {
+    padding-top: max(6px, var(--rmusic-safe-top));
+    padding-bottom: max(6px, var(--rmusic-bottom-inset));
+  }
   .rmusic-settings-panel { padding: 12px 16px; }
   .rmusic-settings-panel > h1 { margin-bottom: 8px; font-size: 20px; }
   .rmusic-visualizer-editor { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 1fr); overflow-y: auto; }

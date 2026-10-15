@@ -1554,6 +1554,9 @@ export default {
     }
   },
   "ui": {
+    "dialogLoadFailed": "頁面暫時無法載入。請檢查網路後重新載入頁面。",
+    "dialogReload": "重新載入頁面",
+    "dialogLoading": "正在載入…",
     "noTrack": "無音軌",
     "previousTrack": "上一首",
     "nextTrack": "下一首",
@@ -1895,6 +1898,7 @@ export default {
     "syncFailedHint": "還有歌曲沒加載成功（{{error}}）。點擊從中斷處繼續加載"
   },
   "search": {
+    "shareSong": "分享歌曲",
     "placeholder": "搜索歌曲...",
     "sourceNetease": "網易雲",
     "sourceLocal": "本地",
@@ -2291,6 +2295,8 @@ export default {
     "diagnosticsCopied": "播放診斷已複製",
     "aboutFeatures": "支援專輯與歌手瀏覽、曲庫搜尋、播放佇列、隨機播放和動態歌詞。音訊透過瀏覽器原生播放器播放。",
     "aboutIntro": "Roylyl的個人音樂播放器，曲庫、專輯封面和標準化歌詞來自Roylyl/Music。",
+    "cacheStorageFull": "瀏覽器儲存空間不足，歌曲快取已暫停。清除部分快取或釋放裝置空間後，可以重試。",
+    "cacheResume": "重試快取",
     "cachePolicyHint": "無限表示應用不限制容量，實際空間由瀏覽器和裝置決定。開啟快取時，清除後會依播放需要重新快取。",
     "cacheClearFailed": "清除快取失敗，請重試。",
     "cacheCleared": "快取已清除",
@@ -3199,6 +3205,10 @@ export default {
     "glowBlurQuantizeDocs": "chromium FD耗盡問題",
     "visualizerFrameRateValue": "限制檔位",
     "themePresets": "主題",
+    "appearanceModeSystem": "跟隨系統",
+    "appearanceModeDark": "深色模式",
+    "appearanceModeLight": "淺色模式",
+    "appearanceModeCover": "跟隨封面",
     "themePresetsDefault": "墨染/素白",
     "openThemePark": "打開Theme Park",
     "themeParkDesc": "自定義配色主題。",
@@ -3258,7 +3268,7 @@ export default {
     "customTheme": "自定義",
     "customThemeUnavailable": "尚未創建自定義主題",
     "clearAll": "全部清空",
-    "confirmClearAll": "確定要清空所有緩存嗎？",
+    "confirmClearAll": "確定要清空下載快取嗎？播放佇列和你修改的歌詞會保留。",
     "electronSettings": "AI主題設置",
     "aiProvider": "AI供應商",
     "otherCompatibleApi": "其他兼容接口",

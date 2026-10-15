@@ -3,9 +3,9 @@ import type { LucideIcon } from 'lucide-react';
 // src/services/lucideIconResolver.ts
 // Resolves a theme's lyricsIcons entry (a PascalCase lucide name coming from AI output or the
 // theme editor) to a renderable component, so callers never index lucide-react by hand.
-// Icons load on demand through lucide's dynamicIconImports - one small chunk per icon, the same
-// chunks folium.ui.icon uses - instead of `import * as` the whole set, which made every lucide icon
-// a startup dependency. Lookups stay synchronous over what has loaded; loadLucideIcons (or the
+// Icons load on demand through lucide's dynamicIconImports, sharing the optional icon bundle
+// with folium.ui.icon. The build keeps it separate from the UI's static icon imports so the full
+// set is not a startup dependency. Lookups stay synchronous over what has loaded; loadLucideIcons (or the
 // useLucideIcons hook) fetches the rest and announces each arrival to subscribers.
 
 type IconLoader = () => Promise<{ default?: unknown }>;

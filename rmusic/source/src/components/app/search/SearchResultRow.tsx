@@ -144,7 +144,7 @@ const SearchResultRow: React.FC<SearchResultRowProps> = ({
                     <button
                         type="button"
                         onClick={() => onAddTrackToQueue(track)}
-                        className="shrink-0 rounded-full p-2 opacity-60 transition-all hover:bg-black/10 hover:opacity-100 dark:hover:bg-white/10 sm:opacity-0 sm:group-hover:opacity-100"
+                        className="rmusic-row-action rmusic-search-row-action flex items-center justify-center shrink-0 rounded-full p-2 opacity-60 transition-all hover:bg-black/10 hover:opacity-100 dark:hover:bg-white/10"
                         title={t('navidrome.addToQueue')}
                     >
                         <Plus size={16} />
@@ -156,9 +156,9 @@ const SearchResultRow: React.FC<SearchResultRowProps> = ({
                         event.stopPropagation();
                         void shareRmusicSong(track);
                     }}
-                    className="shrink-0 rounded-full p-2 opacity-60 transition-opacity hover:bg-black/10 hover:opacity-100 dark:hover:bg-white/10 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100"
-                    title="分享歌曲"
-                    aria-label="分享歌曲"
+                    className="rmusic-row-action rmusic-search-row-action flex items-center justify-center shrink-0 rounded-full p-2 opacity-60 transition-opacity hover:bg-black/10 hover:opacity-100 dark:hover:bg-white/10 focus-visible:opacity-100"
+                    title={t('search.shareSong')}
+                    aria-label={t('search.shareSong')}
                 >
                     <Share2 size={16} />
                 </button>

@@ -3,48 +3,25 @@ import React from 'react';
 import { Monitor, Palette, Settings2, ChevronRight, AlertTriangle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/react/shallow';
-import { type DualTheme, type Theme, type ThemeMode } from '../../../types';
-import { type ThemeGenerationSource } from '../../../services/themePreferences';
+import type { Theme } from '../../../types';
 import { SettingsAnchor } from './navigation/SettingsAnchorContext';
 import SettingsSectionHeading from './navigation/SettingsSectionHeading';
 import { usePlayerChromeSettingsStore } from '../../../stores/usePlayerChromeSettingsStore';
 
 // src/components/modal/settings/AppearanceSettingsSubview.tsx
-// Visual settings subview for theme presets, lyric renderer entry, layout settings, and configurations import/export.
+// Visual settings subview for lyric styling, player controls, and appearance mode.
 
 type AppearanceSettingsSubviewProps = {
     accentOutlineColor: string;
-    bgMode: ThemeMode;
-    hasCustomTheme: boolean;
-    isCustomThemePreferred: boolean;
     isDaylight: boolean;
-    followSystemTheme: boolean;
-    onApplyCustomTheme: () => void;
-    onApplyDefaultTheme: () => void;
-    onOpenThemePark: () => void;
     onOpenVisPlayground: () => void;
-    onToggleSongThemeAutoGenerate: (enabled: boolean) => void;
-    onToggleFollowSystemTheme: (enabled: boolean) => void;
-    onToggleCustomThemePreferred: (enabled: boolean) => void;
-    onToggleSongThemeAutoSwitch: (enabled: boolean) => void;
-    themeGenerationSource: ThemeGenerationSource;
-    onChangeThemeGenerationSource: (source: ThemeGenerationSource) => void;
-    aiApiKeyStatus: 'loading' | 'configured' | 'missing';
-    onOpenAiSettings: () => void;
     onToggleAutoHidePlayerChrome: (enabled: boolean) => void;
     onToggleAutoHideCursorWithPlayerChrome: (enabled: boolean) => void;
-    onSaveCustomTheme: (dualTheme: DualTheme) => void;
     settingsCardClass: string;
-    songThemeAutoSwitchEnabled: boolean;
-    songThemeAutoGenerateEnabled: boolean;
     theme?: Theme;
-    themeParkInitialTheme: DualTheme;
     toggleOffBackgroundClass: string;
     autoHidePlayerChrome: boolean;
     autoHideCursorWithPlayerChrome: boolean;
-    utilityGhostButtonClass: string;
-    aiTheme?: DualTheme | null;
-    customTheme?: DualTheme | null;
 };
 
 // ==========================================
@@ -64,9 +41,6 @@ const AppearanceSettingsSubview: React.FC<AppearanceSettingsSubviewProps> = ({
   autoHideCursorWithPlayerChrome
 }) => {
     const { t } = useTranslation();
-    // OBS static URL points to this web deploy, so the copy button is web-only (no shareable URL under Electron).
-    // The link follows the selected web stage source (Now Playing / PlayerCap); disabled when none is on.
-
     const storePlayerChromeSettings = usePlayerChromeSettingsStore(useShallow(state => ({
         enablePlayerPageNativeBlur: state.enablePlayerPageNativeBlur,
     })));
@@ -160,14 +134,12 @@ const AppearanceSettingsSubview: React.FC<AppearanceSettingsSubviewProps> = ({
             </SettingsAnchor>
 
             {/* Section 2: Theme presets and edit options */}
-            <SettingsAnchor anchorId="themePresets" label="主题">
-                <SettingsSectionHeading icon={Palette} label="主题" />
+            <SettingsAnchor anchorId="themePresets" label={t('options.themePresets')}>
+                <SettingsSectionHeading icon={Palette} label={t('options.themePresets')} />
                 <div className={`p-4 rounded-xl border ${settingsCardClass}`}>
                     <RmusicThemeSelector />
                 </div>
             </SettingsAnchor>
-            {/* Section 3: Now playing card */}
-
         </div>
     );
 };

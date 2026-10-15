@@ -7,11 +7,8 @@ import { isLyricSegmentationRecord } from '../utils/lyrics/lyricSegmentationReco
 // src/services/lyricSegmentation.ts
 // Persists the per-song word segmentation a user produced with AI or by hand.
 //
-// The `lyricSeg_` prefix is chosen, not incidental. Keys starting with `lyric_` are swept by
-// cacheRepository's 'lyrics' category, so a user clearing their lyric cache would silently destroy
-// work that cost them either money or manual effort. `lyricSeg_` matches no category and lands in
-// api_cache through getCacheTableName's fall-through. It IS still removed by "clear all caches",
-// which is accepted: that action is explicitly a full reset.
+// `lyricSeg_` identifies user-created segmentation. Both individual and full cache cleanup
+// preserve these records, including work produced with AI or edited by hand.
 
 const LYRIC_SEGMENTATION_KEY_PREFIX = 'lyricSeg_';
 

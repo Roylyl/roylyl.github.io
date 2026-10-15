@@ -1,5 +1,7 @@
 import { getFromCache, removeFromCache, saveToCache } from './db';
 import { createSafeObjectUrl, isBlob } from '../utils/blobGuards';
+import { getResourceCacheGeneration } from './cacheRuntime';
+import { isDownloadableCacheKey } from './cacheCleanupPolicy';
 import {
     clearCoverAssets,
     getCoverAssetUsage,
@@ -41,14 +43,32 @@ const fetchCoverBlob = async (coverUrl: string): Promise<Blob> => {
     return await response.blob();
 };
 
+const coverWrites = new Map<string, Promise<void>>();
+
+const persistCoverBlob = (cacheKey: string, coverBlob: Blob, generation: number): Promise<void> => {
+    const isCurrent = () => !isDownloadableCacheKey(cacheKey, 'cover')
+        || generation === getResourceCacheGeneration();
+    // Serialize a cover's writes so cancelling an old OPFS write cannot remove a newer one.
+    const operation = (coverWrites.get(cacheKey) ?? Promise.resolve()).catch(() => undefined).then(async () => {
+        if (!isCurrent()) return;
+        const descriptor = await writeCoverAsset(cacheKey, coverBlob).catch(() => null);
+        if (!isCurrent()) {
+            if (descriptor) await removeCoverAsset(cacheKey);
+            return;
+        }
+        await saveToCache(cacheKey, descriptor ?? coverBlob);
+    });
+    coverWrites.set(cacheKey, operation);
+    return operation.finally(() => {
+        if (coverWrites.get(cacheKey) === operation) coverWrites.delete(cacheKey);
+    });
+};
+
 export async function getCachedCoverUrl(cacheKey: string): Promise<string | null> {
+    const generation = getResourceCacheGeneration();
     const stored = await getFromCache<unknown>(cacheKey);
     if (isBlob(stored)) {
-        const descriptor = await writeCoverAsset(cacheKey, stored).catch(() => null);
-        if (!descriptor) {
-            return createSafeObjectUrl(stored);
-        }
-        await saveToCache(cacheKey, descriptor);
+        await persistCoverBlob(cacheKey, stored, generation);
         return createSafeObjectUrl(stored);
     }
 
@@ -81,6 +101,7 @@ export async function hasCachedCover(cacheKey: string): Promise<boolean> {
 
 export async function loadCachedOrFetchCover(cacheKey: string, coverUrl?: string | null): Promise<string | null> {
     if (!coverUrl) return null;
+    const generation = getResourceCacheGeneration();
 
     try {
         const cachedCoverUrl = await getCachedCoverUrl(cacheKey);
@@ -89,8 +110,7 @@ export async function loadCachedOrFetchCover(cacheKey: string, coverUrl?: string
         }
 
         const coverBlob = await fetchCoverBlob(coverUrl);
-        const descriptor = await writeCoverAsset(cacheKey, coverBlob).catch(() => null);
-        if (descriptor) await saveToCache(cacheKey, descriptor);
+        await persistCoverBlob(cacheKey, coverBlob, generation);
         return createSafeObjectUrl(coverBlob) || coverUrl;
     } catch (error) {
         console.warn('Failed to cache cover:', error);
@@ -98,13 +118,8 @@ export async function loadCachedOrFetchCover(cacheKey: string, coverUrl?: string
     }
 }
 
-export async function saveCoverBlob(cacheKey: string, coverBlob: Blob): Promise<void> {
-    const descriptor = await writeCoverAsset(cacheKey, coverBlob).catch(() => null);
-    if (descriptor) {
-        await saveToCache(cacheKey, descriptor);
-        return;
-    }
-    await saveToCache(cacheKey, coverBlob);
+export async function saveCoverBlob(cacheKey: string, coverBlob: Blob, generation = getResourceCacheGeneration()): Promise<void> {
+    await persistCoverBlob(cacheKey, coverBlob, generation);
 }
 
 // Replaces the cached online cover used by local-song playback without changing the audio file.

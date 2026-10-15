@@ -25,11 +25,11 @@ import { useAutomixSettingsStore } from '../stores/useAutomixSettingsStore';
 import { useAudioSettingsStore } from '../stores/useAudioSettingsStore';
 import { classifyPlaybackError } from './playbackRecovery/onlinePlaybackFailure';
 import { getProviderPlaybackCooldown, noteProviderFailure } from './playbackRecovery/providerPlaybackCooldown';
+import { getAudioCacheStatus, onResourceCacheInvalidated, subscribeAudioCacheStatus } from './cacheRuntime';
+import { getPrefetchWindowIndices } from './prefetchWindow';
 
 // Cache full audio immediately for the current song and the nearby playback window.
 // Automix analysis remains independently disabled unless explicitly enabled.
-const PREFETCH_COUNT_NEXT = 3;
-const PREFETCH_COUNT_PREV = 1;
 const URL_TTL_MS = 1200 * 1000; // 1200 seconds = 20 minutes
 const MAX_PREFETCH_CACHE_SIZE = 200; // Evict least recently used entries beyond this limit
 
@@ -100,9 +100,17 @@ const touchPrefetchCacheEntry = (songKey: string, data: PrefetchedSongData): Pre
 
 // Track current prefetch operation to cancel on queue change
 let currentPrefetchAbortController: AbortController | null = null;
+let lastPrefetchRequest: [SongResult, SongResult[], AudioQualityPreference, MediaId | null | undefined] | null = null;
 useAudioSettingsStore.subscribe((state, previous) => {
     if (previous.enableMediaCache && !state.enableMediaCache) currentPrefetchAbortController?.abort();
 });
+subscribeAudioCacheStatus(() => {
+    if (getAudioCacheStatus() === 'storage-full') currentPrefetchAbortController?.abort();
+    else if (lastPrefetchRequest && useAudioSettingsStore.getState().enableMediaCache) {
+        void prefetchNearbySongs(...lastPrefetchRequest).catch(error => console.warn('[Prefetch] Retry failed', error));
+    }
+});
+onResourceCacheInvalidated(() => clearPrefetchRuntime(true));
 /**
  * Check if a prefetched URL is still valid (not expired)
  */
@@ -395,6 +403,7 @@ const prefetchSong = async (
         }
     }
 
+    if (signal.aborted) return;
     prefetchCache.delete(songKey);
 
     // Evict least recently used entries if cache exceeds limit
@@ -451,12 +460,14 @@ export const prefetchNearbySongs = async (
     audioQuality: AudioQualityPreference,
     userId?: MediaId | null
 ): Promise<void> => {
+    lastPrefetchRequest = [currentSong, queue, audioQuality, userId];
     // Cancel any ongoing prefetch
     if (currentPrefetchAbortController) {
         currentPrefetchAbortController.abort();
     }
     currentPrefetchAbortController = new AbortController();
     const signal = currentPrefetchAbortController.signal;
+    if (getAudioCacheStatus() !== 'ready') return;
 
     // Find current song index in queue
     const currentSongKey = getPrefetchSongKey(currentSong);
@@ -466,7 +477,12 @@ export const prefetchNearbySongs = async (
     // are no longer either half of the next transition. This function is called on every track change
     // and every queue change, which is exactly when that set moves - and analysis is serial, so a
     // stale entry does not merely waste itself, it delays the track the listener just chose.
-    const nextSong = currentIndex >= 0 ? queue[currentIndex + 1] : undefined;
+    const { loopMode, enableMediaCache } = useAudioSettingsStore.getState();
+    const shuffleIndex = loopMode === 'shuffle' && currentIndex >= 0 && queue.length > 1
+        ? plannedShuffleIndex(queue, currentIndex) : undefined;
+    const nextSong = currentIndex >= 0 && queue.length > 0
+        ? queue[loopMode === 'one' ? currentIndex : shuffleIndex ?? (currentIndex + 1) % queue.length]
+        : undefined;
     setAnalysisScope(nextSong ? [currentSong, nextSong] : [currentSong]);
 
     if (currentIndex === -1) {
@@ -474,35 +490,12 @@ export const prefetchNearbySongs = async (
         return;
     }
 
-    // Determine songs to prefetch.
-    //
-    // Forwards first, and the immediate next track before anything else. These run strictly one
-    // after another, so whatever is first in this list is the only one guaranteed to be finished
-    // soon - and the next track is the one every transition is planned against, while the previous
-    // track only matters if the listener presses back. Fetching backwards first put a whole song's
-    // URL resolve, lyric fetch and auto-match in front of the analysis a blend was waiting on, and
-    // a track skipped through inside ten seconds reached its transition still unmeasured.
-    const songsToPrefetch: SongResult[] = [];
-
-    // Cache the current track immediately, then the upcoming window, wrapping the list.
-    if (useAudioSettingsStore.getState().enableMediaCache) songsToPrefetch.push(currentSong);
-    if (useAudioSettingsStore.getState().loopMode === 'shuffle' && queue.length > 1) {
-        songsToPrefetch.push(queue[plannedShuffleIndex(queue, currentIndex)]);
-    }
-    for (let offset = 1; offset <= Math.min(PREFETCH_COUNT_NEXT, queue.length - 1); offset++) {
-        const candidate = queue[(currentIndex + offset) % queue.length];
-        if (!songsToPrefetch.includes(candidate)) songsToPrefetch.push(candidate);
-    }
-    for (let offset = 1; offset <= Math.min(PREFETCH_COUNT_PREV, queue.length - 1); offset++) {
-        const song = queue[(currentIndex - offset + queue.length) % queue.length];
-        if (!songsToPrefetch.some(entry => getPrefetchSongKey(entry) === getPrefetchSongKey(song))) songsToPrefetch.push(song);
-    }
+    const songsToPrefetch = getPrefetchWindowIndices(queue.length, currentIndex, enableMediaCache, shuffleIndex)
+        .map(index => queue[index]);
 
     console.log(`[Prefetch] Will prefetch ${songsToPrefetch.length} songs near index ${currentIndex}`);
 
-    // The track playing right now is the other half of every transition it is about to be in, and
-    // it is not in the prefetch set, so it would otherwise only ever be analysed on a second
-    // listen. Its own prefetch entry usually still holds the URL it was resolved from.
+    // Analyse the current track even if audio caching is disabled.
     analyseForAutomix(currentSong, prefetchCache.get(currentSongKey)?.audioUrl);
 
     // Start immediately with two workers: current audio and the next track can download together.
@@ -510,7 +503,11 @@ export const prefetchNearbySongs = async (
     const run = async () => {
         while (!signal.aborted && cursor < songsToPrefetch.length) {
             const song = songsToPrefetch[cursor++];
-            await prefetchSong(song, audioQuality, signal, userId);
+            try {
+                await prefetchSong(song, audioQuality, signal, userId);
+            } catch (error) {
+                if (!signal.aborted) console.warn('[Prefetch] Could not prefetch song', error);
+            }
         }
     };
     await Promise.all([run(), run()]);
@@ -546,24 +543,27 @@ export const invalidatePrefetchedLyrics = (): void => {
 };
 
 // Aborts provider-bound work and releases every in-memory prefetch entry.
-export const clearPrefetchRuntime = (): void => {
+export const clearPrefetchRuntime = (preserveRequest = false): void => {
     currentPrefetchAbortController?.abort();
     currentPrefetchAbortController = null;
     prefetchCache.clear();
+    if (!preserveRequest) lastPrefetchRequest = null;
 };
 
 /**
- * 正在播放那首的预取窗口（前 PREFETCH_COUNT_PREV 首、它自己、后 PREFETCH_COUNT_NEXT 首）的身份串；
+ * 正在播放那首的预取窗口（前一首、它自己、后三首，含列表首尾环绕）的身份串；
  * 当前歌不在队列里时是空串。队列被编辑（拖拽排序、下一首播放、移到末尾、移除）前后这个串变了，才需要重新预取。
  */
 export const getPrefetchWindowKey = (currentSong: SongResult, queue: readonly SongResult[]): string => {
     const currentSongKey = getPrefetchSongKey(currentSong);
     const currentIndex = queue.findIndex(song => getPrefetchSongKey(song) === currentSongKey);
     if (currentIndex < 0) return '';
-    return queue
-        .slice(Math.max(0, currentIndex - PREFETCH_COUNT_PREV), currentIndex + PREFETCH_COUNT_NEXT + 1)
-        .map(getPrefetchSongKey)
-        .join('|');
+    const windowKey = getPrefetchWindowIndices(queue.length, currentIndex, true)
+        .map(index => getPrefetchSongKey(queue[index])).join('|');
+    // Shuffle planning depends on the entire queue. Comparing queue identities avoids drawing
+    // a different random track just to inspect whether a queue edit changed the plan.
+    return useAudioSettingsStore.getState().loopMode === 'shuffle'
+        ? `${windowKey}::${queue.map(getPrefetchSongKey).join('|')}` : windowKey;
 };
 
 /**

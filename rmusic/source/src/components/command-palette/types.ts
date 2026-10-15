@@ -275,7 +275,6 @@ export type CommandPaletteSettingsContext = {
     setLatticePosterTintColor: (color: string) => void;
     setLatticePosterTintIntensity: (intensity: number) => void;
     toggleAlwaysShowTrackSwitchButtons: () => void;
-    toggleAlwaysShowMainWindowTitlebar: () => void;
     toggleHideFullscreenButton: () => void;
     toggleNativeMacFullscreenButton: () => void;
     toggleAutoHideCursorWithPlayerChrome: () => void;

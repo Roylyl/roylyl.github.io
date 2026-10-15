@@ -1,6 +1,5 @@
 import type { LocalLibrarySnapshot, LocalSong } from '../types';
 import type { MigrationResult } from '../utils/lyrics/renderHints';
-import { appDatabase } from './appDatabase';
 import type { SessionData } from './dbTypes';
 import {
   assignImportedSongs,
@@ -9,7 +8,6 @@ import {
   ensureLocalLibraryInitialized,
 } from './localLibraryCatalogService';
 import {
-  clearBrowserCacheByCategory,
   clearCacheTables,
   getBrowserCacheUsage,
   getBrowserCacheUsageByCategory,
@@ -30,12 +28,9 @@ import {
 } from './repositories/localSongRepository';
 import { clearSessionValues, putSessionValue, readSession } from './repositories/sessionRepository';
 import { readThemeRegistryEntries, writeThemeRegistryEntries } from './repositories/themeRegistryRepository';
-import { clearCoverAssets, getCoverAssetUsage } from './binaryAssetStore';
-import { clearLocalCoverBinaries } from './localCoverBinaryStore';
-import {
-  cancelLocalCoverAssetMigration,
-  resetLocalCoverAssetRuntime,
-} from './localCoverAssetService';
+import { clearCoverAssets, getCoverAssetUsage, removeCoverAsset } from './binaryAssetStore';
+import { isDownloadableCacheKey } from './cacheCleanupPolicy';
+import { invalidateResourceCacheWork, resumeAudioCaching } from './cacheRuntime';
 
 // src/services/db.ts
 // Keeps the historical storage API stable while delegating every IndexedDB operation to Dexie repositories.
@@ -179,25 +174,35 @@ export const getCacheUsageByCategory = async (): Promise<{
     } else if (hasElectronAudioCacheBridge()) {
       usage.media += await window.electron!.getAudioCacheUsage();
     }
-    usage.cover += await getCoverAssetUsage();
     return usage;
   } catch (error) {
     throw error;
   }
 };
 
-export const clearCacheByCategory = async (category: CacheCategory): Promise<void> => {
+const clearDownloadableCaches = async (category?: CacheCategory): Promise<void> => {
+  invalidateResourceCacheWork();
   try {
-    await clearBrowserCacheByCategory(category);
-    if (category === 'media' && hasElectronAudioCacheBridge()) {
+    const keys = (await getCacheKeysByPrefix([''])).filter(key => isDownloadableCacheKey(key, category));
+    // Remote covers may live in OPFS. Remove their individual assets, preserving local artwork.
+    for (const key of keys) {
+      if (isDownloadableCacheKey(key, 'cover')) await removeCoverAsset(key);
+    }
+    await removeCacheEntries(keys);
+    if ((!category || category === 'media') && hasElectronAudioCacheBridge()) {
       await window.electron!.clearAudioCache();
     }
-    if (category === 'cover') await clearCoverAssets();
+    resumeAudioCaching();
   } catch (error) {
-    console.error('Failed to clear cache by category', error);
+    console.error('Failed to clear downloadable caches', error);
     throw error;
   }
 };
+
+export const clearCacheByCategory = (category: CacheCategory): Promise<void> => clearDownloadableCaches(category);
+
+/** Cache cleanup preserves playback, user lyrics, local libraries and other user-created data. */
+export const clearAllCaches = (): Promise<void> => clearDownloadableCaches();
 
 export const saveLocalSong = async (song: LocalSong): Promise<void> => {
   await ensureLocalLibraryInitialized();
@@ -246,21 +251,6 @@ export const deleteLocalSongs = async (ids: string[]): Promise<void> => {
     await deleteSongAssignments(ids);
   } catch (error) {
     console.error('Failed to delete local songs', error);
-  }
-};
-
-export const clearAllData = async (): Promise<void> => {
-  try {
-    if (hasElectronAudioCacheBridge()) await window.electron!.clearAudioCache();
-    await clearCoverAssets();
-    await cancelLocalCoverAssetMigration();
-    await clearLocalCoverBinaries();
-    resetLocalCoverAssetRuntime();
-    await appDatabase.delete();
-    await appDatabase.open();
-  } catch (error) {
-    console.error('Failed to clear all data', error);
-    throw error;
   }
 };
 

@@ -6,6 +6,7 @@ import { getSongResourceCacheKey } from './onlineMusic/resourceKeys';
 import { getProviderSongMetadata } from './onlineMusic/songMetadata';
 import { getPlaybackSourceRef } from '../utils/appPlaybackGuards';
 import { clearCachedSongAudioDistrust, isCachedSongAudioDistrusted, isCacheableAudioResponse } from './playbackRecovery/mediaCacheGuard';
+import { getAudioCacheStatus, getResourceCacheGeneration } from './cacheRuntime';
 
 // src/services/playedTrackCache.ts
 
@@ -34,24 +35,28 @@ export const cachePlayedTrackAssets = async (
     coverUrl?: string | null,
     signal?: AbortSignal,
 ): Promise<PlayedTrackCacheResult> => {
-    if (!song || signal?.aborted) return NOTHING_WRITTEN;
+    if (!song || signal?.aborted || getAudioCacheStatus() !== 'ready') return NOTHING_WRITTEN;
+    const generation = getResourceCacheGeneration();
+    const canCache = () => !signal?.aborted && generation === getResourceCacheGeneration()
+        && getAudioCacheStatus() === 'ready';
 
     const result: PlayedTrackCacheResult = { audio: false, cover: false };
 
     // Audio needs a source that can actually be refetched: a blob: URL is this session's own handle
     // to bytes that are either already cached or on disk, so there is nothing to fetch and store.
     // 缓存里那份已被标记为不可信（解码失败过）时，即使还在也要用这次的合格下载覆盖它。
-    if (src && !src.startsWith('blob:') && (!await hasCachedSongAudio(song) || isCachedSongAudioDistrusted(song))) {
+    if (src && !src.startsWith('blob:') && (!await hasCachedSongAudio(song) || isCachedSongAudioDistrusted(song)) && canCache()) {
         console.log('[Cache] Caching fully played song:', song.name);
         try {
             const response = await fetch(src, { signal });
             const blob = await response.blob();
             // 错误页、JSON 报错和截断的下载不能当成音频存进去：缓存命中优先于 provider，坏的一份会一直顶替真音源。
-            if (!signal?.aborted && isCacheableAudioResponse(response, blob)) {
-                await saveAudioBlob(getSongResourceCacheKey('audio', song), blob);
-                clearCachedSongAudioDistrust(song);
-                result.audio = true;
-                console.log('[Cache] Audio saved');
+            if (canCache() && isCacheableAudioResponse(response, blob)) {
+                result.audio = await saveAudioBlob(getSongResourceCacheKey('audio', song), blob);
+                if (result.audio) {
+                    clearCachedSongAudioDistrust(song);
+                    console.log('[Cache] Audio saved');
+                }
             } else {
                 console.warn('[Cache] Skipped caching a download that does not look like audio:', song.name, {
                     status: response.status,
@@ -72,11 +77,13 @@ export const cachePlayedTrackAssets = async (
     // `https:` test also keeps out the blob: URL the app hands back for an already-cached cover,
     // which the old code refetched and rewrote on every play.
     const isLocal = getPlaybackSourceRef(song).kind === 'local';
-    if (!signal?.aborted && !isLocal && cover?.startsWith('https:') && !await hasCachedSongCover(song)) {
+    if (canCache() && !isLocal && cover?.startsWith('https:') && !await hasCachedSongCover(song)) {
         try {
+            if (!canCache()) return result;
             const response = await fetch(cover, { mode: 'cors', signal });
+            if (!response.ok) return result;
             const blob = await response.blob();
-            if (signal?.aborted) return result;
+            if (!canCache()) return result;
             await saveToCache(getSongResourceCacheKey('cover', song), blob);
             result.cover = true;
             console.log('[Cache] Cover saved');

@@ -5,8 +5,8 @@ import type { FoliumIconOptions } from './contract';
 // `folium.ui.icon` (Folium 1.2): the host's lucide icon set, handed to mods as plain SVG elements.
 // Mods have no React, so they get the icon's node data drawn into a fresh <svg> instead of the
 // lucide-react component. Every call returns a new element built from immutable data, so there is
-// no shared state for a mod to change. Each icon's module loads on first use (one small chunk per
-// icon, kept out of the PWA precache by vite.config.ts).
+// no shared state for a mod to change. The optional icon bundle loads on first use and is kept
+// out of the PWA precache by vite.config.ts.
 
 type IconNode = Array<[tag: string, attributes: Record<string, string>]>;
 type IconModule = { __iconData?: { node?: IconNode } };

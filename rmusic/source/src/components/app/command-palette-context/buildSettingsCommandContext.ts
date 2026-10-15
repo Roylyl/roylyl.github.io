@@ -146,9 +146,6 @@ export const buildSettingsCommandContext = (
         toggleAlwaysShowTrackSwitchButtons: () => chrome.handleToggleAlwaysShowTrackSwitchButtons(
             !usePlayerChromeSettingsStore.getState().alwaysShowTrackSwitchButtons,
         ),
-        toggleAlwaysShowMainWindowTitlebar: () => chrome.handleToggleAlwaysShowMainWindowTitlebar(
-            !usePlayerChromeSettingsStore.getState().alwaysShowMainWindowTitlebar,
-        ),
         toggleHideFullscreenButton: () => chrome.handleToggleHideFullscreenButton(
             !usePlayerChromeSettingsStore.getState().hideFullscreenButton,
         ),

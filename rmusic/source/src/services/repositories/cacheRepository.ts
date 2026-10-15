@@ -1,4 +1,5 @@
 import type { Table } from 'dexie';
+import { isDownloadableCacheKey, summarizeDownloadableCacheEntries } from '../cacheCleanupPolicy';
 import {
   appDatabase,
   LOCAL_LIBRARY_ARTIST_SPLIT_MARKER_KEY,
@@ -189,20 +190,8 @@ export const getBrowserCacheUsage = async (): Promise<number> => {
 };
 
 export const getBrowserCacheUsageByCategory = async () => {
-  const usage = { playlist: 0, lyrics: 0, cover: 0, media: 0, analysis: 0, mediaCount: 0 };
-  const entries = (await Promise.all(CACHE_TABLE_NAMES.map(name => getTable(name).toArray()))).flat();
-  entries.forEach(entry => {
-    const size = getEntrySize(entry);
-    if (matchesCategory(entry.key, 'playlist') || USER_CACHE_KEYS.has(entry.key)) usage.playlist += size;
-    else if (matchesCategory(entry.key, 'lyrics')) usage.lyrics += size;
-    else if (matchesCategory(entry.key, 'cover')) usage.cover += size;
-    else if (matchesCategory(entry.key, 'analysis')) usage.analysis += size;
-    else if (matchesCategory(entry.key, 'media')) {
-      usage.media += size;
-      if (entry.key.startsWith('audio_')) usage.mediaCount += 1;
-    }
-  });
-  return usage;
+  const entries = await readCacheEntriesByKey(key => isDownloadableCacheKey(key));
+  return summarizeDownloadableCacheEntries(entries);
 };
 
 export const clearBrowserCacheByCategory = async (category: CacheCategory): Promise<void> => {

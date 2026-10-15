@@ -1,5 +1,6 @@
 import AppUpdateSection from './AppUpdateSection';
-import React from 'react';
+import React, { useSyncExternalStore } from 'react';
+import { getAudioCacheStatus, resumeAudioCaching, subscribeAudioCacheStatus } from '../../../services/cacheRuntime';
 import { AudioWaveform, Command, Database, Disc3, FolderOpen, HardDrive, Layers, Loader2, Pencil, PlayCircle, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { Theme } from '../../../types';
@@ -63,6 +64,7 @@ const StorageSettingsSection: React.FC<StorageSettingsSectionProps> = ({
     useInsetCacheRows = false,
 }) => {
     const { t } = useTranslation();
+    const audioCacheStatus = useSyncExternalStore(subscribeAudioCacheStatus, getAudioCacheStatus, getAudioCacheStatus);
     const cacheRowClass = useInsetCacheRows
         ? `flex items-center justify-between p-3 rounded-xl border ${settingsCardClass}`
         : 'flex items-center justify-between bg-white/5 p-3 rounded-xl border border-white/5';
@@ -90,7 +92,7 @@ const StorageSettingsSection: React.FC<StorageSettingsSectionProps> = ({
                     <Database size={14} /> {t('options.cacheDetails') || 'Cache Storage'}
                     <button
                         onClick={onClearAll}
-                        disabled={isCleaning === 'all'}
+                        disabled={isCleaning !== null}
                         className={`ml-auto text-xs font-normal normal-case tracking-normal px-2 py-1 hover:bg-white/10 rounded-lg ${errorTextColor} opacity-60 hover:opacity-100 transition-all disabled:opacity-20 flex items-center gap-1`}
                     >
                         {isCleaning === 'all' ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />}
@@ -98,7 +100,7 @@ const StorageSettingsSection: React.FC<StorageSettingsSectionProps> = ({
                     </button>
                 </h3>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {cacheItems.map((item) => (
                         <div key={item.id} className={cacheRowClass}>
                             <div className="flex items-center gap-3">
@@ -139,7 +141,10 @@ const StorageSettingsSection: React.FC<StorageSettingsSectionProps> = ({
                         </div>
                         <button
                             onClick={() => onToggleMediaCache(!enableMediaCache)}
-                            className={`w-12 h-6 rounded-full p-1 transition-colors ${!enableMediaCache ? toggleOffBackgroundClass : ''}`}
+                            role="switch"
+                            aria-checked={enableMediaCache}
+                            aria-label={t('options.enableMediaCache')}
+                            className={`w-12 h-6 shrink-0 rounded-full p-1 transition-colors ${!enableMediaCache ? toggleOffBackgroundClass : ''}`}
                             style={{ backgroundColor: enableMediaCache ? theme?.secondaryColor || 'rgba(114, 119, 134, 1)' : undefined }}
                         >
                             <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${enableMediaCache ? 'translate-x-6' : 'translate-x-0'}`} />
@@ -184,7 +189,7 @@ const StorageSettingsSection: React.FC<StorageSettingsSectionProps> = ({
                     )}
 
                     {(
-                        <div className="pt-3 border-t border-white/10 flex items-center justify-between gap-4">
+                        <div className="pt-3 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <div className="space-y-1">
                                 <div className="text-sm font-medium flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
                                     <HardDrive size={14} />
@@ -208,6 +213,15 @@ const StorageSettingsSection: React.FC<StorageSettingsSectionProps> = ({
                     )}
 
                     <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{t('options.cachePolicyHint')}</p>
+                    {enableMediaCache && audioCacheStatus === 'storage-full' && (
+                        <div className="rounded-xl border border-amber-500/40 p-3 space-y-3" role="status">
+                            <p className="text-sm" style={{ color: 'var(--text-primary)' }}>{t('options.cacheStorageFull')}</p>
+                            <button type="button" onClick={resumeAudioCaching} disabled={isCleaning !== null}
+                                className="min-h-11 rounded-lg border px-3 py-2 text-sm disabled:opacity-50">
+                                {t('options.cacheResume')}
+                            </button>
+                        </div>
+                    )}
                     <div className="pt-3 border-t border-white/10 flex justify-between items-center text-xs opacity-80">
                         <span>{t('options.cachedSongsCount') || 'Cached Songs'}:</span>
                         <span className="font-mono">{mediaCount} · {cacheSizes.media}</span>

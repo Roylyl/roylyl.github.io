@@ -2,6 +2,8 @@ import { appDatabase } from './appDatabase';
 import { getFromCache, removeFromCache } from './db';
 import { isBlob } from '../utils/blobGuards';
 import { useAudioSettingsStore } from '../stores/useAudioSettingsStore';
+import { getAudioCacheStatus, getResourceCacheGeneration, pauseAudioCaching, resumeAudioCaching } from './cacheRuntime';
+import { writeWithQuotaRecovery } from './cacheQuota';
 
 /**
  * The ceiling the desktop cache is pruned back to after each write, in bytes.
@@ -13,25 +15,30 @@ import { useAudioSettingsStore } from '../stores/useAudioSettingsStore';
 const cacheLimitBytes = () =>
   useAudioSettingsStore.getState().mediaCacheLimitGb * 1024 * 1024 * 1024;
 
-const trimBrowserAudioCache = async () => {
+const trimBrowserAudioCache = async (incoming?: { key: string; size: number }, reclaimBytes = 0) => {
   const limit = cacheLimitBytes();
-  if (!limit) return;
+  if (!limit && !reclaimBytes) return;
   const table = appDatabase.media_cache;
   await appDatabase.transaction('rw', table, async () => {
-    const entries = (await table.toArray()).filter(entry => entry.key.startsWith('audio_') && isBlob(entry.data));
-    let total = entries.reduce((sum, entry) => sum + (entry.data as Blob).size, 0);
+    const entries = (await table.toArray()).filter(entry => entry.key.startsWith('audio_')
+      && entry.key !== incoming?.key && isBlob(entry.data));
+    let total = entries.reduce((sum, entry) => sum + (entry.data as Blob).size, incoming?.size ?? 0);
+    let reclaimed = 0;
     entries.sort((a, b) => a.timestamp - b.timestamp);
     for (const entry of entries) {
-      if (total <= limit) break;
+      if ((!limit || total <= limit) && reclaimed >= reclaimBytes) break;
       await table.delete(entry.key);
       total -= (entry.data as Blob).size;
+      reclaimed += (entry.data as Blob).size;
     }
   });
 };
 useAudioSettingsStore.subscribe((state, previous) => {
   if (state.mediaCacheLimitGb !== previous.mediaCacheLimitGb) {
-    void trimBrowserAudioCache().catch(error => console.warn('[Cache] Could not enforce cache limit', error));
+    void trimBrowserAudioCache().then(resumeAudioCaching)
+      .catch(error => console.warn('[Cache] Could not enforce cache limit', error));
   }
+  if (!previous.enableMediaCache && state.enableMediaCache) resumeAudioCaching();
 });
 
 interface ElectronAudioCacheEntry {
@@ -59,6 +66,7 @@ const toBlob = (entry: ElectronAudioCacheEntry): Blob | null => {
 };
 
 export async function getCachedAudioBlob(cacheKey: string): Promise<Blob | null> {
+  const generation = getResourceCacheGeneration();
   if (isElectronAudioCacheAvailable()) {
     const electronEntry = await window.electron!.getAudioCache(cacheKey);
     const electronBlob = toBlob(electronEntry);
@@ -75,12 +83,12 @@ export async function getCachedAudioBlob(cacheKey: string): Promise<Blob | null>
     return null;
   }
   const indexedDbBlob = indexedDbValue;
-  await appDatabase.media_cache.update(cacheKey, { timestamp: Date.now() });
+  // A bookkeeping write failing must not make already-cached audio unplayable offline.
+  await appDatabase.media_cache.update(cacheKey, { timestamp: Date.now() }).catch(() => undefined);
 
   if (isElectronAudioCacheAvailable()) {
     try {
-      await saveAudioBlob(cacheKey, indexedDbBlob);
-      await removeFromCache(cacheKey);
+      if (await saveAudioBlob(cacheKey, indexedDbBlob, generation)) await removeFromCache(cacheKey);
     } catch (error) {
       console.warn('[AudioCache] Failed to migrate IndexedDB audio cache to Electron file cache', error);
     }
@@ -120,19 +128,44 @@ export function onAudioCached(listener: (cacheKey: string) => void): () => void 
   return () => { cacheWriteListeners.delete(listener); };
 }
 
-export async function saveAudioBlob(cacheKey: string, blob: Blob): Promise<void> {
+let audioWriteQueue: Promise<unknown> = Promise.resolve();
+
+export async function saveAudioBlob(
+  cacheKey: string,
+  blob: Blob,
+  generation = getResourceCacheGeneration(),
+): Promise<boolean> {
   if (!isBlob(blob)) {
     throw new TypeError('Audio cache only accepts Blob values');
   }
+  // Two prefetch workers share one quota recovery attempt at a time.
+  const operation = audioWriteQueue.then(() => saveAudioBlobNow(cacheKey, blob, generation));
+  audioWriteQueue = operation.catch(() => undefined);
+  return operation;
+}
+
+async function saveAudioBlobNow(cacheKey: string, blob: Blob, generation: number): Promise<boolean> {
+  if (getAudioCacheStatus() !== 'ready' || generation !== getResourceCacheGeneration()) return false;
   if (isElectronAudioCacheAvailable()) {
     const buffer = await blob.arrayBuffer();
+    if (generation !== getResourceCacheGeneration()) return false;
     await window.electron!.saveAudioCache(cacheKey, buffer, blob.type || 'audio/mpeg', cacheLimitBytes());
   } else {
     const limit = cacheLimitBytes();
-    if (limit && blob.size > limit) return;
-    await appDatabase.media_cache.put({ key: cacheKey, data: blob, timestamp: Date.now() });
-    await trimBrowserAudioCache();
+    if (limit && blob.size > limit) return false;
+    const incoming = { key: cacheKey, size: blob.size };
+    await trimBrowserAudioCache(incoming);
+    if (generation !== getResourceCacheGeneration()) return false;
+    await writeWithQuotaRecovery(
+      async () => {
+        if (generation !== getResourceCacheGeneration()) return;
+        await appDatabase.media_cache.put({ key: cacheKey, data: blob, timestamp: Date.now() });
+      },
+      () => trimBrowserAudioCache(incoming, blob.size),
+      pauseAudioCaching,
+    );
   }
+  if (generation !== getResourceCacheGeneration()) return false;
 
   // After the write, and over a copy: a listener that throws must not fail a write that has already
   // happened, and one that unsubscribes itself must not disturb the iteration it is inside.
@@ -143,4 +176,5 @@ export async function saveAudioBlob(cacheKey: string, blob: Blob): Promise<void>
       console.warn('[AudioCache] a cache-write listener threw', error);
     }
   }
+  return true;
 }

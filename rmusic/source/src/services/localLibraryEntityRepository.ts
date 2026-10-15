@@ -35,7 +35,7 @@ export const invalidateLocalLibraryCatalogSnapshot = (): void => {
   cachedCatalogSnapshot = null;
 };
 
-// storagemutated 在写事务提交后触发，覆盖 put / bulkPut / delete / clear，也覆盖 clearAllData 删库重建
+// storagemutated 在写事务提交后触发，覆盖 put / bulkPut / delete / clear。
 // （重建时 Dexie 以全部表为范围触发一次）和其它标签页经 BroadcastChannel 传来的写入。
 // 在提交后而不是写入时失效：写入时失效的话，提交前开始的读还会把旧数据重新放回缓存。
 // 页面从 bfcache 恢复时 Dexie 发的是 { all }，不带表名，期间别的标签页可能写过目录，同样要失效。
