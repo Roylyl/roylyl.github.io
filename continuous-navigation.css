@@ -25,7 +25,7 @@ html.detail-shell-open body { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .detail-shell { transition: none; }
 }
-/* No loading interstitial: the iframe is usable as its document renders. */
+/* Keep the previous page visible while the next one loads. */
 .detail-load-error {
   position: absolute;
   z-index: 1;
@@ -45,6 +45,18 @@ html.detail-shell-open body { overflow: hidden; }
 }
 .detail-load-error[hidden] { display: none; }
 .detail-load-error p { margin: 0; }
+.detail-load-error .button {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 999px;
+  background: rgba(255,255,255,.07);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.detail-load-error .button:hover { background: rgba(255,255,255,.13); }
+.detail-load-error .button:focus-visible { outline: 3px solid #69c9ff; outline-offset: 3px; }
 
 .detail-shell { background: transparent; }
 .detail-shell.has-page { background: #05070b; }

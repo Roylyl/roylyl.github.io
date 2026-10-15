@@ -225,3 +225,35 @@ test('an interrupted session restore cannot mute a later explicit playback', asy
   assert.equal(app.background.muted, false);
   assert.equal(app.attributes.get('aria-pressed'), 'true');
 });
+
+test('starting either native audio source stops active performance videos', async () => {
+  const app = page();
+  let resets = 0;
+  app.window.siteVideoPlayers = { stopAll: () => { resets++; } };
+  await app.startBackground();
+  assert.equal(resets, 1);
+  app.startPreview();
+  assert.equal(resets, 2);
+  app.previews[0].pause();
+  app.document.emit('play', { target: app.previews[0] }, true);
+  assert.equal(resets, 2, 'stale play events must not reset a newer video');
+});
+
+test('cross-origin iframe interaction delegates to the video coordinator and stops native audio', async () => {
+  const app = page();
+  await app.startBackground();
+  app.startPreview();
+  const frame = { matches: selector => selector === '.video-grid iframe' };
+  let activated;
+  app.window.siteVideoPlayers = {
+    activate(value) {
+      activated = value;
+      app.window.siteBackgroundMusic.interruptForVideo();
+    }
+  };
+  app.document.activeElement = frame;
+  app.window.emit('blur');
+  assert.equal(activated, frame);
+  assert.equal(app.background.paused, true);
+  assert.equal(app.previews[0].paused, true);
+});

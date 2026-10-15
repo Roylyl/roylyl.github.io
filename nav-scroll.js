@@ -1,27 +1,59 @@
 (() => {
   const pages = new Set(['/', '/index.html', '/soundshare.html', '/ultrasonic.html', '/philosophy.html', '/other-projects.html']);
   const pendingKey = 'roylyl.navigation-target';
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const scrollTarget = (hash, smooth = true) => {
     let target;
     try { target = document.getElementById(decodeURIComponent(hash.slice(1))); } catch (_) {}
     if (!target) return;
     window.dispatchEvent(new Event('site:close-menu'));
-    target.scrollIntoView({ behavior: smooth ? 'smooth' : 'instant' });
+    target.scrollIntoView({ behavior: smooth && !reducedMotion.matches ? 'smooth' : 'instant' });
     if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
     target.focus({ preventScroll: true });
   };
   if (window.parent === window) {
+    const initialHash = location.hash;
+    const pagePath = location.pathname;
+    const navigationType = performance.getEntriesByType('navigation')[0]?.type;
+    const savedState = history.state;
+    let restorePending = true;
+    let scrollTimer;
+    const saveScroll = () => {
+      if (restorePending || document.documentElement.classList.contains('detail-shell-open')) return;
+      history.replaceState({ ...history.state, pagePath, pageScrollY: window.scrollY }, '', location.href);
+    };
     history.scrollRestoration = 'manual';
-    if (location.hash) history.replaceState(history.state, '', location.pathname + location.search);
+    // Remember direct links before keeping the address bar free of fragments.
+    if (initialHash) history.replaceState(history.state, '', location.pathname + location.search);
     window.addEventListener('pageshow', (event) => {
-      if (event.persisted) return;
+      if (event.persisted) { restorePending = false; return; }
       let pending;
       try { pending = JSON.parse(sessionStorage.getItem(pendingKey)); sessionStorage.removeItem(pendingKey); } catch (_) {}
-      const reload = performance.getEntriesByType('navigation')[0]?.type === 'reload';
       requestAnimationFrame(() => requestAnimationFrame(() => {
-        window.scrollTo({ top: 0, behavior: 'instant' });
-        if (!reload && pending?.path === location.pathname) scrollTarget(pending.hash, false);
+        const restoredScroll = savedState?.pagePath === pagePath ? savedState.pageScrollY
+          : savedState?.detail ? savedState.detailScrollY : savedState?.homeScrollY;
+        const pendingHash = navigationType !== 'reload' && pending?.path === pagePath ? pending.hash : '';
+        if (initialHash || pendingHash) scrollTarget(initialHash || pendingHash, false);
+        else if (['reload', 'back_forward'].includes(navigationType) && Number.isFinite(restoredScroll)) {
+          window.scrollTo({ top: restoredScroll, behavior: 'instant' });
+        } else window.scrollTo({ top: 0, behavior: 'instant' });
+        restorePending = false;
+        saveScroll();
       }));
+    });
+    window.addEventListener('scroll', () => {
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(saveScroll, 120);
+    }, { passive: true });
+    window.addEventListener('pagehide', saveScroll);
+    // The home shell owns its history; standalone detail documents own theirs.
+    if (!document.querySelector('.site-header')) window.addEventListener('popstate', (event) => {
+      if (location.hash) {
+        scrollTarget(location.hash, false);
+        history.replaceState(history.state, '', location.pathname + location.search);
+      } else if (event.state?.pagePath === pagePath && Number.isFinite(event.state.pageScrollY)) {
+        window.scrollTo({ top: event.state.pageScrollY, behavior: 'instant' });
+      }
     });
   }
   // Keep section IDs for scrolling without adding fragments or history entries.

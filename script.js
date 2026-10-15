@@ -146,15 +146,16 @@ if (mobileMenuToggle && header && nav) {
 
 // Keep contact actions usable without a second device or a clipboard permission.
 const socialLabels = {
-  'zh-CN': { copy: '复制账号', open: '打开平台', copied: '账号已复制', failed: '无法自动复制，请长按或选中上方账号复制', zoom: '放大二维码' },
-  'zh-TW': { copy: '複製帳號', open: '開啟平台', copied: '帳號已複製', failed: '無法自動複製，請長按或選取上方帳號複製', zoom: '放大二維碼' },
-  en: { copy: 'Copy ID', open: 'Open profile', copied: 'Account copied', failed: 'Select or long-press the account above to copy it', zoom: 'Enlarge QR code' }
+  'zh-CN': { copy: '复制账号', open: '打开平台', copied: '账号已复制', failed: '无法自动复制，请长按或选中上方账号复制', zoom: '放大二维码', emailCopy: '复制邮箱', emailCopied: '邮箱已复制', emailFailed: '无法自动复制，请长按或选中邮箱地址复制' },
+  'zh-TW': { copy: '複製帳號', open: '開啟平台', copied: '帳號已複製', failed: '無法自動複製，請長按或選取上方帳號複製', zoom: '放大二維碼', emailCopy: '複製信箱', emailCopied: '信箱已複製', emailFailed: '無法自動複製，請長按或選取信箱地址複製' },
+  en: { copy: 'Copy ID', open: 'Open profile', copied: 'Account copied', failed: 'Select or long-press the account above to copy it', zoom: 'Enlarge QR code', emailCopy: 'Copy email', emailCopied: 'Email copied', emailFailed: 'Select or long-press the email address to copy it' }
 };
 const socialStatus = document.querySelector('.social-status');
 let statusTimer;
 function updateSocialLabels() {
   const labels = socialLabels[document.documentElement.lang] || socialLabels['zh-CN'];
   document.querySelectorAll('.social-copy').forEach((button) => { button.textContent = labels.copy; });
+  document.querySelectorAll('.email-copy').forEach((button) => { button.textContent = labels.emailCopy; });
   document.querySelectorAll('.social-direct').forEach((link) => { link.querySelector('.icon-label-text').textContent = labels.open; });
   document.querySelectorAll('.qr-toggle').forEach((button) => {
     const title = button.closest('.social-card').querySelector('h3').textContent;
@@ -162,18 +163,21 @@ function updateSocialLabels() {
     button.setAttribute('aria-haspopup', 'dialog');
   });
 }
-document.querySelectorAll('.social-copy').forEach((button) => button.addEventListener('click', async () => {
-  const labels = socialLabels[document.documentElement.lang] || socialLabels['zh-CN'];
-  let message = labels.copied;
+document.querySelectorAll('.social-copy, .email-copy').forEach((button) => button.addEventListener('click', async () => {
+  const isEmail = button.classList.contains('email-copy');
+  let copied = true;
   try { await navigator.clipboard.writeText(button.dataset.copy); }
   catch (_) {
+    copied = false;
+    const text = isEmail ? document.querySelector('.email-address') : button.closest('.social-card').querySelector('.social-meta p');
     const range = document.createRange();
-    range.selectNodeContents(button.closest('.social-card').querySelector('.social-meta p'));
+    range.selectNodeContents(text);
     const selection = window.getSelection();
-    selection.removeAllRanges();
-    selection.addRange(range);
-    message = labels.failed;
+    selection?.removeAllRanges();
+    selection?.addRange(range);
   }
+  const labels = socialLabels[document.documentElement.lang] || socialLabels['zh-CN'];
+  const message = isEmail ? (copied ? labels.emailCopied : labels.emailFailed) : (copied ? labels.copied : labels.failed);
   clearTimeout(statusTimer);
   socialStatus.textContent = message;
   statusTimer = setTimeout(() => { socialStatus.textContent = ''; }, 4500);
@@ -224,7 +228,7 @@ if (socialCarousel) {
     const gap = Number.parseFloat(getComputedStyle(socialTrack).gap) || 0;
     return card.getBoundingClientRect().width + gap;
   };
-  const socialBehavior = () => 'smooth';
+  const socialBehavior = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth';
   socialPrev?.addEventListener('click', () => socialTrack?.scrollBy({ left: -socialStep(), behavior: socialBehavior() }));
   socialNext?.addEventListener('click', () => socialTrack?.scrollBy({ left: socialStep(), behavior: socialBehavior() }));
   socialTrack?.addEventListener('scroll', updateSocialArrows, { passive: true });

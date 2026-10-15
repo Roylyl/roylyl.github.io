@@ -69,6 +69,7 @@
       if (preview.paused || !preview.matches?.('audio[data-project-audio]')) return;
       // Detail frames are same-origin; stop the shared track synchronously.
       window.parent.siteBackgroundMusic?.mute();
+      window.parent.siteVideoPlayers?.stopAll();
       render(false);
       document.querySelectorAll('audio[data-project-audio]').forEach((other) => {
         if (other !== preview) other.pause();
@@ -104,6 +105,11 @@
     document.querySelector('.detail-shell-frame')?.contentDocument?.querySelectorAll(projectAudioSelector).forEach((preview) => {
       if (preview !== except) preview.pause();
     });
+  }
+
+  function interruptForVideo() {
+    mute();
+    pauseProjectAudio();
   }
 
   async function playFromState(state) {
@@ -160,10 +166,12 @@
     if (playing.paused) return;
     if (playing === audio) {
       pauseProjectAudio();
+      window.siteVideoPlayers?.stopAll();
     } else if (playing.matches?.(projectAudioSelector)) {
       if (!homeVisible) { playing.pause(); return; }
       mute();
       pauseProjectAudio(playing);
+      window.siteVideoPlayers?.stopAll();
     }
   }, true);
   window.addEventListener('site:visibility-change', (event) => {
@@ -185,12 +193,12 @@
     }
   });
 
-  // Cross-origin players do not expose their internal controls to the parent page.
-  // Focusing one of their iframes is the reliable signal that the visitor clicked it.
+  // Cross-origin focus is a user-interaction signal, not an exact playback state.
+  // The video coordinator resets other embeds; native audio keeps its position.
   window.addEventListener('blur', () => {
     if (document.activeElement?.matches('.video-grid iframe')) {
-      mute();
-      pauseProjectAudio();
+      if (window.siteVideoPlayers) window.siteVideoPlayers.activate(document.activeElement);
+      else interruptForVideo();
     }
   });
   window.addEventListener('site-language-change', () => render(!audio.paused && !audio.muted));
@@ -198,5 +206,5 @@
   audio.addEventListener('timeupdate', () => saveState(!audio.paused && !audio.muted));
 
   playFromState(readState());
-  window.siteBackgroundMusic = { mute, toggle: togglePlayback };
+  window.siteBackgroundMusic = { mute, toggle: togglePlayback, interruptForVideo };
 })();
