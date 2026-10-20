@@ -1,0 +1,24 @@
+.github-stats { margin-top: 24px; max-width: 680px; }
+.github-stats-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.github-stat { display: inline-flex; align-items: stretch; min-height: 32px; max-width: 100%; background: #181b34; color: #f5f5fa; text-decoration: none; line-height: 1; }
+.github-stat-name { display: inline-flex; align-items: center; gap: 7px; padding: 9px 10px; }
+.github-stat-icon { flex: 0 0 16px; }
+.github-stat [data-stat-label] { font: 500 11px/1.2 ui-sans-serif, system-ui, sans-serif; letter-spacing: .12em; }
+.github-stat strong { display: inline-flex; align-items: center; justify-content: center; padding: 8px 11px; min-width: 44px; background: #30c998; color: #112c28; font: 800 13px/1.2 ui-sans-serif, system-ui, sans-serif; font-variant-numeric: tabular-nums; letter-spacing: .08em; }
+.github-stat [data-stat="stars"] { background: #ffc326; color: #332b14; }
+.github-stat [data-stat="followers"] { background: #21c7df; color: #082d35; }
+.github-stat:hover { filter: brightness(1.12); }
+.github-stat:focus-visible { outline: 2px solid #2997ff; outline-offset: 3px; }
+@media (max-width: 700px) {
+  .github-stats-grid { flex-wrap: nowrap; gap: 5px; }
+  .github-stat { min-height: 26px; }
+  .github-stat-name { gap: 3px; padding: 6px 4px; }
+  .github-stat-icon { width: 12px; height: 12px; flex-basis: 12px; }
+  .github-stat [data-stat-label] { font-size: 8px; letter-spacing: .02em; }
+  .github-stat strong { min-width: 0; padding: 5px 4px; font-size: 10px; letter-spacing: 0; }
+}
+@media (max-width: 350px) {
+  .github-stats-grid { gap: 4px; }
+  .github-stat-name { padding-inline: 4px; gap: 3px; }
+  .github-stat strong { padding-inline: 4px; }
+}
