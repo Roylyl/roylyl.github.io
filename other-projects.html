@@ -53,7 +53,7 @@
         <p class="project-tag">TOOL 01 · AUDIO VALIDATION</p>
         <h2 data-i18n-static>SoundTest</h2>
         <p class="project-subtitle">移动端声音模型测试</p>
-        <p>在iPhone/iPad测试声音事件与环境场景模型，支持录音、批量WAV测试和事件时间线。</p>
+        <p>与ASRtest共同构成端侧音频测试平台，集成6组声音事件/场景模型。支持录音、WAV批测与日志，完成EfficientAT的ONNX适配、Accelerate前处理及与PyTorch参考实现的一致性校验。</p>
         <a class="tool-source-link" href="https://github.com/Roylyl/SoundTest" target="_blank" rel="noopener noreferrer"><span data-i18n-static>SoundTest</span><span><span class="icon-label"><span class="icon-label-text">详情·源码</span><svg class="site-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M7 7h10v10"/></svg></span></span></a>
       </div>
     </article>
@@ -62,7 +62,7 @@
         <p class="project-tag">TOOL 02 · AUDIO VALIDATION</p>
         <h2 data-i18n-static>ASRtest</h2>
         <p class="project-subtitle">本地语音识别测试</p>
-        <p>在iPhone/iPad对比多种语音识别模型，支持流式识别、文件转写和批量WAV测试。</p>
+        <p>与SoundTest共用音频测试思路，集成8组ASR模型，支持流式/非流式识别及最多100份WAV批测。解决原生运行库链接与符号冲突，将Fun-ASR-Nano封装为独立XCFramework/C接口。</p>
         <a class="tool-source-link" href="https://github.com/Roylyl/ASRtest" target="_blank" rel="noopener noreferrer"><span data-i18n-static>ASRtest</span><span><span class="icon-label"><span class="icon-label-text">详情·源码</span><svg class="site-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M7 7h10v10"/></svg></span></span></a>
       </div>
     </article>
@@ -85,6 +85,7 @@
         <h2 data-i18n-static>MacPlay</h2>
         <p class="project-subtitle">Mac上的CarPlay接收端</p>
         <p>通过USB或共用Wi-Fi接收iPhone的CarPlay画面，支持音频设备选择、分辨率设置与系统媒体控制。</p>
+        <p>针对歌词刷新误判切歌、旧封面覆盖新曲目的问题，实现歌曲身份关联与封面去重处理。</p>
         <div class="project-badges">
           <a href="https://github.com/Roylyl/MacPlay/releases" target="_blank" rel="noopener noreferrer" aria-label="MacPlay发行附件累计下载量"><img src="https://img.shields.io/github/downloads/Roylyl/MacPlay/total?style=flat-square&amp;label=downloads&amp;color=2563eb&amp;cacheSeconds=300" alt="MacPlay发行附件累计下载量" height="20" loading="lazy" decoding="async" /></a>
           <a href="https://github.com/Roylyl/MacPlay/stargazers" target="_blank" rel="noopener noreferrer" aria-label="MacPlay的GitHub Star数"><img src="https://img.shields.io/github/stars/Roylyl/MacPlay?style=flat-square&amp;label=stars&amp;color=2563eb&amp;cacheSeconds=300" alt="MacPlay的GitHub Star数" height="20" loading="lazy" decoding="async" /></a>
@@ -110,7 +111,7 @@
         <p class="project-tag">工具06 · Codex技能</p>
         <h2 data-i18n-static>README<wbr>Writer</h2>
         <p class="project-subtitle">README写作与检查技能</p>
-        <p>面向Codex整理项目介绍、功能与使用步骤，提供视觉规范、证据记录与离线文档校验。</p>
+        <p>可复用的Codex文档技能与Python校验工具，整理项目介绍、功能与使用步骤，并检查链接、锚点、徽标及证据引用。</p>
         <a class="tool-source-link" href="https://github.com/Roylyl/READMEWriter" target="_blank" rel="noopener noreferrer"><span data-i18n-static>READMEWriter</span><span><span class="icon-label"><span class="icon-label-text">详情·源码</span><svg class="site-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M7 7h10v10"/></svg></span></span></a>
       </div>
     </article>
@@ -119,7 +120,7 @@
         <p class="project-tag">TOOL 07 · WEB EXTENSION</p>
         <h2 data-i18n-static>Deer<wbr>Web<wbr>Translator</h2>
         <p class="project-subtitle">网页原位翻译扩展</p>
-        <p>在当前网页阅读译文，支持原文与双语切换及可配置的模型服务，设计参考KISS Translator与TWP。</p>
+        <p>Chrome双语翻译扩展，支持多供应商API与Ollama，处理动态网页、缓存去重与失败重试。设计参考KISS Translator与TWP。</p>
         <a class="tool-source-link" href="https://github.com/Roylyl/DeerWebTranslator" target="_blank" rel="noopener noreferrer"><span data-i18n-static>DeerWebTranslator</span><span><span class="icon-label"><span class="icon-label-text">详情·源码</span><svg class="site-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M7 7h10v10"/></svg></span></span></a>
       </div>
     </article>
@@ -145,7 +146,7 @@
     <div class="p-return"><a class="p-home-link" href="index.html#other-projects"><svg class="site-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5m7-7-7 7 7 7"/></svg><span>返回主页</span></a></div>
   </main>
   <footer class="p-footer wrap"><span>© <span id="pYear"></span> 罗宇伦Roy Luo</span><span>ENGINEERING TOOLS &amp; SOFTWARE</span><span class="music-copyright">背景音乐仅用于个人非商业展示 · 音乐版权归原权利人所有</span></footer>
-  <script src="i18n.js?v=20261026-1"></script>
+  <script src="i18n.js?v=20261026-3"></script>
   <script src="background-music.js?v=20261015-2"></script>
   <script src="continuous-navigation.js?v=20261015-2"></script>
   <script src="philosophy.js?v=20260922-2"></script>

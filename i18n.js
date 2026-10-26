@@ -1437,6 +1437,55 @@
 
   [["MacDuo发行附件累计下载量", "MacDuo發行附件累計下載量", "MacDuo total release asset downloads"], ["MacDuo的GitHub Star数", "MacDuo的GitHub Star數", "MacDuo GitHub stars"]].forEach(([source, traditional, english]) => { cn[source] = source; tw[source] = traditional; en[source] = english; });
 
+  // Resume-aligned facts, October 2026.
+  [
+  [
+    "雷鸟创新技术（深圳）有限公司",
+    "雷鳥創新技術（深圳）有限公司",
+    "RayNeo Innovation Technology (Shenzhen) Co., Ltd."
+  ],
+  [
+    "面向iOS实机与智能眼镜端侧音频需求，搭建模型接入、批量推理、耗时统计与日志追溯流程。完成5个声音事件模型对同一批500份WAV的对照测试，形成2500条完整日志，并整理模型优势、局限与选型建议。",
+    "面向iOS實機與智能眼鏡端側音頻需求，搭建模型接入、批量推理、耗時統計與日誌追溯流程。完成5個聲音事件模型對同一批500份WAV的對照測試，形成2500條完整日誌，並整理模型優勢、局限與選型建議。",
+    "Built workflows for model integration, batch inference, timing and traceable logging for audio testing on physical iOS devices and smart-glasses applications. Compared five sound-event models on the same 500 WAV files, producing 2,500 complete logs and recommendations based on each model’s strengths and limitations."
+  ],
+  [
+    "围绕儿童智能运动陪伴机器人开展竞品与技术可行性调研，整理需求、功能优先级及MVP验收要求。设计设备与App交互、状态同步和异常反馈，制作可点击原型与联动演示；参与音视频及智能硬件拆解、功能测试和问题复现。",
+    "圍繞兒童智能運動陪伴機器人開展競品與技術可行性調研，整理需求、功能優先級及MVP驗收要求。設計設備與App互動、狀態同步和異常回饋，製作可點擊原型與聯動演示；參與音視頻及智能硬件拆解、功能測試和問題重現。",
+    "Researched competing products and technical feasibility for a children’s exercise companion robot, defining requirements, feature priorities and MVP acceptance criteria. Designed device–app interactions, state synchronization and error feedback, and built clickable prototypes and integrated demonstrations. Also contributed to hardware teardowns, functional testing and fault reproduction."
+  ],
+  [
+    "实现音源终端－蓝牙中继－多播放终端链路，覆盖A2DP输入/输出、音频缓存、独立音量与声道分配。已验证多品牌音箱、TWS耳机和头戴式耳机，支持±40ms延迟调节。",
+    "實現音源終端－藍牙中繼－多播放終端鏈路，涵蓋A2DP輸入/輸出、音頻緩存、獨立音量與聲道分配。已驗證多品牌音箱、TWS耳機和頭戴式耳機，支援±40ms延遲調節。",
+    "Implemented the source–Bluetooth relay–multiple playback device pipeline, including A2DP input/output, audio buffering, independent volume and channel assignment. Tested speakers, true wireless earbuds and over-ear headphones from multiple brands, with adjustable delay of ±40 ms."
+  ],
+  [
+    "与ASRtest共同构成端侧音频测试平台，集成6组声音事件/场景模型。支持录音、WAV批测与日志，完成EfficientAT的ONNX适配、Accelerate前处理及与PyTorch参考实现的一致性校验。",
+    "與ASRtest共同構成端側音頻測試平台，整合6組聲音事件/場景模型。支援錄音、WAV批測與日誌，完成EfficientAT的ONNX適配、Accelerate前處理及與PyTorch參考實現的一致性校驗。",
+    "Part of an on-device audio testing platform with ASRtest, integrating six groups of sound-event and acoustic-scene models. Supports recording, batch WAV tests and logging, with EfficientAT adapted to ONNX, Accelerate preprocessing and consistency checks against the PyTorch reference."
+  ],
+  [
+    "与SoundTest共用音频测试思路，集成8组ASR模型，支持流式/非流式识别及最多100份WAV批测。解决原生运行库链接与符号冲突，将Fun-ASR-Nano封装为独立XCFramework/C接口。",
+    "與SoundTest共用音頻測試思路，整合8組ASR模型，支援串流/非串流識別及最多100份WAV批測。解決原生執行庫連結與符號衝突，將Fun-ASR-Nano封裝為獨立XCFramework/C介面。",
+    "Complements SoundTest with eight ASR model groups, streaming and non-streaming recognition, and batches of up to 100 WAV files. Resolved native-library linking and symbol conflicts, and packaged Fun-ASR-Nano as a standalone XCFramework with a C interface."
+  ],
+  [
+    "Chrome双语翻译扩展，支持多供应商API与Ollama，处理动态网页、缓存去重与失败重试。设计参考KISS Translator与TWP。",
+    "Chrome雙語翻譯擴充功能，支援多供應商API與Ollama，處理動態網頁、緩存去重與失敗重試。設計參考KISS Translator與TWP。",
+    "A bilingual translation extension for Chrome supporting multiple API providers and Ollama, with dynamic-page handling, cache deduplication and retries. Design references include KISS Translator and TWP."
+  ],
+  [
+    "可复用的Codex文档技能与Python校验工具，整理项目介绍、功能与使用步骤，并检查链接、锚点、徽标及证据引用。",
+    "可重用的Codex文件技能與Python校驗工具，整理項目介紹、功能與使用步驟，並檢查連結、錨點、徽標及證據引用。",
+    "A reusable Codex documentation skill with Python validation tools for project overviews, features and setup instructions. Checks links, anchors, badges and supporting references."
+  ],
+  [
+    "针对歌词刷新误判切歌、旧封面覆盖新曲目的问题，实现歌曲身份关联与封面去重处理。",
+    "針對歌詞刷新誤判切歌、舊封面覆蓋新曲目的問題，實現歌曲身份關聯與封面去重處理。",
+    "Implemented track identity matching and artwork deduplication to prevent lyric updates from triggering false track changes and stale artwork from replacing the current cover."
+  ]
+].forEach(([source, traditional, english]) => { cn[source] = source; tw[source] = traditional; en[source] = english; });
+
   const pageTitles = {
     'other-projects.html': { 'zh-CN': '工程工具与软件项目 · 罗宇伦Roy Luo', 'zh-TW': '工程工具與軟件項目 · 羅宇倫Roy Luo', en: 'Engineering Tools & Software · Roy Luo' },
     'index.html': { 'zh-CN': '罗宇伦Roy Luo', 'zh-TW': '羅宇倫Roy Luo', en: 'Roy Luo · Engineering Portfolio' },
