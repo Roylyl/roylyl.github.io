@@ -203,9 +203,9 @@
   };
 
   const en = {
-    '个人主页': 'Personal Home',
+    '个人主页': 'Home',
     '背景音乐仅用于个人非商业展示 · 音乐版权归原权利人所有': 'Background music is used only for this non-commercial personal portfolio · Rights belong to the respective rights holders',
-    '学生工程实践者 · 音频产品探索者 · Desk Park乐队吉他手': 'Student engineer · Audio product explorer · Desk Park guitarist',
+    '学生工程实践者 · 音频产品探索者 · Desk Park乐队吉他手': 'Engineering student · Audio product development · Desk Park guitarist',
     '通过音响展调研，我开始更系统地思考音频产品、技术融合和真实使用场景。': 'Visiting audio trade shows led me to think more systematically about audio products, technology integration, and real-world use cases.',
     '欢迎交流硬件、音频产品和早期项目实践。': 'I am open to conversations about hardware, audio products, and early-stage projects.',
     '罗宇伦Roy Luo': 'Roy Luo', '← 罗宇伦Roy Luo': '← Roy Luo',
@@ -214,15 +214,15 @@
     '我是罗宇伦，湖南农业大学卓越工程师学院本科生。当前重点方向是硬件开发、嵌入式系统、样机实现与工程验证。 长期的音乐与音频实践，也让我在延迟、底噪、动态响应和交互体验上保持更敏锐的感知。': 'I am Roy Luo, an undergraduate at the College of Excellent Engineers, Hunan Agricultural University. My current focus is hardware development, embedded systems, prototyping, and engineering validation. Long-term practice in music and audio also gives me a sharper sense of latency, noise floor, dynamic response, and interaction design.',
     '查看项目': 'View projects', '联系我': 'Contact me', '硬件/嵌入式': 'Hardware/Embedded', '音乐QA': 'Music QA', '简体 · 繁體 · English': 'Simplified · Traditional · English',
     '硬件调试、样机搭建、基础PCB设计与系统联调。': 'Hardware debugging, prototype assembly, basic PCB design, and system integration.',
-    'DP音乐工作室主理人 · Desk Park乐队吉他手': 'Founder of DP Music Studio · Guitarist of Desk Park',
-    '长期乐队演出与音频设备实践，让我能从真实使用场景理解音频产品。': 'Years of live performance and hands-on audio gear practice help me understand audio products from real-world use cases.',
-    '我目前最核心的能力结构。': 'My current core capability stack.',
+    'DP音乐工作室主理人 · Desk Park乐队吉他手': 'DP Music Studio lead · Desk Park guitarist',
+    '长期乐队演出与音频设备实践，让我能从真实使用场景理解音频产品。': 'Performing in a band and working with audio equipment help me understand how audio products are used in practice.',
+    '我目前最核心的能力结构。': 'What I work with.',
     '嵌入式开发': 'Embedded Development', '硬件实现': 'Hardware Implementation', '项目推进': 'Project Delivery', '音频体验辅助': 'Audio Awareness',
     '以ESP32为主，进行蓝牙音频、基础控制逻辑与原型功能验证。': 'ESP32-centered work on Bluetooth audio, control logic, and prototype validation.',
     '样机搭建、功放电路实验、硬件调试、系统联调与现场展示。': 'Prototype assembly, amplifier experiments, hardware debugging, system integration, and live demonstrations.',
     '能够在学生项目中承担负责人角色，推进分工、验证与展示落地。': 'Able to lead student projects from task allocation and validation through to a working demonstration.',
     '长期乐队演出与设备使用，让我对延迟、底噪、动态响应等更敏感。': 'Live performance and equipment use make me more sensitive to latency, noise floor, and dynamic response.',
-    '从功能原型，到可验证的工程项目。': 'From functional prototypes to verifiable engineering projects.',
+    '从功能原型，到可验证的工程项目。': 'From working prototypes to tested systems.',
     '超声波定向扬声器': 'Ultrasonic Directional Speaker',
     '基于ESP32平台推进的定向音频项目，围绕蓝牙音频接收、样机搭建、基础硬件系统与工程验证展开。': 'A directional-audio project built around ESP32, covering Bluetooth audio reception, prototype assembly, hardware systems, and engineering validation.',
     '了解更多': 'Learn more',
@@ -244,10 +244,10 @@
     '用现金流换取研发自由与更长的技术周期': 'Use cash flow to buy R&D freedom and longer development cycles',
     '选择巨头动力不足、但足以支撑小团队的细分市场': 'Choose niches too small for giants but large enough to sustain a focused team',
     '短期务实落地，长期继续探索定向声与空间音频': 'Execute pragmatically in the short term while continuing to explore directional and spatial audio',
-    '阅读全文 →': 'Read the full philosophy →',
-    '音乐是第二主线，但依然能说明我与音频产品的关系。': 'Music is a secondary thread, but it still explains how I think about audio products.',
+    '阅读全文 →': 'Read my approach →',
+    '音乐是第二主线，但依然能说明我与音频产品的关系。': 'Music shapes how I approach audio products.',
     '乐队演出/基础音频制作/音色实践': 'Live performance/basic production/tone exploration',
-    '我长期进行乐队排练与现场演出，熟悉电吉他、效果器、监听系统和DAW工作流。这些实践也持续反哺我对音频产品、设备交互和真实使用体验的理解。': 'I have long-term experience in band rehearsals and live performance, with hands-on familiarity with electric guitars, effects, monitoring systems, and DAW workflows. This continuously informs how I understand audio products, device interaction, and real-world experience.',
+    '我长期进行乐队排练与现场演出，熟悉电吉他、效果器、监听系统和DAW工作流。这些实践也持续反哺我对音频产品、设备交互和真实使用体验的理解。': 'Through band rehearsals and live performances, I have gained hands-on experience with electric guitars, effects, monitoring systems and DAW workflows. That experience informs how I approach audio products and the way people use them.',
     '更多联系方式与社交媒体。': 'More ways to connect.', '微信': 'WeChat', '微信号：Roylyl06': 'WeChat ID: Roylyl06', '用户ID：ROYLYL06': 'User ID: ROYLYL06', '抖音': 'Douyin', '@Roylyl · 抖音号：luoyulun': '@Roylyl · Douyin ID: luoyulun', 'WHATSAPP': 'WHATSAPP',
     '如果你在寻找硬件/嵌入式方向的实习生，欢迎联系我。': 'If you are looking for a hardware or embedded-systems intern, feel free to contact me.',
     '也可以查看我的GitHub、简历与两个项目的完整介绍。': 'You can also review my GitHub, résumé, and full project pages.', '发邮件': 'Email me', '下载简历': 'Download résumé', '下载简历 ↗': 'Download résumé ↗', '下载三语简历': 'Download trilingual résumé', '下载三语简历 ↗': 'Download trilingual résumé ↗',
@@ -258,22 +258,22 @@
 
     '音享贴': 'LENGHE SoundShare', '一个面向跨生态多人蓝牙音频共享的轻量化中继设备概念。核心目标是让用户在不更换现有蓝牙设备的前提下，低成本完成多人同步听音与可视化控制。': 'A lightweight relay concept for cross-ecosystem multi-user Bluetooth audio sharing. The goal is to enable synchronized listening and visual control without forcing users to replace their existing Bluetooth devices.',
     '查看多端UI': 'Explore multi-device UI', '返回主页': 'Back to home',
-    '它不是替代现有设备，而是打通设备之间的壁垒。': 'It does not replace existing devices; it connects the gaps between them.',
+    '它不是替代现有设备，而是打通设备之间的壁垒。': 'Helping the devices you already own work together.',
     '音享贴围绕“音源终端 — 音享贴中继 — 多终端播放设备”的架构工作，强调跨品牌兼容、手动可视化校准与多设备独立控制。': 'SoundShare follows a source → relay → multi-output architecture, emphasizing cross-brand compatibility, visual manual calibration, and independent control of multiple devices.',
     '跨生态共享': 'Cross-ecosystem sharing', '连接手机或平板作为音源，再同步分发到多台蓝牙耳机或音箱。': 'Use a phone or tablet as the source and distribute audio to multiple Bluetooth headphones or speakers.',
-    '磁吸轻量形态': 'Lightweight magnetic form', '以轻量化硬件中继的思路切入，强调便携、低门槛与快速落地。': 'A lightweight hardware relay concept focused on portability, low friction, and rapid deployment.',
-    '手动毫秒级校准': 'Manual millisecond calibration', '通过可视化延迟调节解决不同设备的固有播放时差，适配民用场景。': 'Visual delay adjustment compensates for the inherent playback differences between consumer devices.',
+    '磁吸轻量形态': 'Lightweight magnetic design', '以轻量化硬件中继的思路切入，强调便携、低门槛与快速落地。': 'A lightweight hardware relay concept focused on portability, low friction, and rapid deployment.',
+    '手动毫秒级校准': 'Millisecond-level timing adjustment', '通过可视化延迟调节解决不同设备的固有播放时差，适配民用场景。': 'Visual delay adjustment compensates for the inherent playback differences between consumer devices.',
     '多端可视化控制': 'Multi-device visual control', '支持iPad、iPhone、Android、微信小程序与Apple Watch等交互形态。': 'Designed for iPad, iPhone, Android, WeChat Mini Program, and Apple Watch interfaces.',
     '多终端控制界面。': 'Control interfaces across devices.',
     '在这个项目里，UI不是装饰，而是产品逻辑的一部分：设备连接、同步校准、音量控制、状态确认都需要更直观的交互来承载。': 'In this project, UI is part of the product logic rather than decoration: connection, synchronization, volume control, and status confirmation all need clear interaction design.',
     '大屏控制总览': 'Large-screen control overview', '适合在更大视图下查看多设备状态与高级设置。': 'A larger workspace for multi-device status and advanced settings.',
     'iOS控制应用': 'iOS control app', '基于iOS开发设备连接、音量控制与播放状态管理功能。': 'Developed on iOS for device connection, volume control, and playback-status management.',
     'Android控制应用': 'Android control app', '基于Android开发设备连接、音量控制与播放状态管理功能。': 'Developed on Android for device connection, volume control, and playback-status management.',
-    '微信小程序UI': 'WeChat Mini Program UI', '轻量化跨端控制入口': 'Lightweight cross-platform control entry', '适合作为更低门槛的设备控制入口，方便用户快速连接与管理。': 'A lower-friction control entry that lets users quickly connect and manage devices.',
-    '节点音量控制': 'Node volume control', '在腕上查看与微调不同节点设备的音量状态。': 'View and fine-tune volume for different nodes from the wrist.',
+    '微信小程序UI': 'WeChat Mini Program UI', '轻量化跨端控制入口': 'Quick access to device controls', '适合作为更低门槛的设备控制入口，方便用户快速连接与管理。': 'A simple way to connect and manage devices without installing a dedicated app.',
+    '节点音量控制': 'Per-device volume control', '在腕上查看与微调不同节点设备的音量状态。': 'Check and adjust each device’s volume from your wrist.',
     '延迟与同步提示': 'Latency and sync status', '在更轻量的场景里查看双设备同步状态与延迟信息。': 'Check two-device sync state and latency information in a lightweight interface.',
     '围绕真实场景来定义产品价值。': 'Define product value around real scenarios.',
-    '情侣/朋友影音共享': 'Couples/friends media sharing', '多人使用各自耳机同步观影或听音，兼顾私密性与陪伴感。': 'Multiple people can use their own headphones for synchronized viewing or listening while keeping the experience private and shared.',
+    '情侣/朋友影音共享': 'Shared listening with a partner or friend', '多人使用各自耳机同步观影或听音，兼顾私密性与陪伴感。': 'Multiple people can use their own headphones for synchronized viewing or listening while keeping the experience private and shared.',
     '居家/聚会K歌': 'Home/party karaoke', '同时连接耳机与音箱，在监听与氛围之间找到更轻量的平衡。': 'Connect headphones and speakers at the same time to balance monitoring and room ambience.',
     '户外多音箱组网': 'Outdoor multi-speaker setup', '在露营、团建、骑行等活动中临时搭建同步音响系统。': 'Create a temporary synchronized speaker setup for camping, group events, cycling, and similar activities.',
     '从概念、交互到落地路径，继续打磨。': 'Refining the path from concept and interaction to implementation.',
@@ -283,12 +283,12 @@
     '一个围绕定向音频传播展开的工程项目。我在项目中承担负责人角色，关注硬件系统搭建、ESP32功能验证、样机调试与整体推进。': 'An engineering project exploring directional audio propagation. I serve as project lead, focusing on hardware-system construction, ESP32 validation, prototype debugging, and overall project execution.',
     '查看工程细节': 'View engineering details', '项目概览': 'Project overview', '项目定位': 'Positioning', '定向音频原型验证': 'Directional-audio prototype validation',
     '通过超声波阵列与相关音频链路，探索“声音更有方向”的实现路径，面向公共展示与个人音频体验场景。': 'Explore ways to make sound more directional through ultrasonic arrays and the associated audio chain, targeting public displays and personal audio scenarios.',
-    '我的角色': 'My role', '项目负责人': 'Project lead', '负责整体推进、任务分工与展示沟通，同时参与硬件系统搭建、蓝牙音频功能验证与样机调试。': 'Responsible for overall execution, task allocation, and presentation, while also participating in hardware-system construction, Bluetooth audio validation, and prototype debugging.',
-    '当前阶段': 'Current stage', '第一代Demo': 'First-generation demo', '已完成基础样机开发，实现蓝牙音频接收与基础定向发声，并完成展示与联调验证。': 'A first prototype has been completed with Bluetooth audio reception and basic directional output, followed by demo and integration validation.',
-    '我在工程层面做了什么。': 'What I contributed on the engineering side.', '系统与样机': 'System & prototype', '参与超声波定向扬声器系统搭建': 'Participated in ultrasonic directional speaker system assembly', '进行样机组装、功能验证与现场联调': 'Prototype assembly, functional validation, and on-site integration', '围绕真实展示场景推进可运行Demo': 'Built a runnable demo around real presentation scenarios',
+    '我的角色': 'My role', '项目负责人': 'Project lead', '负责整体推进、任务分工与展示沟通，同时参与硬件系统搭建、蓝牙音频功能验证与样机调试。': 'Led project planning, task coordination and presentations, and contributed to hardware assembly, Bluetooth audio testing and prototype debugging.',
+    '当前阶段': 'Current stage', '第一代Demo': 'First-generation demo', '已完成基础样机开发，实现蓝牙音频接收与基础定向发声，并完成展示与联调验证。': 'Built and demonstrated a first prototype with Bluetooth audio reception and basic directional output, and completed system integration testing.',
+    '我在工程层面做了什么。': 'My engineering contributions.', '系统与样机': 'System & prototype', '参与超声波定向扬声器系统搭建': 'Participated in ultrasonic directional speaker system assembly', '进行样机组装、功能验证与现场联调': 'Prototype assembly, functional validation, and on-site integration', '围绕真实展示场景推进可运行Demo': 'Built a working prototype for live demonstrations',
     '嵌入式与控制': 'Embedded & control', '基于ESP32进行基础功能验证': 'Validated foundational functions on ESP32', '围绕蓝牙音频接收进行调试': 'Debugged Bluetooth audio reception', '持续学习ESP-IDF与嵌入式开发流程': 'Continuing to learn ESP-IDF and embedded development workflows',
     '硬件与电路': 'Hardware & circuits', '参与功放电路搭建与基础优化': 'Participated in amplifier circuit construction and basic optimization', '进行硬件调试与系统联调': 'Hardware debugging and system integration', '使用嘉立创EDA、KiCad进行基础PCB设计': 'Basic PCB design using JLC EDA and KiCad',
-    '推进与展示': 'Execution & presentation', '负责项目推进、分工协作与沟通展示': 'Led project execution, team coordination, and presentation', '完成项目展板、现场展示与答辩支持': 'Prepared project boards, live demonstrations, and presentation support', '让项目从概念走向可见的工程样机': 'Moved the project from concept to a visible engineering prototype',
+    '推进与展示': 'Execution & presentation', '负责项目推进、分工协作与沟通展示': 'Led project execution, team coordination, and presentation', '完成项目展板、现场展示与答辩支持': 'Prepared project boards, live demonstrations, and presentation support', '让项目从概念走向可见的工程样机': 'Took the project from concept to a working prototype',
     '项目相关画面': 'Project gallery', '项目展板': 'Project board', '团队与样机': 'Team & prototype', '概念形态图': 'Concept render',
 
     '做能落地的产品，': 'Build products that can ship,', '保留改变未来的野心。': 'keep the ambition to change what comes next.',
@@ -306,12 +306,12 @@
     '以ESP32为主，围绕BLE/A2DP、嵌入式控制与原型功能验证。': 'ESP32-based development covering BLE/A2DP, embedded control, and prototype validation.',
     '硬件与验证': 'Hardware & validation', 'PCB设计、样机组装、硬件调试、功能测试与系统联调。': 'PCB design, prototype assembly, hardware debugging, functional testing, and system integration.',
     '产品与调研': 'Product & research', '结合竞品调研、用户场景分析、多端交互与产品验证推进方案。': 'Advance product decisions through competitor research, user-scenario analysis, multi-platform interaction, and product validation.',
-    '把工程判断放进真实行业场景。': 'Applying engineering judgment in a real industry context.', '雷鸟创新': 'RayNeo', '深圳科创学院': 'Shenzhen Innox Academy', '湖南康通电子股份有限公司': 'Hunan Comtom Electronic Co., Ltd.',
-    'AI AUDIO ALGORITHM INTERNSHIP': 'AI AUDIO ALGORITHM INTERNSHIP', 'AI音频算法实习生': 'AI Audio Algorithm Intern', '职能部门实习 · 市场调研': 'Corporate Functions Intern · Market Research', '硬件部实习': 'Hardware Department Intern', '音视频行业 · 硬件实践': 'Audiovisual Industry · Hardware Practice',
+    '把工程判断放进真实行业场景。': 'Engineering experience in industry.', '雷鸟创新': 'RayNeo', '深圳科创学院': 'Shenzhen Innox Academy', '湖南康通电子股份有限公司': 'Hunan Comtom Electronic Co., Ltd.',
+    'AI AUDIO ALGORITHM INTERNSHIP': 'AI AUDIO ALGORITHM INTERNSHIP', 'AI音频算法实习生': 'AI Audio Algorithm Intern', '职能部门实习 · 市场调研': 'Corporate Functions Intern · Market Research', '硬件部实习': 'Hardware Engineering Intern', '音视频行业 · 硬件实践': 'Audiovisual Industry · Hardware Practice',
     '2026.09 — 至今': 'Sep 2026 — Present', '2026.01 — 2026.02': 'Jan 2026 — Feb 2026', '2026.08 — 2026.09': 'Aug 2026 — Sep 2026',
     '参与智能眼镜音频方向的算法与技术方案研究，围绕AI音频、语音处理及智能穿戴音频场景开展资料调研、技术分析与方案整理；结合实际产品需求，对相关音频算法、开源方案及实现路径进行研究，为后续技术验证与产品方案评估提供支持。': 'Participate in algorithm and technical-solution research for smart-glasses audio, focusing on AI audio, speech processing and wearable-audio scenarios. Conduct technical research on relevant audio algorithms, open-source solutions and implementation approaches based on product requirements, supporting subsequent technical validation and product-solution evaluation.',
     '调研消费电子产品、技术方案、竞品及应用场景，梳理主要参数、核心功能、用户需求与产品定位；归纳多来源市场信息，形成结构化调研记录与阶段性结论。': 'Researched consumer electronics, technical solutions, competitors, and use cases; organized key specifications, core functions, user needs, and product positioning; synthesized market information from multiple sources into structured research records and interim findings.',
-    '参与消费级新产品前期定义，结合竞品、市场与用户需求开展功能及技术方案调研；对音视频及智能硬件进行拆解、逆向与方案分析，梳理关键器件、功能模块及技术路径；协助测试团队开展算法与产品功能测试，完成数据记录、异常场景复现及问题跟踪。': 'Supported early-stage definition of a consumer product through competitor, market and user-needs research; analysed and reverse-engineered audio/video and smart-hardware products to identify key components, functional modules and technical approaches; assisted with algorithm and product-function testing, including data recording, issue reproduction and follow-up.',
+    '参与消费级新产品前期定义，结合竞品、市场与用户需求开展功能及技术方案调研；对音视频及智能硬件进行拆解、逆向与方案分析，梳理关键器件、功能模块及技术路径；协助测试团队开展算法与产品功能测试，完成数据记录、异常场景复现及问题跟踪。': 'Helped define a new consumer product through competitor analysis, market research and user-needs assessment. Disassembled and analyzed audiovisual and smart hardware to understand key components and system design. Supported algorithm and functional testing by recording results, reproducing faults and tracking issues.',
     '同步开展竞品、市场与用户需求分析，参与某新型消费级产品定义；对音视频及智能硬件进行硬件逆向与分析，拆解关键器件、功能模块及技术路径；协助测试部开展算法测试，记录数据、复现异常并跟进问题闭环。': 'Conducted competitor, market, and user-needs analysis and contributed to defining a new consumer product; reverse-engineered and analyzed audiovisual and smart hardware, breaking down key components, functional modules, and technical approaches; assisted the test team with algorithm testing, recorded data, reproduced anomalies, and followed issues through closure.',
     '围绕音视频产品与智能硬件开展技术和市场调研，把应用场景、硬件参数、技术方案与产品定位放进同一套分析框架。': 'Conduct technical and market research on audio-video products and smart hardware, evaluating use cases, hardware specifications, technical approaches, and product positioning within one framework.',
     '梳理竞品功能、硬件参数与应用场景，形成结构化对比和阶段性结论。': 'Structured competitor features, hardware specifications, and use cases into comparative analyses and interim findings.',
@@ -553,7 +553,7 @@
   "耳机与音箱共同使用的拓展设想。监听延迟与两路播放时差需要分别验证，不能由同步功能直接推定。": "A possible extension using headphones and speakers together. Monitoring latency and the timing difference between outputs need separate validation; synchronization alone does not establish both.",
   "户外连接、同步与持续使用仍需验证；当前双路原型不代表更多节点的组网效果已成立。": "Outdoor connections, synchronization and sustained use still need testing. The current two-output prototype does not establish performance with more nodes.",
   "声音与空间": "SOUND IN SPACE",
-  "发出声音之后，还要看它在哪里被听见。": "Beyond making sound: understanding where it is heard.",
+  "发出声音之后，还要看它在哪里被听见。": "Understanding where sound is heard.",
   "我关注声音在空间中的分配：讲解应该在哪里被听见，邻近区域受到多少影响，人移动后体验怎样变化。第一代Demo让基础链路成立，下一步希望把问题放进明确的位置、内容与使用条件中。": "I am interested in where narration should be heard, how it affects nearby areas, and what changes as people move. The first-generation demo established the basic signal path. Next, I want to study these questions with defined positions, content and conditions of use.",
   "空间关系设想": "SPATIAL CONCEPT",
   "以一个展项、一段讲解为起点": "Start with one exhibit and one piece of narration",
@@ -564,7 +564,7 @@
   "走近 · 停留 · 移动": "Approach · Stay · Move",
   "邻近区域": "Nearby areas",
   "观察对旁人的影响": "Observe the effect on other people",
-  "场景设想示意，未按比例绘制；不表示实测声束角、传播距离或隔音边界。": "A scenario concept, not drawn to scale. It does not show a measured beam angle, propagation distance or sound isolation boundary.",
+  "场景设想示意，未按比例绘制；不表示实测声束角、传播距离或隔音边界。": "Concept illustration, not to scale. It does not represent measured beam angles, sound range or acoustic isolation.",
   "下一步研究问题": "NEXT QUESTIONS",
   "先让一个边界清楚的场景成立。": "Start with one clearly defined setting.",
   "位置与移动": "Position and movement",
@@ -572,7 +572,7 @@
   "邻区与内容": "Nearby areas and content",
   "观察邻近区域与背景声的影响，比较不同讲解内容，不用单个最佳位置代替完整使用过程。": "Observe nearby areas and background sound, and compare narration content. One ideal listening position cannot stand in for the whole experience.",
   "结构与持续工作": "Structure and sustained operation",
-  "继续研究阵列、功耗、结构与持续工作表现，并补充DSP与声场仿真的研究，让改进有可解释的依据。": "Continue studying the array, power use, structure and sustained operation, with further research into DSP and sound-field simulation to explain what makes an improvement."
+  "继续研究阵列、功耗、结构与持续工作表现，并补充DSP与声场仿真的研究，让改进有可解释的依据。": "Continue evaluating the array, power consumption, mechanical design and long-term operation. Use DSP research and sound-field simulation to understand and guide improvements."
 });
 
   // Keep the reviewed philosophy copy together so all three languages share exact source keys.
@@ -580,27 +580,27 @@
     [
       '我怎样做产品与选择方向',
       '我怎樣做產品與選擇方向',
-      'How I build products and choose a direction'
+      'How I approach product development'
     ],
     [
       '我关注声音、设备与人之间的关系，尝试用新的组合和交互改善体验，也在探索怎样通过可持续经营，为长期研究留下时间与资源。',
       '我關注聲音、設備與人之間的關係，嘗試用新的組合和互動改善體驗，也在探索怎樣透過可持續經營，為長期研究留下時間與資源。',
-      'I explore the relationships between sound, devices and people, looking for new combinations and interactions that improve the experience. I am also exploring how a sustainable business could make time and resources available for long-term research.'
+      'I explore how people use sound and devices, and how new combinations and interactions can improve that experience. I also consider how a sustainable business can support long-term research.'
     ],
     [
       '产品与创业理念',
       '產品與創業理念',
-      'Product and entrepreneurship philosophy'
+      'Product development and entrepreneurship'
     ],
     [
       '我希望做出带有自己判断的产品：它可以提出新的使用方式，也应在真实使用中不断修正。音乐、硬件项目和展会观察，让我持续关注设备怎样协作、交互怎样保留控制，以及怎样为长期研究创造条件。以下是我当前的判断，其中仍有需要用原型和实验回答的问题。',
       '我希望做出帶有自己判斷的產品：它可以提出新的使用方式，也應在真實使用中不斷修正。音樂、硬件項目和展會觀察，讓我持續關注設備怎樣協作、互動怎樣保留控制，以及怎樣為長期研究創造條件。以下是我目前的判斷，其中仍有需要用原型和實驗回答的問題。',
-      'I want to build products that reflect my own judgment: products that can introduce new ways of doing things and evolve through real use. Music, hardware projects and observations at trade shows keep me thinking about how devices work together, how interactions preserve control, and how to create the conditions for long-term research. These are my current views, with questions that still need prototypes and experiments to answer.'
+      'I want to build products with a clear point of view, introduce new ways to use them and refine them through real-world testing. Music, hardware projects and trade shows have shaped my interest in device compatibility, user control and sustainable research. These are my current views; some questions still need to be tested through prototypes and experiments.'
     ],
     [
       '主动提出新的使用方式',
       '主動提出新的使用方式',
-      'Propose new ways of doing things'
+      'Explore new ways to use a product'
     ],
     [
       '我会从自己的使用经验和具体场景发现问题，也愿意先提出一种尚未被清楚表达的用法。用户能够描述麻烦，却未必能提前说出一种从未体验过的交互。设计者需要把想法做成可以亲手操作的原型，再看人是否理解、学会以后是否仍愿意使用。',
@@ -615,7 +615,7 @@
     [
       '让学习换来更好的控制',
       '讓學習換來更好的控制',
-      'Make learning lead to better control'
+      'Make the learning curve worthwhile'
     ],
     [
       '我希望工具能让人放心试探：临时看看或听听另一种选择时，原来的内容和位置仍然保留；决定采用以后，再正式改变结果。以声音比较为例，我想探索一种可以临时预听、返回原选择、再明确确认的方式，让注意力留在声音的差别上。',
@@ -625,7 +625,7 @@
     [
       '我接受有回报的学习。入口应该让人找得到，基本动作应该讲得清；熟练以后，工具还可以提供更细的控制。压力、键盘和按钮都可以承载这种关系。如果学会以后仍然没有收益，或经常误触，就应调整实现。连续交互的价值，也要体现在状态和返回路径上。',
       '我接受有回報的學習。入口應該讓人找得到，基本動作應該講得清；熟練以後，工具還可以提供更細的控制。壓力、鍵盤和按鈕都可以承載這種關係。如果學會以後仍然沒有收益，或經常誤觸，就應調整實現。連續互動的價值，也要體現在狀態和返回路徑上。',
-      'I accept learning that pays off. Controls should be discoverable and basic actions easy to explain; with practice, a tool can offer finer control. Pressure-sensitive input, keyboards and buttons can all support this progression. If learning brings no benefit, or accidental actions remain common, the implementation should change. Continuous interactions should also make their state and the way back clear.'
+      'A learning curve is worthwhile when it gives people more control. Basic actions should be easy to find and understand, with finer controls available as users gain experience. Pressure-sensitive input, keyboards and buttons can all support this progression. If practice brings little benefit or mistakes remain common, the design needs to change. Users should always understand the current state and how to return to a previous one.'
     ],
     [
       '让成熟技术形成协同',
@@ -635,7 +635,7 @@
     [
       '在当前的资源和能力条件下，我会优先评估成熟技术的组合机会。广州展会上，键盘与声卡结合的产品让我注意到，把原本分散的操作组织起来，也可能形成有价值的新体验。真正要解决的工作包括状态、控制、供电和结构怎样配合。',
       '在目前的資源和能力條件下，我會優先評估成熟技術的組合機會。廣州展會上，鍵盤與聲卡結合的產品讓我注意到，把原本分散的操作組織起來，也可能形成有價值的新體驗。真正要解決的工作包括狀態、控制、供電和結構怎樣配合。',
-      'Given my current resources and capabilities, I would first evaluate opportunities to combine established technologies. At a trade show in Guangzhou, a product combining a keyboard and an audio interface drew my attention to how bringing separate operations together might create a valuable new experience. The real work includes coordinating state, controls, power and physical construction.'
+      'With my current resources and experience, I look first for useful ways to combine established technologies. At a trade show in Guangzhou, a keyboard with an integrated audio interface showed me how bringing separate functions together could improve an everyday workflow. Making that work requires careful integration of device states, controls, power and mechanical design.'
     ],
     [
       '整合还要计算升级和维护的代价。少一个盒子、少几根线，如果换来整机更换或额外设置，收益就未必成立。音享贴让我持续思考同一件事：两个人已经有各自的耳机，新增的中继应该让共同收听更方便，并把额外的携带与设置负担控制得更小。成熟方案帮助我开始，深入理解关键链路则决定我能继续改进什么。',
@@ -645,12 +645,12 @@
     [
       '把一次完整使用验证清楚',
       '把一次完整使用驗證清楚',
-      'Test the full experience of using a product'
+      'Test the complete user experience'
     ],
     [
       '我希望每一次验证都对应一个明确的问题。音频产品除了能否出声，还要看人怎样开始、独立调整、暂时离开、重新加入和结束。原型在我准备好的顺序里运行，只说明了那组条件；其他人换一种顺序操作，仍可能遇到需要重新设计的地方。',
       '我希望每一次驗證都對應一個明確的問題。音頻產品除了能否出聲，還要看人怎樣開始、獨立調整、暫時離開、重新加入和結束。原型在我準備好的順序裡運行，只說明了那組條件；其他人換一種順序操作，仍可能遇到需要重新設計的地方。',
-      'I want each test to address a specific question. For audio products, making sound is only part of the task: I also need to consider how people start, adjust their own settings, step away, rejoin and finish. A prototype working through a sequence I have prepared establishes only what happens under those conditions. Someone following a different sequence may still encounter problems that call for a redesign.'
+      'Each test should answer a specific question. For an audio product, producing sound is only the beginning. I also need to test how people connect, adjust settings, step away, reconnect and finish. A successful demonstration proves only that the prepared sequence works. Someone using the same prototype in a different order may reveal problems that require a redesign.'
     ],
     [
       '对于定向声音，我想进一步比较同一空间中的目标位置、邻近位置和移动路径，理解声音与空间的关系。展示位置听起来合适，还不足以说明整个场景成立。我会把设备、环境与观察结果一起记录，让结论对应实际检查过的范围，再决定继续扩展还是先缩小问题。',
@@ -685,7 +685,7 @@
     [
       '我想继续深入定向声音、空间音频和新的声音交互。对我有吸引力的问题是：声音怎样与位置、内容和人的行动配合；录制与回放怎样保留现场的空间感；人在比较和调整声音时，怎样始终理解自己正在控制什么。',
       '我想繼續深入定向聲音、空間音頻和新的聲音互動。對我有吸引力的問題是：聲音怎樣與位置、內容和人的行動配合；錄製與回放怎樣保留現場的空間感；人在比較和調整聲音時，怎樣始終理解自己正在控制什麼。',
-      'I want to go deeper into directional sound, spatial audio and new ways of interacting with sound. The questions that interest me are how sound can work with position, content and human actions; how recording and playback can preserve the sense of space at an event; and how people can always understand what they are controlling as they compare and adjust sound.'
+      'I want to keep exploring directional sound, spatial audio and new ways to interact with sound. I am interested in how audio responds to location, content and movement; how recording and playback preserve a live event’s sense of space; and how controls help people understand what they are changing as they compare and adjust sound.'
     ],
     [
       '我重视原生空间录制，也对算法和AI能把声音做到什么程度保持兴趣。两者让我留下一个还没想清楚的问题：当生成的听感已经足够接近，真实事件的记录、空间定位和创作者的控制，分别还有什么价值？我愿意围绕具体任务比较这些路径，让后续的原型和实验继续改变判断。',
@@ -695,14 +695,14 @@
     ['产品判断', '產品判斷', 'Product decisions'],
     ['交互与学习', '互動與學習', 'Interaction and learning'],
     ['技术融合', '技術融合', 'Technology integration'],
-    ['使用验证', '使用驗證', 'Testing in use'],
+    ['使用验证', '使用驗證', 'User testing'],
     ['经营与研究', '經營與研究', 'Business and research'],
     ['长期方向', '長期方向', 'Long-term direction'],
     ['本页目录', '本頁目錄', 'On this page'],
     ['返回主页', '返回首頁', 'Back to home'],
     ['查看音享贴项目', '查看音享貼項目', 'View the SoundShare project'],
     ['查看超声波定向扬声器项目', '查看超聲波定向揚聲器項目', 'View the ultrasonic directional speaker project'],
-    ['阅读完整理念', '閱讀完整理念', 'Read the full philosophy'],
+    ['阅读完整理念', '閱讀完整理念', 'Read my approach'],
     [
       '罗宇伦关于产品判断、交互设计、技术融合、工程验证与长期研究的思考。',
       '羅宇倫關於產品判斷、互動設計、技術融合、工程驗證與長期研究的思考。',
@@ -822,7 +822,7 @@
   [
     "我是罗宇伦，湖南农业大学卓越工程师学院智能科学与技术本科生。重点关注消费电子硬件、嵌入式系统与音频产品，项目实践覆盖PCB设计、蓝牙音频链路、软硬件原型、多端交互与工程验证；同时参与智能眼镜AI音频相关的模型接入与测试工作。",
     "我是羅宇倫，湖南農業大學卓越工程師學院智能科學與技術本科生。重點關注消費電子硬件、嵌入式系統與音頻產品，項目實踐涵蓋PCB設計、藍牙音頻鏈路、軟硬件原型、多端互動與工程驗證；同時參與智能眼鏡AI音頻相關的模型接入與測試工作。",
-    "I’m Roy Luo, an undergraduate in Intelligent Science and Technology at the College of Excellent Engineers, Hunan Agricultural University. My focus is consumer electronics hardware, embedded systems and audio products, with hands-on work in PCB design, Bluetooth audio, hardware/software prototypes, multi-platform controls and engineering validation. I also integrate and test AI audio models for smart glasses."
+    "I’m Roy Luo, an Intelligent Science and Technology undergraduate at Hunan Agricultural University’s College of Excellent Engineers. I work on consumer electronics, embedded systems and audio products, from PCB design and Bluetooth audio to hardware and software prototypes, cross-platform controls and system testing. I also help integrate and evaluate AI audio models for smart glasses."
   ],
   [
     "罗宇伦Roy Luo的工程作品集，聚焦消费电子硬件、嵌入式系统、音频产品与工程验证，展示PCB、蓝牙音频、软硬件原型、多端交互及相关工程工具。",
@@ -872,12 +872,12 @@
   [
     "开发移动端、浏览器及测试工具，并将硬件状态、参数配置和多端交互连接起来。",
     "開發流動端、瀏覽器及測試工具，並將硬件狀態、參數設定和多端互動連接起來。",
-    "Building mobile apps, browser extensions and test tools that connect hardware status, configuration and multi-platform interaction."
+    "Building mobile apps, browser extensions and test tools for device monitoring, configuration and control across platforms."
   ],
   [
     "围绕智能眼镜音频场景开展声音事件、环境场景与语音识别模型的方案研究、接入与测试验证；搭建统一音频测试工具，支持模型比较、批量测试、日志记录和问题定位。",
     "圍繞智能眼鏡音頻場景開展聲音事件、環境場景與語音識別模型的方案研究、接入與測試驗證；搭建統一音頻測試工具，支援模型比較、批量測試、日誌記錄和問題定位。",
-    "Research, integrate and validate sound-event, acoustic-scene and speech-recognition models for smart-glasses audio; build unified audio test tools for model comparison, batch testing, logging and issue diagnosis."
+    "Research, integrate and evaluate sound-event detection, acoustic-scene classification and speech-recognition models for smart glasses. Build shared testing tools for model comparison, batch testing, logging and troubleshooting."
   ],
   [
     "长沙市印梦科技有限公司",
@@ -887,12 +887,12 @@
   [
     "设备调试与测试实习",
     "設備調試與測試實習",
-    "Equipment Debugging & Test Intern"
+    "Equipment Testing Intern"
   ],
   [
     "参与超声波刀设备参数调试、性能测试与样机异常复现，围绕工作频率、驱动参数及运行状态开展工程验证。",
     "參與超聲波刀設備參數調試、性能測試與樣機異常重現，圍繞工作頻率、驅動參數及運行狀態開展工程驗證。",
-    "Assisted with ultrasonic cutting equipment tuning, performance testing and prototype fault reproduction, validating operating frequency, drive parameters and operating states."
+    "Helped tune and test ultrasonic cutting equipment, reproduce prototype faults and evaluate operating frequency, drive settings and device behavior."
   ],
   [
     "角色：个人独立全链路开发",
@@ -932,7 +932,7 @@
   [
     "面向跨生态多人蓝牙音频共享的轻量化硬件中继。个人独立完成首版PCB、嵌入式音频链路及多端控制开发，当前硬件原型与核心音频、控制流程已完成首轮验证。",
     "面向跨生態多人藍牙音頻共享的輕量化硬件中繼。個人獨立完成首版PCB、嵌入式音頻鏈路及多端控制開發，目前硬件原型與核心音頻、控制流程已完成首輪驗證。",
-    "A lightweight hardware relay for shared Bluetooth audio across ecosystems. As sole developer, I built the first PCB, embedded audio path and multi-platform controls; the hardware prototype and core audio and control flows have completed initial validation."
+    "A lightweight relay that lets people share Bluetooth audio across device ecosystems. I independently developed the first PCB, embedded audio pipeline and cross-platform controls, and completed initial testing of the hardware and core audio and control functions."
   ],
   [
     "个人独立全链路开发",
@@ -947,12 +947,12 @@
   [
     "硬件原型、嵌入式音频链路及多端控制已完成首轮验证；后续继续扩展设备覆盖与长期稳定性测试。",
     "硬件原型、嵌入式音頻鏈路及多端控制已完成首輪驗證；後續繼續擴展設備覆蓋與長期穩定性測試。",
-    "The hardware prototype, embedded audio path and multi-platform controls have completed initial validation. Further work expands device coverage and long-duration stability testing."
+    "Initial testing of the hardware prototype, embedded audio pipeline and cross-platform controls is complete. Next steps are broader device compatibility testing and long-term stability testing."
   ],
   [
     "基于ESP32的定向音频工程项目，围绕蓝牙PCM音频接收、实时缓存、40 kHz超声调制、功率放大与换能器阵列建立完整发声链路，并完成第一代工程样机验证。",
     "基於ESP32的定向音頻工程項目，圍繞藍牙PCM音頻接收、即時緩存、40 kHz超聲調制、功率放大與換能器陣列建立完整發聲鏈路，並完成第一代工程樣機驗證。",
-    "An ESP32 directional-audio project spanning Bluetooth PCM reception, real-time buffering, 40 kHz ultrasonic modulation, power amplification and a transducer array, with a validated first-generation engineering prototype."
+    "An ESP32-based directional speaker with Bluetooth PCM input, real-time audio buffering, 40 kHz ultrasonic modulation, power amplification and a transducer array. The first-generation prototype has been built and tested."
   ],
   [
     "蓝牙PCM音频接收",
@@ -1328,7 +1328,7 @@
   [
     "在iPhone/iPad测试声音事件与环境场景模型，支持录音、批量WAV测试和事件时间线。",
     "在iPhone/iPad測試聲音事件與環境場景模型，支援錄音、批次WAV測試和事件時間軸。",
-    "Test sound event and environmental scene models on iPhone/iPad, with recording, batch WAV testing and event timelines."
+    "Test sound-event detection and acoustic-scene classification models on iPhone/iPad, with audio recording, batch WAV tests and event timelines."
   ],
   [
     "本地语音识别测试",
@@ -1338,7 +1338,7 @@
   [
     "在iPhone/iPad对比多种语音识别模型，支持流式识别、文件转写和批量WAV测试。",
     "在iPhone/iPad對比多種語音識別模型，支援串流識別、檔案轉寫和批次WAV測試。",
-    "Compare speech recognition models on iPhone/iPad, with streaming recognition, file transcription and batch WAV testing."
+    "Compare speech-recognition models on iPhone/iPad using live audio, file transcription and batch WAV tests."
   ],
   [
     "Mac上的CarPlay接收端",
@@ -1348,7 +1348,7 @@
   [
     "通过USB或共用Wi-Fi接收iPhone的CarPlay画面，支持音频设备选择、分辨率设置与系统媒体控制。",
     "透過USB或共用Wi-Fi接收iPhone的CarPlay畫面，支援音訊裝置選擇、解析度設定與系統媒體控制。",
-    "Receive iPhone CarPlay over USB or shared Wi-Fi, with audio device selection, resolution settings and system media controls."
+    "Use your Mac as a CarPlay receiver over USB or a shared Wi-Fi network. Choose audio devices, adjust the resolution and use system media controls."
   ],
   [
     "Windows上的无线CarPlay接收端",
@@ -1358,7 +1358,7 @@
   [
     "通过本机热点或现有局域网连接iPhone，在独立窗口显示CarPlay，支持音频播放与系统媒体控制。",
     "透過本機熱點或現有區域網路連接iPhone，在獨立視窗顯示CarPlay，支援音訊播放與系統媒體控制。",
-    "Connect an iPhone over a local hotspot or an existing LAN, with a dedicated CarPlay window, audio playback and system media controls."
+    "Use your Windows PC as a wireless CarPlay receiver over its hotspot or an existing local network, with a dedicated window, audio playback and system media controls."
   ],
   [
     "网页原位翻译扩展",
@@ -1368,7 +1368,7 @@
   [
     "在当前网页阅读译文，支持原文与双语切换及可配置的模型服务，设计参考KISS Translator与TWP。",
     "在目前網頁閱讀譯文，支援原文與雙語切換及可設定的模型服務，設計參考KISS Translator與TWP。",
-    "Read translations in the original page, with original/bilingual views and configurable model services. Design references: KISS Translator and TWP."
+    "Translate text directly on a webpage and switch between the original and bilingual views. Supports configurable model services, with design references from KISS Translator and TWP."
   ],
   [
     "铰链驱动的桌面视觉实验",
@@ -1378,7 +1378,7 @@
   [
     "基于MacBook-Duo改进，用兼容MacBook的铰链角度控制桌面效果，支持菜单栏、快捷键与独立设置。",
     "基於MacBook-Duo改進，用相容MacBook的鉸鏈角度控制桌面效果，支援選單列、快捷鍵與獨立設定。",
-    "Built on MacBook-Duo, using a compatible MacBook’s hinge angle to control desktop effects, with menu bar controls, shortcuts and separate settings."
+    "Control desktop visual effects with the lid angle of a compatible MacBook. Built on MacBook-Duo, with menu bar controls, keyboard shortcuts and dedicated settings."
   ],
   [
     "README写作与检查技能",
@@ -1388,7 +1388,7 @@
   [
     "面向Codex整理项目介绍、功能与使用步骤，提供视觉规范、证据记录与离线文档校验。",
     "面向Codex整理項目介紹、功能與使用步驟，提供視覺規範、證據記錄與離線文件校驗。",
-    "A Codex skill for project overviews, features and getting started, with visual guidelines, evidence records and offline document validation."
+    "A Codex skill for writing project overviews, feature descriptions and setup instructions, with formatting guidelines, evidence tracking and offline documentation checks."
   ],
   [
     "音频测试、CarPlay接收、网页翻译、桌面交互与README工具，另附Astra电脑操作实验。",
@@ -1408,7 +1408,7 @@
   [
     "《晚渡》完全由Codex GPT-6 Astra模型操作MacBook上的FL Studio完成，是Astra Computer Use测试，并非个人作品。可试听音频、查看工程与MIDI。",
     "《晚渡》完全由Codex GPT-6 Astra模型操作MacBook上的FL Studio完成，是Astra Computer Use測試，並非個人作品。可試聽音訊、查看工程與MIDI。",
-    "Wandu was made entirely by Codex GPT-6 Astra operating FL Studio on a MacBook. It is an Astra Computer Use test, not my personal work. Audio, project files and MIDI are available."
+    "WANDU was created entirely by Codex GPT-6 Astra operating FL Studio on a MacBook as a Computer Use test. It is not my own musical work. Listen to the result or explore the project and MIDI files."
   ],
   [
     "TOOL 04 · macOS",
@@ -1442,7 +1442,7 @@
     'index.html': { 'zh-CN': '罗宇伦Roy Luo', 'zh-TW': '羅宇倫Roy Luo', en: 'Roy Luo · Engineering Portfolio' },
     'soundshare.html': { 'zh-CN': '音享贴 · LENGHE SoundShare', 'zh-TW': '音享貼 · LENGHE SoundShare', en: 'LENGHE SoundShare · Roy Luo' },
     'ultrasonic.html': { 'zh-CN': '超声波定向扬声器 · Roy Luo', 'zh-TW': '超聲波定向揚聲器 · Roy Luo', en: 'Ultrasonic Directional Speaker · Roy Luo' },
-    'philosophy.html': { 'zh-CN': '产品与创业理念 · 罗宇伦Roy Luo', 'zh-TW': '產品與創業理念 · 羅宇倫Roy Luo', en: 'Product & Entrepreneurship Philosophy · Roy Luo' }
+    'philosophy.html': { 'zh-CN': '产品与创业理念 · 罗宇伦Roy Luo', 'zh-TW': '產品與創業理念 · 羅宇倫Roy Luo', en: 'Product Development & Entrepreneurship · Roy Luo' }
   };
 
   const labels = {
