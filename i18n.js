@@ -146,7 +146,7 @@
     '产品与调研': '產品與調研', '结合竞品调研、用户场景分析、多端交互与产品验证推进方案。': '結合競品調研、用戶場景分析、多端互動與產品驗證推進方案。',
     '把工程判断放进真实行业场景。': '把工程判斷放進真實行業場景。', '雷鸟创新': '雷鳥創新', '深圳科创学院': '深圳科創學院', '湖南康通电子股份有限公司': '湖南康通電子股份有限公司',
     'AI AUDIO ALGORITHM INTERNSHIP': 'AI音頻算法實習', 'AI音频算法实习生': 'AI音頻算法實習生', '职能部门实习 · 市场调研': '職能部門實習 · 市場調研', '硬件部实习': '硬件部實習', '音视频行业 · 硬件实践': '音視頻行業 · 硬件實踐',
-    '2026.09 — 至今': '2026.09 — 至今', '2026.01 — 2026.02': '2026.01 — 2026.02', '2026.07 — 2026.09': '2026.07 — 2026.09',
+    '2026.09 — 至今': '2026.09 — 至今', '2026.01 — 2026.02': '2026.01 — 2026.02', '2026.06 — 2026.09': '2026.06 — 2026.09',
     '参与智能眼镜音频方向的算法与技术方案研究，围绕AI音频、语音处理及智能穿戴音频场景开展资料调研、技术分析与方案整理；结合实际产品需求，对相关音频算法、开源方案及实现路径进行研究，为后续技术验证与产品方案评估提供支持。': '參與智能眼鏡音頻方向的算法及技術方案研究，圍繞AI音頻、語音處理及智能穿戴音頻場景開展資料調研、技術分析及方案整理；結合實際產品需求，研究相關音頻算法、開源方案及實現路徑，為後續技術驗證及產品方案評估提供支持。',
     '调研消费电子产品、技术方案、竞品及应用场景，梳理主要参数、核心功能、用户需求与产品定位；归纳多来源市场信息，形成结构化调研记录与阶段性结论。': '調研消費電子產品、技術方案、競品及應用場景，梳理主要參數、核心功能、用戶需求與產品定位；歸納多來源市場資訊，形成結構化調研記錄與階段性結論。',
     '参与消费级新产品前期定义，结合竞品、市场与用户需求开展功能及技术方案调研；对音视频及智能硬件进行拆解、逆向与方案分析，梳理关键器件、功能模块及技术路径；协助测试团队开展算法与产品功能测试，完成数据记录、异常场景复现及问题跟踪。': '參與消費級新產品前期定義，結合競品、市場及使用者需要開展功能及技術方案調研；對音視頻及智能硬件進行拆解、逆向及方案分析，梳理關鍵器件、功能模組及技術路徑；協助測試團隊開展算法及產品功能測試，完成數據記錄、異常情境復現及問題跟進。',
@@ -308,7 +308,7 @@
     '产品与调研': 'Product & research', '结合竞品调研、用户场景分析、多端交互与产品验证推进方案。': 'Advance product decisions through competitor research, user-scenario analysis, multi-platform interaction, and product validation.',
     '把工程判断放进真实行业场景。': 'Engineering experience in industry.', '雷鸟创新': 'RayNeo', '深圳科创学院': 'Shenzhen Innox Academy', '湖南康通电子股份有限公司': 'Hunan Comtom Electronic Co., Ltd.',
     'AI AUDIO ALGORITHM INTERNSHIP': 'AI AUDIO ALGORITHM INTERNSHIP', 'AI音频算法实习生': 'AI Audio Algorithm Intern', '职能部门实习 · 市场调研': 'Corporate Functions Intern · Market Research', '硬件部实习': 'Hardware Engineering Intern', '音视频行业 · 硬件实践': 'Audiovisual Industry · Hardware Practice',
-    '2026.09 — 至今': 'Sep 2026 — Present', '2026.01 — 2026.02': 'Jan 2026 — Feb 2026', '2026.07 — 2026.09': 'Jul 2026 — Sep 2026',
+    '2026.09 — 至今': 'Sep 2026 — Present', '2026.01 — 2026.02': 'Jan 2026 — Feb 2026', '2026.06 — 2026.09': 'Jun 2026 — Sep 2026',
     '参与智能眼镜音频方向的算法与技术方案研究，围绕AI音频、语音处理及智能穿戴音频场景开展资料调研、技术分析与方案整理；结合实际产品需求，对相关音频算法、开源方案及实现路径进行研究，为后续技术验证与产品方案评估提供支持。': 'Participate in algorithm and technical-solution research for smart-glasses audio, focusing on AI audio, speech processing and wearable-audio scenarios. Conduct technical research on relevant audio algorithms, open-source solutions and implementation approaches based on product requirements, supporting subsequent technical validation and product-solution evaluation.',
     '调研消费电子产品、技术方案、竞品及应用场景，梳理主要参数、核心功能、用户需求与产品定位；归纳多来源市场信息，形成结构化调研记录与阶段性结论。': 'Researched consumer electronics, technical solutions, competitors, and use cases; organized key specifications, core functions, user needs, and product positioning; synthesized market information from multiple sources into structured research records and interim findings.',
     '参与消费级新产品前期定义，结合竞品、市场与用户需求开展功能及技术方案调研；对音视频及智能硬件进行拆解、逆向与方案分析，梳理关键器件、功能模块及技术路径；协助测试团队开展算法与产品功能测试，完成数据记录、异常场景复现及问题跟踪。': 'Helped define a new consumer product through competitor analysis, market research and user-needs assessment. Disassembled and analyzed audiovisual and smart hardware to understand key components and system design. Supported algorithm and functional testing by recording results, reproducing faults and tracking issues.',
@@ -1486,7 +1486,7 @@
   ]
 ].forEach(([source, traditional, english]) => { cn[source] = source; tw[source] = traditional; en[source] = english; });
 
-  en['2025.07 — 2025.09'] = 'Jul 2025 — Sep 2025';
+  en['2025.06 — 2025.09'] = 'Jun 2025 — Sep 2025';
 
   const pageTitles = {
     'other-projects.html': { 'zh-CN': '工程工具与软件项目 · 罗宇伦Roy Luo', 'zh-TW': '工程工具與軟件項目 · 羅宇倫Roy Luo', en: 'Engineering Tools & Software · Roy Luo' },
@@ -1503,9 +1503,9 @@
   };
 
   const resumeAssets = {
-    'zh-CN': 'assets/罗宇伦_简历.pdf?v=20261027-2',
-    'zh-TW': 'assets/羅宇倫_履歷.pdf?v=20261027-2',
-    en: 'assets/Roy Luo_Resume.pdf?v=20261027-2'
+    'zh-CN': 'assets/罗宇伦_简历.pdf?v=20261027-4',
+    'zh-TW': 'assets/羅宇倫_履歷.pdf?v=20261027-4',
+    en: 'assets/Roy Luo_Resume.pdf?v=20261027-4'
   };
 
   const originalText = new WeakMap();
