@@ -145,7 +145,7 @@
     '硬件与验证': '硬件與驗證', 'PCB设计、样机组装、硬件调试、功能测试与系统联调。': 'PCB設計、樣機組裝、硬件調試、功能測試與系統聯調。',
     '产品与调研': '產品與調研', '结合竞品调研、用户场景分析、多端交互与产品验证推进方案。': '結合競品調研、用戶場景分析、多端互動與產品驗證推進方案。',
     '把工程判断放进真实行业场景。': '把工程判斷放進真實行業場景。', '雷鸟创新': '雷鳥創新', '深圳科创学院': '深圳科創學院', '湖南康通电子股份有限公司': '湖南康通電子股份有限公司',
-    'AI AUDIO ALGORITHM INTERNSHIP': 'AI音頻算法實習', 'AI音频算法实习生': 'AI音頻算法實習生', '职能部门实习 · 市场调研': '職能部門實習 · 市場調研', '硬件部实习': '硬件部實習', '音视频行业 · 硬件实践': '音視頻行業 · 硬件實踐',
+    'AI AUDIO ALGORITHM INTERNSHIP': 'AI音頻算法實習', 'AI音频算法实习生': 'AI音頻算法實習生', '职能部门调研实习生': '職能部門調研實習生', '硬件部实习': '硬件部實習', '音视频行业 · 硬件实践': '音視頻行業 · 硬件實踐',
     '2026.09 — 至今': '2026.09 — 至今', '2026.01 — 2026.02': '2026.01 — 2026.02', '2026.06 — 2026.09': '2026.06 — 2026.09',
     '参与智能眼镜音频方向的算法与技术方案研究，围绕AI音频、语音处理及智能穿戴音频场景开展资料调研、技术分析与方案整理；结合实际产品需求，对相关音频算法、开源方案及实现路径进行研究，为后续技术验证与产品方案评估提供支持。': '參與智能眼鏡音頻方向的算法及技術方案研究，圍繞AI音頻、語音處理及智能穿戴音頻場景開展資料調研、技術分析及方案整理；結合實際產品需求，研究相關音頻算法、開源方案及實現路徑，為後續技術驗證及產品方案評估提供支持。',
     '调研消费电子产品、技术方案、竞品及应用场景，梳理主要参数、核心功能、用户需求与产品定位；归纳多来源市场信息，形成结构化调研记录与阶段性结论。': '調研消費電子產品、技術方案、競品及應用場景，梳理主要參數、核心功能、用戶需求與產品定位；歸納多來源市場資訊，形成結構化調研記錄與階段性結論。',
@@ -307,7 +307,7 @@
     '硬件与验证': 'Hardware & validation', 'PCB设计、样机组装、硬件调试、功能测试与系统联调。': 'PCB design, prototype assembly, hardware debugging, functional testing, and system integration.',
     '产品与调研': 'Product & research', '结合竞品调研、用户场景分析、多端交互与产品验证推进方案。': 'Advance product decisions through competitor research, user-scenario analysis, multi-platform interaction, and product validation.',
     '把工程判断放进真实行业场景。': 'Engineering experience in industry.', '雷鸟创新': 'RayNeo', '深圳科创学院': 'Shenzhen Innox Academy', '湖南康通电子股份有限公司': 'Hunan Comtom Electronic Co., Ltd.',
-    'AI AUDIO ALGORITHM INTERNSHIP': 'AI AUDIO ALGORITHM INTERNSHIP', 'AI音频算法实习生': 'AI Audio Algorithm Intern', '职能部门实习 · 市场调研': 'Corporate Functions Intern · Market Research', '硬件部实习': 'Hardware Engineering Intern', '音视频行业 · 硬件实践': 'Audiovisual Industry · Hardware Practice',
+    'AI AUDIO ALGORITHM INTERNSHIP': 'AI AUDIO ALGORITHM INTERNSHIP', 'AI音频算法实习生': 'AI Audio Algorithm Intern', '职能部门调研实习生': 'Research Intern, Corporate Functions', '硬件部实习': 'Hardware Engineering Intern', '音视频行业 · 硬件实践': 'Audiovisual Industry · Hardware Practice',
     '2026.09 — 至今': 'Sep 2026 — Present', '2026.01 — 2026.02': 'Jan 2026 — Feb 2026', '2026.06 — 2026.09': 'Jun 2026 — Sep 2026',
     '参与智能眼镜音频方向的算法与技术方案研究，围绕AI音频、语音处理及智能穿戴音频场景开展资料调研、技术分析与方案整理；结合实际产品需求，对相关音频算法、开源方案及实现路径进行研究，为后续技术验证与产品方案评估提供支持。': 'Participate in algorithm and technical-solution research for smart-glasses audio, focusing on AI audio, speech processing and wearable-audio scenarios. Conduct technical research on relevant audio algorithms, open-source solutions and implementation approaches based on product requirements, supporting subsequent technical validation and product-solution evaluation.',
     '调研消费电子产品、技术方案、竞品及应用场景，梳理主要参数、核心功能、用户需求与产品定位；归纳多来源市场信息，形成结构化调研记录与阶段性结论。': 'Researched consumer electronics, technical solutions, competitors, and use cases; organized key specifications, core functions, user needs, and product positioning; synthesized market information from multiple sources into structured research records and interim findings.',
@@ -1503,9 +1503,9 @@
   };
 
   const resumeAssets = {
-    'zh-CN': 'assets/罗宇伦_简历.pdf?v=20261027-4',
-    'zh-TW': 'assets/羅宇倫_履歷.pdf?v=20261027-4',
-    en: 'assets/Roy Luo_Resume.pdf?v=20261027-4'
+    'zh-CN': 'assets/罗宇伦_简历.pdf?v=20261027-5',
+    'zh-TW': 'assets/羅宇倫_履歷.pdf?v=20261027-5',
+    en: 'assets/Roy Luo_Resume.pdf?v=20261027-5'
   };
 
   const originalText = new WeakMap();
