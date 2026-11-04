@@ -13,6 +13,7 @@ node music/tests/lyrics.cjs
 node music/tests/lyric-loading.cjs
 node music/tests/worker.cjs
 node music/tests/cache-preferences.cjs
+node music/tests/catalog-sync.cjs
 python3 music/tests/catalog.py
 ```
 
@@ -31,15 +32,17 @@ python3 music/tests/catalog.py
 
 ## 更新曲库
 
-网页统一读取`music/data/catalog.json`，其中包含同一次发布的曲库、Apple Music歌单与音频参数。
+曲库、歌单和媒体由Music仓库统一发布。网页与RoyTools共用[版本同步模块](../catalog-sync.js)，每次打开时读取Music仓库的版本清单，有变化才下载完整目录。断网或新版目录不完整时保留上一份本地数据。
+
+在Music仓库根目录运行：
 
 ```sh
-python3 music/scripts/build-catalog.py
+node scripts/publish-catalog.mjs
 ```
 
-导入音频和生成分享页脚本会自动调用此步骤。手工修改三个原始JSON文件后，也需要重新生成。音源版本根据本地文件的修改时间和大小生成，不计算文件哈希；本地音源不存在时保留上一版版本号。
+网站的`scripts/build-catalog.py`保留为兼容入口，调用同一个Music发布脚本，并可同步网站备用目录。普通曲库更新不需要发布网站或APK。
 
-发布前先确保音乐仓库中新增或替换的文件已经可访问，再发布网页仓库。网页目录显示848首不代表远程音源已经推送成功。
+`catalog-sync.cjs`使用小型夹具覆盖本地保存、新增歌曲和歌单、并发去重、同版检查、目录错版与坏引用拒绝、离线重启以及存储不可用。
 
 ## 浏览器验收
 

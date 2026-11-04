@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""Build per-song share pages and public JPEG covers from the local Music checkout."""
+"""Build compatible share pages using the cloud Music catalog and original covers."""
 
 import html
 import json
-import subprocess
 from pathlib import Path
 from urllib.parse import quote
 
@@ -19,8 +18,9 @@ def page(track, image_path):
     title = html.escape(f'{track["title"]} - {track["artist"]}', quote=True)
     artist = html.escape(track["artist"], quote=True)
     album = html.escape(track["album"], quote=True)
-    image = PUBLIC_ROOT + "share-covers/" + quote(image_path.as_posix(), safe="/")
-    relative_image = "../share-covers/" + quote(image_path.as_posix(), safe="/")
+    image = "https://raw.githubusercontent.com/Roylyl/Music/main/" + quote(image_path.as_posix(), safe="/")
+    relative_image = image
+    image_type = {".webp": "image/webp", ".png": "image/png"}.get(image_path.suffix.lower(), "image/jpeg")
     canonical = PUBLIC_ROOT + "share/" + song_id + ".html"
     listen = "../?track=" + song_id + "&amp;full=1&amp;autoplay=1"
     return f"""<!doctype html>
@@ -37,7 +37,7 @@ def page(track, image_path):
 <meta property="og:description" content="{DESCRIPTION}">
 <meta property="og:url" content="{canonical}">
 <meta property="og:image" content="{image}">
-<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:type" content="{image_type}">
 <meta property="og:image:alt" content="{album}专辑封面">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="{title}">
@@ -78,28 +78,20 @@ h1{{font-size:clamp(24px,6vw,36px);line-height:1.3;margin:0 0 10px}}p{{color:#aa
 
 
 def main():
-    tracks = json.loads((MUSIC_SITE / "data/tracks.json").read_text())
+    catalog_path = MUSIC_SOURCE / "catalog.json"
+    if not catalog_path.is_file():
+        catalog_path = MUSIC_SITE / "data/catalog.json"
+    tracks = json.loads(catalog_path.read_text(encoding="utf-8"))["tracks"]
     share_dir = MUSIC_SITE / "share"
-    cover_dir = MUSIC_SITE / "share-covers"
     share_dir.mkdir(exist_ok=True)
-    for cover in sorted({track["cover"] for track in tracks}):
-        source = MUSIC_SOURCE / cover
+    for track in tracks:
+        source = MUSIC_SOURCE / track["cover"]
         if not source.is_file():
             raise FileNotFoundError(source)
-        image_path = Path(cover).with_suffix(".jpg")
-        destination = cover_dir / image_path
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        if not destination.exists() or destination.stat().st_mtime < source.stat().st_mtime:
-            subprocess.run(
-                ["sips", "-s", "format", "jpeg", "-s", "formatOptions", "78", "-Z", "600", str(source), "--out", str(destination)],
-                check=True, capture_output=True,
-            )
-    for track in tracks:
         destination = share_dir / f'{track["id"]}.html'
-        destination.write_text(page(track, Path(track["cover"]).with_suffix(".jpg")))
-    import runpy
-    runpy.run_path(str(MUSIC_SITE / "scripts/build-catalog.py"))["build"]()
-    print(f"已生成{len(tracks)}个歌曲分享页和{len({track['cover'] for track in tracks})}张封面")
+        destination.write_text(page(track, Path(track["cover"])), encoding="utf-8")
+    print(f"已生成{len(tracks)}个歌曲分享页，封面直接引用Music仓库")
+
 
 
 if __name__ == "__main__":

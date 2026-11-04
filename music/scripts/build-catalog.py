@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Package matching catalog data and stat-based audio revisions for one release."""
+"""Compatibility entry point; Music owns catalog generation and versioning."""
 import json
 import hashlib
 import os
+import shutil
+import subprocess
 from pathlib import Path
 from datetime import datetime, timezone
 SITE=Path(__file__).resolve().parents[1]
@@ -31,24 +33,13 @@ def apply_resource_revisions(track, previous, repo):
         track.pop('lyricRevision', None)
 
 def build():
-    data=SITE/'data'
-    tracks=json.loads((data/'tracks.json').read_text())
-    props=json.loads((data/'audio-properties.json').read_text())
-    apple=json.loads((data/'apple-music.json').read_text())
-    previous=json.loads((data/'catalog.json').read_text()) if (data/'catalog.json').exists() else {}
-    old={t['id']:t for t in previous.get('tracks',[])}
-    candidates=[Path(os.environ['ROYLYL_MUSIC_REPO'])] if os.environ.get('ROYLYL_MUSIC_REPO') else [SITE.parent.parent/'Music',Path.home()/'Documents/GitHub/Music']
-    repo=next((candidate for candidate in candidates if (candidate/'tracks.json').is_file()),candidates[0])
-    for t in tracks:
-        apply_resource_revisions(t, old.get(t['id'], {}), repo)
-    releases=json.loads((data/'album-releases.json').read_text())
-    for t in tracks:
-        release=next((r for r in releases if r['artist']==t['src'].split('/')[1] and r['album']==t['album']),None)
-        if release:t['albumYear']=release['year']
-    ids={t['id'] for t in tracks}
-    for entry in apple['entries'].values():
-        if entry.get('trackId') and entry['trackId'] not in ids:raise ValueError('歌单引用曲库中不存在的歌曲：'+entry['trackId'])
-    payload={'version':datetime.now(timezone.utc).isoformat(),'tracks':tracks,'audioProperties':props,'appleMusic':apple}
-    (data/'catalog.json').write_text(json.dumps(payload,ensure_ascii=False,separators=(',',':'))+'\n')
-    print(f'已生成统一目录：{len(tracks)}首')
+    candidates = [Path(os.environ['ROYLYL_MUSIC_REPO'])] if os.environ.get('ROYLYL_MUSIC_REPO') else [SITE.parent.parent/'Music', Path.home()/'Documents/GitHub/Music']
+    repo = next((candidate for candidate in candidates if (candidate/'scripts/publish-catalog.mjs').is_file()), None)
+    if repo is None:
+        raise FileNotFoundError('请将Music仓库放在网站仓库旁，或设置ROYLYL_MUSIC_REPO')
+    subprocess.run(['node', str(repo/'scripts/publish-catalog.mjs')], cwd=repo, check=True)
+    shutil.copyfile(repo/'catalog.json', SITE/'data/catalog.json')
+    catalog = json.loads((repo/'catalog.json').read_text(encoding='utf-8'))
+    print(f"已同步备用目录：版本{catalog['version']}，{len(catalog['tracks'])}首；发布曲库时只需更新Music仓库")
+
 if __name__=='__main__':build()

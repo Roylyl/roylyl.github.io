@@ -27,7 +27,7 @@ Roylyl Music是个人主页下的独立音乐子站，使用原生HTML、CSS和J
 
 ### 在线收听
 
-打开[Roylyl Music](https://roylyl.github.io/music/)，选择专辑、歌曲或固定歌单即可播放。点击底部的专辑封面进入全屏播放页，在封面与歌词之间切换。
+打开[Roylyl Music](https://roylyl.github.io/music/)，选择专辑、歌曲或歌单即可播放。点击底部的专辑封面进入全屏播放页，在封面与歌词之间切换。每次打开播放器会自动检查曲库版本，也可在设置底部点击“检查曲库更新”；歌曲、专辑和新增歌单一起同步，断网时继续使用已保存的曲库与完整缓存的歌曲。
 
 iPhone可在Safari中选择“分享→添加到主屏幕”，从桌面图标打开播放器。其他支持PWA的浏览器可使用浏览器提供的安装入口。首次使用需要联网；系统播放控制和后台运行受浏览器及系统策略影响，iPhone音量由系统控制。
 
@@ -96,80 +96,34 @@ py -3 scripts/preview.py 8037
 - 下一首预加载：默认开启，会提前下载下一首完整音频；流量有限时可关闭。
 - 独立清理音乐、歌词和专辑封面缓存。
 
-网页更新准备完成后会提示刷新，由用户选择更新时间。Service Worker仅管理`/music/`，不影响主站；清理旧网页版本时保留音乐、歌词和封面缓存。
+曲库和歌单更新会直接同步到当前页面，保留正在播放的歌曲和播放进度。网页界面更新准备完成后会提示刷新，由用户选择更新时间。Service Worker仅管理`/music/`，不影响主站；清理旧网页版本时保留音乐、歌词和封面缓存。
 
 ## 曲库与歌单维护
 
-### 数据来自哪里
+曲库、歌单、音频、歌词和专辑封面统一由[Roylyl/Music](https://github.com/Roylyl/Music)发布。网页与RoyTools使用同一套版本检查和本地缓存规则，新增歌曲、专辑或歌单时只需更新Music仓库。
 
-网页代码位于本仓库的`music/`，音频、原始封面及配套歌词来自[Roylyl/Music](https://github.com/Roylyl/Music)。音源根地址配置在[app.js](app.js)的`ROOT`中，文件按需加载。
-
-| 文件或目录 | 用途 |
+| Music仓库中的文件 | 用途 |
 | --- | --- |
-| [data/catalog.json](data/catalog.json) | 播放器读取的统一目录，打包曲目、歌单、音源参数和资源版本。 |
-| [data/tracks.json](data/tracks.json) | 曲目原始索引，包含歌曲ID及音频、封面相对路径。 |
-| [data/apple-music.json](data/apple-music.json) | Apple Music导出的歌单、喜欢状态和曲目映射。 |
-| [data/audio-properties.json](data/audio-properties.json) | 按歌曲ID及音源路径匹配的音频参数。 |
-| [share/](share/)与[share-covers/](share-covers/) | 歌曲分享页面和分享封面。 |
-| [scripts/](scripts/)与[reports/](reports/) | 数据导入、目录生成脚本及匹配记录。 |
+| [catalog-version.json](https://github.com/Roylyl/Music/blob/main/catalog-version.json) | 轻量版本清单；打开播放器时先读取它。 |
+| [catalog.json](https://github.com/Roylyl/Music/blob/main/catalog.json) | 同一版本的歌曲、专辑资料、歌单和音频参数。 |
+| [tracks.json](https://github.com/Roylyl/Music/blob/main/tracks.json) | 可播放曲目索引，保留稳定的歌曲ID与媒体相对路径。 |
+| [playlists.json](https://github.com/Roylyl/Music/blob/main/playlists.json) | 歌单、收藏状态和曲目映射，支持新增任意歌单。 |
 
-音频参数描述音源文件，不代表蓝牙传输规格。更换音频后，应同步更新对应路径和参数；歌曲ID用于关联歌单、分享链接及播放记忆，应保持稳定。
+当前统一曲库版本从1.0.0开始。客户端发现版本变化后读取并保存完整目录，校验成功才替换本机目录；版本文件与目录尚未同时发布、连接失败或断网时，保留已有曲库。已缓存的歌曲不会因目录更新被自动删除。
 
-### 更新曲库
+### 发布曲库更新
 
-维护曲库时，建议把两个仓库放在同一父目录：
+在Music仓库中添加音频、歌词和封面，维护曲目与歌单资料，再在Music仓库根目录运行`node scripts/publish-catalog.mjs`生成新版本目录，并按[Music仓库的维护说明](https://github.com/Roylyl/Music#更新曲库与歌单)发布。版本清单和目录应与对应媒体文件一起发布，不需要修改本网站或重新打包RoyTools。
 
-```text
-GitHub/
-├── roylyl.github.io/
-└── Music/
-```
+专辑列表根据曲目自动生成；歌单列表根据云端歌单目录生成，新歌单会自动显示名称和歌曲数量。歌曲ID用于关联歌单、分享链接及播放记忆，应保持稳定。Apple Music中的修改需要先导入到Music仓库的歌单资料，再发布曲库版本；访客不能更改导出的喜欢状态。
 
-同步`data/tracks.json`和`data/audio-properties.json`后，从网站仓库根目录生成统一目录：
+封面直接读取Music仓库中的原始封面路径，使用资源版本区分缓存。播放器分享链接使用歌曲ID打开当前曲库，不要求为新歌生成独立静态分享页。历史[share/](share/)保留旧链接兼容，其封面同样直接引用Music仓库，不在网站重复保存封面文件。
 
-```sh
-python3 music/scripts/build-catalog.py
-```
+### 网页界面更新
 
-脚本会读取相邻Music仓库中可用的音频和LRC，为资源生成独立版本标记。歌词跟随歌曲版本更新；未带版本标记的歌词按24小时重新验证。LRC的`offset`单位为毫秒，正值提前、负值延后，只在解析时应用一次。
+[页面内置目录](data/catalog.json)仅用于首次打开和无本地记录时的备用曲库。日常曲库更新不需要重写它，也不需要修改网页的资源版本。
 
-需要重新生成歌曲分享页面与JPEG封面时，在macOS运行：
-
-```sh
-python3 music/scripts/generate-share-pages.py
-```
-
-该脚本使用macOS自带的`sips`处理封面，依赖相邻Music仓库，并在结束时生成统一目录。Windows预览和使用已有分享页面不需要运行它。
-
-### 更新Apple Music歌单
-
-“鹿”“深圳”和“我喜欢”来自Apple Music资料库导出的快照。未入库的条目仍显示，播放时跳过。匹配保留专辑和版本区别，不自动用录音室版替换现场版。
-
-心形图标展示导出的喜欢状态，网页访客不能修改。Apple Music中修改歌单或喜欢状态后，需要重新导入并发布数据。
-
-1. 在Music.app中选择“文件→资料库→导出资料库”，将XML保存在仓库外。XML含本地媒体路径等私人信息，不要加入公开仓库。
-2. 在用于维护的Python环境中安装依赖。
-3. 从网站仓库根目录执行导入、来源查询和歌单同步，再生成统一目录。
-
-```sh
-python3 -m pip install opencc-python-reimplemented
-python3 music/scripts/import_apple_music.py /path/to/export.xml
-python3 music/scripts/find_playlist_sources.py
-python3 music/scripts/finalize_apple_music.py ../Music
-python3 music/scripts/build-catalog.py
-```
-
-来源查询需要联网，用于补充未匹配条目的目录信息，不会下载完整歌曲。歌单同步会将清单写入Music仓库的`playlists.json`，并同步导入报告。取得音频后，先按Music仓库规范入库，再更新网页索引和歌单映射。
-
-### 发布更新
-
-`music/`随本仓库的GitHub Pages流程发布，入口保持为`/music/`。发布前端或目录更新时，配套更新以下版本：
-
-- [index.html](index.html)中的资源版本参数及设置页版本文案。
-- [app.js](app.js)中的`APP_VERSION`和`SHELL_VERSION`。
-- [audio-worker.js](audio-worker.js)中的`FILES`资源地址和`SHELL`版本。
-
-数据生成脚本只更新数据，不会代替这一步。资源地址和网页缓存版本一起更新后，已安装的播放器才能收到新版本提示。若修改了音频、歌词或封面路径，也要配套发布Music仓库，避免网页指向不存在的资源。
+修改网页代码时，再配套更新[index.html](index.html)、[app.js](app.js)和[audio-worker.js](audio-worker.js)中的网页资源版本。Service Worker只管理播放器页面，保留已保存的曲库与媒体缓存。
 
 ## 许可与资源
 
