@@ -21,7 +21,7 @@ function harness(){
     async match(address){if(faults.match)throw Error('blocked match');return entries.get(address)?.clone();},
     async put(address,response){if(faults.put)throw Error('QuotaExceededError');entries.set(address,response.clone());}
   };
-  const ctx={current:track(),queue:[],repeat:'all',audio:{currentTime:2,addEventListener:(type,fn)=>events[type]=fn},
+  const ctx={tracePlayback(){},completePlaybackSeek(){},restorePlaybackPosition(){},rebasePlaybackClock(){},syncPlaybackState(){},current:track(),queue:[],repeat:'all',audio:{currentTime:2,addEventListener:(type,fn)=>events[type]=fn},
     $:node,url:p=>'https://example.test/'+p,esc:s=>s,RoylylLyrics:parser,LYRIC_CACHE:'lyrics',Response,AbortController,console,
     Date:{now:()=>now},window:{caches:true,matchMedia:()=>({matches:false})},
     caches:{async open(){if(faults.open)throw Error('SecurityError');return cache;},async delete(){entries.clear();}},
@@ -47,9 +47,17 @@ function harness(){
   h=harness();h.setNetwork(async()=>new Response('',{status:404}));await h.api.loadLyrics(h.ctx.current);
   assert.equal(h.api.getState(),'not-found');await h.api.loadLyrics(h.ctx.current);assert.equal(h.calls.length,1);
   h.advance(61000);h.setNetwork(async()=>new Response('[00:01]已补全'));await h.api.loadLyrics(h.ctx.current);
+  assert.equal(h.api.getState(),'not-found');assert.equal(h.calls.length,1,'missing lyrics stay cached for 24 hours');
+  h.advance(86400001);await h.api.loadLyrics(h.ctx.current);
   assert.equal(h.api.getState(),'ready');assert.equal(h.calls.length,2);
   h.advance(86400001);h.setNetwork(async()=>{throw new TypeError('offline');});await h.api.loadLyrics(h.ctx.current);
   assert.equal(h.api.getState(),'ready');assert(h.node('full-lyrics').innerHTML.includes('已补全'));
+
+  h=harness();h.setNetwork(async()=>new Response('',{status:410}));await h.api.loadLyrics(h.ctx.current);
+  assert.equal(h.api.getState(),'not-found');assert.equal([...h.entries.values()][0].status,404);
+  await h.api.loadLyrics(h.ctx.current);assert.equal(h.calls.length,1);
+  h.ctx.current.lyricRevision='v2';h.setNetwork(async()=>new Response('[00:01]新增歌词'));await h.api.loadLyrics(h.ctx.current);
+  assert.equal(h.api.getState(),'ready');assert.equal(h.calls.length,2,'a new lyric revision bypasses missing cache');
 
   for(const failure of ['server','timeout','body-timeout']){
     h=harness();await h.api.loadLyrics(h.ctx.current);h.advance(86400001);

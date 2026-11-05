@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const APP_VERSION='20261104-pwa-50', SHELL_VERSION='roylyl-music-shell-20261104-50';
+  const APP_VERSION='20261104-pwa-53', SHELL_VERSION='roylyl-music-shell-20261104-53';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const themeMedia=window.matchMedia('(prefers-color-scheme: dark)');
@@ -38,6 +38,14 @@
   $('audio-budget').onchange=async()=>{sessionBudget=Number($('audio-budget').value);try{localStorage.setItem('roylyl-music-audio-budget',String(sessionBudget));}catch{}if(!audioBudget())cancelPreload();await sendAudioConfig();updateCacheStatus();};
   $('preload-next').onchange=()=>{sessionPreload=$('preload-next').checked;try{localStorage.setItem('roylyl-music-preload',String(sessionPreload));}catch{}if(!preloadAllowed()){cancelPreload();releasePrepared();}sendAudioConfig();};
   let audioCacheGeneration = 0, coverCacheGeneration = 0, preloadController = null, localAudioUrl = null, persistenceRequested = false;
+  async function cachedLyricCount() {
+    const cache=await caches.open(LYRIC_CACHE),keys=await cache.keys();let count=0;
+    for(let start=0;start<keys.length;start+=32){
+      const responses=await Promise.all(keys.slice(start,start+32).map(key=>cache.match(key)));
+      count+=responses.filter(response=>response?.status===200).length;
+    }
+    return count;
+  }
   async function updateCacheStatus() {
     if (!('caches' in window)) {
       audioCacheStatus.textContent = coverCacheStatus.textContent = lyricCacheStatus.textContent = '此浏览器不支持本地缓存。';
@@ -51,20 +59,24 @@
       const fallbackBytes=stats?stats.bytes:(await Promise.all(audioKeys.map(key=>audioCache.match(key)))).reduce((sum,hit)=>sum+Number(hit?.headers.get('Content-Length')||0),0);
       audioCacheStatus.textContent = `已缓存${stats?.count??audioKeys.length}首 · ${formatBytes(fallbackBytes)}`;
       coverCacheStatus.textContent = `已缓存${coverKeys.length}张专辑封面`;
-      const lyricKeys=await (await caches.open(LYRIC_CACHE)).keys();
-      lyricCacheStatus.textContent = `已缓存${lyricKeys.length}份歌词`;
+      lyricCacheStatus.textContent = `已缓存${await cachedLyricCount()}份歌词`;
     } catch { audioCacheStatus.textContent = coverCacheStatus.textContent = lyricCacheStatus.textContent = '无法读取本地缓存。'; }
   }
   function cancelPreload(keep='') {
     preloadController?.abort();preloadController=null;
     navigator.serviceWorker?.controller?.postMessage({type:'CANCEL_PRELOAD',keep});
   }
+  const audioCacheJobs=new Map();
   async function cacheAudio(source) {
     if(!navigator.serviceWorker?.controller || !audioBudget())return false;
     const generation=audioCacheGeneration,preload=source!==audioSource(current||{src:''});
     if(preload&&!preloadAllowed())return false;
-    const result=await workerMessage({type:'CACHE_AUDIO',source,preload},120000);
-    return generation===audioCacheGeneration && result?.ok===true;
+    const existing=audioCacheJobs.get(source);
+    if(existing?.generation===generation&&existing.preload===preload)return existing.promise;
+    const job={generation,preload,promise:null};
+    job.promise=workerMessage({type:'CACHE_AUDIO',source,preload},120000).then(result=>generation===audioCacheGeneration&&result?.ok===true)
+      .finally(()=>{if(audioCacheJobs.get(source)===job)audioCacheJobs.delete(source);});
+    audioCacheJobs.set(source,job);return job.promise;
   }
   if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
     navigator.serviceWorker.register('./audio-worker.js',{scope:'./'}).then(registration=>{
@@ -215,7 +227,7 @@
   const normalize = s => String(s).normalize('NFKC').toLocaleLowerCase();
   const safePath = p => typeof p === 'string' && !p.startsWith('/') && !p.includes('\\') && !p.split('/').some(x => x === '..') && !/^[a-z]+:/i.test(p);
   const coverRevisions=new Map();
-  const coverSource = path => url(path)+(coverRevisions.has(path)?'?v='+encodeURIComponent(coverRevisions.get(path)):'');
+  const coverSource = path => {const source=new URL(url(path));if(coverRevisions.has(path))source.searchParams.set('v',coverRevisions.get(path));return source.href;};
   const picture = t => coverSource(t.cover);
   const coverUrls = new Map(), coverRequests = new Map();
   async function cachedCover(path) {
@@ -248,7 +260,7 @@
         });
         return local;
       } catch { return source; }
-      finally { if(coverRequests.get(path)===request)coverRequests.delete(source); }
+      finally { if(coverRequests.get(source)===request)coverRequests.delete(source); }
     })();
     coverRequests.set(source,request);
     return request;
@@ -305,7 +317,7 @@
   let lyricTrackId = '', lyricKey = '', lyricState = 'idle', lyricGroups = [], lyricMetadata = [], lyricActiveIndex = -1, lyricLoadedAt = 0;
   const lyricWrites=new Set();
   let lyricManualUntil = 0, lyricFollowTimer = null;
-  const lyricTtl = 24 * 60 * 60 * 1000, lyricMissingTtl = 60000;
+  const lyricTtl = 24 * 60 * 60 * 1000, lyricMissingTtl = 24 * 60 * 60 * 1000;
   const lyricResource = track => {
     const path = track.src.replace(/\.[^./?]+(?:\?.*)?$/i,'.lrc');
     const revision = track.lyricRevision || 'unversioned';
@@ -401,7 +413,7 @@
       }
       if(controller.signal.aborted&&!(fromCache&&controller.signal.reason==='timeout')){if(controller.signal.reason==='timeout')throw Error('timeout');return;}
       if(request!==lyricRequest||generation!==lyricGeneration||current?.id!==track.id)return;
-      if(response.status===404){
+      if(response.status===404||response.status===410){
         lyricState='not-found';lyricLoadedAt=fromCache?Date.now()-age:Date.now();lyricMessage('暂无歌词');
         if(!fromCache)await storeLyric(cache,resource,'',404,controller,generation);
         return;
@@ -430,14 +442,17 @@
     $('clear-lyric-cache').disabled=false;
     if(current)loadLyrics(current,{force:true});
   };
-  let lyricPreloadController = null;
+  let lyricPreloadController = null,lyricPreloadRequest=0;
   async function preloadNextLyrics(track) {
+    const request=++lyricPreloadRequest,generation=lyricGeneration;
     lyricPreloadController?.abort();
     lyricPreloadController = null;
-    if(current?.id !== track.id || !('caches' in window))return;
+    if(current?.id !== track.id || !('caches' in window)||!preloadAllowed()||!audioBudget()||audio.paused||pendingTrackId)return;
+    const ready=await cacheAudio(audioSource(track));
+    if(!ready||request!==lyricPreloadRequest||generation!==lyricGeneration||current?.id!==track.id||!preloadAllowed()||audio.paused)return;
     const next=nextPreloadTrack();
     if(!next?.src || next.id===track.id)return;
-    const controller=new AbortController(),generation=lyricGeneration,resource=lyricResource(next);
+    const controller=new AbortController(),resource=lyricResource(next);
     lyricPreloadController=controller;
     const timer=setTimeout(()=>controller.abort(),10000);
     try {
@@ -446,7 +461,7 @@
       const hit=await cachedLyric(cache,resource.url);
       if(hit && lyricCacheAge(hit)<(hit.status===404?lyricMissingTtl:lyricTtl))return;
       const response=await fetch(resource.url,{signal:controller.signal,cache:'no-cache'});
-      if(response.status===404){await storeLyric(cache,resource,'',404,controller,generation);return;}
+      if(response.status===404||response.status===410){await storeLyric(cache,resource,'',404,controller,generation);return;}
       if(!response.ok)return;
       const text=await response.text();
       if(/^\s*(?:<!doctype\s+html|<html[\s>])/i.test(text))return;
@@ -809,7 +824,10 @@
       const source=audioSource(next),owner=current.id;
       if(preparedAudio.has(source))return;
       const token=++prepareToken,generation=audioCacheGeneration;
-      cacheAudio(source).then(async ready=>{
+      // Finish saving the playing song before allowing next-song network work.
+      cacheAudio(audioSource(current)).then(async currentReady=>{
+        if(!currentReady||token!==prepareToken||current?.id!==owner||generation!==audioCacheGeneration||audio.paused||!preloadAllowed())return;
+        const ready=await cacheAudio(source);
         if(!ready||token!==prepareToken||current?.id!==owner||generation!==audioCacheGeneration)return;
         const blob=await cachedAudioUrl(source);
         if(!blob)return;
@@ -1278,6 +1296,9 @@
       tracePlayback('native-play-called');
       armPlaybackWatchdog(attempt);
       if(refreshCurrent)setCurrent(t);
+      // A separate full-body consumer keeps loading even when HTMLAudio throttles
+      // its own read-ahead. This never delays the user-initiated play() call.
+      if(audioBudget()&&!recover)cacheAudio(source);
       paintBufferedProgress();status(BUFFERING_STATUS);renderCurrent();
       await started;
       // A resolved play promise is not proof that the media clock is moving.

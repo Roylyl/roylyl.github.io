@@ -1,6 +1,6 @@
 'use strict';
-const AUDIO='roylyl-music-audio-v2',META='roylyl-music-audio-meta-v1',SHELL='roylyl-music-shell-20261104-50';
-const FILES=['/music/','/music/index.html','/music/music.css?v=20261104-pwa-50','/music/catalog-sync.js?v=20261104-pwa-50','/music/app.js?v=20261104-pwa-50','/music/playback-feedback.js?v=20261104-pwa-50','/music/lyric-parser.js?v=20261104-pwa-50','/music/image-loading.css?v=20260927-1','/music/image-loading.js?v=20260927-1','/music/region-notice.css?v=20260928-1','/music/region-notice.js?v=20260928-1','/music/data/catalog.json?v=20261104-pwa-50','/music/favicon.svg','/music/placeholder.svg','/music/manifest.webmanifest','/music/icons/icon-192.png','/music/icons/icon-512.png','/music/icons/apple-touch-icon.png'];
+const AUDIO='roylyl-music-audio-v2',META='roylyl-music-audio-meta-v1',SHELL='roylyl-music-shell-20261104-53';
+const FILES=['/music/','/music/index.html','/music/music.css?v=20261104-pwa-53','/music/catalog-sync.js?v=20261104-pwa-53','/music/app.js?v=20261104-pwa-53','/music/playback-feedback.js?v=20261104-pwa-53','/music/lyric-parser.js?v=20261104-pwa-53','/music/image-loading.css?v=20260927-1','/music/image-loading.js?v=20260927-1','/music/data/catalog.json?v=20261104-pwa-53','/music/favicon.svg','/music/placeholder.svg','/music/manifest.webmanifest','/music/icons/icon-192.png','/music/icons/icon-512.png','/music/icons/apple-touch-icon.png'];
 const metaKey='/music/__audio_index__',configKey='/music/__audio_config__',freshKey='/music/__audio_recovery__';
 let generation=0,budget=-1,preloadEnabled=true,writeQueue=Promise.resolve(),configRevision=0,configRead,freshRead,optionalEpoch=0,lastKeptSource='';
 const inflight=new Map(),playingRequests=new Map(),protectedSources=new Map();
@@ -112,13 +112,21 @@ self.addEventListener('message',event=>{
   if(data.type==='AUDIO_CONFIG'){
     configRevision++;budget=validBudget(data.budget)?data.budget:-1;
     preloadEnabled=data.preload!==false;if(!budget||!preloadEnabled){optionalEpoch++;lastKeptSource='';}protectedSources.set(event.source?.id||'current',data.current||'');
-    for(const [key,job] of inflight)if(job.optional&&(!budget||(!preloadEnabled&&job.preload)))cancelJob(key,job);
+    for(const [key,job] of inflight)if(job.optional&&(!budget||(!preloadEnabled&&job.preload))||job.playback&&!protectedSource(key))cancelJob(key,job);
     run((async()=>{await serial(saveConfig);await trimToBudget();port?.postMessage({ok:true});})());
   }
   if(data.type==='AUDIO_STATS')run(stats(port));
   if(data.type==='CACHE_AUDIO')run((async()=>{
     await ensureConfig();const version=generation,epoch=optionalEpoch;
     if(!audioSource(data.source)||!budget||(data.preload&&!preloadEnabled)){port?.postMessage({ok:false});return;}
+    if(data.preload){
+      const owner=protectedSources.get(event.source?.id||'current');
+      if(owner&&owner!==data.source&&!await cachedFull(owner)){
+        const currentJob=inflight.get(owner);
+        if(!currentJob||!await currentJob.stored){port?.postMessage({ok:false});return;}
+      }
+      if(owner&&owner!==protectedSources.get(event.source?.id||'current')){port?.postMessage({ok:false});return;}
+    }
     const hit=await cachedFull(data.source);
     if(hit){port?.postMessage({ok:true});return;}
     // An in-progress playback Range may already be returning a full 200.
@@ -193,10 +201,10 @@ async function storeFull(source,response,version,signal,epoch=sourceEpoch.get(so
 }
 function startFull(source,request,optional,preload=false,providedResponse,requestGeneration=generation,requestEpoch=sourceEpoch.get(source)||0){
   let job=inflight.get(source);
-  if(job){if(!optional)job.optional=false;return job;}
+  if(job){if(!optional){job.optional=false;job.playback=true;}if(!preload)job.preload=false;return job;}
   const controller=new AbortController(),version=requestGeneration,epoch=requestEpoch;
   const response=providedResponse?Promise.resolve(providedResponse):fetch(request,{signal:controller.signal,...(freshSources.has(source)?{cache:'no-store'}:{})});
-  job={controller,optional,preload,response,stored:null};
+  job={controller,optional,preload,playback:!optional,response,stored:null};
   job.stored=response.then(value=>storeFull(source,value.clone(),version,controller.signal,epoch)).catch(()=>false).then(ok=>{if(!ok&&job.optional)controller.abort();return ok;}).finally(()=>{if(inflight.get(source)===job)inflight.delete(source);});
   inflight.set(source,job);return job;
 }
@@ -232,6 +240,21 @@ async function audioFetch(event){
   const playback=event.request.destination==='audio';
   if(playback)protectedSources.set(event.clientId||'current',source);
   if(range){
+    if(playback&&budget){
+      // A full 200 response is valid when a server ignores Range. Share one
+      // stream with playback while storeFull drains its independent clone.
+      const headers=new Headers(event.request.headers);headers.delete('Range');
+      const job=startFull(source,new Request(event.request,{headers}),false,false);
+      event.waitUntil(job.stored);
+      const response=await job.response;
+      if(fullResponse(response)){
+        if(/^bytes=0-\d*$/i.test(range))return response.clone();
+        // Seeking waits for this same full transfer instead of opening a second
+        // network range. A failed storage write may still serve the shared body.
+        const stored=await job.stored,complete=stored&&await cachedFull(source);
+        return cachedRange(complete||response.clone(),range,method);
+      }
+    }
     // Network ranges stay intact. An ignored Range (200) can feed the optional
     // full cache, but a genuine 206 can never enter that cache.
     const version=generation,epoch=sourceEpoch.get(source)||0,promise=fetch(event.request,freshSources.has(source)?{cache:'no-store'}:{});playingRequests.set(source,promise);
