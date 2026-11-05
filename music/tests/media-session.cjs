@@ -10,7 +10,7 @@ function harness(){
     getAttribute(){return this.src;},pause(){this.paused=true;},load(){this.reloads=(this.reloads||0)+1;},
     play(){this.paused=false;return new Promise((resolve,reject)=>requests.push({resolve,reject}));}};
   const nodes=new Map();
-  const ctx={shuffleOrder:[],shuffleCursor:-1,historyAnchors:[],queueUndo:null,queueUndoTimer:null,retryTicket:null,lastFailureToken:-1,retryWaiting:false,
+  const ctx={time:String,audioDownloadProgress:new Map(),completedAudioRequest:null,notifyNativePlayback(){},audioDownloadProgress:new Map(),completedAudioRequest:null,notifyNativePlayback(){},shuffleOrder:[],shuffleCursor:-1,historyAnchors:[],queueUndo:null,queueUndoTimer:null,retryTicket:null,lastFailureToken:-1,retryWaiting:false,
     RoylylPlaybackFeedback,playbackRetries:RoylylPlaybackFeedback.createRetryController(),isFullOpen:()=>false,document:{body:{append(node){node.parentElement=this;}}},
     setTimeout,clearTimeout,insertionAnchor:null,checkSleepTimer:()=>false,window:{addEventListener(){}},nextUp:[],pendingResumePosition:null,repeat:'all',updateLyricPosition(){},read:(key,fallback)=>fallback,albums:[],get:id=>id===track.id?track:null,tracePlayback(){},performance:{now:()=>100},playbackRequestedAt:0,failedAudioSources:new Set(),playbackBlocked:false,pausedPosition:null,audio,current:track,queue:[track],loadedTrackId:track.id,pendingTrackId:track.id,playToken:0,
     playbackHistory:[track.id],historyCursor:0,persistenceRequested:true,playerStatusText:'buffering',BUFFERING_STATUS:'buffering',
@@ -18,11 +18,11 @@ function harness(){
       audioSession:{state:'active',addEventListener:(name,fn)=>sessionEvents[name]=fn}},
     advance(){ctx.advances=(ctx.advances||0)+1;},canPlay:t=>!!t?.src,audioSource:t=>t.src,cancelPreload(){},status(t){ctx.playerStatusText=t;},renderCurrent(){},
     setCurrent(t){ctx.current=t;},save(){},preloadNext(){},audioBudget:()=>0,releasePrepared(){},URL:{revokeObjectURL(){}},
-    cachedAudioUrl(){throw Error('system action must not await a cache read');},
-    $:id=>{if(!nodes.has(id))nodes.set(id,{hidden:true,style:{setProperty(){}},click(){throw Error('system action must not simulate a DOM click');}});return nodes.get(id);}};
+    cachedAudioUrl(){return Promise.resolve(null);},
+    $:id=>{if(!nodes.has(id))nodes.set(id,{hidden:true,append(node){node.parentElement=this;},setAttribute(){},style:{setProperty(){}},click(){throw Error('system action must not simulate a DOM click');}});return nodes.get(id);}};
   vm.createContext(ctx);
   vm.runInContext(source.slice(source.indexOf('  const playbackFlow='),source.indexOf('  function advance(')),ctx);
-  vm.runInContext(source.slice(source.indexOf('  function registerMediaActions()'),source.indexOf("  document.addEventListener('visibilitychange'")),ctx);
+  vm.runInContext(source.slice(source.indexOf('  function registerMediaActions()'),source.indexOf("  document.addEventListener('visibilitychange'",source.indexOf('  function registerMediaActions()'))),ctx);
   vm.runInContext(source.slice(source.indexOf("  navigator.audioSession?.addEventListener('statechange'"),source.indexOf("  audio.addEventListener('error'")),ctx);
   ctx.registerMediaActions();return {ctx,audio,handlers,requests,sessionEvents,registrations};
 }
@@ -38,7 +38,7 @@ function harness(){
   assert.equal(positions.at(-1).position,0);
   buffering.requests[0].resolve();await starting;buffering.ctx.syncPlaybackState();
   assert.equal(buffering.ctx.navigator.mediaSession.playbackState,'paused','resolved play at readyState=1 is still buffering');
-  buffering.audio.readyState=4;buffering.audio.currentTime=.25;buffering.ctx.observePlaybackClock();buffering.ctx.syncPlaybackState();
+  buffering.audio.readyState=4;buffering.ctx.performance.now=()=>500;buffering.audio.currentTime=.25;buffering.ctx.observePlaybackClock();buffering.ctx.syncPlaybackState();
   assert.equal(buffering.ctx.navigator.mediaSession.playbackState,'playing');
   assert.equal(positions.at(-1).position,.25);
   buffering.audio.currentTime=12.5;buffering.audio.readyState=2;buffering.ctx.syncPlaybackState();

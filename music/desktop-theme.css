@@ -1,0 +1,35 @@
+:root,html[data-theme="light"]{--bg:#f2f2f7;--panel:#fff;--text:#1c1c1e;--muted:#8e8e93;--line:#e5e5ea;--blue:#007aff;--mint:#007aff;--seek-track:#d1d1d6;--seek-thumb:#007aff;--soft:#eaf3ff;color-scheme:light}
+html[data-theme="dark"]{--bg:#121214;--panel:#1c1c1e;--text:#f2f2f7;--muted:#98989d;--line:#38383a;--blue:#0a84ff;--mint:#0a84ff;--seek-track:#48484a;--seek-thumb:#0a84ff;--soft:#102b48;color-scheme:dark}
+html[data-theme] body{background:var(--bg);color:var(--text)}
+html[data-theme] .player,html[data-theme] .queue-panel,html[data-theme] #full-player,html[data-theme] #settings-dialog,html[data-theme] #sleep-dialog,html[data-theme] .track-more-menu{background:var(--panel);color:var(--text);border-color:var(--line)}
+html[data-theme] #full-player{background:var(--bg)}
+html[data-theme] .play,html[data-theme] .primary{background:var(--blue);color:white}
+html[data-theme] .secondary{background:var(--soft);color:var(--blue);border-color:var(--line)}
+html[data-theme] .feature{background:var(--panel);border-color:var(--line)}
+html[data-theme] .intro h1 span,html[data-theme] .feature .eyebrow,html[data-theme] .artist-link,html[data-theme] .album-link,html[data-theme] .track-row.current strong{color:var(--blue);background-image:none}
+html[data-theme] .nav-item.active,html[data-theme] .track-row.current{background:var(--soft);color:var(--blue)}
+html[data-theme] .search,html[data-theme] select,html[data-theme] .theme-options,html[data-theme] input[type=number],html[data-theme] textarea{background:var(--panel);color:var(--text);border-color:var(--line)}
+html[data-theme] .track-row:hover{background:var(--soft)}
+html[data-theme] .feature p:not(.eyebrow),html[data-theme] .home,html[data-theme] .full-header{color:var(--muted)}
+html[data-theme] input[type=range]{accent-color:var(--blue)}
+html[data-theme] #full-player::backdrop{background:var(--bg)}
+/* Palette only: desktop geometry and navigation remain in desktop.css. */
+html[data-theme] { --action-blue:#007aff;--control-hover:#f5f5f7;--control-active:#ededf0;--seek-buffer:#8e8e9345; }
+html[data-theme="dark"] { --control-hover:#252527;--control-active:#2c2c2e;--seek-buffer:#8e8e9370; }
+html[data-theme] .topbar { background:var(--bg)!important; }
+html[data-theme] .primary,html[data-theme] .secondary,html[data-theme] .art .open-album,html[data-theme] .play { background:var(--action-blue)!important;color:#fff!important;border-color:transparent!important; }
+html[data-theme] .primary:not(:disabled):hover,html[data-theme] .secondary:not(:disabled):hover,html[data-theme] .art .open-album:hover { background:#0069d9!important; }
+html[data-theme] .home,html[data-theme] .side-footer,html[data-theme] .side-footer p,html[data-theme] .library-footer,html[data-theme] .intro-note,html[data-theme] .feature p:not(.eyebrow),html[data-theme] .track-no,html[data-theme] .track-album,html[data-theme] .track-time,html[data-theme] .track-copy small,html[data-theme] .album-card .year,html[data-theme] #full-artist,html[data-theme] #full-album,html[data-theme] .lyrics-placeholder { color:var(--muted)!important; }
+html[data-theme] .brand-icon,html[data-theme] .feature .eyebrow,html[data-theme] #audio-details dd,html[data-theme] .quality-badges,html[data-theme] .icon[aria-pressed="true"],html[data-theme] .lyric-group.active .lyric-line { color:var(--blue)!important; }
+html[data-theme] .quality-badges span,html[data-theme] .theme-options label:has(input:checked),html[data-theme] .track-more-menu button:hover { color:var(--blue)!important;background:var(--soft)!important;border-color:var(--line)!important; }
+html[data-theme] .art,html[data-theme] .image-placeholder { background:var(--bg)!important; }
+html[data-theme] #playlist-detail,html[data-theme] .settings-section,html[data-theme] .feature { background:var(--panel)!important;color:var(--text)!important;border-color:var(--line)!important; }
+html[data-theme] .track-row { border-color:var(--line)!important; }
+html[data-theme] .track-row:not(.current):hover { background:var(--control-hover)!important; }
+html[data-theme] .track-row.is-pressed { background:var(--control-active)!important; }
+html[data-theme] .nav-item.active,html[data-theme] .track-row.current { background:var(--soft)!important; }
+html[data-theme] .icon:active { background:var(--control-active)!important; }
+html[data-theme] input[type=checkbox],html[data-theme] input[type=radio] { accent-color:var(--blue); }
+html[data-theme] .timeline input[type=range]::-webkit-slider-runnable-track,html[data-theme] .full-timeline input[type=range]::-webkit-slider-runnable-track { background:linear-gradient(to right,var(--blue) 0%,var(--blue) var(--seek-progress,0%),transparent var(--seek-progress,0%),transparent 100%),var(--seek-buffer-gradient,linear-gradient(transparent,transparent)),var(--seek-track)!important; }
+html[data-theme] .timeline input[type=range]::-moz-range-track,html[data-theme] .full-timeline input[type=range]::-moz-range-track { background:linear-gradient(to right,var(--blue) 0%,var(--blue) var(--seek-progress,0%),transparent var(--seek-progress,0%),transparent 100%),var(--seek-buffer-gradient,linear-gradient(transparent,transparent)),var(--seek-track)!important; }
+html[data-theme] .full-timeline input[type=range]::-webkit-slider-thumb,html[data-theme] .timeline input[type=range]::-webkit-slider-thumb { background:var(--blue)!important; }

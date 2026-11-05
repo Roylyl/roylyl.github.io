@@ -1,0 +1,26 @@
+const fs=require('fs'),assert=require('assert/strict'),path=require('path');
+(async()=>{
+const width=Number(process.env.MOBILE_WIDTH)||393,height=Number(process.env.MOBILE_HEIGHT)||852;
+const appVersion=/APP_VERSION='([^']+)'/.exec(fs.readFileSync(path.join(__dirname,'../app.js'),'utf8'))[1];\nconst endpoint=process.env.CDP_URL||'http://127.0.0.1:9260',url=process.env.MUSIC_URL||'http://127.0.0.1:8059/music/';
+const target=await(await fetch(endpoint+'/json/new?about:blank',{method:'PUT'})).json(),ws=new WebSocket(target.webSocketDebuggerUrl);await new Promise(r=>ws.onopen=r);
+let seq=0;const pending=new Map(),errors=[],results=[];ws.onmessage=e=>{let m=JSON.parse(e.data);if(m.id){let p=pending.get(m.id);pending.delete(m.id);m.error?p.reject(m.error):p.resolve(m.result);}else if(m.method==='Runtime.exceptionThrown')errors.push(m.params.exceptionDetails.exception?.description||m.params.exceptionDetails.text);};
+const send=(method,params={})=>new Promise((resolve,reject)=>{let id=++seq;pending.set(id,{resolve,reject});ws.send(JSON.stringify({id,method,params}));});
+const run=async expression=>{let r=await send('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true,userGesture:true});if(r.exceptionDetails)throw Error(r.exceptionDetails.exception?.description);return r.result.value;};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));const until=async e=>{for(let i=0;i<150;i++){if(await run(e))return;await sleep(100);}throw Error('Timed out: '+e);};
+const out=process.env.AUDIT_OUTPUT||path.join(require('os').tmpdir(),'roytools-mobile-all-pages');fs.mkdirSync(out,{recursive:true});
+async function tap(selector){await run(`document.querySelector(${JSON.stringify(selector)}).scrollIntoView({block:'center'})`);await sleep(70);let r=await run(`(()=>{let e=document.querySelector(${JSON.stringify(selector)}),r=e.getBoundingClientRect(),t=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return {x:r.x+r.width/2,y:r.y+r.height/2,hit:e===t||e.contains(t),target:t?.outerHTML.slice(0,150)}})()`);assert(r.hit,'blocked '+selector+' '+r.target);await send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:r.x,y:r.y}]});await send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await sleep(220);}
+async function capture(label){await sleep(220);let layout=await run(`(()=>{const r=e=>e.getBoundingClientRect().toJSON();return {title:document.querySelector('#web-title')?.textContent,overflow:document.documentElement.scrollWidth>innerWidth,dialogs:[...document.querySelectorAll('dialog[open]')].map(e=>({id:e.id,...r(e)})),menus:[...document.querySelectorAll('.track-more-menu:not([hidden]),#queue-panel:not([hidden]),#full-queue:not([hidden])')].filter(e=>e.getClientRects().length).map(e=>({id:e.id,...r(e)}))}})()`);assert(!layout.overflow,label+' overflow');for(const r of [...layout.dialogs,...layout.menus]){assert(r.x>=-1&&r.right<=width+1,label+' horizontal '+r.id);assert(r.y>=-1&&r.bottom<=height+1,label+' vertical '+r.id);}let shot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(out,label+'.png'),Buffer.from(shot.data,'base64'));results.push({label,...layout});console.log('CHECK',label,layout.title);}
+async function home(){await run("window.RoyToolsMusicApp.goHome()");await sleep(220);}
+await send('Runtime.enable');await send('Page.enable');await send('Network.enable');await send('Network.setBypassServiceWorker',{bypass:false});
+await send('Emulation.setDeviceMetricsOverride',{width:393,height:852,deviceScaleFactor:1,mobile:true});await send('Emulation.setTouchEmulationEnabled',{enabled:true});await send('Page.navigate',{url});await until("!!window.RoyToolsMusicApp&&!!navigator.serviceWorker.controller");
+await home();await tap('[data-music-page=settings]');await tap('#check-web-update');
+await until("(async()=>!!(await navigator.serviceWorker.getRegistration('./')).waiting)()");
+await until("!document.querySelector('#apply-update').hidden");await tap('#apply-update');
+await sleep(500);await until("!!window.RoyToolsMusicApp&&document.querySelector('#notice').hidden");
+assert(await run("document.querySelector('#copy-playback-diagnostics').parentElement.parentElement.textContent.includes('"+appVersion+"')"));
+await home();await tap('[data-music-page=settings]');
+const downloadDir=path.join(out,'downloads');fs.mkdirSync(downloadDir,{recursive:true});await send('Browser.setDownloadBehavior',{behavior:'allow',downloadPath:downloadDir});await tap('#export-playback-diagnostics');
+let files=[];for(let i=0;i<30;i++){files=fs.readdirSync(downloadDir).filter(x=>x.endsWith('.json'));if(files.length)break;await sleep(100);}
+assert(files.length>0);let report=JSON.parse(fs.readFileSync(path.join(downloadDir,files.at(-1)),'utf8'));assert.equal(report.version,appVersion);assert(Array.isArray(report.events));
+console.log('PASS PWA waiting worker -> accept update -> controller change -> reload; log file export',files.at(-1));assert.deepEqual(errors,[]);ws.close();
+})().catch(e=>{console.error(e);process.exit(1)});

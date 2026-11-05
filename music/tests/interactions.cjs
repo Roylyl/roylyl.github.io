@@ -3,10 +3,11 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('nod
 const source=fs.readFileSync(require('node:path').join(__dirname,'../app.js'),'utf8');
 require('../playback-feedback.js');
 const defer=()=>{let resolve;const promise=new Promise(r=>resolve=r);return {promise,resolve};};
+const dependencies=()=>({time:String,audioDownloadProgress:new Map(),completedAudioRequest:null,notifyNativePlayback(){},canPlay:t=>!!t?.src,desktopShell:true,tracks:[],nativeCatalogReady:true,clearDownloadConfirmation(){},syncMusicSelects(){},notifyNativeNavigation(){},animateContentNavigation(){}});
 function player(){
   const requests=[],audio={paused:true,src:'',error:null,currentTime:0,pause(){this.paused=true;},play(){this.paused=false;return Promise.resolve();},load(){},getAttribute(){return this.src;},removeAttribute(){this.src='';}};
   const nodes=new Map();
-  const ctx={shuffleOrder:[],shuffleCursor:-1,historyAnchors:[],queueUndo:null,queueUndoTimer:null,retryTicket:null,lastFailureToken:-1,retryWaiting:false,RoylylPlaybackFeedback,playbackRetries:RoylylPlaybackFeedback.createRetryController(),setTimeout:(fn,delay)=>setTimeout(fn,delay).unref(),clearTimeout,isFullOpen:()=>false,document:{body:{append(node){node.parentElement=this;}}},$:id=>{if(!nodes.has(id))nodes.set(id,{hidden:true,append(node){node.parentElement=this;},style:{setProperty(){}}});return nodes.get(id);},insertionAnchor:null,checkSleepTimer:()=>false,nextUp:[],pendingResumePosition:null,updateLyricPosition(){},read:(key,fallback)=>fallback,albums:[],tracePlayback(){},performance:{now:()=>100},playbackRequestedAt:0,failedAudioSources:new Set(),playbackBlocked:false,pausedPosition:null,audio,requests,preparedAudio:new Map(),prepareToken:0,audioCacheGeneration:0,releasePrepared(){ctx.prepareToken++;ctx.preparedAudio.clear();},navigator:{},window:{},URL:{revokeObjectURL(){}},current:null,queue:[],repeat:'all',playToken:0,persistenceRequested:false,loadedTrackId:null,pendingTrackId:null,playbackHistory:[],historyCursor:-1,localAudioUrl:null,BUFFERING_STATUS:'正在缓冲...',canPlay:t=>!!t?.src,audioSource:t=>t.src,cancelPreload(){},status(){},renderCurrent(){},save(){},cacheAudio(){},audioBudget:()=>0,preloadAllowed:()=>true,cachedAudioUrl(){const request=defer();requests.push(request);return request.promise;},setCurrent(t){ctx.current=t;},get(id){return ctx.queue.find(t=>t.id===id);}};
+  const ctx={...dependencies(),desktopShell:true,nativeCatalogReady:true,clearDownloadConfirmation(){},syncMusicSelects(){},notifyNativeNavigation(){},animateContentNavigation(){},shuffleOrder:[],shuffleCursor:-1,historyAnchors:[],queueUndo:null,queueUndoTimer:null,retryTicket:null,lastFailureToken:-1,retryWaiting:false,RoylylPlaybackFeedback,playbackRetries:RoylylPlaybackFeedback.createRetryController(),setTimeout:(fn,delay)=>setTimeout(fn,delay).unref(),clearTimeout,isFullOpen:()=>false,document:{body:{append(node){node.parentElement=this;}}},$:id=>{if(!nodes.has(id))nodes.set(id,{hidden:true,append(node){node.parentElement=this;},setAttribute(){},style:{setProperty(){}}});return nodes.get(id);},insertionAnchor:null,checkSleepTimer:()=>false,nextUp:[],pendingResumePosition:null,updateLyricPosition(){},read:(key,fallback)=>fallback,albums:[],tracePlayback(){},performance:{now:()=>100},playbackRequestedAt:0,failedAudioSources:new Set(),playbackBlocked:false,pausedPosition:null,audio,requests,preparedAudio:new Map(),prepareToken:0,audioCacheGeneration:0,releasePrepared(){ctx.prepareToken++;ctx.preparedAudio.clear();},navigator:{},window:{},URL:{revokeObjectURL(){}},current:null,queue:[],repeat:'all',playToken:0,persistenceRequested:false,loadedTrackId:null,pendingTrackId:null,playbackHistory:[],historyCursor:-1,localAudioUrl:null,BUFFERING_STATUS:'正在缓冲...',audioSource:t=>t.src,cancelPreload(){},status(){},renderCurrent(){},save(){},cacheAudio(){},audioBudget:()=>0,preloadAllowed:()=>true,cachedAudioUrl(){const request=defer();requests.push(request);return request.promise;},setCurrent(t){ctx.current=t;},get(id){return ctx.queue.find(t=>t.id===id);}};
   vm.createContext(ctx);vm.runInContext(source.slice(source.indexOf('  function preloadNext()'),source.indexOf('  const playbackLog='))+source.slice(source.indexOf('  const playbackFlow='),source.indexOf('  const modeLabels')),ctx);return ctx;
 }
 (async()=>{
@@ -28,7 +29,7 @@ function player(){
     async delete(key){return entries.delete(typeof key==='string'?key:key.url);},
     async keys(){return [...entries.keys()].map(url=>new Request(url));}
   };};
-  const worker={self:{location:{origin:'https://roylyl.github.io'},addEventListener:(name,fn)=>handlers[name]=fn,clients:{claim(){},async matchAll(){return[];}},skipWaiting(){}},caches:{open:async name=>cacheFor(name),delete:async name=>stores.delete(name),keys:async()=>[...stores.keys()]},fetch:async request=>{network++;const range=request.headers?.get('Range');if(range&&!ignoreRange)return new Response('2345',{status:206,headers:{'Content-Type':'audio/mpeg','Content-Length':'4','Content-Range':'bytes 2-5/30'}});return new Response('012345678901234567890123456789',{headers:{'Content-Type':'audio/mpeg','Content-Length':'30'}});},URL,Request,Response,Headers,AbortController,console};
+  const worker={Blob,setTimeout,clearTimeout,setInterval,clearInterval,importScripts(){},self:{location:{origin:'https://roylyl.github.io'},addEventListener:(name,fn)=>handlers[name]=fn,clients:{claim(){},async matchAll(){return[];}},skipWaiting(){}},caches:{open:async name=>cacheFor(name),delete:async name=>stores.delete(name),keys:async()=>[...stores.keys()]},fetch:async request=>{network++;const range=request.headers?.get('Range');if(range&&!ignoreRange)return new Response('2345',{status:206,headers:{'Content-Type':'audio/mpeg','Content-Length':'4','Content-Range':'bytes 2-5/30'}});return new Response('012345678901234567890123456789',{headers:{'Content-Type':'audio/mpeg','Content-Length':'30'}});},URL,Request,Response,Headers,AbortController,console};
   vm.createContext(worker);vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../audio-worker.js'),'utf8'),worker);
   const url='https://raw.githubusercontent.com/Roylyl/Music/main/a.mp3?v=2';
   function request(range,method='GET',target=url){let response;const waits=[];handlers.fetch({request:new Request(target,{method,headers:range?{Range:range}:{}}),clientId:'test',waitUntil(p){waits.push(p);},respondWith(p){response=p;}});return {get response(){return response;},async done(){await Promise.all(waits);}};}
@@ -60,7 +61,7 @@ function player(){
   const songs=[{id:'a',title:'目标歌曲',artist:'甲',album:'专辑',src:'a.mp3'},{id:'b',title:'其他歌曲',artist:'乙',album:'专辑',src:'b.mp3'}];
   node('search').value='目标';node('sort-primary').value='default';
   let played;
-  const ctx={songChunksObserver:null,renderSongList(rows){node('songs')._tracks=rows.filter(t=>!!t.src);},setMarkup(id,markup){node(id).innerHTML=markup;},$:node,document:{body:{classList:{toggle(){}}},querySelectorAll(){return[];},querySelector:node},closeTrackMenu(){},filtered:()=>songs,view:'favorites',selected:null,albums:[],appleMusic:{favorites:['a','b'],updatedAt:'2026-09-28'},activePlaylist:null,updateSortControls(){},playlistTracks:()=>songs,normalize:x=>x,matchesArtist:()=>true,canPlay:t=>!!t.src,compareItems:()=>0,esc:x=>x,icon:()=>'',playAlbum:x=>played=x.tracks,playlistRows:()=>'',hydrateCovers(){},renderCurrent(){},navigationDepth:0};
+  const ctx={...dependencies(),songChunksObserver:null,renderSongList(rows){node('songs')._tracks=rows.filter(t=>!!t.src);},setMarkup(id,markup){node(id).innerHTML=markup;},$:node,document:{body:{classList:{toggle(){}}},querySelectorAll(){return[];},querySelector:node},closeTrackMenu(){},filtered:()=>songs,view:'favorites',selected:null,albums:[],appleMusic:{favorites:['a','b'],updatedAt:'2026-09-28'},activePlaylist:null,updateSortControls(){},playlistTracks:()=>songs,normalize:x=>x,matchesArtist:()=>true,canPlay:t=>!!t.src,compareItems:()=>0,esc:x=>x,icon:()=>'',playAlbum:x=>played=x.tracks,playlistRows:()=>'',hydrateCovers(){},renderCurrent(){},navigationDepth:0};
   ctx.artistContext=null;ctx.hasViewFilters=()=>!!(node('search').value.trim()||node('artist').value&&node('artist').value!==ctx.artistContext);
   vm.createContext(ctx);vm.runInContext(source.slice(source.indexOf('  function render()'),source.indexOf('  function playAlbum(')),ctx);ctx.render();node('play-playlist').onclick();assert.deepEqual(played,[songs[0]]);
   ctx.view='albums';node('artist').value='甲';ctx.render();assert.equal(node('back-albums').hidden,true);assert.equal(node('view-title').textContent,'专辑收藏');assert.equal(node('reset-view-filters').disabled,false);assert.equal(node('reset-view-filters').hidden,false);node('artist').value='';node('search').value='';ctx.render();assert.equal(node('back-albums').hidden,true);
@@ -83,7 +84,7 @@ function player(){
   node('search').value='原关键词';node('artist').value='原歌手';
   node('sort-primary').value='name';node('sort-secondary').value='none';node('sort-direction').value='desc';
   const entries=[{state:null}],history={state:null,replaceState(s){this.state=s;entries[entries.length-1].state=s;},pushState(s){this.state=s;entries.push({state:s});}},handlers={};
-  const ctx={$:node,history,artistContext:null,view:'songs',selected:null,activePlaylist:null,collectionSort:{primary:'name'},scrollY:420,albums:[{key:'album'}],appleMusic:{playlists:[]},window:{addEventListener:(name,fn)=>handlers[name]=fn,scrollTo:({top})=>ctx.scrollY=top},setTimeout,clearTimeout,requestAnimationFrame:fn=>fn(),render(){},leaveFixedSort(){},icon:()=>'',full:{open:false},isFullOpen:()=>false,hideFull(){},openFull(){}};
+  const ctx={...dependencies(),$:node,history,artistContext:null,view:'songs',selected:null,activePlaylist:null,collectionSort:{primary:'name'},scrollY:420,albums:[{key:'album'}],appleMusic:{playlists:[]},window:{addEventListener:(name,fn)=>handlers[name]=fn,scrollTo:({top})=>ctx.scrollY=top},setTimeout,clearTimeout,requestAnimationFrame:fn=>fn(),render(){},leaveFixedSort(){},icon:()=>'',full:{open:false},isFullOpen:()=>false,hideFull(){},openFull(){}};
   vm.createContext(ctx);vm.runInContext(source.slice(source.indexOf("  const navigationKey="),source.indexOf('  function showPlaylist('))+'\nnavigationReady=true;rememberNavigation();',ctx);
   ctx.openArtist('新歌手');assert.equal(entries.length,2);assert.equal(ctx.view,'albums');
   ctx.restoreNavigation(entries[0].state['roylyl-music-navigation']);assert.equal(ctx.view,'songs');assert.equal(node('search').value,'原关键词');assert.equal(node('artist').value,'原歌手');assert.equal(ctx.scrollY,420);assert.equal(node('sort-direction').value,'desc');
@@ -94,7 +95,7 @@ function player(){
 {
   let click,doubleClick,played=0,menuOpened=0;
   const node={_tracks:[{id:'a',src:'a.mp3'}]},track=node._tracks[0];
-  const ctx={document:{addEventListener(name,fn){if(name==='click')click=fn;if(name==='dblclick')doubleClick=fn;}},matchMedia:()=>({matches:true}),$:()=>node,get:()=>track,queue:[track],play(){played++;},openTrackMenu(){menuOpened++;},moreMenu:{hidden:true}};
+  const ctx={...dependencies(),document:{addEventListener(name,fn){if(name==='click')click=fn;if(name==='dblclick')doubleClick=fn;}},matchMedia:()=>({matches:true}),$:()=>node,get:()=>track,queue:[track],play(){played++;},openTrackMenu(){menuOpened++;},moreMenu:{hidden:true}};
   vm.createContext(ctx);
   const start=source.indexOf("  document.addEventListener('click',e=>{"),end=source.indexOf("  let rowGesture=",start);
   vm.runInContext(source.slice(start,end),ctx);
@@ -130,7 +131,7 @@ function player(){
 // Empty visible results must not fall through to an unrelated library song.
 {
   const nodes={play:{},songs:{_tracks:[]}},calls=[];
-  const ctx={$:id=>nodes[id],audio:{paused:true,error:null},pendingTrackId:null,retryWaiting:false,current:null,queue:[],resumeCurrentPlayback:()=>ctx.play(ctx.current,ctx.queue),filtered:()=>[{id:'outside'}],play:(...args)=>calls.push(args)};
+  const ctx={...dependencies(),$:id=>nodes[id],audio:{paused:true,error:null},pendingTrackId:null,retryWaiting:false,current:null,queue:[],resumeCurrentPlayback:()=>ctx.play(ctx.current,ctx.queue),filtered:()=>[{id:'outside'}],play:(...args)=>calls.push(args)};
   vm.createContext(ctx);vm.runInContext(source.slice(source.indexOf('  function togglePlayback()'),source.indexOf('  function rememberPausedPosition()'))+source.slice(source.indexOf("  $('play').onclick ="),source.indexOf("  $('prev').onclick")),ctx);
   nodes.play.onclick();assert.equal(calls.length,0);
   nodes.songs._tracks=[{id:'visible'}];nodes.play.onclick();assert.equal(calls[0][0].id,'visible');
@@ -140,7 +141,7 @@ function player(){
 {
   let scrollHandler,closed=0;
   class Node{};const inside=new Node(),outside=new Node();
-  const ctx={Node,moreMenu:{hidden:false,contains:target=>target===inside},closeTrackMenu:()=>closed++,window:{addEventListener:(_,fn)=>scrollHandler=fn}};
+  const ctx={...dependencies(),Node,moreMenu:{hidden:false,contains:target=>target===inside},closeTrackMenu:()=>closed++,window:{addEventListener:(_,fn)=>scrollHandler=fn}};
   vm.createContext(ctx);vm.runInContext(source.split('\n').find(line=>line.includes("window.addEventListener('scroll',event=>")),ctx);
   scrollHandler({target:inside});assert.equal(closed,0);
   scrollHandler({target:outside});assert.equal(closed,1);
@@ -150,8 +151,8 @@ function player(){
   const nodes=new Map(),node=id=>{if(!nodes.has(id))nodes.set(id,{dataset:{},innerHTML:'',focus(){}});return nodes.get(id);};
   const menu={hidden:true,style:{},get offsetWidth(){return node('menu-artists').innerHTML?220:152;},offsetHeight:180};
   const button={dataset:{more:'a'},setAttribute(){},closest(){return null;},getBoundingClientRect(){return {right:380,top:600,bottom:640};}};
-  const ctx={nextUp:[],showTrackCacheStatus(){},icon:()=>'<svg aria-hidden="true"></svg>',$:node,moreMenu:menu,moreButton:null,moreTrackId:null,closeTrackMenu(){},document:{body:{append(){}}},get:()=>({albumKey:'a',artist:'合作歌手'}),artistNames:s=>[s],esc:s=>s,innerWidth:400,innerHeight:700};
-  vm.createContext(ctx);vm.runInContext(source.slice(source.indexOf('  function artistMenu('),source.indexOf('  async function showTrackCacheStatus('))+source.slice(source.indexOf('  function positionTrackMenu('),source.indexOf('  async function shareTrack(')),ctx);ctx.openTrackMenu(button);
+  const ctx={...dependencies(),nextUp:[],showTrackCacheStatus(){},icon:()=>'<svg aria-hidden="true"></svg>',$:node,moreMenu:menu,moreButton:null,moreTrackId:null,closeTrackMenu(){},document:{body:{append(){}}},get:()=>({albumKey:'a',artist:'合作歌手'}),artistNames:s=>[s],esc:s=>s,innerWidth:400,innerHeight:700};
+  vm.createContext(ctx);vm.runInContext(source.slice(source.indexOf('  function artistMenu('),source.indexOf('  function positionTrackMenu('))+source.slice(source.indexOf('  function positionTrackMenu('),source.indexOf('  async function shareTrack(')),ctx);ctx.openTrackMenu(button);
   assert.equal(menu.style.left,'160px');assert.equal(menu.style.top,'412px');
   let closeHandler,closeRequests=0,dialogOpen=false;
   const closeContext={full:{addEventListener:(_,fn)=>closeHandler=fn},isFullOpen:()=>dialogOpen,closeFull:()=>closeRequests++,document:{body:{classList:{contains:()=>true}}}};

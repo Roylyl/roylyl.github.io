@@ -115,3 +115,5 @@ node music/tests/player-refinements-browser.cjs
 `audio-loading.cjs`检查整曲持续保存、下一首下载顺序、请求共用、取消和离线跳转。
 
 `roytools-ui-browser.cjs`通过Chrome调试端口检查四入口首页、筛选与曲目菜单、深浅主题、320至1440宽度、首次播放进度条和松手跳转，以及下载管理页返回。使用CDP_URL指定浏览器调试地址、MUSIC_URL指定本地音乐页地址，可用AUDIT_OUTPUT指定截图目录。播放检查使用真实云端歌曲，播放器会先静音并把音量设为0。
+
+移动端页面与弹窗检查使用`mobile-pages-browser.cjs`，可通过MOBILE_WIDTH/MOBILE_HEIGHT设置视口，默认393×852。`browser-preservation.cjs`检查真实单曲下载、下载管理删除、复制降级和60秒通知节流；`desktop-settings-browser.cjs`检查电脑端完整设置及主题；`future-playlist-browser.cjs`注入临时曲库样例，检查新歌单的通用图标与歌曲数，不修改Music仓库。`pwa-update-browser.cjs`检查有新版worker等待时的手动更新和日志文件导出。

@@ -5,7 +5,7 @@ html { scrollbar-gutter:stable; }
 .web-header h1 { margin:0;font-size:26px;font-weight:700; }
 #web-back { width:44px;height:48px;color:var(--blue);padding:8px; }
 #web-back svg { width:28px;height:28px; }
-.section-heading>div:first-child,#back-albums,.settings-head { display:none!important; }
+.mobile-shell .section-heading>div:first-child,.mobile-shell #back-albums,.mobile-shell .settings-head { display:none!important; }
 .web-actions { display:flex;flex-wrap:wrap;gap:10px;margin-top:12px; }
 .web-actions button { min-height:40px; }
 .destructive { color:#d70015!important; }
@@ -27,33 +27,13 @@ html[data-theme="dark"] .destructive { color:#ff453a!important; }
 #web-download-tray { position:fixed;right:16px;bottom:94px;z-index:7;background:var(--blue);color:white;border-radius:999px;padding:10px 16px;box-shadow:0 4px 20px #0002; }
 #web-toast { position:fixed;bottom:100px;left:50%;transform:translateX(-50%);max-width:calc(100% - 32px);border-radius:999px;background:var(--text);color:var(--panel);padding:12px 20px;z-index:9999;font-size:14px; }
 body.web-player-open>.player { visibility:hidden;pointer-events:none; }
-.player { z-index:5;bottom:calc(12px + env(safe-area-inset-bottom))!important;box-sizing:border-box; }
+.mobile-shell .player { z-index:5;bottom:calc(12px + env(safe-area-inset-bottom))!important;box-sizing:border-box; }
 #full-player .full-header { font-size:0!important; }
 #full-player .full-header:after { content:'正在播放';font-size:22px;font-weight:700; }
 #full-player .full-header .icon { color:var(--blue); }
 #full-player .full-shell { height:100%;min-height:0; }
 input:focus-visible,button:focus-visible,select:focus-visible { outline:2px solid var(--blue);outline-offset:3px; }
 [hidden] { display:none!important; }
-@media(min-width:701px) {
- #full-player .full-shell { position:relative; }
- #full-player .full-view-bar { display:block;position:absolute;right:16px;top:12px;z-index:8; }
- #full-player .full-view-bar .full-tabs { display:none!important; }
- #full-player .full-more-menu { min-width:200px; }
- .music-page-menu { max-width:900px;display:grid;grid-template-columns:1fr 1fr; }
- #playlist-home #fixed-playlists { display:contents; }
- .web-header { padding-block:20px; }
- .web-header h1 { font-size:30px; }
- .player { max-width:1000px;height:88px;min-height:88px; }
- .player .transport { display:flex!important;flex-direction:column;flex:1.2;min-width:0; }
- .player .controls { display:flex!important;align-items:center;justify-content:center; }
- .player .timeline { display:flex!important;width:100%; }
- .player #prev,.player #next,.player #repeat { display:inline-flex!important; }
- .player .now { flex:1; }
- .player .player-extra { display:flex!important;flex:.8;min-width:0; }
- .player .volume { display:flex; }
- #web-download-tray { bottom:116px; }
- #web-toast { bottom:120px; }
-}
 @media(max-width:700px) {
  .web-header { padding-top:calc(10px + env(safe-area-inset-top)); }
  main { padding-bottom:calc(100px + env(safe-area-inset-bottom))!important; }
@@ -68,3 +48,26 @@ html,body,button,input,select,textarea { font-family:-apple-system,BlinkMacSyste
 #web-confirm p { color:var(--muted); }
 #settings-dialog .web-actions .destructive { color:white!important;background:#c62828!important; }
 #full-player .full-header:after { color:var(--text); }
+@media(max-width:700px) {
+ #settings-dialog .web-actions { flex-direction:column;align-items:flex-start;gap:6px; }
+ #settings-dialog .settings-row .roytools-select-trigger { flex:none;width:auto;min-width:88px;max-width:50%;min-height:44px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--blue);font-size:14px; }
+ #playback-diagnostics-text { box-sizing:border-box;max-width:100%;padding:12px;overflow-wrap:anywhere; }
+}
+#web-options .queue-head { display:flex;justify-content:space-between;align-items:center;gap:12px; }
+#web-options .queue-head h2 { margin:0; }
+#web-options .queue-head { margin-bottom:12px; }
+#web-options .queue-head>.icon { order:0; }
+body.web-overlay-open>.player { visibility:hidden;pointer-events:none; }
+#web-toast { width:max-content;max-width:calc(100vw - 32px);box-sizing:border-box;line-height:1.4;text-align:center;overflow-wrap:anywhere; }
+
+/* Keep scrolling inside the rounded surfaces, with stationary dialog headers. */
+#web-options { overflow:hidden; }
+#web-options[open] { display:flex;flex-direction:column; }
+#web-options .queue-head { flex:none; }
+html:has(dialog[open],#queue-panel:not([hidden]),#full-queue:not([hidden])) { overflow:hidden; }
+#web-option-list { min-height:0;max-height:calc(80dvh - 112px);overflow-y:auto;overscroll-behavior:contain;padding-right:8px;margin-right:-8px; }
+:is(#desktop-settings-modal .settings-body,#web-option-list,#queue-list,#full-queue-list,.track-more-menu,#web-download,#web-confirm,#sleep-dialog) { scrollbar-width:thin;scrollbar-color:var(--muted) transparent; }
+:is(#desktop-settings-modal .settings-body,#web-option-list,#queue-list,#full-queue-list,.track-more-menu,#web-download,#web-confirm,#sleep-dialog)::-webkit-scrollbar { width:6px;height:6px; }
+:is(#desktop-settings-modal .settings-body,#web-option-list,#queue-list,#full-queue-list,.track-more-menu,#web-download,#web-confirm,#sleep-dialog)::-webkit-scrollbar-thumb { background:var(--muted);border-radius:999px; }
+:is(#desktop-settings-modal .settings-body,#web-option-list,#queue-list,#full-queue-list,.track-more-menu,#web-download,#web-confirm,#sleep-dialog)::-webkit-scrollbar-track { background:transparent; }
+:is(#desktop-settings-modal .settings-body,#web-option-list,#queue-list,#full-queue-list,.track-more-menu,#web-download,#web-confirm,#sleep-dialog)::-webkit-scrollbar-button { display:none; }

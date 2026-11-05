@@ -1,7 +1,7 @@
 'use strict';
 importScripts('./lyric-parser.js');
-const AUDIO='roylyl-music-audio-v2',META='roylyl-music-audio-meta-v1',SHELL='roylyl-music-shell-20261105-64';
-const FILES=['/music/web-host.js?v=20261105-web-64','/music/web-host.css?v=20261105-web-64','/music/','/music/index.html','/music/music.css?v=20261105-web-64','/music/roytools.css?v=20261105-web-64','/music/app.js?v=20261105-web-64','/music/playback-feedback.js?v=20261105-web-64','/music/lyric-parser.js?v=20261105-web-64','/music/image-loading.css?v=20260927-1','/music/image-loading.js?v=20261104-1','/music/catalog-sync.js?v=20261105-web-64','/music/data/catalog.json?v=20261105-web-64','/music/favicon.svg','/music/placeholder.svg'];
+const AUDIO='roylyl-music-audio-v2',META='roylyl-music-audio-meta-v1',SHELL='roylyl-music-shell-20261105-76';
+const FILES=['/music/desktop-settings.css?v=20261105-web-76','/music/shell.js?v=20261105-web-76','/music/desktop.css?v=20261105-web-76','/music/desktop-theme.css?v=20261105-web-76','/music/web-host.js?v=20261105-web-76','/music/web-host.css?v=20261105-web-76','/music/','/music/index.html','/music/music.css?v=20261105-web-76','/music/roytools.css?v=20261105-web-76','/music/app.js?v=20261105-web-76','/music/playback-feedback.js?v=20261105-web-76','/music/lyric-parser.js?v=20261105-web-76','/music/image-loading.css?v=20260927-1','/music/image-loading.js?v=20261104-1','/music/catalog-sync.js?v=20261105-web-76','/music/data/catalog.json?v=20261105-web-76','/music/favicon.svg','/music/placeholder.svg'];
 const metaKey='/music/__audio_index__',configKey='/music/__audio_config__',freshKey='/music/__audio_recovery__';
 let generation=0,budget=-1,preloadEnabled=true,writeQueue=Promise.resolve(),configRevision=0,configRead,freshRead,optionalEpoch=0,lastKeptSource='';
 const inflight=new Map(),playingRequests=new Map(),protectedSources=new Map();
@@ -116,8 +116,9 @@ self.addEventListener('install',event=>event.waitUntil((async()=>{
     const catalog=await (await cache.match(FILES.find(file=>file.startsWith('/music/data/catalog.json')))).json();
     if(!Array.isArray(catalog?.tracks)||!catalog.tracks.length||catalog.tracks.some(track=>!track.id))throw Error('Invalid offline catalog');
   }catch(error){await caches.delete(SHELL);throw error;}
-  // The APK ships the shell atomically. Audio/cache state survives activation.
-  await self.skipWaiting();
+  // Let existing pages keep playing until the user accepts the new web shell.
+  if(!self.registration.active)await self.skipWaiting();
+  else for(const client of await self.clients.matchAll())client.postMessage({type:'UPDATE_READY'});
 })()));
 self.addEventListener('activate',event=>event.waitUntil((async()=>{
   await cleanShells();

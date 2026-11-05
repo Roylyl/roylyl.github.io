@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs');
 const source=fs.readFileSync(require('node:path').join(__dirname,'../app.js'),'utf8');
 const events={},classes=new Set(),row={classList:{add:x=>classes.add(x),remove:x=>classes.delete(x)}},target={closest:s=>s.startsWith('.track-row')?row:null};
-const ctx={document:{addEventListener:(name,fn)=>events[name]=fn},window:{addEventListener:(name,fn)=>events[name]=fn},performance:{now:()=>100},Math};vm.createContext(ctx);
+const ctx={confirmDownloadId:null,clearDownloadConfirmation(){},document:{addEventListener:(name,fn)=>events[name]=fn},window:{addEventListener:(name,fn)=>events[name]=fn},performance:{now:()=>100},Math};vm.createContext(ctx);
 vm.runInContext(source.slice(source.indexOf('  let rowGesture='),source.indexOf("  moreMenu.addEventListener('keydown'")),ctx);
 const event=(overrides={})=>({pointerType:'touch',pointerId:1,isPrimary:true,clientX:10,clientY:10,target,...overrides});
 let blocked=false;const click=detail=>{blocked=false;events.click({target,detail,preventDefault(){blocked=true;},stopImmediatePropagation(){}});};

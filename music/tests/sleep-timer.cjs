@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const source=fs.readFileSync(require('node:path').join(__dirname,'../app.js'),'utf8');
 let now=100000,pauses=0,stored=0,scheduled;const nodes=new Map();
-const ctx={sleepDeadline:0,sleepTick:null,Date:{now:()=>now},Math,Number,String,
+const ctx={nativeCall(){return false;},sleepDeadline:0,sleepTick:null,Date:{now:()=>now},Math,Number,String,
  $:id=>{if(!nodes.has(id))nodes.set(id,{classList:{toggle(){}},close(){}});return nodes.get(id);},
  save:(key,value)=>stored=value,pausePlayback:()=>pauses++,status(){},clearTimeout(){},setTimeout:(fn,ms)=>{scheduled={fn,ms};return 1;}};
 vm.createContext(ctx);vm.runInContext(source.slice(source.indexOf('  function formatSleepTime('),source.indexOf('  function closeFullMore(')),ctx);
