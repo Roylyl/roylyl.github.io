@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>$title</title>
+<meta name="description" content="$description">
+<meta property="og:type" content="music.song">
+<meta property="og:site_name" content="Roylyl Music">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:title" content="$title">
+<meta property="og:description" content="$description">
+<meta property="og:url" content="$canonical">
+<meta property="og:image" content="$image">
+<meta property="og:image:type" content="$image_type">
+<meta property="og:image:alt" content="$album专辑封面">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="$title">
+<meta name="twitter:description" content="$description">
+<meta name="twitter:image" content="$image">
+<link rel="canonical" href="$canonical">
+<link rel="image_src" href="$image">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<script>try{const t=localStorage.getItem('roylyl-music-theme')||'system';document.documentElement.dataset.theme=t==='dark'||t==='system'&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}catch{document.documentElement.dataset.theme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}</script>
+<link rel="stylesheet" href="../desktop-theme.css?v=$resource_version">
+<link rel="stylesheet" href="../web-host.css?v=$resource_version">
+<link rel="stylesheet" href="../share.css?v=$resource_version">
+</head>
+<body><main class="share-card"><img src="$image" alt="$album专辑封面" width="600" height="600"><h1>$name</h1><p class="share-artist">$artist</p><p>$album</p><a class="share-open" href="$listen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg><span>打开Roylyl Music</span></a></main></body>
+</html>

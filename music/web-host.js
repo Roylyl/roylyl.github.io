@@ -10,6 +10,12 @@
   },true);
   const modalStack=[],closingDialogs=new WeakSet();
   let cleaningReloadedModals=false,finishReloadedModals=null,settingsDownloadsOpen=false,settingsScroll=0,confirmAction=()=>window.RoyToolsMusicApp.settings('clearAll');
+  function placeDownloadTray(){
+    const tray=$('web-download-tray');
+    const settingsModal=$('desktop-settings-modal'),fullPlayer=$('full-player');
+    const host=settingsModal?.open?settingsModal:fullPlayer?.open?fullPlayer:document.body;
+    if(tray&&tray.parentElement!==host)host.append(tray);
+  }
   function setSettingsDownloads(open){
     if(window.musicMobileShell||settingsDownloadsOpen===open)return false;
     settingsDownloadsOpen=open;
@@ -32,6 +38,7 @@
     modalStack.push({dialog,after:null});
     history.pushState({...history.state,webModal:dialog.id},'');
     dialog.showModal();
+    placeDownloadTray();
   }
   function dismissDialog(dialog,after){
     const layer=modalStack.at(-1);
@@ -42,6 +49,7 @@
     const dialog=$(id);if(!dialog)continue;
     dialog.addEventListener('cancel',event=>{event.preventDefault();dismissDialog(dialog);});
     dialog.addEventListener('close',()=>{
+      placeDownloadTray();
       if($('web-toast').parentElement===dialog&&!$('web-toast').hidden){const host=[...document.querySelectorAll('dialog[open]')].at(-1)||document.body;host.append($('web-toast'));}
       if(closingDialogs.has(dialog)){closingDialogs.delete(dialog);return;}
       if(modalStack.at(-1)?.dialog===dialog)dismissDialog(dialog);
@@ -63,6 +71,7 @@
     const changed=settingsLayer&&setSettingsDownloads(event.state?.settingsPage==='downloads');
     const remainingLayer=modalStack.at(-1);
     if(remainingLayer&&remainingLayer.dialog.id===event.state?.webModal)remainingLayer.closing=false;
+    placeDownloadTray();
     if(popped||changed||opened)event.stopImmediatePropagation();
   },true);
   const bytes=n=>n>=1e9?(n/1e9).toFixed(2)+'GB':(n/1e6).toFixed(1)+'MB';
@@ -74,6 +83,7 @@
   }
   function drawDownload(batch){
     if(!batch||batch.status==='idle')return;
+    placeDownloadTray();
     const partial=batch.currentTotalBytesKnown&&batch.currentTotalBytes>0?Math.min(.99,batch.currentBytes/batch.currentTotalBytes):0;
     const percent=batch.total?Math.min(100,(batch.processed+partial)/batch.total*100):0;
     const now=performance.now();
@@ -132,9 +142,7 @@
       navigation=JSON.parse(payload);$('web-title').textContent=navigation.title;
       $('web-back').hidden=!navigation.secondary;
       document.body.classList.toggle('web-player-open',navigation.fullPlayerOpen);
-      document.body.classList.toggle('web-overlay-open',navigation.overlayOpen);
-      const trayHost=$('full-player').open?$('full-player'):document.body;
-      if($('web-download-tray').parentElement!==trayHost)trayHost.append($('web-download-tray'));
+      placeDownloadTray();
       syncWakeLock();
     },
     onPlaybackState(){},

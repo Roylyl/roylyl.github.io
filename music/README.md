@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="https://roylyl.github.io/music/"><img src="https://img.shields.io/badge/在线收听-Roylyl%20Music-83e8c0?style=flat-square" alt="在线收听"></a>
-  <a href="app.js"><img src="https://img.shields.io/badge/version-20261013--pwa--47-62c9f3?style=flat-square" alt="前端版本20261013-pwa-47"></a>
+  <a href="app.js"><img src="https://img.shields.io/badge/version-20261105--web--97-007aff?style=flat-square" alt="前端版本20261105-web-97"></a>
   <a href="#开始使用"><img src="https://img.shields.io/badge/platform-Web%20%2F%20PWA-485866?style=flat-square" alt="Web与PWA"></a>
   <a href="../LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-485866?style=flat-square" alt="GPL-3.0许可证"></a>
 </p>
@@ -122,7 +122,9 @@ py -3 scripts/preview.py 8037
 
 专辑列表根据曲目自动生成；歌单列表根据云端歌单目录生成，新歌单会自动显示名称和歌曲数量。歌曲ID用于关联歌单、分享链接及播放记忆，应保持稳定。Apple Music中的修改需要先导入到Music仓库的歌单资料，再发布曲库版本；访客不能更改导出的喜欢状态。
 
-封面直接读取Music仓库中的原始封面路径，使用资源版本区分缓存。播放器分享链接使用歌曲ID打开当前曲库，不要求为新歌生成独立静态分享页。历史[share/](share/)保留旧链接兼容，其封面同样直接引用Music仓库，不在网站重复保存封面文件。
+封面直接读取Music仓库中的原始封面路径，使用资源版本区分缓存。分享歌曲时优先使用[独立分享页](share/)，卡片信息包含歌名、歌手、专辑和封面；封面直接引用Music仓库已有的JPEG/PNG原图，网站不重复保存封面文件。新增歌曲尚无独立分享页时，分享链接仍能打开当前曲库中的对应歌曲。
+
+更新独立分享页时，运行`python music/scripts/generate-share-pages.py`，同时更新页面与分享索引。歌曲、专辑和歌单的自动同步仍以Music仓库为准。
 
 ### 网页界面更新
 

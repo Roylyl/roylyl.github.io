@@ -183,13 +183,12 @@ html.native-embedded body.has-current-track main { padding-bottom:90px!important
 html.native-embedded body:not(.has-current-track) main { padding-bottom:16px!important; }
 html.native-embedded .queue-panel { bottom:12px!important; }
 
-/* Match the native action buttons: 40px visible capsule inside a 48px touch target. */
+/* Use a true capsule rather than clipping its curve with transparent borders. */
 button.primary,button.secondary,button.back,button.quality,#feedback-stack button {
   display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;
-  min-width:64px;min-height:48px!important;padding:8px 16px!important;font-size:14px!important;line-height:20px;
-  border-top:4px solid transparent!important;border-bottom:4px solid transparent!important;
-  border-left:0!important;border-right:0!important;border-radius:999px!important;
-  background:var(--action-blue)!important;background-clip:padding-box!important;color:#fff!important;box-shadow:none!important;
+  min-width:64px;min-height:var(--music-action-height,40px)!important;padding:8px 16px!important;font-size:14px!important;line-height:20px;
+  border:0!important;border-radius:var(--music-action-radius,999px)!important;
+  background:var(--action-blue)!important;background-clip:border-box!important;color:#fff!important;box-shadow:none!important;
 }
 button.primary:active,button.secondary:active,button.back:active,button.quality:active,#feedback-stack button:active { background-color:#0069d9!important; }
 .album-card .open-album { background:var(--action-blue)!important;color:#fff!important;box-shadow:none!important; }
@@ -207,13 +206,13 @@ button.primary:active,button.secondary:active,button.back:active,button.quality:
 }
 .roytools-select-trigger:disabled { opacity:.45; }
 
-/* Form fields share the action buttons' capsule silhouette and 48px touch height. */
+/* Fields use the same visible height and curve as the action buttons. */
 .search,.filters .roytools-select-trigger,#sleep-minutes {
-  box-sizing:border-box;min-height:48px;border-radius:999px!important;
-  border:0!important;border-top:4px solid transparent!important;border-bottom:4px solid transparent!important;
-  padding-inline:16px!important;background-clip:padding-box!important;
+  box-sizing:border-box;min-height:var(--music-action-height,40px);border-radius:var(--music-action-radius,999px)!important;
+  border:1px solid var(--line)!important;
+  padding-inline:16px!important;background-clip:border-box!important;
 }
-.search,#sleep-minutes { height:48px; }
+.search,#sleep-minutes { height:var(--music-action-height,40px); }
 
 /* Keep album artwork, copy and playback controls inside the rounded card. */
 #album-detail { padding:18px;margin:0 0 18px; }

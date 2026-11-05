@@ -12,7 +12,7 @@
 #desktop-settings-modal .settings-row small { display:block;font-size:13px;color:var(--muted); }
 #desktop-settings-modal .web-actions { flex-direction:column;align-items:flex-start;gap:6px; }
 #desktop-settings-modal .settings-description,#desktop-settings-modal p[role=status] { color:var(--muted);font-size:13px;line-height:1.6; }
-.roytools-select-trigger { display:flex;align-items:center;justify-content:space-between;min-height:44px;gap:12px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;color:var(--text);background:var(--panel);font:inherit; }
+.roytools-select-trigger { display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 16px;border:1px solid var(--line);color:var(--text);background:var(--panel);font:inherit; }
 .filters select[hidden] { display:none!important; }
 .filters .roytools-select-trigger { width:100%; }
 .filters .roytools-select-trigger:after { content:'⌄';color:var(--muted); }

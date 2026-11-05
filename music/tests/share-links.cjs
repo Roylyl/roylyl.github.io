@@ -1,0 +1,20 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
+const source=fs.readFileSync(path.join(__dirname,'../app.js'),'utf8');
+const calls=[],copied=[];
+const ctx={Set,nativeCall:()=>false,navigator:{share:async data=>calls.push(data)},copyText:async text=>copied.push(text),status(){},window:{prompt(){throw Error('unexpected prompt');}}};
+vm.createContext(ctx);vm.runInContext(fs.readFileSync(path.join(__dirname,'../share-pages.js'),'utf8'),ctx);
+vm.runInContext(source.slice(source.indexOf('  function trackShareData('),source.indexOf('  const FAVORITE_NOTICE=')),ctx);
+(async()=>{
+  const first={id:'qq-AC／DC-Back In Black-d01-t01',title:'Back In Black',artist:'AC/DC',album:'Back In Black'};
+  const second={id:'apple-3d71941557cda2ac',title:'对的时间点',artist:'林俊杰',album:'对的时间点'};
+  await ctx.shareTrack(first);await ctx.shareTrack(second);await ctx.shareTrack(first);
+  assert.equal(calls[0].url,'https://roylyl.github.io/music/share/'+encodeURIComponent(first.id)+'.html');
+  assert.equal(calls[1].url,'https://roylyl.github.io/music/share/'+second.id+'.html');
+  assert.equal(calls[1].title,'对的时间点－林俊杰');assert.match(calls[1].text,/林俊杰｜对的时间点/);
+  assert.equal(calls[2].url,calls[0].url,'sharing the same track stays stable without a network probe');
+  await ctx.shareTrack({...first,id:'cloud-new'});assert.match(calls.at(-1).url,/\?track=cloud-new&full=1$/,'new cloud songs remain shareable before static metadata is published');
+  ctx.navigator.share=async()=>{throw Object.assign(Error('cancel'),{name:'AbortError'});};await ctx.shareTrack(first);assert.equal(copied.length,0,'cancel must not copy');
+  ctx.navigator.share=async()=>{throw Error('unsupported');};await ctx.shareTrack(second);assert.equal(copied[0],calls[1].url);
+  console.log('PASS: per-song card links, title/artist/album, no probe delay, new-song fallback and cancel/copy behavior');
+})().catch(error=>{console.error(error);process.exitCode=1;});

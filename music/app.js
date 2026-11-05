@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const APP_VERSION='20261105-web-89', SHELL_VERSION='roylyl-music-shell-20261105-89';
+  const APP_VERSION='20261105-web-97', SHELL_VERSION='roylyl-music-shell-20261105-97';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const desktopShell=!window.musicMobileShell;
@@ -679,10 +679,14 @@
     positionTrackMenu();
     $('share-track').focus({preventScroll:true});
   }
+  function trackShareData(t) {
+    const id=encodeURIComponent(t.id),root='https://roylyl.github.io/music/';
+    const link=window.RoylylMusicShareIds?.has(t.id)?`${root}share/${id}.html`:`${root}?track=${id}&full=1`;
+    return {title:`${t.title}－${t.artist}`,text:`${t.artist}｜${t.album}｜Roylyl Music`,url:link};
+  }
   async function shareTrack(t,notify=message=>status(message)) {
     if (!t) return;
-    const link = `https://roylyl.github.io/music/?track=${encodeURIComponent(t.id)}&full=1`;
-    const data = {title:`${t.title} - ${t.artist}`,text:'来自Roylyl的私人音乐仓库。',url:link};
+    const data=trackShareData(t),link=data.url;
     if(nativeCall('share',link,data.title))return;
     if (navigator.share) {
       try { await navigator.share(data); return; }
