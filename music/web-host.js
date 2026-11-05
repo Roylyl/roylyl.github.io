@@ -4,7 +4,26 @@
   let navigation={},settings={},toastTimer,wakeLock=null,wakeRequest=null,downloadSample=null,backgroundDownload=false,lastNotificationAt=-Infinity,reloadAfterUpdate=false;
   const theme=()=>{try{return localStorage.getItem('roylyl-music-theme')||'system';}catch{return 'system';}};
   const modalStack=[],closingDialogs=new WeakSet();
-  let returnToDesktopSettings=false,cleaningReloadedModals=false,confirmAction=()=>window.RoyToolsMusicApp.settings('clearAll');
+  let cleaningReloadedModals=false,finishReloadedModals=null,settingsDownloadsOpen=false,libraryHome=null,settingsScroll=0,confirmAction=()=>window.RoyToolsMusicApp.settings('clearAll');
+  function setSettingsDownloads(open){
+    if(window.musicMobileShell||settingsDownloadsOpen===open)return false;
+    settingsDownloadsOpen=open;
+    const settingsPage=$('settings-dialog'),downloadsPage=$('desktop-downloads-page');
+    if(open){
+      settingsScroll=settingsPage.querySelector('.settings-body').scrollTop;
+      $('desktop-downloads-body').append($('library'));
+      settingsPage.hidden=true;downloadsPage.hidden=false;
+      window.RoyToolsMusicApp.settings('openSettingsDownloads');
+      $('desktop-downloads-body').scrollTop=0;$('settings-downloads-back').focus();
+    }else{
+      libraryHome.after($('library'));
+      downloadsPage.hidden=true;settingsPage.hidden=false;
+      window.RoyToolsMusicApp.settings('closeSettingsDownloads');
+      settingsPage.querySelector('.settings-body').scrollTop=settingsScroll;
+      settingsPage.querySelector('[data-setting-action="openDownloads"]').focus({preventScroll:true});
+    }
+    return true;
+  }
   function openDialog(dialog){
     if(dialog.open)return;
     modalStack.push({dialog,after:null});
@@ -26,17 +45,20 @@
     });
   }
   window.addEventListener('popstate',event=>{
-    if(cleaningReloadedModals){if(event.state?.webModal){event.stopImmediatePropagation();history.back();return;}cleaningReloadedModals=false;}
-    if(returnToDesktopSettings){returnToDesktopSettings=false;queueMicrotask(()=>openDialog($('desktop-settings-modal')));return;}
+    if(cleaningReloadedModals){if(event.state?.webModal){event.stopImmediatePropagation();history.back();return;}cleaningReloadedModals=false;finishReloadedModals?.();finishReloadedModals=null;}
     let popped=false;
     while(modalStack.length&&modalStack.at(-1).dialog.id!==event.state?.webModal){
       const layer=modalStack.pop();popped=true;
+      if(layer.dialog.id==='desktop-settings-modal')setSettingsDownloads(false);
       if(layer.dialog.open){closingDialogs.add(layer.dialog);layer.dialog.close();}
       if(layer.after)queueMicrotask(layer.after);
     }
-    if(popped){event.stopImmediatePropagation();return;}
+    const settingsLayer=event.state?.webModal==='desktop-settings-modal';
     const forwardDialog=event.state?.webModal&&$(event.state.webModal);
-    if(forwardDialog&&!forwardDialog.open){modalStack.push({dialog:forwardDialog,after:null});forwardDialog.showModal();event.stopImmediatePropagation();}
+    let opened=false;
+    if(forwardDialog&&!forwardDialog.open){modalStack.push({dialog:forwardDialog,after:null});forwardDialog.showModal();opened=true;}
+    const changed=settingsLayer&&setSettingsDownloads(event.state?.settingsPage==='downloads');
+    if(popped||changed||opened)event.stopImmediatePropagation();
   },true);
   const bytes=n=>n>=1e9?(n/1e9).toFixed(2)+'GB':(n/1e6).toFixed(1)+'MB';
   function showToast(message){clearTimeout(toastTimer);const host=[...document.querySelectorAll('dialog[open]')].at(-1)||document.body;host.append($('web-toast'));$('web-toast').textContent=message;$('web-toast').hidden=false;toastTimer=setTimeout(()=>$('web-toast').hidden=true,3200);}
@@ -76,19 +98,21 @@
     openModal(id){if(id==='sleep-dialog')openDialog($(id));},
     closeModal(id){if(id==='sleep-dialog')dismissDialog($(id));},
     ready(){
-      if(history.state?.webModal){cleaningReloadedModals=true;history.back();}
+      const restored=history.state?.webModal?new Promise(resolve=>{finishReloadedModals=resolve;cleaningReloadedModals=true;history.back();}):null;
       if(!window.musicMobileShell){
         const modal=$('desktop-settings-modal');$('settings-dialog').hidden=false;
         $('close-settings').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg>';
         $('close-settings').onclick=()=>dismissDialog(modal);
         document.querySelectorAll('[data-open-settings]').forEach(button=>button.onclick=()=>{openDialog(modal);window.RoyToolsMusicApp.settings('sync');});
-        $('desktop-download-back').onclick=()=>{if(navigation.depth>0){returnToDesktopSettings=true;window.RoyToolsMusicApp.handleBack();}else{window.RoyToolsMusicApp.handleBack();openDialog(modal);}};
-        $('content').prepend($('desktop-download-back'));
+        libraryHome=document.createComment('Music collection position');$('library').before(libraryHome);
+        $('settings-downloads-back').onclick=()=>history.back();
+        modal.addEventListener('close',()=>setSettingsDownloads(false));
       }
       for(const [id,title] of [['clear-audio-cache','清理音乐缓存'],['clear-lyric-cache','清理歌词缓存'],['clear-cover-cache','清理专辑封面缓存']]){
         const button=$(id),action=button.onclick;
         button.addEventListener('click',event=>{event.preventDefault();event.stopImmediatePropagation();confirmAction=()=>action();$('web-confirm-title').textContent=title+'？';$('web-confirm').querySelector('p').textContent='清理已保存的内容，下次播放或浏览时会重新获取。';openDialog($('web-confirm'));},true);
       }
+      return restored;
     },
     watchUpdate(registration){
       const ready=()=>{$('apply-update').hidden=!registration.waiting;if(registration.waiting)$('web-update-status').textContent='新版界面已就绪，可刷新更新。';};
@@ -107,7 +131,6 @@
       document.body.classList.toggle('web-overlay-open',navigation.overlayOpen);
       const trayHost=$('full-player').open?$('full-player'):document.body;
       if($('web-download-tray').parentElement!==trayHost)trayHost.append($('web-download-tray'));
-      if(!window.musicMobileShell)$('desktop-download-back').hidden=navigation.pageKey!=='downloads';
       syncWakeLock();
     },
     onPlaybackState(){},
@@ -143,7 +166,9 @@
   document.querySelectorAll('[data-setting-action]').forEach(button=>button.onclick=()=>{
     if(button.dataset.settingAction==='clearAll'){confirmAction=()=>window.RoyToolsMusicApp.settings('clearAll');$('web-confirm-title').textContent='删除所有下载与缓存？';$('web-confirm').querySelector('p').textContent='已保存的音频、歌词和封面将被删除，曲库和歌单会保留。';openDialog($('web-confirm'));return;}
     if(button.dataset.settingAction==='downloadAll'&&settings.downloadBatch?.active){window.RoyToolsWebHost.showMusicDownload();return;}
-    if(button.dataset.settingAction==='openDownloads'&&!window.musicMobileShell){dismissDialog($('desktop-settings-modal'),()=>window.RoyToolsMusicApp.settings('openDownloads'));return;}
+    if(button.dataset.settingAction==='openDownloads'&&!window.musicMobileShell){
+      if(!settingsDownloadsOpen){history.pushState({...history.state,settingsPage:'downloads'},'');setSettingsDownloads(true);}return;
+    }
     window.RoyToolsMusicApp.settings(button.dataset.settingAction);
   });
   $('web-confirm-delete').onclick=()=>dismissDialog($('web-confirm'),confirmAction);

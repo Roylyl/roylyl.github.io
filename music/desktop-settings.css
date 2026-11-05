@@ -37,7 +37,29 @@
 #songs .download-delete { color:#d70015;background:transparent;border-radius:999px;min-height:44px; }
 #songs .download-delete svg { width:22px;height:22px; }
 #songs .download-delete.is-confirming { background:#ff3b3014; }
-#desktop-download-back { margin-bottom:16px; }
+#desktop-settings-modal #settings-dialog[hidden],#desktop-downloads-page[hidden] { display:none; }
+#desktop-downloads-page { display:flex;flex-direction:column;height:100%;min-height:0; }
+#desktop-downloads-page .settings-head { justify-content:flex-start;gap:8px;padding:16px; }
+#desktop-downloads-page h2 { margin:0;font-size:22px; }
+#settings-downloads-back { display:grid;place-items:center;width:44px;height:44px;padding:10px;color:var(--blue);border-radius:50%;background:transparent; }
+#settings-downloads-back svg { width:24px;height:24px; }
+#desktop-downloads-page #library { padding:0;min-width:0; }
+#desktop-downloads-page #back-albums,#desktop-downloads-page .section-heading>div:first-child { display:none; }
+#desktop-downloads-page .section-heading { margin:0 0 16px; }
+#desktop-downloads-page .search-tools { display:flex;flex-direction:row;align-items:center;gap:12px;width:100%; }
+#desktop-downloads-page .search { width:auto;flex:1;min-width:0; }
+#desktop-downloads-page .search input { width:100%;min-width:0; }
+#desktop-downloads-page .search kbd { display:none; }
+#desktop-downloads-page .filters { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0 0 16px; }
+#desktop-downloads-page .filters label { width:100%;min-width:0; }
+#desktop-downloads-page .filters>span { grid-column:1/-1;justify-self:end;padding:0; }
+#desktop-downloads-page .track-row { gap:8px;padding:12px 4px; }
+#desktop-downloads-page .track-start { gap:10px;min-width:0; }
+#desktop-downloads-page .track-copy strong { white-space:normal;overflow-wrap:anywhere; }
+#desktop-downloads-page .download-delete { width:44px;height:44px;padding:10px;justify-self:end; }
+#desktop-downloads-page .download-delete.is-confirming { width:88px;padding:8px; }
+#desktop-downloads-page .download-delete:focus-visible { outline:2px solid var(--blue);outline-offset:2px; }
+#desktop-downloads-page .empty { padding:32px 8px; }
 .music-queue-backdrop { position:fixed;inset:0;z-index:6;background:#0005;border:0;padding:0; }
 .queue-panel,.full-queue { z-index:7; }
 #full-queue-backdrop { position:absolute; }

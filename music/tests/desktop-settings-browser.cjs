@@ -23,7 +23,7 @@ for(const theme of ['light','dark']){
  console.log(theme,await run("({bg:getComputedStyle(document.body).backgroundColor,blue:getComputedStyle(document.documentElement).getPropertyValue('--blue'),sidebar:document.querySelector('.sidebar').getBoundingClientRect().width,settings:document.querySelector('#desktop-settings-modal').getBoundingClientRect().toJSON()})"));
  let shot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(out,'desktop-settings-'+theme+'.png'),Buffer.from(shot.data,'base64'));
 }
-await tap('[data-setting-action=openDownloads]');await until("document.querySelector('#view-title').textContent==='已下载曲目'");assert(await run("!document.querySelector('#desktop-settings-modal').open&&!document.querySelector('#desktop-download-back').hidden"));await tap('#desktop-download-back');assert(await run("document.querySelector('#desktop-settings-modal').open"));
+await tap('[data-setting-action=openDownloads]');await until("!document.querySelector('#desktop-downloads-page').hidden");assert(await run("document.querySelector('#desktop-settings-modal').open&&!!document.querySelector('#desktop-downloads-body #library')&&!document.querySelector('#desktop-download-back')"));await tap('#settings-downloads-back');await until("!document.querySelector('#settings-dialog').hidden");assert(await run("document.querySelector('#desktop-settings-modal').open&&!!document.querySelector('#content #library')"));
 await run("window.RoyToolsMusicApp.settings('budget',-1)");
 for(const action of ['downloadAll','downloadLyrics','downloadCovers']){
  await tap('[data-setting-action='+action+']');await until("document.querySelector('#web-download').open");

@@ -59,6 +59,8 @@ html,body,button,input,select,textarea { font-family:-apple-system,BlinkMacSyste
 #web-options .queue-head>.icon { order:0; }
 body.web-overlay-open>.player { visibility:hidden;pointer-events:none; }
 #web-toast { width:max-content;max-width:calc(100vw - 32px);box-sizing:border-box;line-height:1.4;text-align:center;overflow-wrap:anywhere; }
+#settings-dialog .settings-row .roytools-select-trigger { display:flex;align-items:center;justify-content:center;text-align:center;gap:0; }
+#settings-dialog .settings-row .roytools-select-trigger::after { content:none;display:none; }
 
 /* Keep scrolling inside the rounded surfaces, with stationary dialog headers. */
 #web-options { overflow:hidden; }
