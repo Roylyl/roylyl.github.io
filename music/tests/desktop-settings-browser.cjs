@@ -23,7 +23,10 @@ for(const theme of ['light','dark']){
  console.log(theme,await run("({bg:getComputedStyle(document.body).backgroundColor,blue:getComputedStyle(document.documentElement).getPropertyValue('--blue'),sidebar:document.querySelector('.sidebar').getBoundingClientRect().width,settings:document.querySelector('#desktop-settings-modal').getBoundingClientRect().toJSON()})"));
  let shot=await send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(out,'desktop-settings-'+theme+'.png'),Buffer.from(shot.data,'base64'));
 }
-await tap('[data-setting-action=openDownloads]');await until("!document.querySelector('#desktop-downloads-page').hidden");assert(await run("document.querySelector('#desktop-settings-modal').open&&!!document.querySelector('#desktop-downloads-body #library')&&!document.querySelector('#desktop-download-back')"));await tap('#settings-downloads-back');await until("!document.querySelector('#settings-dialog').hidden");assert(await run("document.querySelector('#desktop-settings-modal').open&&!!document.querySelector('#content #library')"));
+const collectionBefore=await run("({markup:document.querySelector('#content').innerHTML,scroll:scrollY,bodyClass:document.body.className,filters:[...document.querySelectorAll('#library input,#library select')].map(e=>[e.id,e.value])})");
+await tap('[data-setting-action=openDownloads]');await until("!document.querySelector('#desktop-downloads-page').hidden");assert(await run("document.querySelector('#desktop-settings-modal').open&&!!document.querySelector('#content #library')&&!document.querySelector('#desktop-downloads-body #library')"));
+assert.deepEqual(await run("({markup:document.querySelector('#content').innerHTML,scroll:scrollY,bodyClass:document.body.className,filters:[...document.querySelectorAll('#library input,#library select')].map(e=>[e.id,e.value])})"),collectionBefore,'打开下载管理不得修改背景页面');
+await tap('#settings-downloads-back');await until("!document.querySelector('#settings-dialog').hidden");assert(await run("document.querySelector('#desktop-settings-modal').open&&!!document.querySelector('#content #library')"));
 await run("window.RoyToolsMusicApp.settings('budget',-1)");
 for(const action of ['downloadAll','downloadLyrics','downloadCovers']){
  await tap('[data-setting-action='+action+']');await until("document.querySelector('#web-download').open");

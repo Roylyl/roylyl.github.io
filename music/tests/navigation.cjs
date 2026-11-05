@@ -36,6 +36,14 @@ function player({fallback=false,entries=[{other:'preserved'}],index=entries.leng
 }
 
 // A full player layer must retain all collection state and the underlying scroll.
+for(const mobileView of ['home','playlists','settings','downloads']){
+  const p=player();p.ready();
+  p.ctx.restoreNavigation({view:mobileView,query:'旧筛选',artist:'旧歌手',scroll:0,depth:0});p.settle();
+  assert.equal(p.ctx.view,'albums','桌面不能恢复为手机独有的空页面：'+mobileView);
+  assert.equal(p.node('search').value,'');assert.equal(p.node('artist').value,'');
+  p.ctx.restoreNavigation({view:mobileView,full:true,scroll:0,depth:0});p.settle();assert.equal(p.ctx.isFullOpen(),true,'布局切换后仍应保留全屏播放状态');
+}
+
 {
   const p=player();p.ctx.view='playlist';p.ctx.activePlaylist=p.ctx.appleMusic.playlists[0];p.ctx.artistContext='歌手';
   for(const [id,value] of [['search','筛选词'],['artist','歌手'],['sort-primary','title'],['sort-secondary','year'],['sort-direction','asc']])p.node(id).value=value;

@@ -4,19 +4,17 @@
   let navigation={},settings={},toastTimer,wakeLock=null,wakeRequest=null,downloadSample=null,backgroundDownload=false,lastNotificationAt=-Infinity,reloadAfterUpdate=false;
   const theme=()=>{try{return localStorage.getItem('roylyl-music-theme')||'system';}catch{return 'system';}};
   const modalStack=[],closingDialogs=new WeakSet();
-  let cleaningReloadedModals=false,finishReloadedModals=null,settingsDownloadsOpen=false,libraryHome=null,settingsScroll=0,confirmAction=()=>window.RoyToolsMusicApp.settings('clearAll');
+  let cleaningReloadedModals=false,finishReloadedModals=null,settingsDownloadsOpen=false,settingsScroll=0,confirmAction=()=>window.RoyToolsMusicApp.settings('clearAll');
   function setSettingsDownloads(open){
     if(window.musicMobileShell||settingsDownloadsOpen===open)return false;
     settingsDownloadsOpen=open;
     const settingsPage=$('settings-dialog'),downloadsPage=$('desktop-downloads-page');
     if(open){
       settingsScroll=settingsPage.querySelector('.settings-body').scrollTop;
-      $('desktop-downloads-body').append($('library'));
       settingsPage.hidden=true;downloadsPage.hidden=false;
       window.RoyToolsMusicApp.settings('openSettingsDownloads');
       $('desktop-downloads-body').scrollTop=0;$('settings-downloads-back').focus();
     }else{
-      libraryHome.after($('library'));
       downloadsPage.hidden=true;settingsPage.hidden=false;
       window.RoyToolsMusicApp.settings('closeSettingsDownloads');
       settingsPage.querySelector('.settings-body').scrollTop=settingsScroll;
@@ -32,7 +30,7 @@
   }
   function dismissDialog(dialog,after){
     const layer=modalStack.at(-1);
-    if(layer?.dialog===dialog&&history.state?.webModal===dialog.id){layer.after=after||null;history.back();return;}
+    if(layer?.dialog===dialog&&history.state?.webModal===dialog.id){if(layer.closing)return;layer.closing=true;layer.after=after||null;history.back();return;}
     if(dialog.open)dialog.close();if(after)after();
   }
   for(const id of ['web-options','web-download','web-confirm','desktop-settings-modal','sleep-dialog']){
@@ -58,6 +56,8 @@
     let opened=false;
     if(forwardDialog&&!forwardDialog.open){modalStack.push({dialog:forwardDialog,after:null});forwardDialog.showModal();opened=true;}
     const changed=settingsLayer&&setSettingsDownloads(event.state?.settingsPage==='downloads');
+    const remainingLayer=modalStack.at(-1);
+    if(remainingLayer&&remainingLayer.dialog.id===event.state?.webModal)remainingLayer.closing=false;
     if(popped||changed||opened)event.stopImmediatePropagation();
   },true);
   const bytes=n=>n>=1e9?(n/1e9).toFixed(2)+'GB':(n/1e6).toFixed(1)+'MB';
@@ -104,7 +104,6 @@
         $('close-settings').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg>';
         $('close-settings').onclick=()=>dismissDialog(modal);
         document.querySelectorAll('[data-open-settings]').forEach(button=>button.onclick=()=>{openDialog(modal);window.RoyToolsMusicApp.settings('sync');});
-        libraryHome=document.createComment('Music collection position');$('library').before(libraryHome);
         $('settings-downloads-back').onclick=()=>history.back();
         modal.addEventListener('close',()=>setSettingsDownloads(false));
       }
@@ -146,7 +145,7 @@
     },
     chooseOption(payload){
       const {id,options,selected}=JSON.parse(payload),dialog=$('web-options');
-      $('web-options-title').textContent=({artist:'歌手','sort-primary':'第一顺序','sort-secondary':'第二顺序','sort-direction':'方向','audio-budget':'缓存上限','web-theme':'主题'})[id];
+      $('web-options-title').textContent=({artist:'歌手','sort-primary':'第一顺序','sort-secondary':'第二顺序','sort-direction':'方向','audio-budget':'缓存上限','web-theme':'主题'})[id.replace(/^downloads-/,'')];
       $('web-option-list').replaceChildren(...options.map(option=>{
         const button=document.createElement('button');button.className='web-option';button.type='button';button.setAttribute('role','radio');button.setAttribute('aria-checked',String(option.value===selected));
         const text=document.createElement('span');text.textContent=option.label;const radio=document.createElement('span');radio.className='web-radio';radio.setAttribute('aria-hidden','true');button.append(text,radio);

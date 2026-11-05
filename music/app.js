@@ -1,10 +1,11 @@
 'use strict';
 (() => {
-  const APP_VERSION='20261105-web-79', SHELL_VERSION='roylyl-music-shell-20261105-79';
+  const APP_VERSION='20261105-web-82', SHELL_VERSION='roylyl-music-shell-20261105-82';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const desktopShell=!window.musicMobileShell;
   const musicSelectTitles={artist:'歌手','sort-primary':'第一顺序','sort-secondary':'第二顺序','sort-direction':'方向'};
+  if(desktopShell)for(const [id,title] of Object.entries({...musicSelectTitles}))musicSelectTitles['downloads-'+id]=title;
   const musicSelectButtons=new Map();
   function nativeCall(method,...args) {
     try { const bridge=window.RoyToolsMusicBridge||window.RoyToolsWebHost;if(typeof bridge?.[method]!=='function')return false;bridge[method](...args);return true; }
@@ -59,6 +60,7 @@
   let audioCacheGeneration = 0, coverCacheGeneration = 0, preloadController = null, localAudioUrl = null, persistenceRequested = false;
   let allCacheBusy=false;
   let downloadedSources=new Set(),downloadsLoadState='idle',downloadsRequest=0,downloadsRefreshTimer=null,confirmDownloadId=null;
+  let settingsDownloadsOpen=false;
   const downloadDeletes=new Set();
   let downloadBatch=null,downloadBatchPort=null,downloadBatchWorker=null,downloadBatchTimer=null;
   const downloadBatchTitles=new Map();
@@ -76,7 +78,7 @@
     if(!downloadBatch)return;
     closeDownloadBatchPort();downloadBatch.active=false;downloadBatch.status=status;downloadBatch.reason=reason;
     notifyDownloadBatch();updateCacheStatus();
-    if(view==='downloads')refreshDownloadedTracks();
+    if(view==='downloads'||settingsDownloadsOpen)refreshDownloadedTracks();
     if(status==='completed') {
       const {kind,downloaded,cached,failed,skipped}=downloadBatch,unit=kind==='lyrics'?'份':kind==='covers'?'张':'首';
       showSystemMessage(`下载结束：新增${downloaded}${unit}，已缓存${cached}${unit}${failed?'，失败'+failed+unit:''}${skipped?'，跳过'+skipped+unit:''}`);
@@ -232,7 +234,7 @@
         audioDownloadProgress.set(event.data.source,1);
         if(current&&event.data.source===audioSource(current)){paintBufferedProgress();if(pendingResumePosition)useCompletedAudio();}
         updateCacheStatus();
-        if(view==='downloads'){clearTimeout(downloadsRefreshTimer);downloadsRefreshTimer=setTimeout(()=>refreshDownloadedTracks(),1000);}
+        if(view==='downloads'||settingsDownloadsOpen){clearTimeout(downloadsRefreshTimer);downloadsRefreshTimer=setTimeout(()=>refreshDownloadedTracks(),1000);}
         if(current && event.data.source===audioSource(current))preloadNext();
       }
       if(event.data?.type==='REPORT_SHELL')reportShellVersion();
@@ -714,11 +716,10 @@
   }
   const navigationKey='roylyl-music-navigation';
   let navigationDepth=history.state?.[navigationKey]?.depth||0, navigationReady=false;
-  let settingsDownloadSnapshot=null;
   let fullPageScroll=null, fullNavigationClosing=false, afterFullClose=null;
   function navigationSnapshot(){const fullOpen=isFullOpen();return {pageSchema:2,view,album:selected?.key||null,playlist:activePlaylist?.id||null,query:$('search').value,artist:$('artist').value,artistContext,sort:['sort-primary','sort-secondary','sort-direction'].map(id=>$(id).value),collectionSort,scroll:fullOpen?fullPageScroll??scrollY:scrollY,depth:navigationDepth,full:fullOpen};}
   function rememberNavigation(){
-    if(!navigationReady||fullNavigationClosing||settingsDownloadSnapshot)return;
+    if(!navigationReady||fullNavigationClosing)return;
     const snapshot=navigationSnapshot();
     if(snapshot.full&&!history.state?.[navigationKey]?.full){
       history.replaceState({...history.state,[navigationKey]:{...snapshot,full:false}},'');
@@ -737,7 +738,7 @@
   function finishNavigation(){navigationDepth++;history.pushState({[navigationKey]:navigationSnapshot()},'');if(selected || view==='albums'&&artistContext)$('back-albums').innerHTML=icon('back')+'返回上一页';animateContentNavigation();}
   function restoreNavigation(state,afterRestore){
     if(!state)return;
-    if(desktopShell&&!settingsDownloadSnapshot&&state.view==='downloads')state={...state,view:'albums',album:null,playlist:null,query:'',artist:'',artistContext:null,full:false};
+    if(desktopShell&&['home','playlists','settings','downloads'].includes(state.view))state={...state,view:'albums',album:null,playlist:null,query:'',artist:'',artistContext:null};
     const previousDepth=navigationDepth,previousView=view,previousAlbum=selected?.key,previousPlaylist=activePlaylist?.id;
     view=state.view||(desktopShell?'albums':'home');selected=albums.find(a=>a.key===state.album)||null;activePlaylist=appleMusic?.playlists.find(p=>p.id===state.playlist)||null;
     if(view==='playlist'&&!activePlaylist)view='playlists';
@@ -778,22 +779,47 @@
   }
   function clearDownloadConfirmation() {
     confirmDownloadId=null;
-    for(const button of $('songs').querySelectorAll('.download-delete.is-confirming')) {
+    const buttons=[...$('songs').querySelectorAll('.download-delete.is-confirming'),...($('downloads-songs')?.querySelectorAll('.download-delete.is-confirming')||[])];
+    for(const button of buttons) {
       button.classList.remove('is-confirming');button.closest('.download-row')?.classList.remove('confirming-delete');
       button.innerHTML=icon('trash');button.setAttribute('aria-label','删除下载：'+(get(button.dataset.deleteDownload)?.title||'歌曲'));
     }
   }
   async function refreshDownloadedTracks(showLoading=false) {
     const request=++downloadsRequest;
-    if(showLoading||downloadsLoadState==='idle'){downloadsLoadState='loading';if(view==='downloads')render();}
+    if(showLoading||downloadsLoadState==='idle'){downloadsLoadState='loading';if(view==='downloads')render();if(settingsDownloadsOpen)renderSettingsDownloads();}
     const result=await workerMessage({type:'AUDIO_DOWNLOADS'},10000);
     if(request!==downloadsRequest)return;
     if(result?.ok!==true||!Array.isArray(result.sources)) {
-      downloadsLoadState='error';if(view==='downloads')render();return;
+      downloadsLoadState='error';if(view==='downloads')render();if(settingsDownloadsOpen)renderSettingsDownloads();return;
     }
     const sources=new Set(result.sources.filter(source=>typeof source==='string'));
     const changed=downloadsLoadState!=='ready'||sources.size!==downloadedSources.size||[...sources].some(source=>!downloadedSources.has(source));
     downloadedSources=sources;downloadsLoadState='ready';if(changed&&view==='downloads')render();
+    if(changed&&settingsDownloadsOpen)renderSettingsDownloads();
+  }
+  function renderSettingsDownloads(){
+    if(!settingsDownloadsOpen)return;
+    const root=$('downloads-songs'),query=normalize($('downloads-search').value.trim()),artist=$('downloads-artist').value;
+    const primary=$('downloads-sort-primary').value,secondary=$('downloads-sort-secondary'),direction=$('downloads-sort-direction');
+    if(primary==='default'){secondary.value='none';direction.value='asc';}
+    if(secondary.value===primary)secondary.value='none';
+    for(const option of secondary.options)option.disabled=option.value===primary;
+    secondary.disabled=primary==='default';direction.disabled=primary==='default';syncMusicSelects();
+    const all=tracks.filter(track=>downloadedSources.has(audioSource(track)));
+    const rows=all.filter(track=>matchesArtist(track,artist)&&(!query||normalize(track.title+' '+track.artist+' '+(track.albumArtist||'')+' '+track.album).includes(query)));
+    if(primary!=='default'){const order=direction.value==='desc'?-1:1;rows.sort((a,b)=>compareField(a,b,primary,order)||(secondary.value==='none'?0:compareField(a,b,secondary.value,order)));}
+    const loading=downloadsLoadState==='idle'||downloadsLoadState==='loading',failed=downloadsLoadState==='error';
+    $('downloads-notice').hidden=!loading&&!failed;$('downloads-notice').textContent=failed?'无法读取已下载曲目，请重试。':'正在读取已下载曲目…';$('downloads-retry').hidden=!failed;
+    $('downloads-count').textContent=loading||failed?'':rows.length+'首歌曲';
+    $('downloads-reset').disabled=!query&&!artist;
+    $('downloads-empty').hidden=loading||failed||rows.length>0;
+    $('downloads-empty').textContent=all.length?'没有找到匹配的歌曲，可以清空筛选。':'暂无已下载曲目，可在歌单、专辑或音乐设置中下载歌曲。';
+    root._tracks=loading||failed?[]:rows;root.innerHTML=downloadedRows(root._tracks);hydrateCovers(root);
+  }
+  function syncSettingsDownloadArtists(){
+    const artist=$('downloads-artist'),previous=artist.value;artist.innerHTML=$('artist').innerHTML;
+    artist.value=[...artist.options].some(option=>option.value===previous)?previous:'';
   }
   function downloadedRows(list,offset=0) {
     return list.map((track,index)=>{
@@ -802,7 +828,7 @@
     }).join('');
   }
   async function deleteDownloadedTrack(button) {
-    if(view!=='downloads'||allCacheBusy)return;
+    if((view!=='downloads'&&!settingsDownloadsOpen)||allCacheBusy)return;
     const id=button.dataset.deleteDownload,track=get(id);if(!track?.src||downloadDeletes.has(id))return;
     const source=audioSource(track);
     if(downloadBatch?.active&&downloadBatchTitles.has(source)){clearDownloadConfirmation();showSystemMessage('这首歌曲正在下载任务中，请先取消下载');return;}
@@ -817,7 +843,7 @@
     if(result?.ok===true) {
       downloadedSources.delete(source);prepareToken++;
       const prepared=preparedAudio.get(source);if(prepared){URL.revokeObjectURL(prepared);preparedAudio.delete(source);}
-      if(view==='downloads')render();updateCacheStatus();showSystemMessage('已删除《'+track.title+'》的下载');
+      if(view==='downloads')render();if(settingsDownloadsOpen)renderSettingsDownloads();updateCacheStatus();showSystemMessage('已删除《'+track.title+'》的下载');
     } else {if(button.isConnected)button.disabled=false;showSystemMessage(result?.reason||'删除失败，请重试');}
   }
   function trackRows(list, inQueue = false, offset = 0) {
@@ -876,7 +902,7 @@
     document.body.classList.toggle('album-detail-open',view==='albums' && !!selected);
     $('songs')._tracks=null;
     const collection=!['home','playlists','settings'].includes(view);
-    $('music-home').hidden=view!=='home';$('playlist-home').hidden=view!=='playlists';$('settings-dialog').hidden=desktopShell?!!settingsDownloadSnapshot:view!=='settings';$('library').hidden=!collection;
+    $('music-home').hidden=view!=='home';$('playlist-home').hidden=view!=='playlists';if(!desktopShell)$('settings-dialog').hidden=view!=='settings';$('library').hidden=!collection;
     document.body.classList.toggle('music-home-open',view==='home');
     if(desktopShell){
       const showIntro=view==='albums'&&!selected&&!artistContext&&!$('search').value&&!$('artist').value;
@@ -1676,7 +1702,8 @@
     if(albumPlay){playAlbum(albums.find(a=>a.key===albumPlay.dataset.albumPlay));return;}
     const album=e.target.closest('[data-album]'), button=e.target.closest('[data-play]'), heart=e.target.closest('[data-like]');
     if(album) openAlbum(albums.find(a=>a.key===album.dataset.album));
-    if(button) play($('songs')._tracks?.find(t=>t.id===button.dataset.play)||get(button.dataset.play),$('songs')._tracks);
+    const songList=button?.closest('#downloads-songs')||$('songs');
+    if(button) play(songList._tracks?.find(t=>t.id===button.dataset.play)||get(button.dataset.play),songList._tracks);
     if(heart) like(heart.dataset.like);
   }
   $('content').addEventListener('click',handleCollectionClick);
@@ -1775,7 +1802,7 @@
   for(const id of ['sort-primary','sort-secondary','sort-direction'])$(id).onchange=()=>{render();rememberNavigation();};
   updateSortControls();
   document.addEventListener('keydown',e=> {
-    if($('sleep-dialog').open)return;
+    if(document.querySelector('dialog[open]:not(#full-player)'))return;
     if(e.key==='Escape'&&!moreMenu.hidden){e.preventDefault();e.stopPropagation();closeTrackMenu(true);return;}
     if(e.key==='Escape'&&!$('full-queue').hidden){e.preventDefault();e.stopPropagation();toggleFullQueue(false);return;}
     else if(e.key==='Escape'&&!$('queue-panel').hidden)toggleQueue(false);
@@ -2114,6 +2141,7 @@
     const updated=current&&get(current.id);
     if(updated)current={...current,title:updated.title,artist:updated.artist,album:updated.album,cover:updated.cover,albumKey:updated.albumKey};
     closeTrackMenu();closeFullMore();render();
+    if(settingsDownloadsOpen){syncSettingsDownloadArtists();renderSettingsDownloads();}
     if(current){
       bindCover($('now-cover'),current.cover,true);
       $('now-title').textContent=current.title;$('now-artist').textContent=current.artist+' · '+current.album;
@@ -2210,17 +2238,14 @@
       case 'cancelDownload':cancelDownloadBatch();break;
       case 'openDownloads':openMusicPage('downloads');break;
       case 'openSettingsDownloads':
-        if(desktopShell&&!settingsDownloadSnapshot){
-          settingsDownloadSnapshot=navigationSnapshot();clearTimeout(searchTimer);enterFixedSort();
-          view='downloads';selected=null;activePlaylist=null;artistContext=null;$('search').value='';$('artist').value='';
-          render();refreshDownloadedTracks(downloadsLoadState!=='ready');
+        if(desktopShell&&!settingsDownloadsOpen){
+          settingsDownloadsOpen=true;
+          syncSettingsDownloadArtists();
+          renderSettingsDownloads();refreshDownloadedTracks(downloadsLoadState!=='ready');
         }
         break;
       case 'closeSettingsDownloads':
-        if(settingsDownloadSnapshot){
-          const snapshot=settingsDownloadSnapshot;settingsDownloadSnapshot=null;
-          clearTimeout(searchTimer);clearDownloadConfirmation();restoreNavigation(snapshot);
-        }
+        settingsDownloadsOpen=false;clearDownloadConfirmation();
         break;
       case 'clearAll':clearAllDownloadsAndCaches();break;
     }
@@ -2362,12 +2387,19 @@
   }
   function nativeChooseOption(id,value) {
     if(!Object.prototype.hasOwnProperty.call(musicSelectTitles,id))return false;
-    if($('library').hidden||document.querySelector('.filters').hidden||isFullOpen()||fullNavigationClosing)return false;
+    if(id.startsWith('downloads-')){if(!settingsDownloadsOpen)return false;}
+    else if($('library').hidden||document.querySelector('.filters').hidden||isFullOpen()||fullNavigationClosing)return false;
     const select=$(id);
     if(select.disabled||![...select.options].some(option=>option.value===value&&!option.disabled&&!option.hidden))return false;
     select.value=value;select.dispatchEvent(new Event('change',{bubbles:true}));return true;
   }
   installMusicSelects();
+  if(desktopShell){
+    $('downloads-search').oninput=()=>{clearDownloadConfirmation();renderSettingsDownloads();};
+    for(const id of ['downloads-artist','downloads-sort-primary','downloads-sort-secondary','downloads-sort-direction'])$(id).onchange=()=>{clearDownloadConfirmation();renderSettingsDownloads();};
+    $('downloads-reset').onclick=()=>{clearDownloadConfirmation();$('downloads-search').value='';$('downloads-artist').value='';renderSettingsDownloads();};
+    $('downloads-retry').onclick=()=>refreshDownloadedTracks(true);
+  }
   window.RoyToolsMusicApp={checkCatalog:()=>checkCatalogUpdates(false),handleBack:nativeHandleBack,goHome:nativeGoHome,setTheme:applyTheme,command:nativeCommand,pulse:nativePulse,clearLogs:clearPlaybackLogs,settings:nativeSettings,chooseOption:nativeChooseOption};
   for(const name of ['play','pause','playing','ended','seeked','error','loadedmetadata','durationchange'])audio.addEventListener(name,()=>notifyNativePlayback(true));
   audio.addEventListener('timeupdate',()=>notifyNativePlayback());
