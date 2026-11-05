@@ -109,3 +109,9 @@ node music/tests/player-refinements-browser.cjs
 ```
 
 脚本读取`MUSIC_URL`、`CDP_URL`和`AUDIT_OUTPUT`，默认分别为`http://127.0.0.1:8049/music/`、`http://127.0.0.1:9231`和`/tmp/roylyl-refinements-results`。只在专用测试浏览器配置中运行，会写入该浏览器的播放会话。
+
+## RoyTools界面对齐
+
+`audio-loading.cjs`检查整曲持续保存、下一首下载顺序、请求共用、取消和离线跳转。
+
+`roytools-ui-browser.cjs`通过Chrome调试端口检查四入口首页、筛选与曲目菜单、深浅主题、320至1440宽度、首次播放进度条和松手跳转，以及下载管理页返回。使用CDP_URL指定浏览器调试地址、MUSIC_URL指定本地音乐页地址，可用AUDIT_OUTPUT指定截图目录。播放检查使用真实云端歌曲，播放器会先静音并把音量设为0。

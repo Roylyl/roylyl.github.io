@@ -981,11 +981,6 @@ html[data-theme="light"] #sleep-current,html[data-theme="light"] #sleep-countdow
 .feedback-stack button:active { background:var(--control-active); }
 #full-status { display:none!important; }
 .feedback-stack:has(#playback-recovery:not([hidden])) > #player-status { display:none; }
-.menu-cache-status:empty { display:none; }
-.menu-cache-status {
-  margin:6px 4px 0; padding:10px 8px 5px; border-top:1px solid var(--line);
-  color:var(--muted); font-size:11px; line-height:1.5;
-}
 .artist-choices { margin:2px 8px 6px 22px; padding-left:10px; border-left:1px solid var(--line); }
 .artist-choices button { min-width:0; }
 /* Mobile density: smaller visual emphasis, with existing touch targets intact. */

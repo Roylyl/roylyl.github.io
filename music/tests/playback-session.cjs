@@ -21,7 +21,7 @@ function harness(storage=new Map()){
     isFullOpen:()=>false,insertionAnchor:null,checkSleepTimer:()=>false,setTimeout:schedule,clearTimeout:cancel,audio,tracks,albums:[{tracks}],current:null,queue:[],repeat:'all',nextUp:[],playbackHistory:[],historyCursor:-1,
     loadedTrackId:null,pendingTrackId:null,playbackBlocked:false,pausedPosition:null,pendingResumePosition:null,
     lastSaved:0,playbackRequestedAt:0,playToken:0,audioCacheGeneration:0,persistenceRequested:true,failedAudioSources:new Set(),preparedAudio:new Map(),localAudioUrl:null,fallbackCachedId:null,
-    playerStatusText:'',BUFFERING_STATUS:'buffering',navigator:{onLine:true,mediaSession:{}},performance:{now:()=>100},
+    audioDownloadProgress:new Map(),completedAudioRequest:null,notifyNativePlayback(){},playerStatusText:'',BUFFERING_STATUS:'buffering',navigator:{onLine:true,mediaSession:{}},performance:{now:()=>100},
     document:{body,hidden:false,addEventListener(name,fn){events[name]=fn;}},URL:{revokeObjectURL(){}},
     get:id=>tracks.find(t=>t.id===id),canPlay:t=>!!t?.src,audioSource:t=>'https://example.test/'+t.src+'?v=1',
     read:(key,fallback)=>storage.has(key)?plain(storage.get(key)):fallback,save:(key,value)=>storage.set(key,plain(value)),
