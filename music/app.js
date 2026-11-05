@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const APP_VERSION='20261105-web-82', SHELL_VERSION='roylyl-music-shell-20261105-82';
+  const APP_VERSION='20261105-web-89', SHELL_VERSION='roylyl-music-shell-20261105-89';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const desktopShell=!window.musicMobileShell;
@@ -1687,10 +1687,10 @@
   const savedVolume = read('volume',1);
   const desktopVolume = typeof savedVolume === 'number' && Number.isFinite(savedVolume) && savedVolume >= 0 && savedVolume <= 1 ? savedVolume : 1;
   $('volume').value = String(desktopVolume);
-  function applyVolume() { audio.volume = mobileVolume.matches ? 1 : Number($('volume').value); }
+  function applyVolume() { audio.volume = Number($('volume').value); }
   applyVolume();
   mobileVolume.addEventListener('change',applyVolume);
-  $('volume').oninput = () => { if (mobileVolume.matches) return; const value=Number($('volume').value); audio.volume=value; save('volume',value); };
+  $('volume').oninput = () => { const value=Number($('volume').value); audio.volume=value; save('volume',value); };
   function toggleQueue(open) { $('queue-panel').hidden=!open;$('queue-backdrop').hidden=!open; for(const id of ['queue-toggle','mobile-queue-toggle'])$(id).setAttribute('aria-expanded',String(open)); if (open) { renderQueue(); $('close-queue').focus({preventScroll:true});positionQueue('queue-list'); } else (matchMedia('(max-width:700px)').matches?$('mobile-queue-toggle'):$('queue-toggle')).focus(); }
   for(const id of ['queue-toggle','mobile-queue-toggle'])$(id).onclick = () => toggleQueue($('queue-panel').hidden);
   $('close-queue').onclick=()=>toggleQueue(false);

@@ -3,6 +3,11 @@
   const $=id=>document.getElementById(id);
   let navigation={},settings={},toastTimer,wakeLock=null,wakeRequest=null,downloadSample=null,backgroundDownload=false,lastNotificationAt=-Infinity,reloadAfterUpdate=false;
   const theme=()=>{try{return localStorage.getItem('roylyl-music-theme')||'system';}catch{return 'system';}};
+  // Dialog focus restoration must not turn a pointer click into a keyboard ring.
+  document.addEventListener('pointerdown',()=>document.documentElement.removeAttribute('data-keyboard-nav'),true);
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Tab'||event.key.startsWith('Arrow'))document.documentElement.setAttribute('data-keyboard-nav','');
+  },true);
   const modalStack=[],closingDialogs=new WeakSet();
   let cleaningReloadedModals=false,finishReloadedModals=null,settingsDownloadsOpen=false,settingsScroll=0,confirmAction=()=>window.RoyToolsMusicApp.settings('clearAll');
   function setSettingsDownloads(open){

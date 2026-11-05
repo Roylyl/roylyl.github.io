@@ -1,0 +1,11 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
+const source=fs.readFileSync(path.join(__dirname,'../app.js'),'utf8'),start=source.indexOf('  function applyVolume()'),end=source.indexOf('  function toggleQueue(',start);
+assert(start>=0&&end>start);
+const slider={value:'0'},events={},saved=[];
+const ctx={audio:{volume:1},$:()=>slider,mobileVolume:{matches:false,addEventListener:(name,fn)=>events[name]=fn},save:(key,value)=>saved.push([key,value])};
+vm.createContext(ctx);vm.runInContext(source.slice(start,end),ctx);assert.equal(ctx.audio.volume,0);
+ctx.mobileVolume.matches=true;events.change();assert.equal(ctx.audio.volume,0,'窗口变窄不得将静音恢复为100%');
+slider.value='0.25';slider.oninput();assert.equal(ctx.audio.volume,.25);assert.deepEqual(saved,[['volume',.25]]);
+ctx.mobileVolume.matches=false;events.change();assert.equal(ctx.audio.volume,.25);
+console.log('PASS volume: preserve mute and chosen level across narrow/wide resizing');

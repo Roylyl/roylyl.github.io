@@ -66,3 +66,18 @@ html[data-theme="dark"] #desktop-downloads-page .download-delete { color:#ff453a
 #full-queue-backdrop { position:absolute; }
 #open-full-copy { cursor:pointer; }
 #desktop-settings-modal #close-settings svg { width:24px;height:24px; }
+#album-detail>.detail-heading>img { grid-row:1 / span 2; }
+#album-detail .album-play-actions { grid-column:2; }
+@media(max-width:600px) {
+ #album-detail>.detail-heading>img { grid-row:1; }
+ #album-detail .album-play-actions { grid-column:1 / -1; }
+}
+/* A desktop session may become narrow without reloading or replacing the player. */
+@media(max-width:700px) {
+ #full-player .full-view-bar { display:grid;position:relative;top:auto;right:auto;grid-template-columns:minmax(44px,1fr) minmax(0,190px) minmax(44px,1fr);min-height:44px; }
+ #full-player .full-view-bar .full-tabs { display:flex!important;align-items:stretch;height:44px;padding:4px;gap:4px;border:0;border-radius:999px;background:var(--panel); }
+ #full-player .full-tab { height:36px;min-height:36px;color:var(--muted);background:transparent; }
+ #full-player .full-tab.is-active { color:var(--blue);background:var(--soft); }
+ #full-player #full-more { position:static;align-self:center;justify-self:end;margin:0; }
+ #full-player .full-content>img { width:min(100%,30dvh);height:auto;max-height:34dvh;aspect-ratio:1; }
+}

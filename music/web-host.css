@@ -28,11 +28,16 @@ html[data-theme="dark"] .destructive { color:#ff453a!important; }
 #web-toast { position:fixed;bottom:100px;left:50%;transform:translateX(-50%);max-width:calc(100% - 32px);border-radius:999px;background:var(--text);color:var(--panel);padding:12px 20px;z-index:9999;font-size:14px; }
 body.web-player-open>.player { visibility:hidden;pointer-events:none; }
 .mobile-shell .player { z-index:5;bottom:calc(12px + env(safe-area-inset-bottom))!important;box-sizing:border-box; }
-#full-player .full-header { font-size:0!important; }
+#full-player .full-header { display:flex;align-items:center;justify-content:flex-start;gap:10px;font-size:0!important; }
+#full-player .full-header>span { display:none; }
 #full-player .full-header:after { content:'正在播放';font-size:22px;font-weight:700; }
-#full-player .full-header .icon { color:var(--blue); }
+#full-player .full-header .icon { order:-1;position:static;flex:none;margin:0;color:var(--blue); }
 #full-player .full-shell { height:100%;min-height:0; }
 input:focus-visible,button:focus-visible,select:focus-visible { outline:2px solid var(--blue);outline-offset:3px; }
+html:not([data-keyboard-nav]) :is(button,a):focus { outline:none!important; }
+html[data-theme] .icon:not(.play):not(.is-confirming),#settings-downloads-back,#web-back {
+ border:0!important;background:transparent!important;box-shadow:none!important;
+}
 [hidden] { display:none!important; }
 @media(max-width:700px) {
  .web-header { padding-top:calc(10px + env(safe-area-inset-top)); }
@@ -61,6 +66,27 @@ body.web-overlay-open>.player { visibility:hidden;pointer-events:none; }
 #web-toast { width:max-content;max-width:calc(100vw - 32px);box-sizing:border-box;line-height:1.4;text-align:center;overflow-wrap:anywhere; }
 #settings-dialog .settings-row .roytools-select-trigger { display:flex;align-items:center;justify-content:center;text-align:center;gap:0; }
 #settings-dialog .settings-row .roytools-select-trigger::after { content:none;display:none; }
+:is(#downloads-songs,#songs) .download-delete { display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;font-size:13px;line-height:20px;white-space:nowrap; }
+.collection-play-actions { display:flex;flex-wrap:wrap;align-items:center;gap:10px;min-width:0; }
+.collection-play-actions>button.primary,.collection-play-actions>button.secondary { display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;margin:0;padding:10px 14px;font-size:13px;line-height:20px;white-space:nowrap; }
+.collection-play-actions svg { flex:none;width:17px;height:17px; }
+@media(max-width:380px) {
+ .collection-play-actions { gap:6px; }
+ .collection-play-actions>button.primary,.collection-play-actions>button.secondary { gap:4px;padding-inline:7px;font-size:11px; }
+ .collection-play-actions svg { width:14px;height:14px; }
+}
+@media(max-width:700px) {
+ :is(#songs,#downloads-songs) .track-row.download-row { grid-template-columns:minmax(0,1fr) 44px;gap:8px;min-height:72px; }
+ :is(#songs,#downloads-songs) .track-row.download-row.confirming-delete { grid-template-columns:minmax(0,1fr) 88px; }
+ :is(#songs,#downloads-songs) .download-row>.track-no { display:none; }
+ :is(#songs,#downloads-songs) .download-row>.track-start { grid-column:1;grid-row:1;display:flex;width:100%;min-width:0;gap:10px;padding:0; }
+ :is(#songs,#downloads-songs) .download-row>.download-delete { grid-column:2;grid-row:1;justify-self:end; }
+ :is(#songs,#downloads-songs) .download-row .track-art-play { width:40px;min-width:40px;flex:none; }
+ :is(#songs,#downloads-songs) .download-row .track-cover { width:40px;height:40px; }
+ :is(#songs,#downloads-songs) .download-row .track-copy { flex:1;min-width:0;height:auto;overflow:hidden; }
+ :is(#songs,#downloads-songs) .download-row .track-title-play { display:block;width:100%;min-width:0;text-align:left; }
+ :is(#songs,#downloads-songs) .download-row .track-copy strong,:is(#songs,#downloads-songs) .download-row .track-copy small { display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+}
 
 /* Keep scrolling inside the rounded surfaces, with stationary dialog headers. */
 #web-options { overflow:hidden; }
