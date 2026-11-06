@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const APP_VERSION='20261105-web-97', SHELL_VERSION='roylyl-music-shell-20261105-97';
+  const APP_VERSION='20261106-web-98', SHELL_VERSION='roylyl-music-shell-20261106-98';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const desktopShell=!window.musicMobileShell;
@@ -995,7 +995,8 @@
     const first=album.tracks[shuffle?Math.floor(Math.random()*album.tracks.length):0];
     playbackHistory=[];historyAnchors=[];historyCursor=-1;
     if(current?.id===first.id){pendingResumePosition={id:current.id,time:0};pausedPosition=null;if(audio.readyState>0)audio.currentTime=0;}
-    play(first,[...album.tracks]);
+    // "Play all" and "shuffle" are explicit restarts, even for the list already queued.
+    play(first,[...album.tracks],false,false,false,{replaceQueue:true});
   }
   function openAlbum(album) {
     if(!album || selected?.key===album.key)return;beginNavigation();leaveFixedSort();view='albums'; artistContext=null;selected=album; $('search').value=''; $('artist').value=''; render();finishNavigation();
@@ -1136,6 +1137,9 @@
       if(attempt!==playbackFlow.attempt||attempt.token!==playToken||playbackBlocked)return;
       if(finishPlaybackIfEnded('watchdog'))return;
       if(observePlaybackClock())return;
+      // Data still arriving means a slow network, not a stuck one: keep the buffer.
+      // Bounded because the download eventually finishes or stops reporting progress.
+      if(attempt.dataArrived){attempt.dataArrived=false;tracePlayback('start-slow','data still arriving');armPlaybackWatchdog(attempt);return;}
       tracePlayback('start-timeout',pendingResumePosition?'seek pending':'clock frozen');
       attempt.recover();
     },8000);
@@ -1518,6 +1522,19 @@
     renderCurrent();
     syncPlaybackState();
   }
+  function isCurrentQueue(list) {
+    if(list===queue)return true;
+    // List views pass their own array, so identity cannot tell whether the list changed.
+    const playable=list?.filter(canPlay);
+    return !!playable?.length&&playable.length===queue.length&&playable.every((t,index)=>t.id===queue[index].id);
+  }
+  function queueReturnAnchor() {
+    const inQueue=id=>queue.some(t=>t.id===id);
+    if(insertionAnchor&&inQueue(insertionAnchor))return insertionAnchor;
+    if(current&&inQueue(current.id))return current.id;
+    for(let i=playbackHistory.length-1;i>=0;i--)if(inQueue(playbackHistory[i]))return playbackHistory[i];
+    return queue[0]?.id||null;
+  }
   async function play(t, list = queue, fromHistory = false, immediate = false, inserted = false, options = {}) {
     if(checkSleepTimer())return;
     if (!canPlay(t)) return;
@@ -1528,15 +1545,25 @@
     const token=++playToken;playbackRequestedAt=performance.now();
     tracePlayback('play-request','target='+t.id);
     try { if(navigator.audioSession)navigator.audioSession.type='playback'; } catch {}
-    const newQueue=list!==queue;
+    const newQueue=!!options.replaceQueue||!isCurrentQueue(list);
     if(newQueue){nextUp=[];insertionAnchor=null;clearQueueUndo();shuffleOrder=[];shuffleCursor=-1;}
+    // A history entry or queue-panel row can lie outside the base queue. Play it
+    // like an insertion so the queue and its return position survive.
+    else if(!inserted&&queue.length&&!queue.some(x=>x.id===t.id)){
+      insertionAnchor=queueReturnAnchor();inserted=true;
+      if(fromHistory&&insertionAnchor)historyAnchors[historyCursor]=insertionAnchor;
+    }
     if(!inserted&&current?.id!==t.id)insertionAnchor=null;
     if(list?.length)queue=list.filter(canPlay);
 
     if(!inserted&&!queue.some(x=>x.id===t.id))queue=[t];
     if(newQueue&&repeat==='shuffle')resetShuffle(t.id);
     if(repeat==='shuffle'&&!inserted&&!fromHistory)selectShuffleTrack(t.id);
-    if(!fromHistory&&(newQueue||options.newOccurrence||playbackHistory[historyCursor]!==t.id)){
+    if(!fromHistory&&!options.newOccurrence&&playbackHistory[historyCursor]===t.id){
+      // Re-selecting the current song is not a new occurrence; a new list only
+      // invalidates the forward path that belonged to the previous one.
+      if(newQueue){playbackHistory=playbackHistory.slice(0,historyCursor+1);historyAnchors=historyAnchors.slice(0,historyCursor+1);historyAnchors[historyCursor]=null;}
+    } else if(!fromHistory){
       // Inserting while browsing history preserves the already-played forward path.
       if(inserted){playbackHistory.splice(historyCursor+1,0,t.id);historyAnchors.splice(historyCursor+1,0,insertionAnchor);historyCursor++;}
       else {playbackHistory=playbackHistory.slice(0,historyCursor+1);historyAnchors=historyAnchors.slice(0,historyCursor+1);playbackHistory.push(t.id);historyAnchors.push(null);historyCursor=playbackHistory.length-1;}
@@ -1639,7 +1666,12 @@
     }
     if(ended&&repeat==='one'){audio.currentTime=0;play(current,queue,true,true);return;}
     if(repeat==='shuffle'){start(nextShuffleTrack());return;}
-    const index=queue.findIndex(t=>t.id===current?.id);start(queue[(index+direction+queue.length)%queue.length]);
+    if(insertionAnchor&&direction<0){
+      // An inserted song has no list neighbour: previous returns to where it interrupted.
+      const anchor=insertionAnchor;insertionAnchor=null;
+      start(queue.find(t=>t.id===anchor)||get(anchor));return;
+    }
+    const index=queue.findIndex(t=>t.id===current?.id);start(queue[index<0?0:(index+direction+queue.length)%queue.length]);
   }
   function previousTrack() { advance(-1); }
   const modeLabels = {all:'列表循环',shuffle:'随机播放',one:'单曲循环'};
@@ -1719,8 +1751,7 @@
     if(nextButton){addNext(get(nextButton.dataset.next));closeTrackMenu();return;}
     const row=e.target.closest('.track-row[data-track]');
     if(matchMedia('(max-width:700px)').matches && row && !e.target.closest('button,a,input,select')){
-      const inQueue=row.closest('#queue-list,#full-queue-list');
-      play(get(row.dataset.track),inQueue?queue:$('songs')._tracks);return;
+      play(get(row.dataset.track),rowPlaybackList(row));return;
     }
     const artistChoice=e.target.closest('[data-view-artists]');
     if(artistChoice){const choices=artistChoice.nextElementSibling;choices.hidden=!choices.hidden;artistChoice.setAttribute('aria-expanded',String(!choices.hidden));if(!moreMenu.hidden)positionTrackMenu();return;}
@@ -1745,9 +1776,12 @@
     if(matchMedia('(max-width:700px)').matches)return;
     const row=e.target.closest('.track-row[data-track]');
     if(!row || e.target.closest('button,a,input,select'))return;
-    const inQueue=row.closest('#queue-list,#full-queue-list');
-    play(get(row.dataset.track),inQueue?queue:$('songs')._tracks);
+    play(get(row.dataset.track),rowPlaybackList(row));
   });
+  function rowPlaybackList(row) {
+    if(row.closest('#queue-list,#full-queue-list'))return queue;
+    return (row.closest('#downloads-songs')||$('songs'))._tracks;
+  }
   let rowGesture=null;
   function clearRowPress(){rowGesture?.row.classList.remove('is-pressed');}
   function cancelRowPress(){if(rowGesture){rowGesture.moved=true;clearRowPress();}}
@@ -1842,6 +1876,7 @@
   audio.addEventListener('error',()=>{if(audio.getAttribute('src')&&loadedTrackId===current?.id)handlePlaybackFailure(audio.error);});
   for(const name of ['loadeddata','canplay'])audio.addEventListener(name,()=>{restorePlaybackPosition();syncPlaybackState();});
   audio.addEventListener('progress',()=>{
+    if(playbackFlow.attempt)playbackFlow.attempt.dataArrived=true;
     restorePlaybackPosition();paintBufferedProgress();
     if(navigator.serviceWorker?.controller || !current || !Number.isFinite(audio.duration))return;
     for(let i=0;i<audio.buffered.length;i++)if(audio.buffered.start(i)===0 && audio.buffered.end(i)>=audio.duration-.1){
@@ -2327,9 +2362,10 @@
     }
     if(action==='pause'&&!nativeCatalogReady)nativePendingCommands=nativePendingCommands.filter(([name])=>name==='seek'||name==='openPlayer');
     switch(action){
-      case 'play':if(current)resumePlayback();else $('play').click();break;
+      // Call playback directly: a synthetic click would be consumed by an open menu.
+      case 'play':if(current)resumePlayback();else togglePlayback();break;
       case 'pause':pausePlayback('system');break;
-      case 'toggle':$('play').click();break;
+      case 'toggle':togglePlayback();break;
       case 'next':if(current)advance(1);break;
       case 'previous':if(current)advance(-1);break;
       case 'seek':seekPlayback(Number(position));break;

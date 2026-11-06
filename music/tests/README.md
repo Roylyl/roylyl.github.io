@@ -100,7 +100,7 @@ node music/tests/playback-browser.cjs
 
 ### 随机顺序、插队撤销和缓冲恢复
 
-- `queue-shuffle.cjs`：整轮无重复、跨轮边界、真实历史及重复歌曲、插队后返回随机顺序、会话恢复、取消/清空/撤销边界、有限重试与暂停取消。
+- `queue-shuffle.cjs`：整轮无重复、跨轮边界、真实历史及重复歌曲、插队后返回随机顺序、会话恢复、取消/清空/撤销边界、有限重试与暂停取消；队列外歌曲不覆盖队列、插队歌曲返回上一首、同列表点歌保留插队、重复选择不增加历史、数据仍在到达时不误判失败。
 - `playback-feedback.cjs`：不连续缓冲区间、边界和异常TimeRanges；每次请求最多一次自动重试、离线/用户授权错误、暂停和切歌取消。
 - `player-refinements-browser.cjs`：沿用临时Chrome调试端口，在真实页面和audio元素上验证队列操作、六种宽度、菜单跳转、缓存状态和HTTP503恢复。使用180秒WAV响应与本地Cache API测试数据，不验证远程MP3或真机蓝牙行为。`--recovery-only`只检查加载恢复。
 

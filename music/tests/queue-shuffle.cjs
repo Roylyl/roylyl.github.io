@@ -1,5 +1,5 @@
 'use strict';
-const assert = require('node:assert/strict');
+const assert = require('node:assert/strict'), fs = require('node:fs'), path = require('node:path'), vm = require('node:vm');
 const {harness, plain, settle} = require('./playback-session.cjs');
 const ids = list => plain(list.map(track => track.id));
 const step = async (h, direction = 1, ended = false) => { h.ctx.advance(direction, ended); await settle(); };
@@ -107,4 +107,71 @@ function future(h) {
   h.flushTimer(350); await settle(); assert.equal(h.ctx.retryWaiting, false); assert.equal(h.ctx.pendingTrackId, null);
   assert.equal(h.ctx.$('playback-recovery').hidden, false); assert.match(h.ctx.playerStatusText, /离线/);
   console.log('通过：实际播放只自动重试一次，等待期间可取消，失败/离线有恢复操作，暂停或新请求取消旧重试。');
+
+  // Base queue a,b,c: d stands in for a song from another list.
+  const partial = (id = 'a') => { const q = harness(); q.loaded(id); q.ctx.queue = q.ctx.queue.slice(0, 3); q.ctx.historyAnchors = [null]; return q; };
+  h = partial(); h.ctx.repeat = 'shuffle'; h.ctx.resetShuffle('a');
+  h.ctx.play(h.ctx.get('b'), [h.ctx.get('b'), h.ctx.get('c')]); await settle();
+  await step(h, -1); assert.equal(h.ctx.current.id, 'a');
+  assert.deepEqual(ids(h.ctx.queue), ['b', 'c'], 'history entry from an old list keeps the queue');
+  assert.equal(h.ctx.insertionAnchor, 'b');
+  h.ctx.savePlaybackSession();
+  const reopened = harness(h.storage); reopened.ctx.restorePlaybackSession();
+  assert.deepEqual(ids(reopened.ctx.queue), ['b', 'c'], 'restore does not add the outside track to the queue');
+  await step(h); assert.equal(h.ctx.current.id, 'b');
+  await step(h); assert.equal(h.ctx.current.id, 'c', 'shuffle continues through the whole queue');
+  assert.deepEqual(ids(h.ctx.queue), ['b', 'c']);
+  console.log('通过：随机模式返回旧列表歌曲时保留当前队列，之后继续随机播放。');
+
+  h = partial(); h.ctx.addNext(h.ctx.get('d')); h.ctx.play(h.ctx.get('d')); await settle();
+  assert.equal(h.ctx.current.id, 'd'); assert.deepEqual(ids(h.ctx.queue), ['a', 'b', 'c']);
+  assert.equal(h.ctx.insertionAnchor, 'a');
+  h.ctx.clearInsertions(); await step(h); assert.equal(h.ctx.current.id, 'b', 'return after the song that was interrupted');
+  console.log('通过：队列面板播放队列外的插队歌曲，保留原队列和返回位置。');
+
+  h = partial(); h.ctx.addNext(h.ctx.get('d')); await step(h); assert.equal(h.ctx.current.id, 'd');
+  await step(h, -1); assert.equal(h.ctx.current.id, 'a', 'previous returns to the interrupted song');
+  assert.equal(h.ctx.insertionAnchor, null); assert.deepEqual(ids(h.ctx.queue), ['a', 'b', 'c']);
+  h = partial('b'); h.ctx.addNext(h.ctx.get('a')); await step(h); assert.equal(h.ctx.current.id, 'a');
+  await step(h, -1); assert.equal(h.ctx.current.id, 'b', 'previous ignores the inserted song list position');
+  h = partial(); await step(h, -1); assert.equal(h.ctx.current.id, 'c', 'ordinary previous still wraps');
+  h = partial('d'); await step(h, -1);
+  assert.equal(h.ctx.current.id, 'a', 'unknown position falls back to the first song');
+  console.log('通过：插队歌曲按上一首回到被打断的歌曲，普通上一首不变。');
+
+  h = harness(); h.loaded('a'); h.ctx.addNext(h.ctx.get('b'));
+  const sameList = () => ['a', 'b', 'c', 'd'].map(h.ctx.get);
+  h.ctx.play(h.ctx.get('c'), sameList()); await settle();
+  assert.deepEqual(plain(h.ctx.nextUp), ['b'], 'selecting a row in the same list keeps insertions');
+  h.ctx.play(h.ctx.get('c'), ['a', 'b', 'd', 'c'].map(h.ctx.get)); await settle();
+  assert.deepEqual(plain(h.ctx.nextUp), [], 'a reordered list is a new queue');
+  h.ctx.addNext(h.ctx.get('b')); h.ctx.playAlbum({tracks: ['a', 'b', 'd', 'c'].map(h.ctx.get)}); await settle();
+  assert.deepEqual(plain(h.ctx.nextUp), [], 'play all is an explicit restart');
+  console.log('通过：同一列表点歌保留插队；顺序变化和播放全部仍按新队列处理。');
+
+  h = harness(); h.loaded('a'); const row = ['a', 'b', 'c', 'd'].map(h.ctx.get);
+  await h.ctx.play(h.ctx.get('a'), row); await h.ctx.play(h.ctx.get('a'), [...row]);
+  assert.deepEqual(plain(h.ctx.playbackHistory), ['a'], 'reselecting the current song adds no history');
+  await h.ctx.play(h.ctx.get('a'), [h.ctx.get('a'), h.ctx.get('b')]);
+  assert.deepEqual(plain(h.ctx.playbackHistory), ['a'], 'same song from a new list adds no history');
+  await h.ctx.play(h.ctx.get('b')); assert.deepEqual(plain(h.ctx.playbackHistory), ['a', 'b']);
+  h = shuffled(); await step(h); await step(h); await step(h, -1);
+  const browsing = plain(h.ctx.playbackHistory.slice(0, h.ctx.historyCursor + 1)), here = h.ctx.current;
+  await h.ctx.play(here, [here, h.ctx.tracks.find(t => t.id !== here.id)]);
+  assert.deepEqual(plain(h.ctx.playbackHistory), browsing, 'a new list drops the old forward path');
+  console.log('通过：重复选择当前歌曲不增加历史，换列表时清除旧的前进路径。');
+
+  const source = fs.readFileSync(path.join(__dirname, '../app.js'), 'utf8');
+  const progressListener = source.slice(source.indexOf("  audio.addEventListener('progress'"), source.indexOf('  let fallbackCachedId'));
+  const stuck = () => { const q = harness(); q.loaded('a'); vm.runInContext(progressListener, q.ctx); q.audio.play = () => new Promise(() => {}); q.ctx.play(q.ctx.get('b'), q.ctx.queue, false, true); q.audio.readyState = 0; return q; };
+  const attempt = q => vm.runInContext('playbackFlow.attempt', q.ctx);
+  h = stuck(); const firstAttempt = attempt(h); h.audioEvents.progress(); h.flushTimer(8000); await settle();
+  assert.equal(attempt(h), firstAttempt, 'arriving data must not reload the source');
+  assert.equal(h.ctx.playbackBlocked, false);
+  h.audioEvents.progress(); h.flushTimer(8000); await settle(); assert.equal(attempt(h), firstAttempt);
+  h.flushTimer(8000); await settle(); assert.notEqual(attempt(h), firstAttempt, 'silent network recovers once');
+  assert.equal(h.ctx.playbackBlocked, false);
+  h.flushTimer(8000); await settle();
+  assert.equal(h.ctx.playbackBlocked, true, 'second silent window gives up'); assert.equal(h.ctx.$('playback-recovery').hidden, false);
+  console.log('通过：数据仍在到达时不重载也不报失败；网络无数据时仍有限恢复。');
 })().catch(error => { console.error(error); process.exitCode = 1; });

@@ -93,6 +93,14 @@ function player(){
   console.log('通过：导航返回恢复状态、当前歌手重复点击、无历史时退出歌手筛选。');
 }
 {
+  // An open menu consumes synthetic clicks, so native commands must not rely on one.
+  let toggled=0;
+  const ctx={nativeCatalogReady:true,nativePendingCommands:[],current:null,togglePlayback(){toggled++;},notifyNativePlayback(){},notifyNativeNavigation(){},$:()=>({click(){assert.fail('原生命令不应模拟点击');}})};
+  vm.createContext(ctx);vm.runInContext(source.slice(source.indexOf('  function nativeCommand('),source.indexOf('  function nativePulse()')),ctx);
+  assert.equal(ctx.nativeCommand('toggle'),true);assert.equal(ctx.nativeCommand('play'),true);assert.equal(toggled,2);
+  console.log('通过：原生播放/切换命令直接控制播放，不会被打开的菜单拦截。');
+}
+{
   let click,doubleClick,played=0,menuOpened=0;
   const node={_tracks:[{id:'a',src:'a.mp3'}]},track=node._tracks[0];
   const ctx={...dependencies(),document:{addEventListener(name,fn){if(name==='click')click=fn;if(name==='dblclick')doubleClick=fn;}},matchMedia:()=>({matches:true}),$:()=>node,get:()=>track,queue:[track],play(){played++;},openTrackMenu(){menuOpened++;},moreMenu:{hidden:true}};
@@ -106,6 +114,14 @@ function player(){
   ctx.matchMedia=()=>({matches:false});
   click({target:{closest(selector){return selector==='.track-row[data-track]'?row:null;}}});assert.equal(played,1,'桌面单击空白不能播放');
   doubleClick({target:{closest(selector){return selector==='.track-row[data-track]'?row:null;}}});assert.equal(played,2,'桌面双击空白播放');
+  {
+    const songs={_tracks:['songs']},downloads={_tracks:['downloads']};ctx.$=()=>songs;
+    const within=selector=>({closest:query=>query===selector?downloads:null});
+    assert.equal(ctx.rowPlaybackList(within('#downloads-songs')),downloads._tracks,'下载页使用自己的列表');
+    assert.equal(ctx.rowPlaybackList({closest:()=>null}),songs._tracks,'普通行使用歌曲列表');
+    assert.equal(ctx.rowPlaybackList({closest:query=>query.includes('#queue-list')?{}:null}),ctx.queue,'队列行使用当前队列');
+    ctx.$=()=>node;
+  }
   click({target:{closest(selector){if(selector==='.track-row[data-track]')return row;if(selector==='button,a,input,select'||selector==='[data-more]')return more;return null;}}});assert.equal(played,2);assert.equal(menuOpened,2);
   for(const control of ['button','a','input','select']){
     click({target:{closest(selector){if(selector==='.track-row[data-track]')return row;if(selector==='button,a,input,select')return {tagName:control};return null;}}});
