@@ -24,7 +24,7 @@
       settingsScroll=settingsPage.querySelector('.settings-body').scrollTop;
       settingsPage.hidden=true;downloadsPage.hidden=false;
       window.RoyToolsMusicApp.settings('openSettingsDownloads');
-      $('desktop-downloads-body').scrollTop=0;$('settings-downloads-back').focus();
+      $('desktop-downloads-body').scrollTop=0;$('settings-downloads-back').focus({preventScroll:true});
     }else{
       downloadsPage.hidden=true;settingsPage.hidden=false;
       window.RoyToolsMusicApp.settings('closeSettingsDownloads');

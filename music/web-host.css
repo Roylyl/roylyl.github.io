@@ -65,6 +65,12 @@ body.web-player-open>.player { visibility:hidden;pointer-events:none; }
 .queue-tag { background:var(--soft)!important;border-radius:var(--music-action-radius)!important; }
 #full-player .full-header .icon { order:-1;position:static;flex:none;margin:0;color:var(--blue); }
 #full-player .full-shell { height:100%;min-height:0; }
+/* A phone rotated to landscape keeps access to the player action menu. */
+@media(min-width:701px) {
+ .mobile-shell #full-player .full-view-bar { display:block;position:absolute;top:8px;right:16px;z-index:8; }
+ .mobile-shell #full-player .full-tabs { display:none; }
+ .mobile-shell #full-player .full-more-menu { position:absolute;top:calc(100% + 8px);right:0;max-height:calc(100dvh - 80px);overflow-y:auto; }
+}
 input:focus-visible,button:focus-visible,select:focus-visible { outline:2px solid var(--blue);outline-offset:3px; }
 html:not([data-keyboard-nav]) :is(button,a):focus { outline:none!important; }
 html[data-theme] .icon:not(.play):not(.is-confirming),#settings-downloads-back,#web-back {
@@ -122,6 +128,10 @@ html,body,button,input,select,textarea { font-family:-apple-system,BlinkMacSyste
 }
 
 /* Keep scrolling inside the rounded surfaces, with stationary dialog headers. */
+#sleep-dialog { box-sizing:border-box;overflow:hidden; }
+#sleep-dialog[open] { display:flex;flex-direction:column; }
+#sleep-dialog>.queue-head { flex:none; }
+#sleep-dialog>.sleep-body { min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-right:4px;scrollbar-width:thin;scrollbar-color:var(--muted) transparent; }
 #web-options { overflow:hidden; }
 #web-options[open] { display:flex;flex-direction:column; }
 #web-options .queue-head { flex:none; }

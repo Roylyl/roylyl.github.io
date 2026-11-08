@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const APP_VERSION='20261106-web-98', SHELL_VERSION='roylyl-music-shell-20261106-98';
+  const APP_VERSION='20261108-web-101', SHELL_VERSION='roylyl-music-shell-20261108-101';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const desktopShell=!window.musicMobileShell;
@@ -204,7 +204,7 @@
     if(existing?.generation===generation&&existing.preload===preload)return existing.promise;
     const job={generation,preload,promise:null};
     job.promise=workerMessage({type:'CACHE_AUDIO',source,preload},120000).then(result=>{
-      const complete=generation===audioCacheGeneration&&result?.ok===true;
+      const complete=generation===audioCacheGeneration&&audioCacheJobs.get(source)===job&&result?.ok===true;
       if(complete){
         audioDownloadProgress.set(source,1);
         if(current&&source===audioSource(current))paintBufferedProgress();
@@ -719,7 +719,7 @@
     return list.map((t,i)=>canPlay(t)?trackRows([t],false,i+offset):`<div class="track-row unavailable"><span class="track-no">${String(i+1+offset).padStart(2,'0')}</span><div class="track-start">${trackCover(t)}<span class="track-copy"><strong>${esc(t.title)}</strong><small>${artistLinks(t.artist)}</small></span></div><span class="track-album">${esc(t.album)}</span><span class="track-time">${time(t.duration)}</span><span class="source-label" title="音源尚未入库">${t.sourceUrl?`<a href="${esc(t.sourceUrl)}" target="_blank" rel="noopener noreferrer">${t.sourceStatus==='purchasable'?'待购入':'外部收听'} ↗</a>`:'待补音源'}</span></div>`).join('');
   }
   const navigationKey='roylyl-music-navigation';
-  let navigationDepth=history.state?.[navigationKey]?.depth||0, navigationReady=false;
+  let navigationDepth=history.state?.[navigationKey]?.depth||0, navigationReady=false, navigationRevision=0;
   let fullPageScroll=null, fullNavigationClosing=false, afterFullClose=null;
   function navigationSnapshot(){const fullOpen=isFullOpen();return {pageSchema:2,view,album:selected?.key||null,playlist:activePlaylist?.id||null,query:$('search').value,artist:$('artist').value,artistContext,sort:['sort-primary','sort-secondary','sort-direction'].map(id=>$(id).value),collectionSort,scroll:fullOpen?fullPageScroll??scrollY:scrollY,depth:navigationDepth,full:fullOpen};}
   function rememberNavigation(){
@@ -730,7 +730,7 @@
       history.pushState({...history.state,[navigationKey]:snapshot},'');
     }else history.replaceState({...history.state,[navigationKey]:snapshot},'');
   }
-  function beginNavigation(){rememberNavigation();}
+  function beginNavigation(){navigationRevision++;rememberNavigation();}
   let contentAnimation=null;
   function animateContentNavigation(back=false) {
     const content=$('content');
@@ -845,7 +845,8 @@
     const result=await workerMessage({type:'DELETE_AUDIO',source},15000);
     downloadDeletes.delete(id);
     if(result?.ok===true) {
-      downloadedSources.delete(source);prepareToken++;
+      downloadedSources.delete(source);audioCacheJobs.delete(source);audioDownloadProgress.delete(source);prepareToken++;
+      if(current&&audioSource(current)===source)paintBufferedProgress();
       const prepared=preparedAudio.get(source);if(prepared){URL.revokeObjectURL(prepared);preparedAudio.delete(source);}
       if(view==='downloads')render();if(settingsDownloadsOpen)renderSettingsDownloads();updateCacheStatus();showSystemMessage('已删除《'+track.title+'》的下载');
     } else {if(button.isConnected)button.disabled=false;showSystemMessage(result?.reason||'删除失败，请重试');}
@@ -2075,6 +2076,7 @@
       const control=target.closest('button,a,input,select');
       return !control||control.id==='open-full'||control.id==='open-full-copy';
     };
+    now.addEventListener('dragstart',event=>{if(isSwipeTarget(event.target))event.preventDefault();});
     const reset=(block=false)=>{
       const previous=gesture;gesture=null;
       if(block)blockClickUntil=performance.now()+650;
@@ -2200,13 +2202,16 @@
     return result;
   }
   async function load() {
+    const startingNavigationRevision=navigationRevision;
     $('retry').hidden=true;$('notice').hidden=false;$('notice').textContent='正在载入音乐收藏…';
     try {applyCatalog(await catalogSync.load());}
     catch { $('notice').textContent='音乐库加载失败，请联网后重试';$('retry').hidden=false;return; }
     $('notice').hidden=true;$('notice').textContent='';
     const shareParams = new URLSearchParams(location.search);
     const sharedId = shareParams.get('track');
-    if(!current && sharedId) {
+    const navigatedWhileLoading=navigationRevision!==startingNavigationRevision;
+    const sharedNavigationAllowed=!navigatedWhileLoading&&!document.querySelector('dialog[open]:not(#full-player)');
+    if(!current && sharedId && sharedNavigationAllowed) {
       const shared = get(sharedId), album = albums.find(a=>a.tracks.some(t=>t.id===sharedId));
       if(shared && album) {
         queue=album.tracks;view='albums';selected=album;setCurrent(shared);
@@ -2217,8 +2222,8 @@
     if(!current)restorePlaybackSession();
     render();
     navigationReady=true;
-    if(!sharedId&&history.state?.[navigationKey]?.pageSchema===2)restoreNavigation(history.state[navigationKey]);
-    else {if(!sharedId){view=desktopShell?'albums':'home';selected=null;activePlaylist=null;artistContext=null;navigationDepth=0;render();}rememberNavigation();}
+    if((!sharedId||navigatedWhileLoading)&&history.state?.[navigationKey]?.pageSchema===2)restoreNavigation(history.state[navigationKey]);
+    else {if(!sharedId&&!navigatedWhileLoading){view=desktopShell?'albums':'home';selected=null;activePlaylist=null;artistContext=null;navigationDepth=0;render();}rememberNavigation();}
     nativeCatalogReady=true;
     for(const [action,position] of nativePendingCommands.splice(0))nativeCommand(action,position);
     notifyNativeNavigation();notifyNativePlayback(true);
@@ -2341,6 +2346,7 @@
     queueMicrotask(notifyNativeNavigation);return true;
   }
   function nativeGoHome() {
+    navigationRevision++;
     const alreadyHome=view==='home'&&!selected&&!artistContext&&navigationDepth===0&&!isFullOpen()&&!fullNavigationClosing;
     for(const dialog of document.querySelectorAll('dialog[open]'))if(dialog!==full)dialog.close();
     closeTrackMenu();closeFullMore();toggleFullQueue(false);if(!$('queue-panel').hidden)toggleQueue(false);
