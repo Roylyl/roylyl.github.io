@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="https://roylyl.github.io/music/"><img src="https://img.shields.io/badge/在线收听-Roylyl%20Music-83e8c0?style=flat-square" alt="在线收听"></a>
-  <a href="app.js"><img src="https://img.shields.io/badge/version-20261108--web--104-007aff?style=flat-square" alt="前端版本20261108-web-104"></a>
+  <a href="app.js"><img src="https://img.shields.io/badge/version-20261108--web--106-007aff?style=flat-square" alt="前端版本20261108-web-106"></a>
   <a href="#开始使用"><img src="https://img.shields.io/badge/platform-Web%20%2F%20PWA-485866?style=flat-square" alt="Web与PWA"></a>
   <a href="../LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-485866?style=flat-square" alt="GPL-3.0许可证"></a>
 </p>
@@ -66,15 +66,15 @@ py -3 scripts/preview.py 8037
 
 ### 下一首插队
 
-歌曲右侧的“下一首播放”会新增一次播放，放到当前曲目之后。原列表中的歌曲保留：
+歌曲右侧的“下一首播放”会加入插播队列，多首歌曲按照点击先后播放。原列表中的歌曲保留：
 
 ```text
-原列表：A → B → C
-播放A时插队B：A → 插队B → 原B → C
-依次插队B、C：A → 插队C → 插队B → 原B → C
+原顺序：A→B
+播放A时先添加G、再添加H：A→G→H→B
+播放G时继续添加I：A→G→H→I→B
 ```
 
-重复添加同一首待插队歌曲，会把它移到下一首；当前歌曲也可以插队，从头再听一次。插队优先于随机和单曲循环，结束后继续原来的播放顺序。
+重复添加同一首待插播歌曲不会重复加入，也不会改变已经排好的顺序；当前歌曲也可以插播，从头再听一次。插播优先于随机和单曲循环，结束后继续原来的播放顺序。
 
 在更多菜单中可“取消此次插队”或“清空待插队”。添加、取消和清空后，底部提示提供5秒撤销入口。开始播放新的专辑或列表会清除旧插队。
 

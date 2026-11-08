@@ -19,12 +19,12 @@ const ids=await run("[...document.querySelectorAll('#songs [data-track]')].slice
 await run("document.querySelector('#songs .track-art-play').click()");await until("!document.querySelector('#audio').paused && document.querySelector('#audio').currentTime>0");
 const add=id=>run(`document.querySelector('#songs [data-next=${JSON.stringify(id)}]').click()`);
 await add(ids[1]);await add(ids[2]);
-const saved=await run("JSON.parse(localStorage.getItem('roy-music:playback'))");assert.deepEqual(saved.nextUp,[ids[2],ids[1]]);assert.equal(saved.id,ids[0]);
+const saved=await run("JSON.parse(localStorage.getItem('roy-music:playback'))");assert.deepEqual(saved.nextUp,[ids[1],ids[2]]);assert.equal(saved.id,ids[0]);
 await run("document.querySelector('#queue-toggle').click()");
-assert.deepEqual((await run("[...document.querySelectorAll('#queue-list [data-track]')].slice(0,3).map(n=>n.dataset.track)")),[ids[0],ids[2],ids[1]]);
+assert.deepEqual((await run("[...document.querySelectorAll('#queue-list [data-track]')].slice(0,3).map(n=>n.dataset.track)")),[ids[0],ids[1],ids[2]]);
 await shot('desktop-queue');await run("document.querySelector('#close-queue').click();document.querySelector('#next').click()");
-await until(`JSON.parse(localStorage.getItem('roy-music:playback')).id===${JSON.stringify(ids[2])} && !document.querySelector('#audio').paused`);
-await run("document.querySelector('#next').click()");await until(`JSON.parse(localStorage.getItem('roy-music:playback')).id===${JSON.stringify(ids[1])}`);
+await until(`JSON.parse(localStorage.getItem('roy-music:playback')).id===${JSON.stringify(ids[1])} && !document.querySelector('#audio').paused`);
+await run("document.querySelector('#next').click()");await until(`JSON.parse(localStorage.getItem('roy-music:playback')).id===${JSON.stringify(ids[2])}`);
 // Preserve pending insertions, shuffle mode and paused seek through reload.
 await run("document.querySelector('#repeat').click()");await add(ids[0]);await add(ids[2]);
 await run("document.querySelector('#play').click();document.querySelector('#seek').value=40;document.querySelector('#seek').dispatchEvent(new Event('input'))");
@@ -54,5 +54,5 @@ await send('Emulation.setDeviceMetricsOverride',{width:402,height:874,deviceScal
 const playingBefore=await run("document.querySelector('#now-title').textContent");await add(ids[0]);assert.equal(await run("document.querySelector('#now-title').textContent"),playingBefore);assert(await run("document.querySelector('#audio').paused"));
 await run(`document.querySelector('#songs [data-track=${JSON.stringify(ids[0])}]').click()`);await until("!document.querySelector('#audio').paused");
 await run("document.querySelector('#play').click()");
-assert.deepEqual(errors,[]);fs.writeFileSync(out+'/results.json',JSON.stringify({passed:true,fixture:'180s WAV response replaces MP3 only in this browser session; tests page and native audio lifecycle, not remote MP3 availability',metrics,errors},null,2));console.log('PASS browser: real page/audio element, LIFO, insertion isolation, queue display, pause-seek, refresh context+diagnostics, fullscreen history, 5 viewport layouts.');console.log(out);ws.close();
+assert.deepEqual(errors,[]);fs.writeFileSync(out+'/results.json',JSON.stringify({passed:true,fixture:'180s WAV response replaces MP3 only in this browser session; tests page and native audio lifecycle, not remote MP3 availability',metrics,errors},null,2));console.log('PASS browser: real page/audio element, FIFO, insertion isolation, queue display, pause-seek, refresh context+diagnostics, fullscreen history, 5 viewport layouts.');console.log(out);ws.close();
 })().catch(e=>{console.error(e);process.exitCode=1;setTimeout(()=>process.exit(1),100)});

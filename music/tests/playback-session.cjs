@@ -98,9 +98,9 @@ if(require.main===module){
   for(const mode of ['all','shuffle','one']){
     h=harness();h.loaded('a',51);h.ctx.repeat=mode;
     h.ctx.addNext(h.ctx.get('b'));h.ctx.addNext(h.ctx.get('c'));
-    assert.deepEqual(plain(h.ctx.nextUp),['c','b'],mode+': newly added track must precede earlier requests');
+    assert.deepEqual(plain(h.ctx.nextUp),['b','c'],mode+': inserted tracks must follow request order');
     h.ctx.addNext(h.ctx.get('b'));
-    assert.deepEqual(plain(h.ctx.nextUp),['b','c'],mode+': last requested track must play next without duplicates');
+    assert.deepEqual(plain(h.ctx.nextUp),['b','c'],mode+': duplicate requests must retain the original position');
     assert.equal(h.ctx.queue.length,4);assert.equal(h.ctx.nextPreloadTrack().id,'b');
     assert.deepEqual(plain(h.ctx.displayQueue().map(t=>t.id)),['a','b','c','b','c','d']);
     h.ctx.advance(1,true);await settle();assert.equal(h.ctx.current.id,'b',mode+': explicit next must override playback mode');
@@ -127,7 +127,7 @@ if(require.main===module){
   h.ctx.playAlbum({tracks:[h.ctx.get('c'),h.ctx.get('d')]});await settle();
   assert.equal(h.ctx.repeat,'all');assert.equal(h.ctx.current.id,'c');
   console.log('通过：随机播放只选当前结果，顺序播放恢复列表模式。');
-  console.log('通过：下一首按最近添加优先，重复添加去重，覆盖列表/随机/单曲模式，并支持当前曲重复下一次。');
+  console.log('通过：下一首按添加先后播放，重复添加保留原位置，覆盖列表/随机/单曲模式，并支持当前曲重复下一次。');
 })().catch(error=>{console.error(error);process.exitCode=1;});
 // Diagnostic retention survives refresh without growing local storage forever.
 {

@@ -12,6 +12,9 @@
   document.addEventListener('scroll',event=>{
     const target=event.target===document?document.documentElement:event.target;
     if(!(target instanceof Element)||!target.matches('html.music-scrollbar-auto,#full-lyrics,#queue-list,#full-queue-list,#desktop-downloads-body'))return;
+    if(target.id==='full-lyrics'&&target.classList.contains('lyric-auto-follow')){
+      clearTimeout(scrollIdleTimers.get(target));scrollIdleTimers.delete(target);target.classList.remove('is-scrolling');return;
+    }
     target.classList.add('is-scrolling');
     clearTimeout(scrollIdleTimers.get(target));
     scrollIdleTimers.set(target,setTimeout(()=>{target.classList.remove('is-scrolling');scrollIdleTimers.delete(target);},650));

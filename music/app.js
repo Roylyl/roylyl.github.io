@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const APP_VERSION='20261108-web-104', SHELL_VERSION='roylyl-music-shell-20261108-104';
+  const APP_VERSION='20261108-web-106', SHELL_VERSION='roylyl-music-shell-20261108-106';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const desktopShell=!window.musicMobileShell;
@@ -509,9 +509,11 @@
     const box=$('full-lyrics'),target=box.querySelector(`[data-group="${lyricActiveIndex}"]`);
     if(!target || !box.clientHeight)return;
     const reduceMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    box.classList.toggle('lyric-auto-follow',lyricPreviewPosition===null);
     box.scrollTo({top:box.scrollTop+target.getBoundingClientRect().top-box.getBoundingClientRect().top-box.clientHeight*.4,behavior:smooth&&!reduceMotion?'smooth':'instant'});
   }
   function pauseLyricFollow(){
+    $('full-lyrics').classList.remove('lyric-auto-follow');
     lyricManualUntil=Date.now()+8000;
     clearTimeout(lyricFollowTimer);
     lyricFollowTimer=setTimeout(()=>{lyricManualUntil=0;scrollActiveLyric(true);},8000);
@@ -539,6 +541,7 @@
     const controller=new AbortController(),request=++lyricRequest,generation=lyricGeneration;
     if(lyricTrackId!==track.id){
       lyricPreviewPosition=null;
+      $('full-lyrics').classList.add('lyric-auto-follow');
       clearTimeout(lyricFollowTimer);lyricManualUntil=0;$('full-lyrics').scrollTo({top:0,behavior:'instant'});
     }
     lyricController=controller;lyricTrackId=track.id;lyricKey=resource.key;lyricState='loading';lyricGroups=[];lyricMetadata=[];lyricActiveIndex=-1;
@@ -1406,8 +1409,9 @@
     if(!canPlay(t))return;
     const before=[...nextUp];
     if(!current){queue=[t,...queue.filter(item=>item.id!==t.id)];setCurrent(t);queueChanged();return;}
-    nextUp=[t.id,...nextUp.filter(id=>id!==t.id)];
-    queueChanged();rememberQueueUndo(before,'已添加到下一首：'+t.title);
+    if(nextUp.includes(t.id))return;
+    nextUp.push(t.id);
+    queueChanged();rememberQueueUndo(before,'已加入插播队列：'+t.title);
     if(current){const owner=current.id;cachedAudioUrl(audioSource(current)).then(blob=>{if(blob){URL.revokeObjectURL(blob);if(current?.id===owner)preloadNext();}});}
   }
   function playbackControl() {

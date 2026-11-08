@@ -10,7 +10,7 @@ function harness(){
   let now=1000000,id=0,network=async()=>new Response('[00:01.00]正文');
   const entries=new Map(),calls=[],timers=new Map(),nodes=new Map(),events={};
   const node=name=>{
-    if(!nodes.has(name))nodes.set(name,{innerHTML:'',textContent:'',disabled:false,clientHeight:200,scrollTop:0,events:{},scrolls:[],classList:{add(){},remove(){}},
+    if(!nodes.has(name))nodes.set(name,{innerHTML:'',textContent:'',disabled:false,clientHeight:200,scrollTop:0,events:{},scrolls:[],classList:{values:new Set(),add(name){this.values.add(name);},remove(name){this.values.delete(name);},toggle(name,force){if(force)this.add(name);else this.remove(name);},contains(name){return this.values.has(name);}},
       addEventListener(type,fn){this.events[type]=fn;},scrollTo(value){this.scrolls.push(value);this.scrollTop=value.top;},
       getBoundingClientRect(){return {top:0};},insertAdjacentHTML(_,html){this.innerHTML+=html;},
       querySelector(selector){if(selector.startsWith('[data-group=')){const n=node(name+selector);n.getBoundingClientRect=()=>({top:180});return n;}return node(name+selector);}
@@ -121,8 +121,9 @@ function harness(){
   }
   console.log('通过：快速切歌和清理缓存期间旧请求不能覆盖正文或重新污染缓存。');
   h=harness();await h.api.loadLyrics(h.ctx.current);const box=h.node('full-lyrics');box.scrolls=[];
-  box.events.wheel();h.api.updateLyricPosition(true);assert.equal(box.scrolls.length,0);
-  h.expire(8000);assert.equal(box.scrolls.length,1,'manual hold expires even when active group is unchanged');assert.equal(box.scrolls[0].behavior,'smooth');
+  assert(box.classList.contains('lyric-auto-follow'),'normal lyric positioning marks automatic following');
+  box.events.wheel();assert(!box.classList.contains('lyric-auto-follow'),'manual scrolling clears automatic provenance');h.api.updateLyricPosition(true);assert.equal(box.scrolls.length,0);
+  h.expire(8000);assert.equal(box.scrolls.length,1,'manual hold expires even when active group is unchanged');assert.equal(box.scrolls[0].behavior,'smooth');assert(box.classList.contains('lyric-auto-follow'));
   box.events.touchstart();h.ctx.current=track('b');await h.api.loadLyrics(h.ctx.current);
   assert(box.scrolls.some(value=>value.top===0),'new track resets previous manual scroll');
   box.scrolls=[];h.events.seeked();assert.equal(box.scrolls.length,1);

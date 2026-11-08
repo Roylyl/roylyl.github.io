@@ -24,7 +24,7 @@ function shortcuts(){
 
 function preview(){
   const nodes=new Map(),windowEvents={},commits=[];let clock=5,writes=0;
-  const box={clientHeight:200,scrollTop:0,scrolls:[],events:{},addEventListener(name,fn){this.events[name]=fn;},getBoundingClientRect:()=>({top:0}),scrollTo(value){this.scrolls.push(value);this.scrollTop=value.top;}};
+  const box={clientHeight:200,scrollTop:0,scrolls:[],events:{},classList:{values:new Set(),add(name){this.values.add(name);},remove(name){this.values.delete(name);},toggle(name,force){if(force)this.add(name);else this.remove(name);},contains(name){return this.values.has(name);}},addEventListener(name,fn){this.events[name]=fn;},getBoundingClientRect:()=>({top:0}),scrollTo(value){this.scrolls.push(value);this.scrollTop=value.top;}};
   const groups=[0,30,60,90].map((time,index)=>({time,lines:[String(index)],index}));
   const rows=groups.map((group,index)=>({classList:{active:false,add(){this.active=true;},remove(){this.active=false;}},getBoundingClientRect:()=>({top:index*100-box.scrollTop})}));
   box.querySelector=selector=>selector==='.lyric-group.is-active'?rows.find(row=>row.classList.active):rows[Number(selector.match(/data-group="(\d+)"/)?.[1])];
@@ -38,16 +38,17 @@ function preview(){
   vm.runInContext(section('  function scrollActiveLyric(','  audio.addEventListener(\'seeked\''),ctx);
   vm.runInContext(section('  function paintSeekProgress()','  let seekDrag='),ctx);
   vm.runInContext(section("  for(const id of ['seek','full-seek']){\n    const input=$(id);", "  audio.addEventListener('durationchange'"),ctx);
-  ctx.updateLyricPosition(true);assert.equal(ctx.lyricActiveIndex,0);
+  ctx.updateLyricPosition(true);assert.equal(ctx.lyricActiveIndex,0);assert(box.classList.contains('lyric-auto-follow'));
   for(const id of ['seek','full-seek']){
     const input=node(id);box.events.wheel();assert(ctx.lyricManualUntil>1000);
     input.events.pointerdown();input.value='75';input.events.input();
+    assert(!box.classList.contains('lyric-auto-follow'),'seeking previews are user-driven and may show the scrollbar');
     assert.equal(ctx.lyricActiveIndex,3);assert.equal(audio.currentTime,5);assert.equal(writes,0);assert.equal(commits.length,0);
     assert.equal(node('seek').value,'75');assert.equal(node('full-seek').value,'75');
     assert.equal(box.scrolls.at(-1).behavior,'instant','拖动预览不得排队平滑滚动');
     clock=7;ctx.renderPlaybackProgress();ctx.updateLyricPosition();
     assert.equal(ctx.lyricActiveIndex,3,'播放timeupdate不能抢回拖动时的歌词');assert.equal(input.value,'75');
-    input.events.pointercancel();assert.equal(ctx.lyricPreviewPosition,null);assert.equal(ctx.lyricActiveIndex,0);assert.equal(commits.length,0);
+    input.events.pointercancel();assert.equal(ctx.lyricPreviewPosition,null);assert.equal(ctx.lyricActiveIndex,0);assert.equal(commits.length,0);assert(box.classList.contains('lyric-auto-follow'));
     clock=5;
   }
   const input=node('full-seek');input.events.pointerdown();input.value='50';input.events.input();assert.equal(writes,0);

@@ -33,9 +33,9 @@ function future(h) {
 
   let h = shuffled(), originalFuture = future(h);
   h.ctx.addNext(h.ctx.get('d')); h.ctx.addNext(h.ctx.get('b'));
-  assert.deepEqual(future(h), ['b', 'd', ...originalFuture]);
-  await step(h); assert.equal(h.ctx.current.id, 'b');
+  assert.deepEqual(future(h), ['d', 'b', ...originalFuture]);
   await step(h); assert.equal(h.ctx.current.id, 'd');
+  await step(h); assert.equal(h.ctx.current.id, 'b');
   assert.deepEqual(future(h), originalFuture);
   for (const id of originalFuture) { await step(h); assert.equal(h.ctx.current.id, id); }
   assert.deepEqual(ids(h.ctx.queue), ['a', 'b', 'c', 'd']);
@@ -67,17 +67,40 @@ function future(h) {
   h = shuffled(); const base = ids(h.ctx.queue), playing = h.ctx.current.id, position = h.audio.currentTime;
   h.ctx.addNext(h.ctx.get('b')); h.ctx.addNext(h.ctx.get('c'));
   h.ctx.cancelInsertion('b'); assert.deepEqual(plain(h.ctx.nextUp), ['c']);
-  h.ctx.undoQueueChange(); assert.deepEqual(plain(h.ctx.nextUp), ['c', 'b']);
+  h.ctx.undoQueueChange(); assert.deepEqual(plain(h.ctx.nextUp), ['b', 'c']);
   h.ctx.clearInsertions(); assert.deepEqual(plain(h.ctx.nextUp), []);
   assert.equal(h.ctx.current.id, playing); assert.equal(h.audio.currentTime, position); assert.deepEqual(ids(h.ctx.queue), base);
-  h.ctx.undoQueueChange(); assert.deepEqual(plain(h.ctx.nextUp), ['c', 'b']);
-  h.ctx.addNext(h.ctx.get('d')); await step(h); assert.equal(h.ctx.current.id, 'd');
+  h.ctx.undoQueueChange(); assert.deepEqual(plain(h.ctx.nextUp), ['b', 'c']);
+  h.ctx.addNext(h.ctx.get('d')); await step(h); assert.equal(h.ctx.current.id, 'b');
   const afterConsumption = plain(h.ctx.nextUp); h.ctx.undoQueueChange(); assert.deepEqual(plain(h.ctx.nextUp), afterConsumption);
   h.ctx.clearInsertions(); h.ctx.playAlbum({tracks: [h.ctx.get('b'), h.ctx.get('c')]}); await settle();
   h.ctx.undoQueueChange(); assert.deepEqual(plain(h.ctx.nextUp), []); assert.deepEqual(ids(h.ctx.queue), ['b', 'c']);
   h.ctx.addNext(h.ctx.get('d')); h.flushTimer(5000); h.ctx.undoQueueChange();
   assert.deepEqual(plain(h.ctx.nextUp), ['d'], 'expired undo cannot alter queue');
   console.log('通过：取消/清空及撤销只作用于插队，保留原队列和当前播放；消费、换队列和到期使撤销失效。');
+
+  for(const mode of ['all','shuffle','one']){
+    const extras=['g','h','i'].map(id=>({id,src:id+'.mp3',title:id,duration:240}));
+    h=harness();h.ctx.tracks.push(...extras);h.loaded('a');
+    h.ctx.queue=['a','b'].map(h.ctx.get);h.ctx.repeat=mode;
+    if(mode==='shuffle')h.ctx.resetShuffle('a');
+    h.ctx.addNext(h.ctx.get('g'));h.ctx.addNext(h.ctx.get('h'));
+    assert.deepEqual(ids(h.ctx.displayQueue()),['a','g','h','b'],mode+': A-B plus G then H must display A-G-H-B');
+    const undoBeforeDuplicate=h.ctx.queueUndo;
+    h.ctx.addNext(h.ctx.get('g'));
+    assert.deepEqual(plain(h.ctx.nextUp),['g','h']);
+    assert.equal(h.ctx.queueUndo,undoBeforeDuplicate,'duplicate insertion must not erase the previous undo');
+    assert.equal(h.ctx.nextPreloadTrack().id,'g');
+    await step(h);assert.equal(h.ctx.current.id,'g');
+    h.ctx.addNext(h.ctx.get('i'));
+    assert.deepEqual(plain(h.ctx.nextUp),['h','i'],'adding during an insertion appends after its remaining requests');
+    h.ctx.savePlaybackSession();
+    const resumed=harness(h.storage);resumed.ctx.tracks.push(...extras);resumed.ctx.restorePlaybackSession();
+    assert.deepEqual(ids(resumed.ctx.displayQueue()),['a','g','h','i','b']);
+    for(const id of ['h','i','b']){await step(resumed);assert.equal(resumed.ctx.current.id,id);}
+    assert.deepEqual(ids(resumed.ctx.queue),['a','b'],'insertions do not rewrite the base list');
+  }
+  console.log('通过：A-G-H-B按添加顺序播放，中途新增排在待播末尾，去重及刷新恢复保留顺序。');
 
   h = harness(); h.loaded('a', 82); let attempts = 0;
   h.audio.play = async () => { attempts++; h.audio.paused = true; h.audio.error = {code: 2}; throw Object.assign(Error('unavailable'), {name: 'NetworkError'}); };
