@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const APP_VERSION='20261108-web-101', SHELL_VERSION='roylyl-music-shell-20261108-101';
+  const APP_VERSION='20261108-web-104', SHELL_VERSION='roylyl-music-shell-20261108-104';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const desktopShell=!window.musicMobileShell;
@@ -467,7 +467,7 @@
   let lyricRequest = 0, lyricGeneration = 0, lyricController = null;
   let lyricTrackId = '', lyricKey = '', lyricState = 'idle', lyricGroups = [], lyricMetadata = [], lyricActiveIndex = -1, lyricLoadedAt = 0;
   const lyricWrites=new Set();
-  let lyricManualUntil = 0, lyricFollowTimer = null;
+  let lyricManualUntil = 0, lyricFollowTimer = null, lyricPreviewPosition = null;
   const lyricTtl = 24 * 60 * 60 * 1000, lyricMissingTtl = 24 * 60 * 60 * 1000;
   const lyricResource = track => {
     const path = track.src.replace(/\.[^./?]+(?:\?.*)?$/i,'.lrc');
@@ -505,7 +505,7 @@
     scrollActiveLyric(false);
   }
   function scrollActiveLyric(smooth=true){
-    if(Date.now()<lyricManualUntil || lyricActiveIndex<0)return;
+    if((lyricPreviewPosition===null&&Date.now()<lyricManualUntil)||lyricActiveIndex<0)return;
     const box=$('full-lyrics'),target=box.querySelector(`[data-group="${lyricActiveIndex}"]`);
     if(!target || !box.clientHeight)return;
     const reduceMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
@@ -518,9 +518,9 @@
   }
   for(const event of ['wheel','touchstart','touchmove','touchend','pointerdown'])$('full-lyrics').addEventListener(event,pauseLyricFollow,{passive:true});
   $('full-lyrics').addEventListener('keydown',event=>{if(/^(Arrow|Page|Home|End)/.test(event.key))pauseLyricFollow();});
-  function updateLyricPosition(force=false) {
+  function updateLyricPosition(force=false,position=lyricPreviewPosition??audio.currentTime) {
     if(!lyricGroups.some(group=>group.time!==null))return;
-    const active=RoylylLyrics.currentLyricGroup(lyricGroups,audio.currentTime);
+    const active=RoylylLyrics.currentLyricGroup(lyricGroups,position);
     if(active===lyricActiveIndex&&!force)return;
     $('full-lyrics').querySelector('.lyric-group.is-active')?.classList.remove('is-active');
     lyricActiveIndex=active;
@@ -538,6 +538,7 @@
     if(force)lyricGeneration++;
     const controller=new AbortController(),request=++lyricRequest,generation=lyricGeneration;
     if(lyricTrackId!==track.id){
+      lyricPreviewPosition=null;
       clearTimeout(lyricFollowTimer);lyricManualUntil=0;$('full-lyrics').scrollTo({top:0,behavior:'instant'});
     }
     lyricController=controller;lyricTrackId=track.id;lyricKey=resource.key;lyricState='loading';lyricGroups=[];lyricMetadata=[];lyricActiveIndex=-1;
@@ -1335,7 +1336,7 @@
     if(audio.paused||playbackBlocked)pausedPosition={id:current.id,time:targetTime};
     restorePlaybackPosition();useCompletedAudio();rebasePlaybackClock();
     tracePlayback('seek-request','target='+targetTime+(pendingResumePosition?' pending':' completed'));
-    savePlaybackSession();updateLyricPosition(true);syncPlaybackState();
+    savePlaybackSession();updateLyricPosition(true,targetTime);syncPlaybackState();
   }
   function completePlaybackSeek() {
     const target=pendingResumePosition;
@@ -1702,15 +1703,17 @@
     input.addEventListener('input',()=>{
       seekDrag=true;
       const position=Number(input.value)/100*playbackDuration();
+      lyricPreviewPosition=position;clearTimeout(lyricFollowTimer);lyricManualUntil=0;
+      for(const otherId of ['seek','full-seek'])$(otherId).value=input.value;
       $('elapsed').textContent=$('full-elapsed').textContent=time(position);
       input.setAttribute('aria-valuetext',time(position)+' / '+time(playbackDuration()));
-      paintSeekProgress();
+      paintSeekProgress();updateLyricPosition(true,position);
     });
     input.addEventListener('change',()=>{
-      seekDrag=false;
+      seekDrag=false;lyricPreviewPosition=null;
       seekPlayback(Number(input.value)/100*playbackDuration());
     });
-    input.addEventListener('pointercancel',()=>{seekDrag=false;});
+    input.addEventListener('pointercancel',()=>{seekDrag=false;lyricPreviewPosition=null;renderPlaybackProgress();updateLyricPosition(true);});
   }
   window.addEventListener('pointerup',()=>{seekDrag=false;});
   audio.addEventListener('durationchange',()=>{updateFull();$('seek').disabled=playbackDuration()<=0;restorePlaybackPosition();});
@@ -1840,11 +1843,22 @@
   $('clear-filters').onclick=()=>{clearTimeout(searchTimer);$('search').value='';$('artist').value=artistContext||'';render();rememberNavigation();$('search').focus({preventScroll:true});};
   for(const id of ['sort-primary','sort-secondary','sort-direction'])$(id).onchange=()=>{render();rememberNavigation();};
   updateSortControls();
+  function handleTrackShortcut(event) {
+    if(event.defaultPrevented||event.repeat||event.isComposing||event.ctrlKey||event.altKey||event.metaKey)return false;
+    if(!desktopShell&&!matchMedia('(any-pointer: fine)').matches)return false;
+    const target=event.target;
+    if(/INPUT|SELECT|TEXTAREA/.test(target.tagName)||target.isContentEditable||target.closest?.('[contenteditable]:not([contenteditable="false"]),[role="slider"],[role="menu"],[role="tablist"]'))return false;
+    if(!moreMenu.hidden||!$('full-more-menu').hidden)return false;
+    const key=event.key.toLowerCase(),direction=key==='a'||key==='arrowleft'?-1:key==='d'||key==='arrowright'?1:0;
+    if(!direction)return false;
+    event.preventDefault();advance(direction);return true;
+  }
   document.addEventListener('keydown',e=> {
     if(document.querySelector('dialog[open]:not(#full-player)'))return;
     if(e.key==='Escape'&&!moreMenu.hidden){e.preventDefault();e.stopPropagation();closeTrackMenu(true);return;}
     if(e.key==='Escape'&&!$('full-queue').hidden){e.preventDefault();e.stopPropagation();toggleFullQueue(false);return;}
     else if(e.key==='Escape'&&!$('queue-panel').hidden)toggleQueue(false);
+    if(handleTrackShortcut(e))return;
     if(/INPUT|SELECT|TEXTAREA|BUTTON/.test(e.target.tagName)||e.target.isContentEditable)return;
     if(view==='settings')return;
     if(e.key==='/'&&isFullOpen())return;

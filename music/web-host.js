@@ -8,6 +8,19 @@
   document.addEventListener('keydown',event=>{
     if(event.key==='Tab'||event.key.startsWith('Arrow'))document.documentElement.setAttribute('data-keyboard-nav','');
   },true);
+  const scrollIdleTimers=new WeakMap();
+  document.addEventListener('scroll',event=>{
+    const target=event.target===document?document.documentElement:event.target;
+    if(!(target instanceof Element)||!target.matches('html.music-scrollbar-auto,#full-lyrics,#queue-list,#full-queue-list,#desktop-downloads-body'))return;
+    target.classList.add('is-scrolling');
+    clearTimeout(scrollIdleTimers.get(target));
+    scrollIdleTimers.set(target,setTimeout(()=>{target.classList.remove('is-scrolling');scrollIdleTimers.delete(target);},650));
+  },{capture:true,passive:true});
+  document.addEventListener('scrollend',event=>{
+    const target=event.target===document?document.documentElement:event.target;
+    if(!scrollIdleTimers.has(target))return;
+    clearTimeout(scrollIdleTimers.get(target));scrollIdleTimers.delete(target);target.classList.remove('is-scrolling');
+  },{capture:true,passive:true});
   const modalStack=[],closingDialogs=new WeakSet();
   let cleaningReloadedModals=false,finishReloadedModals=null,settingsDownloadsOpen=false,settingsScroll=0,confirmAction=()=>window.RoyToolsMusicApp.settings('clearAll');
   function placeDownloadTray(){
@@ -142,6 +155,7 @@
       navigation=JSON.parse(payload);$('web-title').textContent=navigation.title;
       $('web-back').hidden=!navigation.secondary;
       document.body.classList.toggle('web-player-open',navigation.fullPlayerOpen);
+      document.documentElement.classList.toggle('music-scrollbar-auto',!['home','playlists','settings','player'].includes(navigation.pageKey));
       placeDownloadTray();
       syncWakeLock();
     },

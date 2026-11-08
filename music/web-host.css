@@ -142,3 +142,27 @@ html:has(dialog[open],#queue-panel:not([hidden]),#full-queue:not([hidden])) { ov
 :is(#desktop-settings-modal .settings-body,#web-option-list,#queue-list,#full-queue-list,.track-more-menu,#web-download,#web-confirm,#sleep-dialog)::-webkit-scrollbar-thumb { background:var(--muted);border-radius:999px; }
 :is(#desktop-settings-modal .settings-body,#web-option-list,#queue-list,#full-queue-list,.track-more-menu,#web-download,#web-confirm,#sleep-dialog)::-webkit-scrollbar-track { background:transparent; }
 :is(#desktop-settings-modal .settings-body,#web-option-list,#queue-list,#full-queue-list,.track-more-menu,#web-download,#web-confirm,#sleep-dialog)::-webkit-scrollbar-button { display:none; }
+
+/* Page transitions never create a horizontal scrollbar. */
+html,body { overflow-x:clip; }
+main { overflow-x:clip; }
+#full-lyrics,#desktop-downloads-body,#queue-list,#full-queue-list { overflow-x:hidden; }
+*::-webkit-scrollbar:horizontal { height:0!important;display:none!important; }
+/* Keep the gutter stable; show the thumb only while the content is moving. */
+:is(html.music-scrollbar-auto,#full-lyrics,#queue-list,#full-queue-list,#desktop-downloads-body) {
+ scrollbar-width:thin;scrollbar-color:transparent transparent;
+}
+:is(html.music-scrollbar-auto,#full-lyrics,#queue-list,#full-queue-list,#desktop-downloads-body).is-scrolling {
+ scrollbar-color:var(--muted) transparent;
+}
+:is(html.music-scrollbar-auto,#full-lyrics,#queue-list,#full-queue-list,#desktop-downloads-body)::-webkit-scrollbar { width:6px; }
+:is(html.music-scrollbar-auto,#full-lyrics,#queue-list,#full-queue-list,#desktop-downloads-body)::-webkit-scrollbar-thumb { background:transparent;border-radius:999px; }
+:is(html.music-scrollbar-auto,#full-lyrics,#queue-list,#full-queue-list,#desktop-downloads-body).is-scrolling::-webkit-scrollbar-thumb { background:var(--muted); }
+:is(html.music-scrollbar-auto,#full-lyrics,#queue-list,#full-queue-list,#desktop-downloads-body)::-webkit-scrollbar-track { background:transparent; }
+:is(html.music-scrollbar-auto,#full-lyrics,#queue-list,#full-queue-list,#desktop-downloads-body)::-webkit-scrollbar-button { display:none; }
+@supports selector(::-webkit-scrollbar) {
+ :is(html.music-scrollbar-auto,#full-lyrics,#queue-list,#full-queue-list,#desktop-downloads-body),
+ :is(html.music-scrollbar-auto,#full-lyrics,#queue-list,#full-queue-list,#desktop-downloads-body).is-scrolling {
+  scrollbar-width:auto;scrollbar-color:auto;
+ }
+}
