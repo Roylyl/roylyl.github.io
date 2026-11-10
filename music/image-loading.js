@@ -1,5 +1,11 @@
 (() => {
   const records = new Map();
+  const presentedSources = new Set();
+  function rememberSource(source) {
+    if (!source) return;
+    presentedSources.add(source);
+    if (presentedSources.size > 512) presentedSources.delete(presentedSources.values().next().value);
+  }
   const pendingPlacement = new Set();
   let placementFrame = null;
   function placePending() {
@@ -42,7 +48,10 @@
     overlay.setAttribute('aria-hidden', 'true');
     host.append(overlay);
     const interactive = img.closest('button,a');
-    let generation = 0;
+    let generation = 0, requestSignature = null, readySource = '', decodingSource = '', animation = null;
+    const signature = () => JSON.stringify([img.getAttribute('src'), img.getAttribute('srcset')]);
+    const selectedSource = () => img.currentSrc || img.src || img.getAttribute('src') || '';
+    const cancelAnimation = () => { animation?.cancel(); animation = null; };
     const place = () => queuePlacement(img);
     const measure = () => {
       const a = img.getBoundingClientRect(), b = host.getBoundingClientRect();
@@ -50,7 +59,8 @@
       return { left: `${(a.left-b.left)/sx-host.clientLeft+host.scrollLeft}px`, top: `${(a.top-b.top)/sy-host.clientTop+host.scrollTop}px`, width: `${a.width/sx}px`, height: `${a.height/sy}px` };
     };
     const retry = () => {
-      start();
+      if (!img.dispatchEvent(new Event('roylyl-cover-retry', { bubbles: true, cancelable: true }))) return;
+      start(true);
       // Reset selection as well as src so srcset images retry the chosen source.
       const src = img.getAttribute('src'), srcset = img.getAttribute('srcset');
       img.removeAttribute('srcset'); img.removeAttribute('src');
@@ -59,6 +69,7 @@
     };
     function failed() {
       generation++;
+      decodingSource = ''; readySource = ''; cancelAnimation();
       img.dataset.imageState = 'error';
       img.removeAttribute('aria-busy');
       overlay.hidden = false; overlay.setAttribute('data-error', '');
@@ -70,21 +81,37 @@
       overlay.append(text); place();
     }
     async function loaded() {
+      if(img.dataset.coverState==='error'){failed();return;}
+      if(img.dataset.coverState==='loading')return;
+      const attributes = signature(), source = selectedSource();
+      if (!img.isConnected || decodingSource === source || (requestSignature === attributes && readySource === source)) return;
+      if (requestSignature !== attributes || readySource !== source) { requestSignature = attributes; cancelAnimation(); readySource = ''; }
       const version = ++generation;
       if (!img.naturalWidth) { failed(); return; }
+      decodingSource = source;
       try { await img.decode(); } catch (_) { /* A load event already confirms a usable image. */ }
-      if (version !== generation) return;
+      if (version !== generation || !img.isConnected || signature() !== attributes || selectedSource() !== source) return;
+      decodingSource = ''; readySource = source;
       img.dataset.imageState = 'ready'; img.removeAttribute('aria-busy'); overlay.hidden = true;
-      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) img.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 350, easing: 'ease-out' });
+      const firstPresentation = !presentedSources.has(source);
+      rememberSource(source);
+      if (firstPresentation && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        cancelAnimation();
+        animation = img.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 350, easing: 'ease-out' });
+      }
     }
-    function start() {
+    function start(force = false) {
+      const attributes = signature();
+      if (!force && requestSignature === attributes) return;
+      requestSignature = attributes; readySource = ''; decodingSource = ''; cancelAnimation();
       generation++;
+      if(img.dataset.coverState==='error'){failed();return;}
       if (!img.getAttribute('src') && !img.getAttribute('srcset')) { overlay.hidden = true; return; }
-      if (img.complete && img.naturalWidth) { img.dataset.imageState = 'ready'; img.removeAttribute('aria-busy'); overlay.hidden = true; return; }
+      if (!img.dataset.coverState && img.complete && img.naturalWidth) { readySource = selectedSource(); rememberSource(readySource); img.dataset.imageState = 'ready'; img.removeAttribute('aria-busy'); overlay.hidden = true; return; }
       img.dataset.imageState = 'loading'; img.setAttribute('aria-busy', 'true');
       overlay.hidden = false; overlay.removeAttribute('data-error'); overlay.setAttribute('aria-hidden', 'true');
       const orbit = document.createElement('span'); orbit.className = 'image-placeholder-orbit'; overlay.replaceChildren(orbit); place();
-      if (img.complete && !img.naturalWidth) failed();
+      if (!img.dataset.coverState && img.complete && !img.naturalWidth) failed();
     }
     const retryClick = event => {
       if (img.dataset.imageState !== 'error') return;
@@ -92,11 +119,12 @@
     };
     if (interactive) interactive.addEventListener('click', retryClick, true);
     records.set(img, { img, host, overlay, place, measure, start, failed, dispose() {
-      generation++;
-      img.removeEventListener('load', loaded);img.removeEventListener('error', failed);
+      generation++; cancelAnimation(); decodingSource = '';
+      img.removeEventListener('load', loaded);img.removeEventListener('error', failed);img.removeEventListener('roylyl-cover-loading',coverLoading);
       interactive?.removeEventListener('click', retryClick, true);overlay.remove();
     } });
-    img.addEventListener('load', loaded); img.addEventListener('error', failed);
+    const coverLoading=()=>start(true);
+    img.addEventListener('load', loaded); img.addEventListener('error', failed);img.addEventListener('roylyl-cover-loading',coverLoading);
     sizing.observe(img);
     visibility.observe(img); start();
   }

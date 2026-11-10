@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const APP_VERSION='20261108-web-106', SHELL_VERSION='roylyl-music-shell-20261108-106';
+  const APP_VERSION='20261110-web-107', SHELL_VERSION='roylyl-music-shell-20261110-107';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const desktopShell=!window.musicMobileShell;
@@ -248,7 +248,7 @@
   document.querySelectorAll('[data-open-settings]').forEach(button=>button.addEventListener('click',updateCacheStatus));
   for (const [buttonId,cacheName,statusElement,invalidate,done] of [
     ['clear-audio-cache',AUDIO_CACHE,audioCacheStatus,()=>{audioCacheGeneration++;audioDownloadProgress.clear();paintBufferedProgress();cancelPreload();releasePrepared();},'音乐缓存已清理'],
-    ['clear-cover-cache',COVER_CACHE,coverCacheStatus,()=>{coverCacheGeneration++;document.querySelectorAll('img[data-cover-bound]').forEach(img=>{img.src=coverSource(img.dataset.coverBound);delete img.dataset.coverBound;});for(const blob of coverUrls.values())URL.revokeObjectURL(blob);coverUrls.clear();coverRequests.clear();},'专辑封面缓存已清理'],
+    ['clear-cover-cache',COVER_CACHE,coverCacheStatus,invalidateCoverCache,'专辑封面缓存已清理'],
   ]) $(buttonId).onclick = async () => {
     if(cacheName===AUDIO_CACHE&&downloadBatch?.active){showSystemMessage('请先取消下载，再清理音乐缓存');return false;}
     invalidate();
@@ -383,18 +383,38 @@
   const coverRevisions=new Map();
   const coverSource = path => {const source=new URL(url(path));if(coverRevisions.has(path))source.searchParams.set('v',coverRevisions.get(path));return source.href;};
   const picture = t => coverSource(t.cover);
-  const coverUrls = new Map(), coverRequests = new Map();
-  async function cachedCover(path) {
+  const coverUrls = new Map(), coverRequests = new Map(), coverFailures = new Map();
+  const usableCoverResponse = response => {
+    const type=(response?.headers?.get('Content-Type')||'').split(';')[0].trim();
+    return !!response?.ok&&(!type||/^image\//i.test(type)||/^application\/octet-stream$/i.test(type));
+  };
+  function invalidateCoverCache() {
+    coverCacheGeneration++;
+    document.querySelectorAll('img[data-cover-bound]').forEach(img=>{
+      delete img.dataset.coverSource;delete img.dataset.coverState;
+    });
+    for(const blob of coverUrls.values())URL.revokeObjectURL(blob);
+    coverUrls.clear();coverRequests.clear();coverFailures.clear();
+  }
+  async function cachedCover(path,force=false) {
     const source=coverSource(path),generation=coverCacheGeneration;
-    if(coverUrls.has(source))return coverUrls.get(source);
     if(coverRequests.has(source))return coverRequests.get(source);
+    if(!force&&coverUrls.has(source))return coverUrls.get(source);
+    if(force)coverFailures.delete(source);
+    else if((coverFailures.get(source)||0)>Date.now())return null;
     const request = (async () => {
       try {
-        const cache = 'caches' in window ? await caches.open(COVER_CACHE) : null;
-        let response = await cache?.match(source);
+        let cache=null,response=null;
+        try{cache='caches' in window?await caches.open(COVER_CACHE):null;if(!force)response=await cache?.match(source);}catch{}
+        if(response&&!usableCoverResponse(response)){
+          response.body?.cancel().catch(()=>{});
+          try{await cache?.delete(source);}catch{}
+          response=null;
+        }
         if (!response) {
-          response = await fetch(source);
-          if (!response.ok) throw Error('Cover HTTP ' + response.status);
+          response = await fetch(source,force?{cache:'reload'}:undefined);
+          if (!response.ok) {response.body?.cancel().catch(()=>{});const error=Error('Cover HTTP '+response.status);error.status=response.status;throw error;}
+          if(!usableCoverResponse(response)){response.body?.cancel().catch(()=>{});throw Error('Cover response is not an image');}
           if (cache && generation === coverCacheGeneration) {
             try {
               await cache.put(source,response.clone());
@@ -403,36 +423,56 @@
           }
         }
         const blob=await response.blob();
-        if(generation!==coverCacheGeneration)return './placeholder.svg';
+        if(generation!==coverCacheGeneration)return null;
         const local = URL.createObjectURL(blob);
+        coverFailures.delete(source);
         coverUrls.set(source,local);
         return local;
-      } catch { return source; }
+      } catch(error) {
+        if(generation===coverCacheGeneration){
+          coverFailures.set(source,Date.now()+([404,410].includes(error?.status)?300000:15000));
+          if(coverFailures.size>512)coverFailures.delete(coverFailures.keys().next().value);
+        }
+        return null;
+      }
       finally { if(coverRequests.get(source)===request)coverRequests.delete(source); }
     })();
     coverRequests.set(source,request);
     return request;
   }
   const observedCovers=new Set();
-  async function loadCoverInto(img,path) {
+  async function loadCoverInto(img,path,force=false) {
     observedCovers.delete(img);
     coverObserver?.unobserve(img);
     if(!img.isConnected)return;
-    const address=coverSource(path),generation=coverCacheGeneration,source=await cachedCover(path);
-    if(img.isConnected&&generation===coverCacheGeneration&&img.dataset.coverBound===path&&img.dataset.coverSource===address)img.src=source;
+    img.dataset.coverState='loading';
+    if(force)img.dispatchEvent(new Event('roylyl-cover-loading'));
+    const address=coverSource(path),generation=coverCacheGeneration,source=await cachedCover(path,force);
+    if(img.isConnected&&generation===coverCacheGeneration&&img.dataset.coverBound===path&&img.dataset.coverSource===address){
+      if(source){delete img.dataset.coverState;img.src=source;}
+      else{img.dataset.coverState='error';img.dispatchEvent(new Event('error'));}
+    }
   }
   const coverObserver = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
     for (const {target,isIntersecting} of entries) if (isIntersecting) loadCoverInto(target,target.dataset.coverBound);
   },{rootMargin:'300px'}) : null;
+  document.addEventListener('roylyl-cover-retry',event=>{
+    const img=event.target,path=img?.dataset?.coverBound;
+    if(!path)return;
+    event.preventDefault();img.dataset.coverSource=coverSource(path);loadCoverInto(img,path,true);
+  },true);
   function bindCover(img,path,eager=false) {
     if(!img)return;
     const source=coverSource(path);
     if(img.dataset.coverBound===path&&img.dataset.coverSource===source)return;
     img.dataset.coverBound=path;img.dataset.coverSource=source;
-    img.src = './placeholder.svg';
-    if (coverUrls.has(source)) img.src = coverUrls.get(source);
-    else if (eager || !coverObserver) loadCoverInto(img,path);
-    else {observedCovers.add(img);coverObserver.observe(img);}
+    if (coverUrls.has(source)) {delete img.dataset.coverState;img.src = coverUrls.get(source);}
+    else {
+      img.dataset.coverState='loading';
+      img.src = './placeholder.svg';
+      if (eager || !coverObserver) loadCoverInto(img,path);
+      else {observedCovers.add(img);coverObserver.observe(img);}
+    }
   }
   function hydrateCovers(root) {
     for(const img of observedCovers)if(!img.isConnected){coverObserver?.unobserve(img);observedCovers.delete(img);}
@@ -823,7 +863,7 @@
     $('downloads-reset').disabled=!query&&!artist;
     $('downloads-empty').hidden=loading||failed||rows.length>0;
     $('downloads-empty').textContent=all.length?'没有找到匹配的歌曲，可以清空筛选。':'暂无已下载曲目，可在歌单、专辑或音乐设置中下载歌曲。';
-    root._tracks=loading||failed?[]:rows;root.innerHTML=downloadedRows(root._tracks);hydrateCovers(root);
+    root._tracks=loading||failed?[]:rows;setMarkup('downloads-songs',downloadedRows(root._tracks));hydrateCovers(root);
   }
   function syncSettingsDownloadArtists(){
     const artist=$('downloads-artist'),previous=artist.value;artist.innerHTML=$('artist').innerHTML;
@@ -955,13 +995,13 @@
     if(fixedView) {
       $('albums').hidden=true;$('songs').hidden=false;$('album-detail').hidden=true;
       $('view-title').textContent=view==='favorites'?'我喜欢':activePlaylist.name;
-      if(!appleMusic){$('playlist-detail').textContent=appleError?'Apple Music歌单加载失败，请刷新页面重试。':'正在读取Apple Music歌单…';$('songs').innerHTML='';$('songs')._tracks=[];$('result-count').textContent='';$('empty').hidden=true;renderCurrent();return;}
+      if(!appleMusic){delete $('playlist-detail')._markup;$('playlist-detail').textContent=appleError?'Apple Music歌单加载失败，请刷新页面重试。':'正在读取Apple Music歌单…';$('songs').innerHTML='';$('songs')._tracks=[];$('result-count').textContent='';$('empty').hidden=true;renderCurrent();return;}
       const ids=view==='favorites'?appleMusic.favorites:activePlaylist.entries;
       const all=playlistTracks(ids),q=normalize($('search').value.trim()),ar=$('artist').value;
       const ordered=$('sort-primary').value==='default'?all:[...all].sort(compareItems);
       const rows=ordered.filter(t=>matchesArtist(t,ar)&&(!q||normalize(t.title+' '+t.artist+' '+t.album).includes(q)));
       const playable=rows.filter(canPlay);
-      $('playlist-detail').innerHTML=`<p>${all.length}首歌曲</p><div class="playlist-play-actions collection-play-actions"><button id="play-playlist" class="primary" ${playable.length?'':'disabled'}>${icon('play')}<span>顺序播放</span></button><button id="shuffle-playlist" class="secondary" ${playable.length?'':'disabled'}>${icon('shuffle')}<span>随机播放</span></button><button id="download-playlist" class="secondary" ${all.some(canPlay)?'':'disabled'}>${icon('download')}<span>下载全部</span></button></div><small>更新于${esc(new Date(appleMusic.updatedAt).toLocaleDateString('zh-CN',{timeZone:'Asia/Shanghai'}))}</small>`;
+      setMarkup('playlist-detail',`<p>${all.length}首歌曲</p><div class="playlist-play-actions collection-play-actions"><button id="play-playlist" class="primary" ${playable.length?'':'disabled'}>${icon('play')}<span>顺序播放</span></button><button id="shuffle-playlist" class="secondary" ${playable.length?'':'disabled'}>${icon('shuffle')}<span>随机播放</span></button><button id="download-playlist" class="secondary" ${all.some(canPlay)?'':'disabled'}>${icon('download')}<span>下载全部</span></button></div><small>更新于${esc(new Date(appleMusic.updatedAt).toLocaleDateString('zh-CN',{timeZone:'Asia/Shanghai'}))}</small>`);
       $('play-playlist').onclick=()=>playAlbum({tracks:playable});
       $('shuffle-playlist').onclick=()=>playAlbum({tracks:playable},true);
       $('download-playlist').onclick=()=>downloadAll(all,view==='favorites'?'歌单《我喜欢》':'歌单《'+activePlaylist.name+'》');
@@ -972,7 +1012,7 @@
     $('songs').hidden = view === 'albums' && !selected;
     $('album-detail').hidden = !selected;
     if (selected) {
-      $('album-detail').innerHTML = `<div class="detail-heading"><img src="./placeholder.svg" data-cover-path="${esc(selected.tracks[0].cover)}" alt="${esc(selected.title)}封面"><div class="detail-copy"><p class="eyebrow">专辑</p><h2>${esc(selected.title)}</h2><p class="detail-meta">${artistLinks(selected.artist,true)}${selected.year ? ' · ' + selected.year : ''} · ${selected.tracks.length}首</p></div><div class="album-play-actions collection-play-actions"><button class="primary" id="play-selected">${icon('play')}<span>播放专辑</span></button><button class="secondary" id="download-selected">${icon('download')}<span>下载全部</span></button></div></div>`;
+      setMarkup('album-detail',`<div class="detail-heading"><img src="./placeholder.svg" data-cover-path="${esc(selected.tracks[0].cover)}" alt="${esc(selected.title)}封面"><div class="detail-copy"><p class="eyebrow">专辑</p><h2>${esc(selected.title)}</h2><p class="detail-meta">${artistLinks(selected.artist,true)}${selected.year ? ' · ' + selected.year : ''} · ${selected.tracks.length}首</p></div><div class="album-play-actions collection-play-actions"><button class="primary" id="play-selected">${icon('play')}<span>播放专辑</span></button><button class="secondary" id="download-selected">${icon('download')}<span>下载全部</span></button></div></div>`);
       hydrateCovers($('album-detail'));
       const visibleTracks=selected.tracks.filter(t=>matchingIds.has(t.id));
       $('play-selected').disabled=!visibleTracks.length;
@@ -1040,18 +1080,62 @@
     });
   }
   function renderQueueWindow(list,force=false) {
-    const items=list._queueItems||[],start=Math.min(Math.max(0,items.length-1),Math.max(0,Math.floor(list.scrollTop/72)-4));
+    const items=list._queueItems||[],scrollTop=list.scrollTop,start=Math.min(Math.max(0,items.length-1),Math.max(0,Math.floor(scrollTop/72)-4));
     const end=Math.min(items.length,start+Math.ceil(list.clientHeight/72)+9);
     if(!force&&list._queueStart===start&&list._queueEnd===end)return;
     list._queueStart=start;list._queueEnd=end;
-    list.querySelectorAll('img[data-cover-path]').forEach(img=>coverObserver?.unobserve(img));
-    list.innerHTML=items.length?`<div aria-hidden="true" style="height:${start*72}px"></div>`+trackRows(items.slice(start,end),true,start)+`<div aria-hidden="true" style="height:${(items.length-end)*72}px"></div>`:'<p class="muted">播放一首歌曲后，队列会显示在这里。</p>';
-    hydrateCovers(list);updateQueueMarkers();
+    if(!list._queueTopSpacer){
+      list._queueTopSpacer=document.createElement('div');list._queueBottomSpacer=document.createElement('div');
+      for(const spacer of [list._queueTopSpacer,list._queueBottomSpacer])spacer.setAttribute('aria-hidden','true');
+      list.append(list._queueTopSpacer,list._queueBottomSpacer);
+    }
+    if(list._queueKeyItems!==items){
+      const occurrences=new Map();
+      list._queueEntryKeys=items.map(item=>{
+        const identity=JSON.stringify([item.id,item._queueCurrent?'current':item._queueInserted?'inserted':'regular']);
+        const occurrence=occurrences.get(identity)||0;occurrences.set(identity,occurrence+1);
+        return identity+':'+occurrence;
+      });
+      list._queueKeyItems=items;
+    }
+    const existing=new Map([...list.children].filter(row=>row._queueEntryKey).map(row=>[row._queueEntryKey,row]));
+    const wanted=new Set(),rows=[],fresh=[];
+    for(let index=start;index<end;index++){
+      const item=items[index],key=list._queueEntryKeys[index];
+      // Playback flags and row numbers are patched below, without replacing artwork.
+      const markup=trackRows([{...item,_queueCurrent:false}],true,0);
+      const contentKey=JSON.stringify([markup,item.cover?coverSource(item.cover):'']);
+      let row=existing.get(key);
+      if(!row||row._queueMarkup!==contentKey){
+        const template=document.createElement('template');template.innerHTML=markup;row=template.content.firstElementChild;
+        row._queueEntryKey=key;row._queueMarkup=contentKey;fresh.push(row);
+      }
+      if(item._queueCurrent)row.removeAttribute('data-queued-repeat');else row.dataset.queuedRepeat='true';
+      if(item._queueInserted)row.dataset.queueInserted='true';else row.removeAttribute('data-queue-inserted');
+      const number=row.querySelector('.track-no');
+      const playing=item._queueCurrent&&item.id===current?.id&&!audio.paused&&!pendingTrackId;
+      if(number){number.dataset.number=String(index+1).padStart(2,'0');number.textContent=playing?'♫':number.dataset.number;}
+      row.classList.toggle('current',!!playing);wanted.add(row);rows.push(row);
+    }
+    for(const row of existing.values())if(!wanted.has(row)){
+      row.querySelectorAll('img[data-cover-path]').forEach(img=>coverObserver?.unobserve(img));row.remove();
+    }
+    list._queueEmpty?.remove();
+    let cursor=list._queueTopSpacer.nextElementSibling;
+    for(const row of rows){if(row!==cursor)list.insertBefore(row,cursor);cursor=row.nextElementSibling;}
+    list._queueTopSpacer.style.height=start*72+'px';list._queueBottomSpacer.style.height=(items.length-end)*72+'px';
+    if(!items.length){
+      list._queueEmpty??=document.createElement('p');list._queueEmpty.className='muted';
+      list._queueEmpty.textContent='播放一首歌曲后，队列会显示在这里。';list.insertBefore(list._queueEmpty,list._queueBottomSpacer);
+    }
+    for(const row of fresh)hydrateCovers(row);
+    if(list.scrollTop!==scrollTop)list.scrollTop=scrollTop;
+    updateQueueMarkers();
   }
   function renderQueue() {
     const targets=['queue-list','full-queue-list'].map($).filter(list=>!list.parentElement.hidden);
     if(!targets.length)return;
-    const displayed=displayQueue(),signature=displayed.map(t=>t.id+':'+!!t._queueCurrent+':'+!!t._queueInserted).join('\n');
+    const displayed=displayQueue(),signature=JSON.stringify(displayed.map(t=>[t.id,!!t._queueCurrent,!!t._queueInserted,t.title,t.artist,t.album,t.albumKey,t.cover,t.cover?coverSource(t.cover):'',t.duration,t.src,t.sourceStatus]));
     for(const list of targets){
       if(list._queueSignature!==signature||queueSignature===''){
         list._queueItems=displayed;list._queueSignature=signature;renderQueueWindow(list,true);
@@ -2249,7 +2333,7 @@
   }
   function applyAppleMusic() {
     favorites.clear();for(const id of appleMusic.favorites){const e=appleMusic.entries[id];favorites.add(e.trackId||'apple:'+id);}
-    $('fixed-playlists').innerHTML=appleMusic.playlists.map(p=>`<button type="button" class="music-entry playlist-entry" data-playlist="${esc(p.id)}"><span class="music-entry-icon">${icon(playlistIconName(p.id))}</span><span class="music-entry-copy"><strong>${esc(p.name)}</strong></span><span class="music-entry-count">${p.entries.length}首</span><span class="music-entry-arrow">${icon('arrow')}</span></button>`).join('');
+    setMarkup('fixed-playlists',appleMusic.playlists.map(p=>`<button type="button" class="music-entry playlist-entry" data-playlist="${esc(p.id)}"><span class="music-entry-icon">${icon(playlistIconName(p.id))}</span><span class="music-entry-copy"><strong>${esc(p.name)}</strong></span><span class="music-entry-count">${p.entries.length}首</span><span class="music-entry-arrow">${icon('arrow')}</span></button>`).join(''));
     const artists=[...new Set([...tracks.flatMap(t=>[t.albumArtist,...artistNames(t.artist)]).filter(Boolean),...Object.values(appleMusic.entries).flatMap(e=>artistNames(e.artist))])].sort((a,b)=>a.localeCompare(b,'zh-CN'));
     const previous=$('artist').value;$('artist').innerHTML='<option value="">全部歌手</option>'+artists.map(a=>`<option>${esc(a)}</option>`).join('');$('artist').value=previous;
   }

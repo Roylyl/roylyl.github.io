@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="https://roylyl.github.io/music/"><img src="https://img.shields.io/badge/在线收听-Roylyl%20Music-83e8c0?style=flat-square" alt="在线收听"></a>
-  <a href="app.js"><img src="https://img.shields.io/badge/version-20261108--web--106-007aff?style=flat-square" alt="前端版本20261108-web-106"></a>
+  <a href="app.js"><img src="https://img.shields.io/badge/version-20261110--web--107-007aff?style=flat-square" alt="前端版本20261110-web-107"></a>
   <a href="#开始使用"><img src="https://img.shields.io/badge/platform-Web%20%2F%20PWA-485866?style=flat-square" alt="Web与PWA"></a>
   <a href="../LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-485866?style=flat-square" alt="GPL-3.0许可证"></a>
 </p>
@@ -91,6 +91,8 @@ py -3 scripts/preview.py 8037
 成功在线打开后，网页和曲库目录可离线重新打开；断网时可播放已经完整保存的歌曲。在“设置→音乐下载→已下载曲目”中可筛选和管理歌曲，单曲删除需要再次确认。
 
 进度条的蓝色部分表示已播放，缓存条显示整曲下载进度。开启音乐缓存后，开始播放即持续保存整首音频；当前歌曲完整保存后再预加载下一首。
+
+专辑封面按资源地址和版本共用缓存，同一专辑的歌曲、列表和播放器复用同一份图片。已缓存的封面直接从本地读取，浏览与批量下载共用进行中的请求；多个页面同时打开也不会各自下载同一张封面。资源版本变化或手动清理缓存后才重新获取，失败请求会短暂限速，仍可点击失败的封面立即重试。
 
 在设置中可以调整：
 

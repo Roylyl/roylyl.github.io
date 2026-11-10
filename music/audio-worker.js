@@ -1,13 +1,14 @@
 'use strict';
 importScripts('./lyric-parser.js');
-const AUDIO='roylyl-music-audio-v2',META='roylyl-music-audio-meta-v1',SHELL='roylyl-music-shell-20261108-106';
-const FILES=['/music/share-pages.js?v=20261108-web-106','/music/share.css?v=20261108-web-106','/music/desktop-settings.css?v=20261108-web-106','/music/shell.js?v=20261108-web-106','/music/desktop.css?v=20261108-web-106','/music/desktop-theme.css?v=20261108-web-106','/music/web-host.js?v=20261108-web-106','/music/web-host.css?v=20261108-web-106','/music/','/music/index.html','/music/music.css?v=20261108-web-106','/music/roytools.css?v=20261108-web-106','/music/app.js?v=20261108-web-106','/music/playback-feedback.js?v=20261108-web-106','/music/lyric-parser.js?v=20261108-web-106','/music/image-loading.css?v=20260927-1','/music/image-loading.js?v=20261104-1','/music/catalog-sync.js?v=20261108-web-106','/music/data/catalog.json?v=20261108-web-106','/music/favicon.svg','/music/placeholder.svg'];
+const AUDIO='roylyl-music-audio-v2',META='roylyl-music-audio-meta-v1',SHELL='roylyl-music-shell-20261110-107';
+const FILES=['/music/share-pages.js?v=20261110-web-107','/music/share.css?v=20261110-web-107','/music/desktop-settings.css?v=20261110-web-107','/music/shell.js?v=20261110-web-107','/music/desktop.css?v=20261110-web-107','/music/desktop-theme.css?v=20261110-web-107','/music/web-host.js?v=20261110-web-107','/music/web-host.css?v=20261110-web-107','/music/','/music/index.html','/music/music.css?v=20261110-web-107','/music/roytools.css?v=20261110-web-107','/music/app.js?v=20261110-web-107','/music/playback-feedback.js?v=20261110-web-107','/music/lyric-parser.js?v=20261110-web-107','/music/image-loading.css?v=20260927-1','/music/image-loading.js?v=20261110-web-107','/music/catalog-sync.js?v=20261110-web-107','/music/data/catalog.json?v=20261110-web-107','/music/favicon.svg','/music/placeholder.svg'];
 const metaKey='/music/__audio_index__',configKey='/music/__audio_config__',freshKey='/music/__audio_recovery__';
 let generation=0,budget=-1,preloadEnabled=true,writeQueue=Promise.resolve(),configRevision=0,configRead,freshRead,optionalEpoch=0,lastKeptSource='';
 const inflight=new Map(),playingRequests=new Map(),protectedSources=new Map();
 const sourceEpoch=new Map(),recoveryRequests=new Map(),freshSources=new Set(),shellClients=new Map();
 let manualBatch=null;
 const assetGenerations={lyrics:0,covers:0},assetCaches={lyrics:'roylyl-music-lyrics-v1',covers:'roylyl-music-covers-v1'};
+const coverJobs=new Map(),coverFailures=new Map();
 const shellPattern=/^roylyl-music-shell-(\d{8})-(\d+)$/;
 const serial=task=>{const p=writeQueue.then(task,task);writeQueue=p.catch(()=>{});return p;};
 const protectedSource=source=>[...protectedSources.values()].includes(source)||!!(manualBatch?.kind==='audio'&&!manualBatch.stopped&&manualBatch.sources.has(source));
@@ -188,6 +189,7 @@ function cancelJob(source,job){job.controller.abort();if(inflight.get(source)===
 function stopManualBatch(batch,status,reason,code){
   if(batch.stopped)return;
   batch.stopped={status,reason,code};batch.controller?.abort();
+  releaseCoverBatch(batch);
   for(const controller of batch.controllers||[])controller.abort();
   batch.cancel();
 }
@@ -283,6 +285,10 @@ async function deleteAudio(source,port){
 async function clearAssetCache(kind,port){
   if(!assetCaches[kind]){port?.postMessage({ok:false,reason:'缓存类型无效',code:'invalid'});return;}
   assetGenerations[kind]++;
+  if(kind==='covers'){
+    for(const job of coverJobs.values())if(!job.pageConsumer)job.controller.abort();
+    coverJobs.clear();coverFailures.clear();
+  }
   const batch=manualBatch;
   if(batch?.kind===kind){stopManualBatch(batch,'cancelled','缓存已清理，下载已停止','cleared');await batch.finished;}
   try{await serial(()=>caches.delete(assetCaches[kind]));port?.postMessage({ok:true});}
@@ -295,6 +301,102 @@ async function cachedAsset(kind,source){
   const saved=Number(hit.headers.get('X-Roylyl-Cached-At')||0),age=saved>0?Math.max(0,Date.now()-saved):Infinity;
   if((hit.status===404||hit.status===410)&&age<86400000)return 'missing';
   return hit.status===200&&age<86400000;
+}
+function reportCoverProgress(job){
+  for(const [batch,last] of job.batches){
+    if(batch.stopped||batch.current!==job.source)continue;
+    batch.currentBytes=job.bytes;batch.currentTotalBytes=job.total;
+    batch.downloadedBytes+=Math.max(0,job.bytes-last);job.batches.set(batch,job.bytes);
+    if(job.total)batch.sizes.set(job.source,job.total);
+    batchProgress(batch);
+  }
+}
+function countCoverResponse(response,job){
+  job.total=validSize(response);reportCoverProgress(job);
+  if(!response.body)return response;
+  const reader=response.body.getReader();
+  return new Response(new ReadableStream({
+    async pull(controller){try{
+      const part=await reader.read();
+      if(part.done){controller.close();return;}
+      job.bytes+=part.value.byteLength;reportCoverProgress(job);controller.enqueue(part.value);
+    }catch(error){controller.error(error);}},
+    cancel(reason){return reader.cancel(reason);}
+  },{highWaterMark:0}),{status:response.status,statusText:response.statusText,headers:response.headers});
+}
+function releaseCoverBatch(batch){
+  const job=batch.coverJob;if(!job)return;
+  job.batches.delete(batch);batch.coverJob=null;
+  if(!job.pageConsumer&&!job.batches.size)job.controller.abort();
+}
+function sharedCover(source,{page=false,reload=false,batch=null}={}){
+  const version=assetGenerations.covers;
+  let job=coverJobs.get(source);
+  if(!job||job.version!==version||job.controller.signal.aborted){
+    job={source,version,controller:new AbortController(),pageConsumer:false,batches:new Map(),bytes:0,total:0,cached:false};
+    const active=job;
+    active.response=(async()=>{
+      if(!reload){
+        try{const hit=await (await caches.open(assetCaches.covers)).match(source);
+          if(hit?.status===200&&version===assetGenerations.covers){active.cached=true;return hit;}
+        }catch{/* A cache failure must not prevent an online cover from displaying. */}
+        const failed=coverFailures.get(source);
+        if(failed?.version===version&&failed.until>Date.now()){
+          if(failed.response)return failed.response.clone();throw failed.error;
+        }
+      }
+      if(version!==assetGenerations.covers||active.controller.signal.aborted)throw Error('Cover request cancelled');
+      try{
+        let response=await fetch(new Request(source,{mode:'cors'}),{signal:active.controller.signal,...(reload?{cache:'reload'}:{})});
+        if(response.status===404||response.status===410){
+          response.body?.cancel().catch(()=>{});
+          const headers=new Headers(response.headers);headers.delete('Content-Length');
+          response=new Response(null,{status:response.status,statusText:response.statusText,headers});
+        }
+        if(version===assetGenerations.covers&&!active.controller.signal.aborted){
+          if(response.status===404||response.status===410)coverFailures.set(source,{version,until:Date.now()+15000,response:response.clone()});
+          else if(response.ok)coverFailures.delete(source);
+        }
+        return response;
+      }catch(error){
+        if(version===assetGenerations.covers&&!active.controller.signal.aborted)coverFailures.set(source,{version,until:Date.now()+15000,error});
+        throw error;
+      }finally{
+        while(coverFailures.size>128)coverFailures.delete(coverFailures.keys().next().value);
+      }
+    })();
+    active.stored=active.response.then(async response=>{
+      if(active.cached)return {ok:true,cached:true};
+      if(!response.ok)return {ok:false,code:'http',reason:`资源服务器返回${response.status}，无法下载`};
+      const outcome={},account={sizes:new Map(),currentTotalBytes:0};
+      const ok=await storeAsset('covers',source,countCoverResponse(response.clone(),active),version,active.controller.signal,account,outcome);
+      return {ok,...outcome};
+    }).catch(error=>({ok:false,code:active.controller.signal.aborted?'cancelled':'network',reason:active.controller.signal.aborted?'下载已取消':'封面下载失败，请检查网络'}))
+      .finally(()=>{if(coverJobs.get(source)===active)coverJobs.delete(source);});
+    coverJobs.set(source,active);
+  }
+  if(page)job.pageConsumer=true;
+  if(batch){job.batches.set(batch,0);batch.coverJob=job;reportCoverProgress(job);}
+  return job;
+}
+async function coverFetch(event){
+  const job=sharedCover(event.request.url,{page:true,reload:event.request.cache==='reload'});
+  event.waitUntil(job.stored);
+  return (await job.response).clone();
+}
+async function downloadSharedCover(batch,source){
+  const job=sharedCover(source,{batch});let timer;
+  try{
+    const timeout=new Promise(resolve=>{timer=setTimeout(()=>resolve({ok:false,code:'timeout',reason:'专辑封面下载超时'}),120000);});
+    const result=await Promise.race([job.stored,batch.cancelled,timeout]);
+    if(batch.stopped)return;
+    if(result?.ok){if(result.cached)batch.cached++;else batch.downloaded++;}
+    else{
+      failedBatchSource(batch,result?.code||'network',result?.reason||'封面下载失败，请检查网络');
+      if(result?.code==='quota'||result?.code==='storage')stopManualBatch(batch,'error',result.reason,result.code);
+    }
+    finishBatchSource(batch);
+  }finally{clearTimeout(timer);releaseCoverBatch(batch);}
 }
 async function storeAsset(kind,source,response,version,signal,batch,outcome){
   const fail=(code,reason)=>{Object.assign(outcome,{code,reason});return false;};
@@ -409,6 +511,7 @@ async function downloadAudioBatch(data,port,owner){
           if(cached==='missing')batch.missing++;else batch.cached++;
           finishBatchSource(batch);batch.sizes.set(source,0);batchProgress(batch);continue;
         }
+        if(kind==='covers'){await downloadSharedCover(batch,source);if(!batch.stopped)batchProgress(batch);continue;}
         // Joining an existing optional/playback copy must not transfer ownership:
         // cancelling this batch can never abort a playing or preloading request.
         const shared=kind==='audio'?inflight.get(source):null;
@@ -629,6 +732,7 @@ async function shellResponse(request){
 }
 self.addEventListener('fetch',event=>{
   const u=new URL(event.request.url);
+  if(event.request.method==='GET'&&assetSource('covers',u.href)){event.respondWith(coverFetch(event));return;}
   if(audioSource(u.href)&&['GET','HEAD'].includes(event.request.method)){event.respondWith(audioFetch(event));return;}
   if(u.origin!==self.location.origin||!u.pathname.startsWith('/music/')||event.request.method!=='GET')return;
   if(event.request.mode==='navigate'&&(u.pathname==='/music/'||u.pathname==='/music/index.html')){
