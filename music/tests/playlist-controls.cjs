@@ -1,0 +1,64 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+const {harness,plain,settle}=require('./playback-session.cjs');
+const source=fs.readFileSync(path.join(__dirname,'../app.js'),'utf8');
+const section=(start,end)=>source.slice(source.indexOf(start),source.indexOf(end,source.indexOf(start)));
+const ids=list=>plain(list.map(t=>t.id));
+const pending=(ctx,id,kind)=>ctx.displayQueue().find(t=>t.id===id&&(!kind||t._queueRemoval?.kind===kind))?._queueRemoval;
+(async()=>{
+  let h=harness();h.loaded('a',80);
+  assert.equal(pending(h.ctx,'a'),undefined,'当前条目不能删除待播');
+  assert(h.ctx.removeQueuedTrack(pending(h.ctx,'b')));
+  assert.deepEqual(ids(h.ctx.queue),['a','c','d']);assert.equal(h.audio.currentTime,80);
+  const restored=harness(h.storage);restored.ctx.restorePlaybackSession();assert.deepEqual(ids(restored.ctx.queue),['a','c','d'],'刷新后保留已删除待播的队列');
+  h.ctx.undoQueueChange();assert.deepEqual(ids(h.ctx.queue),['a','b','c','d']);
+  h.ctx.removeQueuedTrack(pending(h.ctx,'b'));h.ctx.advance(1);await settle();assert.equal(h.ctx.current.id,'c','真正跳过移除的待播歌曲');
+  h=harness();h.loaded('a');h.ctx.addNext(h.ctx.get('b'));
+  assert(h.ctx.removeQueuedTrack(pending(h.ctx,'b','inserted')));
+  assert.deepEqual(plain(h.ctx.nextUp),[]);assert.deepEqual(ids(h.ctx.queue),['a','b','c','d'],'删除插播不误删原列表的同曲条目');
+  h.ctx.undoQueueChange();assert.deepEqual(plain(h.ctx.nextUp),['b']);
+  const stale=pending(h.ctx,'b','inserted');h.ctx.advance(1);await settle();assert.equal(h.ctx.removeQueuedTrack(stale),false,'切歌后的旧菜单不能误删新队列');
+  h=harness();h.loaded('a');h.ctx.repeat='shuffle';h.ctx.resetShuffle('a');
+  const entry=h.ctx.displayQueue().find(t=>t._queueRemoval)?._queueRemoval;
+  assert(h.ctx.removeQueuedTrack(entry));assert(!h.ctx.displayQueue().some(t=>t._queueRemoval?.id===entry.id));
+  assert(!h.ctx.shuffleOrder.includes(entry.id));h.ctx.undoQueueChange();assert(h.ctx.shuffleOrder.includes(entry.id));
+  h.ctx.playbackHistory=['a','b','c'];h.ctx.historyAnchors=[null,'a',null];h.ctx.historyCursor=0;
+  assert(h.ctx.removeQueuedTrack(pending(h.ctx,'b','history')));
+  assert.deepEqual(plain(h.ctx.playbackHistory),['a','c']);assert.deepEqual(plain(h.ctx.historyAnchors),[null,null]);
+  assert(h.ctx.queue.some(t=>t.id==='b'),'删除历史前进条目保留原队列歌曲');
+  console.log('通过：待播删除及撤销、实际跳过、同曲不同条目隔离、过期菜单保护、随机与历史队列。');
+
+  const nodes=new Map(),node=id=>{if(!nodes.has(id))nodes.set(id,{hidden:false,value:'',_tracks:[],querySelectorAll:()=>[]});return nodes.get(id);};
+  let mounted=null,scrolled=null,rendered=0,remembered=0;
+  const ctx={current:{id:'b'},view:'playlist',appleMusic:{entries:{first:{trackId:'a'},second:{trackId:'b'}},favorites:['second']},activePlaylist:{entries:['first','second']},$:node,searchTimer:null,clearTimeout(){},matchMedia:()=>({matches:false}),rememberNavigation(){remembered++;},render(){rendered++;node('songs')._tracks=[{id:'a'},{id:'b'}];}};
+  node('songs')._mountSongTrack=id=>mounted=id;
+  node('songs').querySelectorAll=()=>[{dataset:{track:'a'}},{dataset:{track:'b'},scrollIntoView:options=>scrolled=options}];
+  vm.createContext(ctx);vm.runInContext(section('  function playlistCurrentTrackId()','  function renderCurrent()'),ctx);
+  ctx.updatePlaylistNavigation();assert.equal(node('playlist-navigation').hidden,false,'从其他来源播放也按当前歌单内容显示');
+  node('search').value='隐藏当前曲目的筛选';node('artist').value='其他歌手';node('songs')._tracks=[{id:'a'}];
+  ctx.locatePlaylistCurrent();assert.equal(rendered,1);assert.equal(remembered,1);assert.equal(node('search').value,'');assert.equal(node('artist').value,'');assert.equal(mounted,'b');assert.equal(scrolled.block,'center');
+  ctx.locatePlaylistCurrent();assert.equal(rendered,1,'可见曲目定位无需重建列表');
+  ctx.activePlaylist={entries:['first']};ctx.updatePlaylistNavigation();assert.equal(node('playlist-navigation').hidden,true);
+  ctx.view='favorites';ctx.updatePlaylistNavigation();assert.equal(node('playlist-navigation').hidden,false);
+  ctx.current={id:'a'};ctx.updatePlaylistNavigation();assert.equal(node('playlist-navigation').hidden,true,'切歌后实时隐藏');
+  ctx.view='settings';ctx.updatePlaylistNavigation();assert.equal(node('playlist-navigation').hidden,true);
+  let topOptions;ctx.window={scrollTo:options=>topOptions=options};
+  vm.runInContext(source.split('\n').find(line=>line.startsWith("  $('playlist-scroll-top').onclick=")),ctx);
+  node('playlist-scroll-top').onclick();assert.equal(topOptions.top,0);assert.equal(topOptions.behavior,'smooth');
+  console.log('通过：跨来源歌单识别、喜欢歌单、筛选后定位、可见曲目不重绘、切歌和离页隐藏。');
+
+  let observer;
+  const chunks=[];const root={_tracks:[],replaceChildren(){chunks.length=0;},append(chunk){chunk.parentElement=this;chunks.push(chunk);},addEventListener(){}};
+  const mountCtx={window:{IntersectionObserver:true},IntersectionObserver:class{constructor(){observer=this;}observe(){}unobserve(){}disconnect(){}},songChunksObserver:null,document:{createElement(){return {style:{},firstElementChild:{getBoundingClientRect:()=>({height:72})}};}},$:()=>root,trackRows:items=>items.map(t=>t.id).join(','),playlistRows:()=>'',downloadedRows:()=>'',canPlay:()=>true,hydrateCovers(){}};
+  vm.createContext(mountCtx);vm.runInContext(section('  function renderSongList(','  function render()'),mountCtx);
+  mountCtx.renderSongList(Array.from({length:90},(_,i)=>({id:String(i)})));
+  assert.equal(chunks[4]._mounted,undefined);root._mountSongTrack('70');assert.equal(chunks[4]._mounted,true);assert(chunks[4].innerHTML.includes('70'));
+  console.log('通过：定位直接挂载长歌单目标分段，未加载曲目也能找到。');
+  const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
+  for(const shell of ['mobile','desktop']){
+    const template=html.split('<template id="'+shell+'-shell">')[1].split('</template>')[0];
+    for(const id of ['remove-queued-track','playlist-navigation','playlist-scroll-top','playlist-locate-current'])assert.equal(template.split('id="'+id+'"').length-1,1,shell+'模板控件必须唯一');
+    const menu=template.match(/<div id="track-more-menu"[^\r\n]*/)[0];assert(menu.lastIndexOf('删除待播')>menu.lastIndexOf('清空待插队'));
+  }
+  console.log('通过：桌面与手机模板按钮唯一，删除待播在曲目菜单底部。');
+})().catch(error=>{console.error(error);process.exitCode=1;});

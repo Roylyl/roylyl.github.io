@@ -1,5 +1,12 @@
 /* Browser surfaces corresponding to RoyTools' native header and settings. */
 :root { --music-action-height:40px;--music-action-radius:999px; }
+.playlist-navigation { position:fixed;right:max(16px,calc((100vw - 1200px)/2 + 16px));bottom:calc(var(--player-height,120px) + 28px + env(safe-area-inset-bottom));z-index:5;display:flex;flex-direction:column;gap:10px; }
+.playlist-jump { display:flex;align-items:center;justify-content:center;width:46px;height:46px;min-width:46px;min-height:46px;padding:12px;border:1px solid var(--line);border-radius:50%;background:var(--panel);color:var(--blue);box-shadow:0 3px 14px #00000018; }
+.playlist-jump svg { width:22px;height:22px;flex:none; }
+.playlist-jump:active { background:var(--soft,var(--bg)); }
+html.native-embedded .playlist-navigation { bottom:calc(88px + env(safe-area-inset-bottom)); }
+html:has(dialog[open],#queue-panel:not([hidden]),#full-queue:not([hidden])) .playlist-navigation { visibility:hidden;pointer-events:none; }
+#remove-queued-track>svg { color:inherit; }
 /* Filled actions and outlined selectors share the same visible capsule. */
 button.primary,button.secondary,button.back,button.quality,#feedback-stack button,#web-download-tray,.download-delete.is-confirming,.image-placeholder button {
  display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;
