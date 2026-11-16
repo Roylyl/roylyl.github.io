@@ -8,7 +8,7 @@ const plain=value=>JSON.parse(JSON.stringify(value));
 const settle=()=>new Promise(resolve=>setImmediate(resolve));
 function harness(storage=new Map()){
   const tracks=['a','b','c','d'].map(id=>({id,src:id+'.mp3',title:id,duration:240}));
-  const nodes=new Map(),events={},audioEvents={},calls={play:0,source:0},timers=new Map();let timerId=0;
+  const nodes=new Map(),events={},windowEvents={},audioEvents={},calls={play:0,source:0},timers=new Map();let timerId=0;
   const schedule=(fn,delay)=>{timers.set(++timerId,{fn,delay});return timerId;},cancel=id=>timers.delete(id);
   const body={append(node){node.parentElement=this;}};
   const math=Object.create(Math);math.random=()=>0.99999;
@@ -22,18 +22,21 @@ function harness(storage=new Map()){
     loadedTrackId:null,pendingTrackId:null,playbackBlocked:false,pausedPosition:null,pendingResumePosition:null,
     lastSaved:0,playbackRequestedAt:0,playToken:0,audioCacheGeneration:0,persistenceRequested:true,failedAudioSources:new Set(),preparedAudio:new Map(),localAudioUrl:null,fallbackCachedId:null,
     audioDownloadProgress:new Map(),completedAudioRequest:null,notifyNativePlayback(){},playerStatusText:'',BUFFERING_STATUS:'buffering',navigator:{onLine:true,mediaSession:{}},performance:{now:()=>100},
-    document:{body,hidden:false,addEventListener(name,fn){events[name]=fn;}},URL:{revokeObjectURL(){}},
+    document:{body,hidden:false,addEventListener(name,fn){events[name]=fn;}},window:{addEventListener(name,fn){windowEvents[name]=fn;}},URL:{revokeObjectURL(){}},
     get:id=>tracks.find(t=>t.id===id),canPlay:t=>!!t?.src,audioSource:t=>'https://example.test/'+t.src+'?v=1',
     read:(key,fallback)=>storage.has(key)?plain(storage.get(key)):fallback,save:(key,value)=>storage.set(key,plain(value)),
     setCurrent:t=>ctx.current=t,status:value=>ctx.playerStatusText=value,tracePlayback(){},renderCurrent(){},renderQueue(){},
-    cancelPreload(){},releasePrepared(){ctx.preparedAudio.clear();},cachedAudioUrl:async()=>null,audioBudget:()=>0,
+    cancelPreload(){},releasePrepared(){ctx.preparedAudio.clear();},hasCachedAudio:async()=>false,cachedAudioUrl:async()=>null,audioBudget:()=>0,
     preloadNextLyrics(){},preloadNext(){},updateLyricPosition(){},loadLyrics(){},updateFull(){},updateModeControls(){},registerMediaActions(){},reportShellVersion(){},
     time:String,$:id=>{if(!nodes.has(id))nodes.set(id,{hidden:true,append(node){node.parentElement=this;},style:{setProperty(){}},setAttribute(){}});return nodes.get(id);}
   };
   vm.createContext(ctx);vm.runInContext(segment,ctx);
   vm.runInContext(source.slice(source.indexOf('  function playAlbum('),source.indexOf('  function openAlbum(')),ctx);
   vm.runInContext(listener("  audio.addEventListener('loadedmetadata'"),ctx);
-  vm.runInContext(listener("  document.addEventListener('visibilitychange'"),ctx);
+  vm.runInContext(source.split('\n').find(line=>line.includes("document.addEventListener('visibilitychange'")&&line.includes('reconcilePagePlayback()')),ctx);
+  vm.runInContext(source.split('\n').find(line=>line.includes("window.addEventListener('pagehide'")&&line.includes('savePlaybackSession()')),ctx);
+  vm.runInContext(listener("  document.addEventListener('freeze'"),ctx);
+  vm.runInContext(listener("  window.addEventListener('pageshow'"),ctx);
   vm.runInContext(source.slice(source.indexOf("  audio.addEventListener('timeupdate'"),source.indexOf("  audio.addEventListener('play',")),ctx);
   for(const name of ['seeked','seeking','waiting'])vm.runInContext(listener("  audio.addEventListener('"+name+"'"),ctx);
   const metadata=(duration=240)=>{audio.duration=duration;audio.readyState=1;audioEvents.loadedmetadata();};
@@ -41,7 +44,7 @@ function harness(storage=new Map()){
     ctx.current=ctx.get(id);ctx.queue=[...tracks];ctx.loadedTrackId=id;ctx.playbackHistory=[id];ctx.historyCursor=0;
     audio.src=ctx.audioSource(ctx.current);metadata();audio.currentTime=time;
   };
-  return {ctx,audio,audioEvents,storage,calls,events,metadata,loaded,timers,timeupdate:()=>audioEvents.timeupdate(),flushTimer(delay){for(const [id,job] of [...timers])if(job.delay===delay){timers.delete(id);job.fn();}}};
+  return {ctx,audio,audioEvents,storage,calls,events,windowEvents,metadata,loaded,timers,timeupdate:()=>audioEvents.timeupdate(),flushTimer(delay){for(const [id,job] of [...timers])if(job.delay===delay){timers.delete(id);job.fn();}}};
 }
 module.exports={harness,plain,settle};
 if(require.main===module){

@@ -4,7 +4,7 @@ const file=process.argv[2]||path.join(__dirname,'../app.js');
 const source=fs.readFileSync(file,'utf8'),start=source.indexOf('  const coverRevisions='),end=source.indexOf('  const observedCovers=',start);
 assert(start>=0&&end>start);
 const stored=new Map(),calls=[],revoked=[],documentEvents={},boundImages=[];let blobs=0,release,clock=1000,mode='ok',cancelledBodies=0,denyStorage=false;
-const ctx={URL:class extends URL {static createObjectURL(){return 'blob:'+(++blobs);}static revokeObjectURL(source){revoked.push(source);}},Date:{now:()=>clock},Event,coverCacheGeneration:0,COVER_CACHE:'covers',
+const ctx={setTimeout:()=>1,URL:class extends URL {static createObjectURL(){return 'blob:'+(++blobs);}static revokeObjectURL(source){revoked.push(source);}},Date:{now:()=>clock},Event,coverCacheGeneration:0,COVER_CACHE:'covers',
  url:relative=>'https://raw.githubusercontent.com/Roylyl/Music/main/'+relative.split('/').map(encodeURIComponent).join('/'),
  document:{querySelectorAll:()=>boundImages,addEventListener:(name,handler)=>documentEvents[name]=handler},caches:{open:async()=>{if(denyStorage)throw Error('storage disabled');return {match:async key=>stored.get(key)?.clone(),put:async(key,response)=>stored.set(key,response.clone()),delete:async key=>stored.delete(key)};}},
  fetch:async(address,options)=>{calls.push({address,options});if(release)await new Promise(resolve=>{release=resolve;});
@@ -14,6 +14,7 @@ const ctx={URL:class extends URL {static createObjectURL(){return 'blob:'+(++blo
    return new Response('image-bytes',{headers:{'Content-Type':'image/webp'}});}};
 ctx.window=ctx;vm.createContext(ctx);vm.runInContext(source.slice(start,end)+'\nglobalThis.api={cachedCover,coverSource,coverRevisions,coverRequests};',ctx);
 vm.runInContext(source.slice(source.indexOf('  const observedCovers='),source.indexOf('  function hydrateCovers(')),ctx);
+vm.runInContext('globalThis.coverMemory={coverUrls,observedCovers};',ctx);
 (async()=>{
  const album='artists/歌手/专辑/cover.webp';ctx.api.coverRevisions.set(album,'v1');
  const results=await Promise.all(Array.from({length:12},()=>ctx.api.cachedCover(album)));
@@ -55,6 +56,29 @@ vm.runInContext(source.slice(source.indexOf('  const observedCovers='),source.in
  const stalePath='artists/歌手/旧错误条目/cover.webp',staleSource=ctx.api.coverSource(stalePath);
  stored.set(staleSource,new Response('<html>error</html>',{headers:{'Content-Type':'text/html'}}));
  const beforeStale=calls.length;assert((await ctx.api.cachedCover(stalePath)).startsWith('blob:'));assert.equal(calls.length,beforeStale+1);assert.equal(stored.get(staleSource).headers.get('Content-Type'),'image/webp','old non-image cache entries are discarded and replaced');
+ const livePath='live-cover.webp',liveSource=ctx.api.coverSource(livePath),liveUrl=await ctx.api.cachedCover(livePath);
+ boundImages.push({dataset:{coverSource:liveSource}});
+ for(let i=0;i<65;i++)await ctx.api.cachedCover('memory-'+i+'.webp');
+ ctx.pruneCoverMemory();assert(!revoked.includes(liveUrl),'live cover must remain usable');
+ const evicted=ctx.api.coverSource('memory-0.webp'),networkBefore=calls.length;
+ assert(stored.has(evicted),'memory trimming must retain the disk copy');
+ await ctx.api.cachedCover('memory-0.webp');assert.equal(calls.length,networkBefore,'returning to an evicted cover must not download again');
+ assert(revoked.length>10,'unused blob URLs are actually released');
+ for(let round=0;round<50;round++){
+   boundImages.length=0;
+   for(let i=0;i<60;i++){
+     const path='page-cover-'+((round%2)*40+i)+'.webp';await ctx.api.cachedCover(path);
+     if(i>=57)boundImages.push({dataset:{coverSource:ctx.api.coverSource(path)}});
+   }
+   const detached={isConnected:false};ctx.coverMemory.observedCovers.add(detached);
+   ctx.pruneCoverMemory();assert.equal(ctx.coverMemory.observedCovers.size,0,'离页后未加载图片不再被观察集合持有');
+   assert.equal(ctx.coverMemory.coverUrls.size,48,'多轮页面往返后内存封面数量不增长');
+ }
+ assert.equal(calls.filter(call=>call.address.includes('page-cover-')).length,100,'50轮页面往返，100个封面各下载一次');
+ const liveImage=boundImages[0],liveAddress=liveImage.dataset.coverSource;
+ liveImage.src=ctx.coverMemory.coverUrls.get(liveAddress);const beforeRetry=liveImage.src;
+ await ctx.api.cachedCover(new URL(liveAddress).pathname.split('/main/')[1],true);
+ assert(revoked.includes(beforeRetry));assert.notEqual(liveImage.src,beforeRetry,'重试更新所有使用者后释放旧URL');
  denyStorage=true;const uncached=await ctx.api.cachedCover('artists/歌手/无存储/cover.webp');assert(uncached.startsWith('blob:'),'storage denial must retain ordinary online image loading');
  console.log(path.basename(path.dirname(file))+': same-album requests, blob/cache deduplication, settled task removal and version separation passed');
 })().catch(error=>{console.error(error);process.exitCode=1;});

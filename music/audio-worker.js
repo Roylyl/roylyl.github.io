@@ -1,7 +1,7 @@
 'use strict';
 importScripts('./lyric-parser.js');
-const AUDIO='roylyl-music-audio-v2',META='roylyl-music-audio-meta-v1',SHELL='roylyl-music-shell-20261111-108';
-const FILES=['/music/share-pages.js?v=20261111-web-108','/music/share.css?v=20261111-web-108','/music/desktop-settings.css?v=20261111-web-108','/music/shell.js?v=20261111-web-108','/music/desktop.css?v=20261111-web-108','/music/desktop-theme.css?v=20261111-web-108','/music/web-host.js?v=20261111-web-108','/music/web-host.css?v=20261111-web-108','/music/','/music/index.html','/music/music.css?v=20261111-web-108','/music/roytools.css?v=20261111-web-108','/music/app.js?v=20261111-web-108','/music/playback-feedback.js?v=20261111-web-108','/music/lyric-parser.js?v=20261111-web-108','/music/image-loading.css?v=20260927-1','/music/image-loading.js?v=20261111-web-108','/music/catalog-sync.js?v=20261111-web-108','/music/data/catalog.json?v=20261111-web-108','/music/favicon.svg','/music/placeholder.svg'];
+const AUDIO='roylyl-music-audio-v2',META='roylyl-music-audio-meta-v1',SHELL='roylyl-music-shell-20261116-109';
+const FILES=['/music/share-pages.js?v=20261116-web-109','/music/share.css?v=20261116-web-109','/music/desktop-settings.css?v=20261116-web-109','/music/shell.js?v=20261116-web-109','/music/desktop.css?v=20261116-web-109','/music/desktop-theme.css?v=20261116-web-109','/music/web-host.js?v=20261116-web-109','/music/web-host.css?v=20261116-web-109','/music/','/music/index.html','/music/music.css?v=20261116-web-109','/music/roytools.css?v=20261116-web-109','/music/app.js?v=20261116-web-109','/music/playback-feedback.js?v=20261116-web-109','/music/lyric-parser.js?v=20261116-web-109','/music/image-loading.css?v=20260927-1','/music/image-loading.js?v=20261116-web-109','/music/catalog-sync.js?v=20261116-web-109','/music/data/catalog.json?v=20261116-web-109','/music/favicon.svg','/music/placeholder.svg'];
 const metaKey='/music/__audio_index__',configKey='/music/__audio_config__',freshKey='/music/__audio_recovery__';
 let generation=0,budget=-1,preloadEnabled=true,writeQueue=Promise.resolve(),configRevision=0,configRead,freshRead,optionalEpoch=0,lastKeptSource='';
 const inflight=new Map(),playingRequests=new Map(),protectedSources=new Map();
@@ -580,7 +580,27 @@ async function cachedRange(response,range,method='GET'){
   else{start=Number(match[1]);end=match[2]?Math.min(Number(match[2]),size-1):size-1;}
   if(!Number.isSafeInteger(start)||!Number.isSafeInteger(end)||start>=size||end<start){headers.set('Content-Range',`bytes */${size}`);headers.set('Content-Length','0');return new Response(null,{status:416,headers});}
   headers.set('Content-Range',`bytes ${start}-${end}/${size}`);headers.set('Content-Length',String(end-start+1));
-  return new Response(method==='HEAD'?null:(await response.blob()).slice(start,end+1),{status:206,headers});
+  if(method==='HEAD'){response.body?.cancel().catch(()=>{});return new Response(null,{status:206,headers});}
+  // Safari requests many small ranges. Never materialize the complete cached
+  // song for each request; retain only the current stream chunk.
+  const reader=response.body.getReader();let offset=0,finished=false;
+  const body=new ReadableStream({
+    async pull(controller){
+      try{
+        while(!finished){
+          const part=await reader.read();
+          if(part.done){finished=true;reader.releaseLock();controller.error(new Error('Incomplete cached audio range'));return;}
+          const from=Math.max(0,start-offset),to=Math.min(part.value.byteLength,end+1-offset);
+          offset+=part.value.byteLength;
+          if(to>from)controller.enqueue(part.value.slice(from,to));
+          if(offset>end){finished=true;controller.close();reader.cancel().catch(()=>{}).finally(()=>reader.releaseLock());return;}
+          if(to>from)return;
+        }
+      }catch(error){finished=true;try{reader.releaseLock();}catch{}controller.error(error);}
+    },
+    cancel(reason){finished=true;return reader.cancel(reason).finally(()=>reader.releaseLock());}
+  });
+  return new Response(body,{status:206,headers});
 }
 async function storeFull(source,response,version,signal,epoch=sourceEpoch.get(source)||0,outcome){
   const fail=(code,reason)=>{if(outcome)Object.assign(outcome,{code,reason});return false;};
@@ -617,6 +637,7 @@ async function storeFull(source,response,version,signal,epoch=sourceEpoch.get(so
       }
     } finally {reader.releaseLock();}
     const body=new Blob(chunks,{type:response.headers.get('Content-Type')||'audio/mpeg'});
+    chunks.length=0;
     if(body.size!==size)return fail('incomplete','歌曲文件未完整下载，请重试');
     if(version!==generation||signal.aborted)return fail('cancelled','下载已取消');
     phase='storage';

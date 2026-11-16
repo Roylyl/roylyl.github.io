@@ -6,7 +6,7 @@
  document.body.replaceChildren(fragment);
  const navigationButtons=[...document.querySelectorAll('[data-open-settings],[data-music-page],button.nav-item')];
  for(const button of navigationButtons)button.disabled=true;
- const scripts=['image-loading.js?v=20261111-web-108','lyric-parser.js?v=20261111-web-108','playback-feedback.js?v=20261111-web-108','catalog-sync.js?v=20261111-web-108','share-pages.js?v=20261111-web-108','web-host.js?v=20261111-web-108','app.js?v=20261111-web-108'];
+ const scripts=['image-loading.js?v=20261116-web-109','lyric-parser.js?v=20261116-web-109','playback-feedback.js?v=20261116-web-109','catalog-sync.js?v=20261116-web-109','share-pages.js?v=20261116-web-109','web-host.js?v=20261116-web-109','app.js?v=20261116-web-109'];
  for(const source of scripts)await new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='./'+source;script.onload=resolve;script.onerror=reject;document.body.append(script);});
  await window.RoyToolsWebHost?.ready();
  for(const button of navigationButtons)button.disabled=false;

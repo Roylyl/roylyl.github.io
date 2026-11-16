@@ -6,7 +6,7 @@ const cacheSource=source.slice(source.indexOf('  const audioCacheJobs='),source.
 const preloadSource=source.slice(source.indexOf('  function preloadNext()'),source.indexOf('  const playbackLog='));
 function setup({preload=true}={}) {
   const h=harness(),requests=[],pending=new Map();h.loaded('a',12);
-  Object.assign(h.ctx,{window:h.ctx,prepareToken:0,audioCacheGeneration:0,preloadAllowed:()=>preload,audioBudget:()=>-1,
+  Object.assign(h.ctx,{window:h.ctx,prepareToken:0,prepareJob:null,audioCacheGeneration:0,preloadAllowed:()=>preload,audioBudget:()=>-1,
     workerMessage(data){requests.push(data.source);return new Promise(resolve=>pending.set(data.source,resolve));}});
   h.ctx.navigator.serviceWorker={controller:{}};
   vm.runInContext(cacheSource+preloadSource,h.ctx);
@@ -23,6 +23,19 @@ function setup({preload=true}={}) {
     h.complete('a');await settle();await settle();
     assert.deepEqual(h.requests,preload?['https://example.test/a.mp3?v=1','https://example.test/b.mp3?v=1']:['https://example.test/a.mp3?v=1']);
     if(preload){h.complete('b');await settle();}
+  }
+  {
+    const h=setup();let blobReads=0,resolveBlob,revoked=[];
+    h.ctx.cachedAudioUrl=()=>{blobReads++;return new Promise(resolve=>resolveBlob=resolve);};
+    h.ctx.URL.revokeObjectURL=url=>revoked.push(url);
+    await h.ctx.play(h.ctx.current,h.ctx.queue,true,true);
+    h.ctx.pendingTrackId=null;h.ctx.preloadNext();
+    for(let i=0;i<100;i++)h.ctx.preloadNext();
+    h.complete('a');await settle();h.complete('b');await settle();
+    for(let i=0;i<100;i++)h.ctx.preloadNext();
+    assert.equal(blobReads,1,'重复事件只保留一个下一曲Blob读取');assert.equal(h.requests.length,2,'本曲和下一曲各一个下载任务');
+    h.ctx.current=h.ctx.get('c');h.ctx.prepareToken++;
+    resolveBlob('blob:obsolete');await settle();assert.deepEqual(revoked,['blob:obsolete']);assert.equal(h.ctx.preparedAudio.size,0,'切歌后迟到的预加载立即释放');assert.equal(h.ctx.prepareJob,null);
   }
   {
     const h=setup();await h.ctx.play(h.ctx.current,h.ctx.queue,true,true);

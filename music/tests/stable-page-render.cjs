@@ -21,7 +21,8 @@ const ctx={$:node,desktopShell:true,tracks,albums:[album],selected:album,artistC
   favorites:new Set(),artistNames:value=>[value],playlistIconName:()=>'',updateCacheStatus(){}};
 vm.createContext(ctx);
 vm.runInContext(source.split('\n').find(line=>line.startsWith('  function setMarkup('))+section('  function render() {','  function playAlbum(')+section('  function applyAppleMusic() {','  // Android owns'),ctx);
-ctx.render();const albumToken=node('album-detail').token;
+node('songs')._mountSongTrack=()=>tracks;
+ctx.render();assert.equal(node('songs')._mountSongTrack,null,'页面切换清除持有旧分段的定位回调');const albumToken=node('album-detail').token;
 ctx.render();assert.equal(node('album-detail').token,albumToken,'相同专辑详情保留大封面DOM');assert.equal(writes.get('album-detail'),1);
 visible=[tracks[1]];ctx.render();assert.equal(node('album-detail').token,albumToken,'筛选结果变化不应重建相同专辑封面');
 node('play-selected').onclick();assert.deepEqual(played,[tracks[1]],'保留按钮DOM后，播放操作必须使用新的筛选结果');

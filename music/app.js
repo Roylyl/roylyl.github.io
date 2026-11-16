@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const APP_VERSION='20261111-web-108', SHELL_VERSION='roylyl-music-shell-20261111-108';
+  const APP_VERSION='20261116-web-109', SHELL_VERSION='roylyl-music-shell-20261116-109';
   const ROOT = 'https://raw.githubusercontent.com/Roylyl/Music/main/';
   const $ = id => document.getElementById(id);
   const desktopShell=!window.musicMobileShell;
@@ -196,6 +196,16 @@
   }
   const audioCacheJobs=new Map();
   const audioDownloadProgress=new Map();
+  function rememberAudioProgress(source,progress) {
+    audioDownloadProgress.delete(source);audioDownloadProgress.set(source,progress);
+    if(audioDownloadProgress.size>128){
+      const playing=current?audioSource(current):null;
+      for(const key of audioDownloadProgress.keys()){
+        if(audioDownloadProgress.size<=128)break;
+        if(key!==playing)audioDownloadProgress.delete(key);
+      }
+    }
+  }
   async function cacheAudio(source) {
     if(!navigator.serviceWorker?.controller || !audioBudget())return false;
     const generation=audioCacheGeneration,preload=source!==audioSource(current||{src:''});
@@ -206,7 +216,7 @@
     job.promise=workerMessage({type:'CACHE_AUDIO',source,preload},120000).then(result=>{
       const complete=generation===audioCacheGeneration&&audioCacheJobs.get(source)===job&&result?.ok===true;
       if(complete){
-        audioDownloadProgress.set(source,1);
+        rememberAudioProgress(source,1);
         if(current&&source===audioSource(current))paintBufferedProgress();
       }
       return complete;
@@ -227,11 +237,11 @@
     });
     navigator.serviceWorker.addEventListener('message',event=>{
       if(event.data?.type==='AUDIO_DOWNLOAD_PROGRESS'){
-        audioDownloadProgress.set(event.data.source,event.data.total>0?Math.min(.999,event.data.bytes/event.data.total):0);
+        rememberAudioProgress(event.data.source,event.data.total>0?Math.min(.999,event.data.bytes/event.data.total):0);
         if(current&&event.data.source===audioSource(current))paintBufferedProgress();
       }
       if(event.data?.type==='AUDIO_CACHED'){
-        audioDownloadProgress.set(event.data.source,1);
+        rememberAudioProgress(event.data.source,1);
         if(current&&event.data.source===audioSource(current)){paintBufferedProgress();if(pendingResumePosition)useCompletedAudio();}
         updateCacheStatus();
         if(view==='downloads'||settingsDownloadsOpen){clearTimeout(downloadsRefreshTimer);downloadsRefreshTimer=setTimeout(()=>refreshDownloadedTracks(),1000);}
@@ -244,6 +254,14 @@
     if (!('caches' in window)) return null;
     try { const response = await (await caches.open(AUDIO_CACHE)).match(source); return response?.status===200 && !response.headers.has('Content-Range') ? URL.createObjectURL(await response.blob()) : null; }
     catch { return null; }
+  }
+  async function hasCachedAudio(source) {
+    if(!('caches' in window))return false;
+    try{
+      const response=await (await caches.open(AUDIO_CACHE)).match(source);
+      const complete=response?.status===200&&!response.headers.has('Content-Range');
+      response?.body?.cancel().catch(()=>{});return !!complete;
+    }catch{return false;}
   }
   document.querySelectorAll('[data-open-settings]').forEach(button=>button.addEventListener('click',updateCacheStatus));
   for (const [buttonId,cacheName,statusElement,invalidate,done] of [
@@ -320,8 +338,8 @@
   const favorites = new Set();
   let appleMusic=null, activePlaylist=null, appleError=false, artistContext=null;
   const preparedAudio=new Map();
-  let prepareToken=0;
-  function releasePrepared(){prepareToken++;for(const blob of preparedAudio.values())URL.revokeObjectURL(blob);preparedAudio.clear();}
+  let prepareToken=0,prepareJob=null;
+  function releasePrepared(){prepareToken++;prepareJob=null;for(const blob of preparedAudio.values())URL.revokeObjectURL(blob);preparedAudio.clear();}
   const failedAudioSources=new Set();
   let playbackBlocked=false, pausedPosition=null, pendingResumePosition=null, playbackRequestedAt=0, nextUp=[], insertionAnchor=null;
   let loadedTrackId=null, pendingTrackId=null, playbackHistory=[], historyCursor=-1, queueSignature='';
@@ -385,6 +403,20 @@
   const coverSource = path => {const source=new URL(url(path));if(coverRevisions.has(path))source.searchParams.set('v',coverRevisions.get(path));return source.href;};
   const picture = t => coverSource(t.cover);
   const coverUrls = new Map(), coverRequests = new Map(), coverFailures = new Map();
+  let coverPruneTimer=null;
+  function pruneCoverMemory() {
+    coverPruneTimer=null;
+    for(const img of observedCovers)if(!img.isConnected){coverObserver?.unobserve(img);observedCovers.delete(img);}
+    const live=new Set([...document.querySelectorAll('img[data-cover-source]')].map(img=>img.dataset.coverSource));
+    for(const [source,blob] of coverUrls){
+      if(coverUrls.size<=48)break;
+      if(live.has(source)||coverRequests.has(source))continue;
+      URL.revokeObjectURL(blob);coverUrls.delete(source);
+    }
+  }
+  function scheduleCoverPrune() {
+    if((coverUrls.size>48||observedCovers.size)&&!coverPruneTimer)coverPruneTimer=setTimeout(pruneCoverMemory,1000);
+  }
   const usableCoverResponse = response => {
     const type=(response?.headers?.get('Content-Type')||'').split(';')[0].trim();
     return !!response?.ok&&(!type||/^image\//i.test(type)||/^application\/octet-stream$/i.test(type));
@@ -400,7 +432,9 @@
   async function cachedCover(path,force=false) {
     const source=coverSource(path),generation=coverCacheGeneration;
     if(coverRequests.has(source))return coverRequests.get(source);
-    if(!force&&coverUrls.has(source))return coverUrls.get(source);
+    if(!force&&coverUrls.has(source)){
+      const local=coverUrls.get(source);coverUrls.delete(source);coverUrls.set(source,local);return local;
+    }
     if(force)coverFailures.delete(source);
     else if((coverFailures.get(source)||0)>Date.now())return null;
     const request = (async () => {
@@ -427,7 +461,14 @@
         if(generation!==coverCacheGeneration)return null;
         const local = URL.createObjectURL(blob);
         coverFailures.delete(source);
+        const previous=coverUrls.get(source);
         coverUrls.set(source,local);
+        if(previous&&previous!==local){
+          // Explicit retries replace the shared URL for every remaining consumer.
+          document.querySelectorAll('img[data-cover-source]').forEach(img=>{if(img.dataset.coverSource===source&&img.src===previous)img.src=local;});
+          URL.revokeObjectURL(previous);
+        }
+        scheduleCoverPrune();
         return local;
       } catch(error) {
         if(generation===coverCacheGeneration){
@@ -478,6 +519,7 @@
   function hydrateCovers(root) {
     for(const img of observedCovers)if(!img.isConnected){coverObserver?.unobserve(img);observedCovers.delete(img);}
     root.querySelectorAll('img[data-cover-path]').forEach(img=>bindCover(img,img.dataset.coverPath));
+    scheduleCoverPrune();
   }
   let playerStatusText = '', statusNoticeTimer=null;
   const BUFFERING_STATUS = '正在缓冲...';
@@ -956,6 +998,7 @@
     songChunksObserver?.disconnect();songChunksObserver=null;
     if($('songs')._songFocusHandler)$('songs').removeEventListener('focusin',$('songs')._songFocusHandler);
     $('songs')._songFocusHandler=null;
+    $('songs')._mountSongTrack=null;
     if(view==='albums'&&!selected)$('songs').replaceChildren();
     document.body.classList.toggle('album-detail-open',view==='albums' && !!selected);
     $('songs')._tracks=null;
@@ -1077,7 +1120,7 @@
   }
   function renderCurrent() {
     document.body.classList.toggle('has-current-track',!!current);
-    updatePlaylistNavigation();
+    updatePlaylistNavigation();scheduleCoverPrune();
     syncPlaybackState();
     updateFull();
     $('play').disabled=!current&&!($('songs')._tracks ?? filtered()).some(canPlay);
@@ -1205,7 +1248,9 @@
     if(next && next.id!==current.id){
       const source=audioSource(next),owner=current.id;
       if(preparedAudio.has(source))return;
+      if(prepareJob?.source===source&&prepareJob.owner===owner&&prepareJob.generation===audioCacheGeneration&&prepareJob.token===prepareToken)return;
       const token=++prepareToken,generation=audioCacheGeneration;
+      const job={source,owner,generation,token};prepareJob=job;
       // Finish saving the playing song before allowing next-song network work.
       cacheAudio(audioSource(current)).then(async currentReady=>{
         if(!currentReady||token!==prepareToken||current?.id!==owner||generation!==audioCacheGeneration||audio.paused||!preloadAllowed())return;
@@ -1216,7 +1261,7 @@
         if(token!==prepareToken||current?.id!==owner||generation!==audioCacheGeneration){URL.revokeObjectURL(blob);return;}
         for(const previous of preparedAudio.values())URL.revokeObjectURL(previous);
         preparedAudio.clear();preparedAudio.set(source,blob);
-      });
+      }).catch(()=>{}).finally(()=>{if(prepareJob===job)prepareJob=null;});
     }
   }
   const playbackLog=(()=>{const events=read('playback-log',[]);let cleared=0;try{cleared=Number(window.RoyToolsMusicBridge?.getLogsClearedAt())||0;}catch{}return Array.isArray(events)?events.filter(e=>e&&typeof e.event==='string'&&Date.parse(e.at)>cleared&&Date.now()-Date.parse(e.at)<86400000).slice(-120):[];})();
@@ -1556,7 +1601,7 @@
     if(nextUp.includes(t.id))return;
     nextUp.push(t.id);
     queueChanged();rememberQueueUndo(before,'已加入插播队列：'+t.title);
-    if(current){const owner=current.id;cachedAudioUrl(audioSource(current)).then(blob=>{if(blob){URL.revokeObjectURL(blob);if(current?.id===owner)preloadNext();}});}
+    if(current){const owner=current.id;hasCachedAudio(audioSource(current)).then(ready=>{if(ready&&current?.id===owner)preloadNext();});}
   }
   function playbackControl() {
     if(retryWaiting&&!playbackBlocked)return {icon:'pause',label:'取消重试',system:'paused'};
@@ -1628,6 +1673,21 @@
   function handleSessionChange() {
     tracePlayback('session-statechange');
     if(navigator.audioSession?.state==='interrupted')pausePlayback('interrupted');
+  }
+  function reconcilePagePlayback() {
+    checkSleepTimer();
+    if(!document.hidden)reportShellVersion();
+    if(!current)return;
+    registerMediaActions();
+    // Visibility alone is not a native pause. Safari can report a transient
+    // paused state while moving the existing media session into the background.
+    if(navigator.audioSession?.state==='interrupted')handleSessionChange();
+    else if(playbackBlocked)handleAudioStart();
+    else if(!finishPlaybackIfEnded('visibility'))observePlaybackClock();
+    savePlaybackSession();syncPlaybackState(true);
+    if(!document.hidden){
+      renderCurrent();renderPlaybackProgress();loadLyrics(current);updateLyricPosition(true);
+    }
   }
   function togglePlayback() {
     if(!audio.paused||pendingTrackId||retryWaiting){pausePlayback();return;}
@@ -1838,7 +1898,7 @@
   $('play').onclick = togglePlayback;
   $('prev').onclick = previousTrack;
   $('next').onclick = () => advance(1);
-  $('repeat').onclick = () => { repeat=({all:'shuffle',shuffle:'one',one:'all'})[repeat];if(repeat==='shuffle')resetShuffle(insertionAnchor||current?.id);cancelPreload();releasePrepared();renderQueue();savePlaybackSession();updateModeControls();if(current){preloadNextLyrics(current);cachedAudioUrl(audioSource(current)).then(blob=>{if(blob){URL.revokeObjectURL(blob);preloadNext();}});} };
+  $('repeat').onclick = () => { repeat=({all:'shuffle',shuffle:'one',one:'all'})[repeat];if(repeat==='shuffle')resetShuffle(insertionAnchor||current?.id);cancelPreload();releasePrepared();renderQueue();savePlaybackSession();updateModeControls();if(current){preloadNextLyrics(current);hasCachedAudio(audioSource(current)).then(ready=>{if(ready)preloadNext();});} };
   $('undo-queue-change').onclick=undoQueueChange;
   $('retry-playback').onclick=()=>current&&play(current,queue,true,true,!!insertionAnchor);
   $('skip-playback').onclick=()=>advance(1);
@@ -2072,7 +2132,9 @@
     }
   }
   window.addEventListener('pagehide',()=>{savePlaybackSession();tracePlayback('pagehide');});
-  document.addEventListener('visibilitychange',()=>{checkSleepTimer();if(!document.hidden)reportShellVersion();else savePlaybackSession();tracePlayback('visibilitychange');if(current){registerMediaActions();if(navigator.audioSession?.state==='interrupted')handleSessionChange();else if(playbackBlocked)handleAudioStart();else if(!finishPlaybackIfEnded('visibility')&&audio.paused&&!pendingTrackId)handleAudioPause();}if(!document.hidden&&current){renderPlaybackProgress();loadLyrics(current);updateLyricPosition(true);}});
+  document.addEventListener('freeze',()=>{savePlaybackSession();tracePlayback('freeze');});
+  window.addEventListener('pageshow',event=>{if(event.persisted){tracePlayback('pageshow-restored');reconcilePagePlayback();}});
+  document.addEventListener('visibilitychange',()=>{tracePlayback('visibilitychange');reconcilePagePlayback();});
   const full = $('full-player');
   function isFullOpen() { return Boolean(full.open || full.classList.contains('dialog-fallback-open')); }
   function updateFull() {

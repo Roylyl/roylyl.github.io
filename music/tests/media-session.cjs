@@ -18,11 +18,11 @@ function harness(){
       audioSession:{state:'active',addEventListener:(name,fn)=>sessionEvents[name]=fn}},
     advance(){ctx.advances=(ctx.advances||0)+1;},canPlay:t=>!!t?.src,audioSource:t=>t.src,cancelPreload(){},status(t){ctx.playerStatusText=t;},renderCurrent(){},
     setCurrent(t){ctx.current=t;},save(){},preloadNext(){},audioBudget:()=>0,releasePrepared(){},URL:{revokeObjectURL(){}},
-    cachedAudioUrl(){return Promise.resolve(null);},
+    hasCachedAudio:async()=>false,cachedAudioUrl(){return Promise.resolve(null);},
     $:id=>{if(!nodes.has(id))nodes.set(id,{hidden:true,append(node){node.parentElement=this;},setAttribute(){},style:{setProperty(){}},click(){throw Error('system action must not simulate a DOM click');}});return nodes.get(id);}};
   vm.createContext(ctx);
   vm.runInContext(source.slice(source.indexOf('  const playbackFlow='),source.indexOf('  function advance(')),ctx);
-  vm.runInContext(source.slice(source.indexOf('  function registerMediaActions()'),source.indexOf("  document.addEventListener('visibilitychange'",source.indexOf('  function registerMediaActions()'))),ctx);
+  vm.runInContext(source.slice(source.indexOf('  function registerMediaActions()'),source.indexOf("  window.addEventListener('pagehide'",source.indexOf('  function registerMediaActions()'))),ctx);
   vm.runInContext(source.slice(source.indexOf("  navigator.audioSession?.addEventListener('statechange'"),source.indexOf("  audio.addEventListener('error'")),ctx);
   ctx.registerMediaActions();return {ctx,audio,handlers,requests,sessionEvents,registrations};
 }

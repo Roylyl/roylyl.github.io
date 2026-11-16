@@ -1,0 +1,40 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+const {harness,settle}=require('./playback-session.cjs');
+(async()=>{
+  const h=harness();h.loaded('a',42.75);h.audio.paused=false;h.audio.readyState=4;
+  let loads=0,cacheReads=0,currentWrites=0,revokes=0;
+  const app=fs.readFileSync(path.join(__dirname,'../app.js'),'utf8');
+  let coverWrites=0;const cover={dataset:{coverBound:'album.webp',coverSource:'cached-cover'},set src(value){coverWrites++;}};
+  h.ctx.coverSource=()=> 'cached-cover';
+  vm.runInContext(app.slice(app.indexOf('  function bindCover('),app.indexOf('  function hydrateCovers(')),h.ctx);
+  h.ctx.renderCurrent=()=>h.ctx.bindCover(cover,'album.webp',true);
+  h.audio.load=()=>loads++;h.ctx.cachedAudioUrl=async()=>{cacheReads++;return null;};
+  h.ctx.setCurrent=()=>currentWrites++;h.ctx.URL.revokeObjectURL=()=>revokes++;
+  const initialSources=h.calls.source,initialPlay=h.calls.play;
+  for(let i=0;i<100;i++){
+    h.ctx.document.hidden=true;h.events.visibilitychange();h.audio.currentTime+=.75;
+    h.windowEvents.pagehide({persisted:true});h.events.freeze();
+    h.ctx.document.hidden=false;h.windowEvents.pageshow({persisted:true});h.events.visibilitychange();
+    assert.equal(h.ctx.playbackBlocked,false);assert.equal(h.storage.get('playback').time,h.audio.currentTime);
+  }
+  assert.equal(h.audio.currentTime,117.75);assert.equal(h.calls.source,initialSources);assert.equal(h.calls.play,initialPlay);
+  assert.deepEqual([loads,cacheReads,currentWrites,revokes],[0,0,0,0],'前后台与页面恢复不换源、不重新读音频、不重设封面、不释放当前资源');
+  assert.equal(coverWrites,0,'恢复UI时实际封面绑定保留原图片地址');
+  h.audio.paused=true;h.ctx.document.hidden=true;h.events.visibilitychange();assert.equal(h.ctx.playbackBlocked,false,'仅暂时paused不能合成用户暂停');
+  h.audio.paused=false;assert(h.ctx.handleAudioStart());
+  h.ctx.pausePlayback('system');const pausedTime=h.audio.currentTime;
+  h.ctx.document.hidden=false;h.events.visibilitychange();h.windowEvents.pageshow({persisted:true});
+  assert.equal(h.audio.paused,true);assert.equal(h.audio.currentTime,pausedTime);assert.equal(h.ctx.playbackBlocked,true,'锁屏暂停后返回不擅自续播');
+  const resumed=harness(h.storage);resumed.ctx.restorePlaybackSession();assert.equal(resumed.ctx.current.id,'a');assert.equal(resumed.ctx.pendingResumePosition.time,pausedTime);assert.equal(resumed.calls.play,0,'页面被回收后恢复记录，不自动播放');
+  const next=harness();next.loaded('a',240);next.audio.paused=false;next.ctx.document.hidden=true;
+  next.events.visibilitychange();await settle();assert.equal(next.ctx.current.id,'b');
+  next.metadata();next.audio.currentTime=23.5;next.ctx.document.hidden=false;
+  const before=next.calls.source;next.events.visibilitychange();next.windowEvents.pageshow({persisted:true});
+  assert.equal(next.ctx.current.id,'b');assert.equal(next.audio.currentTime,23.5);assert.equal(next.calls.source,before,'锁屏已切到下一曲，返回不能恢复旧曲');
+  const interrupted=harness();interrupted.loaded('a',88);interrupted.audio.paused=false;interrupted.ctx.navigator.audioSession={state:'interrupted'};
+  interrupted.ctx.document.hidden=true;interrupted.events.visibilitychange();assert.equal(interrupted.ctx.playbackBlocked,true);
+  interrupted.ctx.navigator.audioSession.state='active';interrupted.ctx.document.hidden=false;interrupted.events.visibilitychange();
+  assert.equal(interrupted.audio.currentTime,88);assert.equal(interrupted.audio.paused,true,'真实系统中断仍保留暂停和进度');
+  console.log('通过：100轮后台/冻结/页面恢复不换源或重读缓存；锁屏暂停、后台切歌、系统中断及页面重建进度恢复。');
+})().catch(error=>{console.error(error);process.exitCode=1;});
